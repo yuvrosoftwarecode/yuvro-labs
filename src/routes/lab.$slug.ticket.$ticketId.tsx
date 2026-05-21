@@ -176,6 +176,28 @@ function TicketEditor() {
     }, 600);
   }
 
+  function handleSubmit() {
+    setBottomTab("tests");
+    setTests((ts) => ts.map((t) => ({ ...t, time: "…", pass: false })));
+    setTimeout(() => {
+      const m = files["Main.java"];
+      const next: TestResult[] = [
+        { name: "Test 1 · Variables Declaration", pass: /int\s+\w+\s*=/.test(m) && /double\s+\w+\s*=/.test(m), time: "12ms" },
+        { name: "Test 2 · Type Casting (implicit)", pass: /double\s+\w+\s*=\s*\w+\s*;/.test(m), time: "8ms" },
+        { name: "Test 3 · Type Casting (explicit)", pass: /\(int\)\s*\w/.test(m), time: "9ms" },
+        { name: "Test 4 · String Operations", pass: /\.length\(\)/.test(m) && /\.charAt\(/.test(m), time: "7ms" },
+        { name: "Test 5 · Output Format", pass: /System\.out\.println/.test(m) || /printf\(/.test(m), time: "11ms" },
+      ];
+      setTests(next);
+      setTestsRan(true);
+      if (next.every((t) => t.pass)) {
+        navigate({ to: "/lab/$slug/ticket/$ticketId/review", params: { slug, ticketId } });
+      } else {
+        showToast("Fix failing tests before submitting");
+      }
+    }, 600);
+  }
+
   function handleSave() {
     setDirty({ "Main.java": false, "MainTest.java": false, "README.md": false });
     const now = new Date();
