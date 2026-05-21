@@ -4,11 +4,11 @@ import { TopNav } from "@/components/TopNav";
 import { DiffBadge, StatusBadge } from "@/components/Badges";
 import { tickets, labs } from "@/lib/dummy";
 import {
-  Play, Save, Send, Lightbulb, AlertTriangle, ChevronRight, ChevronDown,
+  Play, Save, Send, Lightbulb, AlertTriangle, ChevronRight, ChevronDown, ChevronLeft,
   FileCode2, Folder, FolderOpen, Search, GitBranch, Bug, Package, Settings,
   CircleDot, Terminal as TerminalIcon, CheckCircle2, XCircle, Clock, Zap,
   MessageSquare, Lock, Unlock, RotateCcw, Copy, Share2, Flag, HelpCircle,
-  Sparkles, Gauge, Wand2, Globe, Check,
+  Sparkles, Gauge, Wand2, Globe, Check, ArrowLeft, PanelLeftClose, PanelLeftOpen, BookOpen,
 } from "lucide-react";
 
 export const Route = createFileRoute("/lab/$slug/ticket/$ticketId")({ component: TicketEditor });
@@ -68,6 +68,7 @@ function TicketEditor() {
   const ticket = tickets.find((t) => t.id === ticketId) ?? tickets[0];
 
   const [tab, setTab] = useState<"problem" | "hints" | "discuss">("problem");
+  const [leftCollapsed, setLeftCollapsed] = useState(false);
   const [activeFile, setActiveFile] = useState<FileName>("Main.java");
   const [bottomTab, setBottomTab] = useState<BottomTab>("tests");
   const [hintLevel, setHintLevel] = useState(2);
@@ -249,10 +250,16 @@ function TicketEditor() {
 
   return (
     <div className="h-screen flex flex-col bg-background overflow-hidden">
-      <TopNav />
-
-      {/* Top sub-bar */}
-      <div className="flex flex-wrap items-center gap-3 border-b bg-card/60 px-4 py-2 text-xs">
+      {/* Top sub-bar (no global nav — full-page editor) */}
+      <div className="flex flex-wrap items-center gap-3 border-b bg-card/60 px-3 py-2 text-xs">
+        <Link to="/lab/$slug" params={{ slug }} className="inline-flex items-center gap-1 rounded-md border px-2 py-1 hover:bg-accent">
+          <ArrowLeft className="h-3 w-3" />Exit
+        </Link>
+        <button onClick={() => setLeftCollapsed((v) => !v)} title="Toggle panel"
+          className="inline-flex items-center gap-1 rounded-md border px-2 py-1 hover:bg-accent">
+          {leftCollapsed ? <PanelLeftOpen className="h-3 w-3" /> : <PanelLeftClose className="h-3 w-3" />}
+          <span className="hidden md:inline">{leftCollapsed ? "Show" : "Hide"} panel</span>
+        </button>
         <div className="flex items-center gap-1.5 text-muted-foreground">
           <Link to="/" className="hover:text-foreground">Practical Labs</Link><ChevronRight className="h-3 w-3" />
           <Link to="/lab/$slug" params={{ slug }} className="hover:text-foreground">{lab.name}</Link><ChevronRight className="h-3 w-3" />
@@ -289,24 +296,47 @@ function TicketEditor() {
           <Settings className="mt-auto h-4 w-4" />
         </div>
 
-        {/* Left panel */}
-        <aside className="hidden md:flex w-[30%] min-w-[320px] max-w-[480px] flex-col border-r bg-editor-panel">
-          <div className="flex border-b text-xs">
+        {/* Left panel (collapsible) */}
+        {leftCollapsed ? (
+          <aside className="hidden md:flex w-10 flex-col items-center gap-1 border-r bg-editor-panel py-2 text-muted-foreground">
             {[
-              { k: "problem", label: "Problem" },
-              { k: "hints", label: "Hints" },
-              { k: "discuss", label: "Discuss" },
-            ].map((t) => (
-              <button key={t.k} onClick={() => setTab(t.k as typeof tab)}
-                className={`px-3 py-2 ${tab === t.k ? "bg-editor-bg text-foreground border-b-2 border-primary" : "text-muted-foreground hover:text-foreground"}`}>{t.label}</button>
+              { k: "problem", I: BookOpen, label: "Problem" },
+              { k: "hints", I: Lightbulb, label: "Hints" },
+              { k: "discuss", I: MessageSquare, label: "Discuss" },
+            ].map(({ k, I, label }) => (
+              <button key={k} title={label} onClick={() => { setLeftCollapsed(false); setTab(k as typeof tab); }}
+                className="grid h-9 w-9 place-items-center rounded hover:text-foreground hover:bg-accent">
+                <I className="h-4 w-4" />
+              </button>
             ))}
-          </div>
-          <div className="flex-1 overflow-auto scrollbar-thin p-4 text-sm space-y-3">
-            {tab === "problem" && <ProblemPanel ticket={ticket} />}
-            {tab === "hints" && <HintsPanel level={hintLevel} setLevel={setHintLevel} elapsed={elapsed} onUnlock={(n, c) => showToast(`Hint ${n} unlocked${c ? ` (${c})` : ""}`)} />}
-            {tab === "discuss" && <DiscussPanel />}
-          </div>
-        </aside>
+            <button onClick={() => setLeftCollapsed(false)} title="Expand panel"
+              className="mt-auto grid h-9 w-9 place-items-center rounded hover:text-foreground hover:bg-accent">
+              <PanelLeftOpen className="h-4 w-4" />
+            </button>
+          </aside>
+        ) : (
+          <aside className="hidden md:flex w-[30%] min-w-[300px] max-w-[460px] flex-col border-r bg-editor-panel">
+            <div className="flex items-center border-b text-xs">
+              {[
+                { k: "problem", label: "Problem" },
+                { k: "hints", label: "Hints" },
+                { k: "discuss", label: "Discuss" },
+              ].map((t) => (
+                <button key={t.k} onClick={() => setTab(t.k as typeof tab)}
+                  className={`px-3 py-2 ${tab === t.k ? "bg-editor-bg text-foreground border-b-2 border-primary" : "text-muted-foreground hover:text-foreground"}`}>{t.label}</button>
+              ))}
+              <button onClick={() => setLeftCollapsed(true)} title="Collapse panel"
+                className="ml-auto mr-2 grid h-7 w-7 place-items-center rounded hover:bg-accent text-muted-foreground hover:text-foreground">
+                <PanelLeftClose className="h-3.5 w-3.5" />
+              </button>
+            </div>
+            <div className="flex-1 overflow-auto scrollbar-thin p-4 text-sm space-y-3">
+              {tab === "problem" && <ProblemPanel ticket={ticket} />}
+              {tab === "hints" && <HintsPanel level={hintLevel} setLevel={setHintLevel} elapsed={elapsed} onUnlock={(n, c) => showToast(`Hint ${n} unlocked${c ? ` (${c})` : ""}`)} />}
+              {tab === "discuss" && <DiscussPanel />}
+            </div>
+          </aside>
+        )}
 
         {/* Center editor */}
         <section className="flex flex-1 min-w-0 flex-col relative">
