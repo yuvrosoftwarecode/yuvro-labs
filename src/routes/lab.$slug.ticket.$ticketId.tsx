@@ -250,10 +250,16 @@ function TicketEditor() {
 
   return (
     <div className="h-screen flex flex-col bg-background overflow-hidden">
-      <TopNav />
-
-      {/* Top sub-bar */}
-      <div className="flex flex-wrap items-center gap-3 border-b bg-card/60 px-4 py-2 text-xs">
+      {/* Top sub-bar (no global nav — full-page editor) */}
+      <div className="flex flex-wrap items-center gap-3 border-b bg-card/60 px-3 py-2 text-xs">
+        <Link to="/lab/$slug" params={{ slug }} className="inline-flex items-center gap-1 rounded-md border px-2 py-1 hover:bg-accent">
+          <ArrowLeft className="h-3 w-3" />Exit
+        </Link>
+        <button onClick={() => setLeftCollapsed((v) => !v)} title="Toggle panel"
+          className="inline-flex items-center gap-1 rounded-md border px-2 py-1 hover:bg-accent">
+          {leftCollapsed ? <PanelLeftOpen className="h-3 w-3" /> : <PanelLeftClose className="h-3 w-3" />}
+          <span className="hidden md:inline">{leftCollapsed ? "Show" : "Hide"} panel</span>
+        </button>
         <div className="flex items-center gap-1.5 text-muted-foreground">
           <Link to="/" className="hover:text-foreground">Practical Labs</Link><ChevronRight className="h-3 w-3" />
           <Link to="/lab/$slug" params={{ slug }} className="hover:text-foreground">{lab.name}</Link><ChevronRight className="h-3 w-3" />
