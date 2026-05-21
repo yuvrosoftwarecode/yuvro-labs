@@ -272,17 +272,10 @@ function TicketEditor() {
           <button onClick={handleRun} disabled={running} className="inline-flex items-center gap-1 rounded-md bg-success/20 text-success border border-success/40 px-3 py-1 hover:bg-success/30 font-medium disabled:opacity-60">
             <Play className="h-3 w-3" />{running ? "Running…" : "Run"} <kbd className="hidden md:inline rounded bg-success/20 px-1 text-[10px]">⌘↵</kbd>
           </button>
-          {allPass ? (
-            <Link to="/lab/$slug/ticket/$ticketId/review" params={{ slug, ticketId }}
-              className="inline-flex items-center gap-1 rounded-md px-3 py-1 font-medium bg-primary text-primary-foreground hover:opacity-90">
-              <Send className="h-3 w-3" />Submit
-            </Link>
-          ) : (
-            <button onClick={() => { handleRunTests(); showToast("Run all tests before submitting"); }}
-              className="inline-flex items-center gap-1 rounded-md px-3 py-1 font-medium bg-primary/40 text-primary-foreground/80 hover:bg-primary/50">
-              <Send className="h-3 w-3" />Submit
-            </button>
-          )}
+          <button onClick={handleSubmit}
+            className="inline-flex items-center gap-1 rounded-md px-3 py-1 font-medium bg-primary text-primary-foreground hover:opacity-90">
+            <Send className="h-3 w-3" />Submit
+          </button>
         </div>
       </div>
 
