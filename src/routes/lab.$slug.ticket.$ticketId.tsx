@@ -68,6 +68,7 @@ function TicketEditor() {
   const ticket = tickets.find((t) => t.id === ticketId) ?? tickets[0];
 
   const [tab, setTab] = useState<"problem" | "hints" | "discuss">("problem");
+  const [leftCollapsed, setLeftCollapsed] = useState(false);
   const [activeFile, setActiveFile] = useState<FileName>("Main.java");
   const [bottomTab, setBottomTab] = useState<BottomTab>("tests");
   const [hintLevel, setHintLevel] = useState(2);
