@@ -382,8 +382,7 @@ function NextCard({ tag, id, title, cta, tone, to, params, highlight }: {
       <div className="text-[10px] uppercase tracking-wider text-muted-foreground">{tag}</div>
       <div className="mt-1 font-mono text-xs text-muted-foreground">{id}</div>
       <div className="text-sm font-semibold">{title}</div>
-      {/* @ts-expect-error generic link */}
-      <Link to={to} params={params as never} className="mt-3 inline-flex items-center gap-1 text-sm text-primary hover:underline">
+      <Link to={to as string} params={params as never} className="mt-3 inline-flex items-center gap-1 text-sm text-primary hover:underline">
         {cta} <ArrowRight className="h-3 w-3" />
       </Link>
     </div>
