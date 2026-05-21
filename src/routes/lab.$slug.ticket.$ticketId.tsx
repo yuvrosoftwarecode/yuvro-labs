@@ -4,11 +4,11 @@ import { TopNav } from "@/components/TopNav";
 import { DiffBadge, StatusBadge } from "@/components/Badges";
 import { tickets, labs } from "@/lib/dummy";
 import {
-  Play, Save, Send, Lightbulb, AlertTriangle, ChevronRight, ChevronDown,
+  Play, Save, Send, Lightbulb, AlertTriangle, ChevronRight, ChevronDown, ChevronLeft,
   FileCode2, Folder, FolderOpen, Search, GitBranch, Bug, Package, Settings,
   CircleDot, Terminal as TerminalIcon, CheckCircle2, XCircle, Clock, Zap,
   MessageSquare, Lock, Unlock, RotateCcw, Copy, Share2, Flag, HelpCircle,
-  Sparkles, Gauge, Wand2, Globe, Check,
+  Sparkles, Gauge, Wand2, Globe, Check, ArrowLeft, PanelLeftClose, PanelLeftOpen, BookOpen,
 } from "lucide-react";
 
 export const Route = createFileRoute("/lab/$slug/ticket/$ticketId")({ component: TicketEditor });
