@@ -9,38 +9,180 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
+import { Route as ProfileRouteImport } from './routes/profile'
+import { Route as LeaderboardRouteImport } from './routes/leaderboard'
+import { Route as ForumRouteImport } from './routes/forum'
+import { Route as CertificatesRouteImport } from './routes/certificates'
+import { Route as AnalyticsRouteImport } from './routes/analytics'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as LabSlugRouteImport } from './routes/lab.$slug'
+import { Route as LabSlugTicketTicketIdRouteImport } from './routes/lab.$slug.ticket.$ticketId'
+import { Route as LabSlugTicketTicketIdReviewRouteImport } from './routes/lab.$slug.ticket.$ticketId.review'
 
+const ProfileRoute = ProfileRouteImport.update({
+  id: '/profile',
+  path: '/profile',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const LeaderboardRoute = LeaderboardRouteImport.update({
+  id: '/leaderboard',
+  path: '/leaderboard',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ForumRoute = ForumRouteImport.update({
+  id: '/forum',
+  path: '/forum',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const CertificatesRoute = CertificatesRouteImport.update({
+  id: '/certificates',
+  path: '/certificates',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AnalyticsRoute = AnalyticsRouteImport.update({
+  id: '/analytics',
+  path: '/analytics',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const LabSlugRoute = LabSlugRouteImport.update({
+  id: '/lab/$slug',
+  path: '/lab/$slug',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const LabSlugTicketTicketIdRoute = LabSlugTicketTicketIdRouteImport.update({
+  id: '/ticket/$ticketId',
+  path: '/ticket/$ticketId',
+  getParentRoute: () => LabSlugRoute,
+} as any)
+const LabSlugTicketTicketIdReviewRoute =
+  LabSlugTicketTicketIdReviewRouteImport.update({
+    id: '/review',
+    path: '/review',
+    getParentRoute: () => LabSlugTicketTicketIdRoute,
+  } as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/analytics': typeof AnalyticsRoute
+  '/certificates': typeof CertificatesRoute
+  '/forum': typeof ForumRoute
+  '/leaderboard': typeof LeaderboardRoute
+  '/profile': typeof ProfileRoute
+  '/lab/$slug': typeof LabSlugRouteWithChildren
+  '/lab/$slug/ticket/$ticketId': typeof LabSlugTicketTicketIdRouteWithChildren
+  '/lab/$slug/ticket/$ticketId/review': typeof LabSlugTicketTicketIdReviewRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/analytics': typeof AnalyticsRoute
+  '/certificates': typeof CertificatesRoute
+  '/forum': typeof ForumRoute
+  '/leaderboard': typeof LeaderboardRoute
+  '/profile': typeof ProfileRoute
+  '/lab/$slug': typeof LabSlugRouteWithChildren
+  '/lab/$slug/ticket/$ticketId': typeof LabSlugTicketTicketIdRouteWithChildren
+  '/lab/$slug/ticket/$ticketId/review': typeof LabSlugTicketTicketIdReviewRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
+  '/analytics': typeof AnalyticsRoute
+  '/certificates': typeof CertificatesRoute
+  '/forum': typeof ForumRoute
+  '/leaderboard': typeof LeaderboardRoute
+  '/profile': typeof ProfileRoute
+  '/lab/$slug': typeof LabSlugRouteWithChildren
+  '/lab/$slug/ticket/$ticketId': typeof LabSlugTicketTicketIdRouteWithChildren
+  '/lab/$slug/ticket/$ticketId/review': typeof LabSlugTicketTicketIdReviewRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/'
+  fullPaths:
+    | '/'
+    | '/analytics'
+    | '/certificates'
+    | '/forum'
+    | '/leaderboard'
+    | '/profile'
+    | '/lab/$slug'
+    | '/lab/$slug/ticket/$ticketId'
+    | '/lab/$slug/ticket/$ticketId/review'
   fileRoutesByTo: FileRoutesByTo
-  to: '/'
-  id: '__root__' | '/'
+  to:
+    | '/'
+    | '/analytics'
+    | '/certificates'
+    | '/forum'
+    | '/leaderboard'
+    | '/profile'
+    | '/lab/$slug'
+    | '/lab/$slug/ticket/$ticketId'
+    | '/lab/$slug/ticket/$ticketId/review'
+  id:
+    | '__root__'
+    | '/'
+    | '/analytics'
+    | '/certificates'
+    | '/forum'
+    | '/leaderboard'
+    | '/profile'
+    | '/lab/$slug'
+    | '/lab/$slug/ticket/$ticketId'
+    | '/lab/$slug/ticket/$ticketId/review'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
+  AnalyticsRoute: typeof AnalyticsRoute
+  CertificatesRoute: typeof CertificatesRoute
+  ForumRoute: typeof ForumRoute
+  LeaderboardRoute: typeof LeaderboardRoute
+  ProfileRoute: typeof ProfileRoute
+  LabSlugRoute: typeof LabSlugRouteWithChildren
 }
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
+    '/profile': {
+      id: '/profile'
+      path: '/profile'
+      fullPath: '/profile'
+      preLoaderRoute: typeof ProfileRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/leaderboard': {
+      id: '/leaderboard'
+      path: '/leaderboard'
+      fullPath: '/leaderboard'
+      preLoaderRoute: typeof LeaderboardRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/forum': {
+      id: '/forum'
+      path: '/forum'
+      fullPath: '/forum'
+      preLoaderRoute: typeof ForumRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/certificates': {
+      id: '/certificates'
+      path: '/certificates'
+      fullPath: '/certificates'
+      preLoaderRoute: typeof CertificatesRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/analytics': {
+      id: '/analytics'
+      path: '/analytics'
+      fullPath: '/analytics'
+      preLoaderRoute: typeof AnalyticsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/': {
       id: '/'
       path: '/'
@@ -48,22 +190,63 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/lab/$slug': {
+      id: '/lab/$slug'
+      path: '/lab/$slug'
+      fullPath: '/lab/$slug'
+      preLoaderRoute: typeof LabSlugRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/lab/$slug/ticket/$ticketId': {
+      id: '/lab/$slug/ticket/$ticketId'
+      path: '/ticket/$ticketId'
+      fullPath: '/lab/$slug/ticket/$ticketId'
+      preLoaderRoute: typeof LabSlugTicketTicketIdRouteImport
+      parentRoute: typeof LabSlugRoute
+    }
+    '/lab/$slug/ticket/$ticketId/review': {
+      id: '/lab/$slug/ticket/$ticketId/review'
+      path: '/review'
+      fullPath: '/lab/$slug/ticket/$ticketId/review'
+      preLoaderRoute: typeof LabSlugTicketTicketIdReviewRouteImport
+      parentRoute: typeof LabSlugTicketTicketIdRoute
+    }
   }
 }
 
+interface LabSlugTicketTicketIdRouteChildren {
+  LabSlugTicketTicketIdReviewRoute: typeof LabSlugTicketTicketIdReviewRoute
+}
+
+const LabSlugTicketTicketIdRouteChildren: LabSlugTicketTicketIdRouteChildren = {
+  LabSlugTicketTicketIdReviewRoute: LabSlugTicketTicketIdReviewRoute,
+}
+
+const LabSlugTicketTicketIdRouteWithChildren =
+  LabSlugTicketTicketIdRoute._addFileChildren(
+    LabSlugTicketTicketIdRouteChildren,
+  )
+
+interface LabSlugRouteChildren {
+  LabSlugTicketTicketIdRoute: typeof LabSlugTicketTicketIdRouteWithChildren
+}
+
+const LabSlugRouteChildren: LabSlugRouteChildren = {
+  LabSlugTicketTicketIdRoute: LabSlugTicketTicketIdRouteWithChildren,
+}
+
+const LabSlugRouteWithChildren =
+  LabSlugRoute._addFileChildren(LabSlugRouteChildren)
+
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
+  AnalyticsRoute: AnalyticsRoute,
+  CertificatesRoute: CertificatesRoute,
+  ForumRoute: ForumRoute,
+  LeaderboardRoute: LeaderboardRoute,
+  ProfileRoute: ProfileRoute,
+  LabSlugRoute: LabSlugRouteWithChildren,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
   ._addFileTypes<FileRouteTypes>()
-
-import type { getRouter } from './router.tsx'
-import type { startInstance } from './start.ts'
-declare module '@tanstack/react-start' {
-  interface Register {
-    ssr: true
-    router: Awaited<ReturnType<typeof getRouter>>
-    config: Awaited<ReturnType<typeof startInstance.getOptions>>
-  }
-}
