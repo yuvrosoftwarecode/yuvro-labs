@@ -11,6 +11,7 @@
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as LabSlugRouteImport } from './routes/lab.$slug'
+import { Route as LabSlugTicketTicketIdRouteImport } from './routes/lab.$slug.ticket.$ticketId'
 
 const IndexRoute = IndexRouteImport.update({
   id: '/',
@@ -22,31 +23,39 @@ const LabSlugRoute = LabSlugRouteImport.update({
   path: '/lab/$slug',
   getParentRoute: () => rootRouteImport,
 } as any)
+const LabSlugTicketTicketIdRoute = LabSlugTicketTicketIdRouteImport.update({
+  id: '/ticket/$ticketId',
+  path: '/ticket/$ticketId',
+  getParentRoute: () => LabSlugRoute,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
-  '/lab/$slug': typeof LabSlugRoute
+  '/lab/$slug': typeof LabSlugRouteWithChildren
+  '/lab/$slug/ticket/$ticketId': typeof LabSlugTicketTicketIdRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
-  '/lab/$slug': typeof LabSlugRoute
+  '/lab/$slug': typeof LabSlugRouteWithChildren
+  '/lab/$slug/ticket/$ticketId': typeof LabSlugTicketTicketIdRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
-  '/lab/$slug': typeof LabSlugRoute
+  '/lab/$slug': typeof LabSlugRouteWithChildren
+  '/lab/$slug/ticket/$ticketId': typeof LabSlugTicketTicketIdRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/lab/$slug'
+  fullPaths: '/' | '/lab/$slug' | '/lab/$slug/ticket/$ticketId'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/lab/$slug'
-  id: '__root__' | '/' | '/lab/$slug'
+  to: '/' | '/lab/$slug' | '/lab/$slug/ticket/$ticketId'
+  id: '__root__' | '/' | '/lab/$slug' | '/lab/$slug/ticket/$ticketId'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
-  LabSlugRoute: typeof LabSlugRoute
+  LabSlugRoute: typeof LabSlugRouteWithChildren
 }
 
 declare module '@tanstack/react-router' {
@@ -65,12 +74,30 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof LabSlugRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/lab/$slug/ticket/$ticketId': {
+      id: '/lab/$slug/ticket/$ticketId'
+      path: '/ticket/$ticketId'
+      fullPath: '/lab/$slug/ticket/$ticketId'
+      preLoaderRoute: typeof LabSlugTicketTicketIdRouteImport
+      parentRoute: typeof LabSlugRoute
+    }
   }
 }
 
+interface LabSlugRouteChildren {
+  LabSlugTicketTicketIdRoute: typeof LabSlugTicketTicketIdRoute
+}
+
+const LabSlugRouteChildren: LabSlugRouteChildren = {
+  LabSlugTicketTicketIdRoute: LabSlugTicketTicketIdRoute,
+}
+
+const LabSlugRouteWithChildren =
+  LabSlugRoute._addFileChildren(LabSlugRouteChildren)
+
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
-  LabSlugRoute: LabSlugRoute,
+  LabSlugRoute: LabSlugRouteWithChildren,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
