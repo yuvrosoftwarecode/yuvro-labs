@@ -1,4 +1,4 @@
-import { createFileRoute, Link, useParams } from "@tanstack/react-router";
+import { createFileRoute, Link, Outlet, useMatch, useNavigate, useParams } from "@tanstack/react-router";
 import { useEffect, useMemo, useRef, useState } from "react";
 import { TopNav } from "@/components/TopNav";
 import { DiffBadge, StatusBadge } from "@/components/Badges";
@@ -62,6 +62,8 @@ type BottomTab = "output" | "errors" | "tests" | "quality" | "preview" | "termin
 
 function TicketEditor() {
   const { slug, ticketId } = useParams({ from: "/lab/$slug/ticket/$ticketId" });
+  const navigate = useNavigate({ from: "/lab/$slug/ticket/$ticketId" });
+  const reviewMatch = useMatch({ from: "/lab/$slug/ticket/$ticketId/review", shouldThrow: false });
   const lab = labs.find((l) => l.slug === slug) ?? labs[0];
   const ticket = tickets.find((t) => t.id === ticketId) ?? tickets[0];
 
@@ -174,6 +176,28 @@ function TicketEditor() {
     }, 600);
   }
 
+  function handleSubmit() {
+    setBottomTab("tests");
+    setTests((ts) => ts.map((t) => ({ ...t, time: "…", pass: false })));
+    setTimeout(() => {
+      const m = files["Main.java"];
+      const next: TestResult[] = [
+        { name: "Test 1 · Variables Declaration", pass: /int\s+\w+\s*=/.test(m) && /double\s+\w+\s*=/.test(m), time: "12ms" },
+        { name: "Test 2 · Type Casting (implicit)", pass: /double\s+\w+\s*=\s*\w+\s*;/.test(m), time: "8ms" },
+        { name: "Test 3 · Type Casting (explicit)", pass: /\(int\)\s*\w/.test(m), time: "9ms" },
+        { name: "Test 4 · String Operations", pass: /\.length\(\)/.test(m) && /\.charAt\(/.test(m), time: "7ms" },
+        { name: "Test 5 · Output Format", pass: /System\.out\.println/.test(m) || /printf\(/.test(m), time: "11ms" },
+      ];
+      setTests(next);
+      setTestsRan(true);
+      if (next.every((t) => t.pass)) {
+        navigate({ to: "/lab/$slug/ticket/$ticketId/review", params: { slug, ticketId } });
+      } else {
+        showToast("Fix failing tests before submitting");
+      }
+    }, 600);
+  }
+
   function handleSave() {
     setDirty({ "Main.java": false, "MainTest.java": false, "README.md": false });
     const now = new Date();
@@ -221,6 +245,8 @@ function TicketEditor() {
     });
   }
 
+  if (reviewMatch) return <Outlet />;
+
   return (
     <div className="h-screen flex flex-col bg-background overflow-hidden">
       <TopNav />
@@ -246,17 +272,10 @@ function TicketEditor() {
           <button onClick={handleRun} disabled={running} className="inline-flex items-center gap-1 rounded-md bg-success/20 text-success border border-success/40 px-3 py-1 hover:bg-success/30 font-medium disabled:opacity-60">
             <Play className="h-3 w-3" />{running ? "Running…" : "Run"} <kbd className="hidden md:inline rounded bg-success/20 px-1 text-[10px]">⌘↵</kbd>
           </button>
-          {allPass ? (
-            <Link to="/lab/$slug/ticket/$ticketId/review" params={{ slug, ticketId }}
-              className="inline-flex items-center gap-1 rounded-md px-3 py-1 font-medium bg-primary text-primary-foreground hover:opacity-90">
-              <Send className="h-3 w-3" />Submit
-            </Link>
-          ) : (
-            <button onClick={() => { handleRunTests(); showToast("Run all tests before submitting"); }}
-              className="inline-flex items-center gap-1 rounded-md px-3 py-1 font-medium bg-primary/40 text-primary-foreground/80 hover:bg-primary/50">
-              <Send className="h-3 w-3" />Submit
-            </button>
-          )}
+          <button onClick={handleSubmit}
+            className="inline-flex items-center gap-1 rounded-md px-3 py-1 font-medium bg-primary text-primary-foreground hover:opacity-90">
+            <Send className="h-3 w-3" />Submit
+          </button>
         </div>
       </div>
 

@@ -1,4 +1,4 @@
-import { createFileRoute, Link, useParams } from "@tanstack/react-router";
+import { createFileRoute, Link, Outlet, useMatch, useParams } from "@tanstack/react-router";
 import { TopNav } from "@/components/TopNav";
 import { DiffBadge, StatusBadge } from "@/components/Badges";
 import { labs, tickets, leaderboard } from "@/lib/dummy";
@@ -9,10 +9,13 @@ export const Route = createFileRoute("/lab/$slug")({ component: LabDashboard });
 
 function LabDashboard() {
   const { slug } = useParams({ from: "/lab/$slug" });
+  const ticketMatch = useMatch({ from: "/lab/$slug/ticket/$ticketId", shouldThrow: false });
   const lab = labs.find((l) => l.slug === slug) ?? labs[0];
   const [view, setView] = useState<"kanban" | "list">("kanban");
   const cols: { key: "Not Started" | "In Progress" | "Completed"; }[] = [{ key: "Not Started" }, { key: "In Progress" }, { key: "Completed" }];
   const pct = Math.round((lab.completed / lab.total) * 100);
+
+  if (ticketMatch) return <Outlet />;
 
   return (
     <div className="min-h-screen">
