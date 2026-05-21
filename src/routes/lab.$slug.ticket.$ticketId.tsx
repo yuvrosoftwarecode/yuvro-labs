@@ -1,4 +1,4 @@
-import { createFileRoute, Link, useParams } from "@tanstack/react-router";
+import { createFileRoute, Link, Outlet, useMatch, useParams } from "@tanstack/react-router";
 import { useEffect, useMemo, useRef, useState } from "react";
 import { TopNav } from "@/components/TopNav";
 import { DiffBadge, StatusBadge } from "@/components/Badges";
@@ -62,6 +62,7 @@ type BottomTab = "output" | "errors" | "tests" | "quality" | "preview" | "termin
 
 function TicketEditor() {
   const { slug, ticketId } = useParams({ from: "/lab/$slug/ticket/$ticketId" });
+  const reviewMatch = useMatch({ from: "/lab/$slug/ticket/$ticketId/review", shouldThrow: false });
   const lab = labs.find((l) => l.slug === slug) ?? labs[0];
   const ticket = tickets.find((t) => t.id === ticketId) ?? tickets[0];
 
@@ -220,6 +221,8 @@ function TicketEditor() {
       return next;
     });
   }
+
+  if (reviewMatch) return <Outlet />;
 
   return (
     <div className="h-screen flex flex-col bg-background overflow-hidden">
