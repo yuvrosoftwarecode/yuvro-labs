@@ -1,5 +1,6 @@
 import { Link, useRouterState } from "@tanstack/react-router";
-import { Flame, Zap, Trophy, User, LayoutDashboard, MessagesSquare, Award, BarChart3 } from "lucide-react";
+import { Flame, Zap, Trophy, User, LayoutDashboard, MessagesSquare, Award, BarChart3, Sun, Moon } from "lucide-react";
+import { useTheme } from "@/hooks/use-theme";
 import { me } from "@/lib/dummy";
 
 const links = [
@@ -13,6 +14,7 @@ const links = [
 
 export function TopNav() {
   const path = useRouterState({ select: (s) => s.location.pathname });
+  const { theme, toggle } = useTheme();
   return (
     <header className="sticky top-0 z-40 glass border-b border-border">
       <div className="mx-auto flex h-14 max-w-[1400px] items-center gap-6 px-4">
@@ -33,6 +35,10 @@ export function TopNav() {
           })}
         </nav>
         <div className="ml-auto flex items-center gap-3 text-sm">
+          <button onClick={toggle} title={`Switch to ${theme === "dark" ? "light" : "dark"} mode`}
+            className="grid h-8 w-8 place-items-center rounded-md border hover:bg-accent text-muted-foreground hover:text-foreground transition-colors">
+            {theme === "dark" ? <Sun className="h-4 w-4" /> : <Moon className="h-4 w-4" />}
+          </button>
           <span className="hidden sm:flex items-center gap-1 text-warning"><Flame className="h-4 w-4" />{me.streak}</span>
           <span className="hidden sm:flex items-center gap-1 text-primary"><Zap className="h-4 w-4" />{me.xp.toLocaleString()} XP</span>
           <span className="rounded-full bg-accent px-2 py-0.5 text-xs">Lv {me.level}</span>
