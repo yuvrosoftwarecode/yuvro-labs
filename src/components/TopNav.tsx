@@ -1,5 +1,6 @@
 import { Link, useRouterState } from "@tanstack/react-router";
-import { Flame, Zap, Trophy, User, LayoutDashboard, MessagesSquare, Award, BarChart3 } from "lucide-react";
+import { Flame, Zap, Trophy, User, LayoutDashboard, MessagesSquare, Award, BarChart3, Sun, Moon } from "lucide-react";
+import { useTheme } from "@/hooks/use-theme";
 import { me } from "@/lib/dummy";
 
 const links = [
