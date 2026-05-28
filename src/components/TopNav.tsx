@@ -4,7 +4,8 @@ import { useTheme } from "@/hooks/use-theme";
 import { me } from "@/lib/dummy";
 
 const links = [
-  { to: "/", label: "Hub", icon: LayoutDashboard },
+  { to: "/", label: "Individual Hub", icon: LayoutDashboard },
+  { to: "/collaboration", label: "Collaboration Hub", icon: Users },
   { to: "/analytics", label: "Analytics", icon: BarChart3 },
   { to: "/leaderboard", label: "Leaderboard", icon: Trophy },
   { to: "/forum", label: "Forum", icon: MessagesSquare },
