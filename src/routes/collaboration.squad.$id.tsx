@@ -26,7 +26,7 @@ function SquadDetails() {
             <h1 className="text-2xl font-semibold mt-1">{squad.name}</h1>
             <p className="text-sm text-muted-foreground mt-1 max-w-2xl">{squad.objective}</p>
             <div className="mt-3 flex flex-wrap gap-1">
-              {squad.stack.map(s => <span key={s} className="text-[10px] px-2 py-0.5 rounded bg-accent">{s}</span>)}
+              {squad.stack.map((s: string) => <span key={s} className="text-[10px] px-2 py-0.5 rounded bg-accent">{s}</span>)}
             </div>
           </div>
           <div className="flex gap-2">
@@ -54,7 +54,7 @@ function SquadDetails() {
           <div className="mt-4 pt-4 border-t">
             <p className="text-[11px] text-muted-foreground mb-2">Missing Roles</p>
             <div className="flex flex-wrap gap-1">
-              {squad.missing.map(r => <span key={r} className="text-[10px] px-2 py-0.5 rounded-full border border-warning/50 text-warning">{r}</span>)}
+              {squad.missing.map((r: string) => <span key={r} className="text-[10px] px-2 py-0.5 rounded-full border border-warning/50 text-warning">{r}</span>)}
             </div>
           </div>
         </div>

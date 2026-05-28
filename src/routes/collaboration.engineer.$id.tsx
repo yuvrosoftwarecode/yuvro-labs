@@ -30,10 +30,10 @@ function EngineerProfile() {
             </div>
             <p className="text-sm text-muted-foreground">{e.role} Engineer · {e.handle}</p>
             <div className="mt-2 flex flex-wrap gap-1">
-              {e.stack.map(s => <span key={s} className="text-[10px] px-2 py-0.5 rounded bg-accent">{s}</span>)}
+              {e.stack.map((s: string) => <span key={s} className="text-[10px] px-2 py-0.5 rounded bg-accent">{s}</span>)}
             </div>
             <div className="mt-3 flex flex-wrap gap-1.5">
-              {e.badges.map(b => <span key={b} className="text-[11px] px-2 py-0.5 rounded-full border bg-card flex items-center gap-1"><Star className="h-2.5 w-2.5 text-warning" />{b}</span>)}
+              {e.badges.map((b: string) => <span key={b} className="text-[11px] px-2 py-0.5 rounded-full border bg-card flex items-center gap-1"><Star className="h-2.5 w-2.5 text-warning" />{b}</span>)}
             </div>
           </div>
           <div className="flex gap-2">
@@ -84,7 +84,7 @@ function EngineerProfile() {
           {tab === "incidents" && <p className="text-sm text-muted-foreground">Participated in 4 SEV1 and 7 SEV2 incidents. Average MTTR contribution: 18 min.</p>}
           {tab === "support" && <p className="text-sm text-muted-foreground">Mentored 12 engineers. Resolved 23 blockers across squads.</p>}
           {tab === "achievements" && (
-            <div className="flex flex-wrap gap-2">{e.badges.map(b => <span key={b} className="text-xs px-3 py-1 rounded-full border bg-accent/50">{b}</span>)}</div>
+            <div className="flex flex-wrap gap-2">{e.badges.map((b: string) => <span key={b} className="text-xs px-3 py-1 rounded-full border bg-accent/50">{b}</span>)}</div>
           )}
         </div>
         <div className="rounded-xl border bg-card p-5">
