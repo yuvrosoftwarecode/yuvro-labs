@@ -1,7 +1,8 @@
 import { Link, useRouterState } from "@tanstack/react-router";
 import {
   LayoutDashboard, Users2, Compass, Inbox, UserPlus, GitMerge,
-  AlertOctagon, Mail, Trophy, Shield, Plus, Search, Radio
+  AlertOctagon, Mail, Trophy, Shield, Plus, Search, Radio,
+  Bell, BarChart3, Briefcase, BookOpen, GraduationCap
 } from "lucide-react";
 
 const groups = [
@@ -12,6 +13,7 @@ const groups = [
       { to: "/collaboration/squads", label: "My Squads", icon: Users2 },
       { to: "/collaboration/discover", label: "Discover Squads", icon: Compass },
       { to: "/collaboration/requests", label: "Open Requests", icon: Inbox },
+      { to: "/collaboration/analytics", label: "Squad Analytics", icon: BarChart3 },
     ],
   },
   {
@@ -20,6 +22,7 @@ const groups = [
       { to: "/collaboration/marketplace", label: "Available Engineers", icon: UserPlus },
       { to: "/collaboration/pair", label: "Pair Programming", icon: GitMerge },
       { to: "/collaboration/invitations", label: "Invitations", icon: Mail },
+      { to: "/collaboration/mentorship", label: "Mentorship", icon: GraduationCap },
     ],
   },
   {
@@ -27,6 +30,7 @@ const groups = [
     items: [
       { to: "/collaboration/incidents", label: "Incident Rooms", icon: AlertOctagon },
       { to: "/collaboration/live", label: "Live Presence", icon: Radio },
+      { to: "/collaboration/notifications", label: "Notifications", icon: Bell },
     ],
   },
   {
@@ -34,6 +38,13 @@ const groups = [
     items: [
       { to: "/collaboration/rankings", label: "Team Rankings", icon: Trophy },
       { to: "/collaboration/reputation", label: "My Reputation", icon: Shield },
+      { to: "/collaboration/recruiter", label: "Recruiter Portal", icon: Briefcase },
+    ],
+  },
+  {
+    label: "Resources",
+    items: [
+      { to: "/collaboration/handbook", label: "Handbook", icon: BookOpen },
     ],
   },
 ];
