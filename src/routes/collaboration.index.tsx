@@ -14,11 +14,11 @@ import {
   BadgeCheck,
   Bell,
   Bot,
-  Branch,
   CheckCircle2,
   ChevronRight,
   Circle,
   Code2,
+  GitBranch,
   GitPullRequest,
   KanbanSquare,
   MessageSquare,
@@ -160,7 +160,7 @@ function Dashboard() {
         </section>
 
         <aside className="col-span-12 xl:col-span-3 space-y-4">
-          <Panel title="Active squad" icon={<Branch className="h-4 w-4" />} action={<Link to="/collaboration/squad/$id" params={{ id: activeSquad.id }} className="text-xs text-primary">Profile</Link>}>
+          <Panel title="Active squad" icon={<GitBranch className="h-4 w-4" />} action={<Link to="/collaboration/squad/$id" params={{ id: activeSquad.id }} className="text-xs text-primary">Profile</Link>}>
             <h2 className="text-lg font-semibold">{activeSquad.name}</h2>
             <p className="mt-1 text-sm text-muted-foreground">{activeSquad.objective}</p>
             <div className="mt-4 space-y-3">
