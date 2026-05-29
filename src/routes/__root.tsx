@@ -98,7 +98,7 @@ const themeInit = `(function(){try{var t=localStorage.getItem('pl-theme');if(!t)
 
 function RootShell({ children }: { children: React.ReactNode }) {
   return (
-    <html lang="en">
+    <html lang="en" suppressHydrationWarning>
       <head>
         <HeadContent />
         <script dangerouslySetInnerHTML={{ __html: themeInit }} />
