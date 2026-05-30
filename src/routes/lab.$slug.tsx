@@ -2,16 +2,48 @@ import { createFileRoute, Link, Outlet, useMatch, useParams } from "@tanstack/re
 import { TopNav } from "@/components/TopNav";
 import { DiffBadge, StatusBadge } from "@/components/Badges";
 import { labs, tickets, leaderboard } from "@/lib/dummy";
-import { Search, Filter, LayoutGrid, List, Calendar, Zap, TrendingUp, TrendingDown, Award, Lock, Sparkles } from "lucide-react";
-import { useState } from "react";
+import { Search, Filter, LayoutGrid, List, Calendar, Zap, TrendingUp, TrendingDown, Award, Lock, Sparkles, ArrowLeft, CheckCircle2, Play, Clock, Target, Flag } from "lucide-react";
+import { useMemo, useState } from "react";
+import type { Ticket } from "@/lib/dummy";
 
 export const Route = createFileRoute("/lab/$slug")({ component: LabDashboard });
+
+type SprintStatus = "Completed" | "Active" | "Upcoming";
+interface Sprint {
+  id: string;
+  name: string;
+  goal: string;
+  range: string;
+  ticketIds: string[];
+  status: SprintStatus;
+}
+
+function buildSprints(allTickets: Ticket[]): Sprint[] {
+  const groups: { id: string; name: string; goal: string; range: string; tags: string[] }[] = [
+    { id: "S1", name: "Sprint 1 · Foundations", goal: "Master language fundamentals & control flow", range: "Apr 1 – Apr 7", tags: ["Fundamentals"] },
+    { id: "S2", name: "Sprint 2 · OOP Core", goal: "Classes, inheritance and interfaces", range: "Apr 8 – Apr 14", tags: ["OOP"] },
+    { id: "S3", name: "Sprint 3 · Generics & Errors", goal: "Type-safe APIs and resilient error handling", range: "Apr 15 – Apr 21", tags: ["Generics", "Errors", "I/O"] },
+    { id: "S4", name: "Sprint 4 · Collections", goal: "Lists, maps and idiomatic data access", range: "Apr 22 – Apr 28", tags: ["Collections"] },
+    { id: "S5", name: "Sprint 5 · Advanced Java", goal: "Streams, concurrency, testing & patterns", range: "Apr 29 – May 12", tags: ["Streams", "FP", "Threads", "DB", "Testing", "Patterns"] },
+  ];
+  return groups.map((g) => {
+    const ts = allTickets.filter((t) => g.tags.includes(t.tag));
+    const completed = ts.filter((t) => t.status === "Completed").length;
+    const inProgress = ts.some((t) => t.status === "In Progress");
+    const status: SprintStatus = completed === ts.length && ts.length ? "Completed" : inProgress || completed > 0 ? "Active" : "Upcoming";
+    return { id: g.id, name: g.name, goal: g.goal, range: g.range, ticketIds: ts.map((t) => t.id), status };
+  });
+}
 
 function LabDashboard() {
   const { slug } = useParams({ from: "/lab/$slug" });
   const ticketMatch = useMatch({ from: "/lab/$slug/ticket/$ticketId", shouldThrow: false });
   const lab = labs.find((l) => l.slug === slug) ?? labs[0];
   const [view, setView] = useState<"kanban" | "list">("kanban");
+  const [activeSprint, setActiveSprint] = useState<string | null>(null);
+  const sprints = useMemo(() => buildSprints(tickets), []);
+  const sprint = sprints.find((s) => s.id === activeSprint) ?? null;
+  const sprintTickets = sprint ? tickets.filter((t) => sprint.ticketIds.includes(t.id)) : tickets;
   const cols: { key: "Not Started" | "In Progress" | "Completed"; }[] = [{ key: "Not Started" }, { key: "In Progress" }, { key: "Completed" }];
   const pct = Math.round((lab.completed / lab.total) * 100);
 
