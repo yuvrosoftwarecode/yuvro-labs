@@ -116,83 +116,149 @@ function LabDashboard() {
 
           {/* MAIN */}
           <section>
-            <div className="mb-3 flex flex-wrap items-center gap-2">
-              <div className="relative flex-1 min-w-[200px]">
-                <Search className="absolute left-2.5 top-2.5 h-3.5 w-3.5 text-muted-foreground" />
-                <input placeholder="Search tickets..." className="w-full rounded-md border bg-input/40 pl-8 pr-3 py-2 text-sm outline-none focus:ring-2 focus:ring-primary/40" />
-              </div>
-              <div className="flex rounded-md border bg-card p-0.5 text-xs">
-                <button onClick={() => setView("kanban")} className={`flex items-center gap-1 rounded px-2 py-1 ${view === "kanban" ? "bg-accent" : ""}`}><LayoutGrid className="h-3 w-3" />Kanban</button>
-                <button onClick={() => setView("list")} className={`flex items-center gap-1 rounded px-2 py-1 ${view === "list" ? "bg-accent" : ""}`}><List className="h-3 w-3" />List</button>
-                <button className="flex items-center gap-1 rounded px-2 py-1 text-muted-foreground"><Calendar className="h-3 w-3" />Timeline</button>
-              </div>
-            </div>
-
-            {view === "kanban" ? (
-              <div className="grid gap-3 md:grid-cols-3">
-                {cols.map((c) => {
-                  const items = tickets.filter((t) => t.status === c.key);
-                  return (
-                    <div key={c.key} className="rounded-xl border bg-card/50 p-3">
-                      <div className="mb-3 flex items-center justify-between px-1">
-                        <div className="text-sm font-medium">{c.key}</div>
-                        <span className="rounded-full bg-accent px-2 py-0.5 text-[11px]">{items.length}</span>
-                      </div>
-                      <div className="space-y-2">
-                        {items.map((t) => (
-                          <Link key={t.id} to="/lab/$slug/ticket/$ticketId" params={{ slug: lab.slug, ticketId: t.id }}
-                            className="block rounded-lg border bg-card p-3 hover:border-primary/50 transition">
-                            <div className="flex items-center justify-between text-[11px] text-muted-foreground">
-                              <span className="font-mono">{t.id}</span>
-                              <DiffBadge value={t.difficulty} />
+            {!sprint ? (
+              <>
+                <div className="mb-3 flex items-center justify-between">
+                  <div>
+                    <h2 className="text-base font-semibold">Sprints</h2>
+                    <p className="text-xs text-muted-foreground">Pick a sprint to view its ticket board</p>
+                  </div>
+                  <span className="text-xs text-muted-foreground">{sprints.length} sprints · {tickets.length} tickets</span>
+                </div>
+                <div className="grid gap-3 md:grid-cols-2">
+                  {sprints.map((s) => {
+                    const items = tickets.filter((t) => s.ticketIds.includes(t.id));
+                    const done = items.filter((t) => t.status === "Completed").length;
+                    const pctS = items.length ? Math.round((done / items.length) * 100) : 0;
+                    const xp = items.reduce((a, t) => a + t.xp, 0);
+                    const mins = items.reduce((a, t) => a + t.estMin, 0);
+                    const tone = s.status === "Completed" ? "success" : s.status === "Active" ? "info" : "muted-foreground";
+                    const Icon = s.status === "Completed" ? CheckCircle2 : s.status === "Active" ? Play : Flag;
+                    return (
+                      <button key={s.id} onClick={() => setActiveSprint(s.id)}
+                        className="text-left rounded-xl border bg-card p-4 hover:border-primary/60 hover:shadow-md transition">
+                        <div className="flex items-start justify-between gap-2">
+                          <div className="min-w-0">
+                            <div className="flex items-center gap-2 text-[11px] text-muted-foreground">
+                              <span className="font-mono">{s.id}</span>
+                              <span>·</span>
+                              <span>{s.range}</span>
                             </div>
-                            <div className="mt-1.5 text-sm font-medium leading-snug">{t.title}</div>
-                            <div className="mt-2 flex items-center justify-between text-[11px] text-muted-foreground">
-                              <span>⏱ {t.estMin}m · {t.tag}</span>
-                              <span className="inline-flex items-center gap-1 text-primary"><Zap className="h-3 w-3" />{t.xp}</span>
-                            </div>
-                            {t.status === "In Progress" && t.progress != null && (
-                              <div className="mt-2 h-1 rounded-full bg-muted overflow-hidden">
-                                <div className="h-full bg-info" style={{ width: `${t.progress}%` }} />
-                              </div>
-                            )}
-                            {t.status === "Completed" && (
-                              <div className="mt-2 flex items-center justify-between text-[11px]">
-                                <span className="text-success">✓ Score {t.score}</span>
-                                <Award className="h-3.5 w-3.5 text-warning" />
-                              </div>
-                            )}
-                          </Link>
-                        ))}
-                      </div>
-                    </div>
-                  );
-                })}
-              </div>
+                            <div className="mt-1 font-semibold leading-snug">{s.name}</div>
+                            <p className="mt-1 text-xs text-muted-foreground line-clamp-2">{s.goal}</p>
+                          </div>
+                          <span className="inline-flex items-center gap-1 rounded-md border px-2 py-0.5 text-[10px] font-medium"
+                            style={{ color: `var(--${tone})`, borderColor: `color-mix(in oklab, var(--${tone}) 40%, transparent)`, background: `color-mix(in oklab, var(--${tone}) 12%, transparent)` }}>
+                            <Icon className="h-3 w-3" />{s.status}
+                          </span>
+                        </div>
+                        <div className="mt-4">
+                          <div className="flex justify-between text-[11px] text-muted-foreground"><span>{done}/{items.length} tickets</span><span>{pctS}%</span></div>
+                          <div className="mt-1 h-1.5 rounded-full bg-muted overflow-hidden">
+                            <div className="h-full bg-primary" style={{ width: `${pctS}%` }} />
+                          </div>
+                        </div>
+                        <div className="mt-3 flex items-center justify-between text-[11px] text-muted-foreground">
+                          <span className="inline-flex items-center gap-1"><Target className="h-3 w-3" />{items.length} tickets</span>
+                          <span className="inline-flex items-center gap-1"><Clock className="h-3 w-3" />{Math.round(mins/60)}h</span>
+                          <span className="inline-flex items-center gap-1 text-primary"><Zap className="h-3 w-3" />{xp} XP</span>
+                        </div>
+                      </button>
+                    );
+                  })}
+                </div>
+              </>
             ) : (
-              <div className="rounded-xl border bg-card overflow-hidden">
-                <table className="w-full text-sm">
-                  <thead className="bg-accent/40 text-xs text-muted-foreground">
-                    <tr><th className="text-left p-3">ID</th><th className="text-left">Title</th><th>Difficulty</th><th>Status</th><th>XP</th><th>Time</th><th>Score</th><th></th></tr>
-                  </thead>
-                  <tbody>
-                    {tickets.map((t) => (
-                      <tr key={t.id} className="border-t hover:bg-accent/30">
-                        <td className="p-3 font-mono text-xs">{t.id}</td>
-                        <td>{t.title}</td>
-                        <td className="text-center"><DiffBadge value={t.difficulty} /></td>
-                        <td className="text-center"><StatusBadge value={t.status} /></td>
-                        <td className="text-center text-primary">{t.xp}</td>
-                        <td className="text-center text-muted-foreground">{t.estMin}m</td>
-                        <td className="text-center">{t.score ?? "—"}</td>
-                        <td className="text-right p-3">
-                          <Link to="/lab/$slug/ticket/$ticketId" params={{ slug: lab.slug, ticketId: t.id }} className="text-primary text-xs">Open →</Link>
-                        </td>
-                      </tr>
-                    ))}
-                  </tbody>
-                </table>
-              </div>
+              <>
+                <div className="mb-3 flex flex-wrap items-center gap-2">
+                  <button onClick={() => setActiveSprint(null)} className="inline-flex items-center gap-1 rounded-md border bg-card px-2 py-1.5 text-xs hover:bg-accent">
+                    <ArrowLeft className="h-3 w-3" />Sprints
+                  </button>
+                  <div className="min-w-0">
+                    <div className="text-sm font-semibold leading-tight">{sprint.name}</div>
+                    <div className="text-[11px] text-muted-foreground">{sprint.range} · {sprint.goal}</div>
+                  </div>
+                  <div className="ml-auto flex items-center gap-2">
+                    <div className="relative">
+                      <Search className="absolute left-2.5 top-2.5 h-3.5 w-3.5 text-muted-foreground" />
+                      <input placeholder="Search tickets..." className="w-56 rounded-md border bg-input/40 pl-8 pr-3 py-2 text-sm outline-none focus:ring-2 focus:ring-primary/40" />
+                    </div>
+                    <div className="flex rounded-md border bg-card p-0.5 text-xs">
+                      <button onClick={() => setView("kanban")} className={`flex items-center gap-1 rounded px-2 py-1 ${view === "kanban" ? "bg-accent" : ""}`}><LayoutGrid className="h-3 w-3" />Kanban</button>
+                      <button onClick={() => setView("list")} className={`flex items-center gap-1 rounded px-2 py-1 ${view === "list" ? "bg-accent" : ""}`}><List className="h-3 w-3" />List</button>
+                      <button className="flex items-center gap-1 rounded px-2 py-1 text-muted-foreground"><Calendar className="h-3 w-3" />Timeline</button>
+                    </div>
+                  </div>
+                </div>
+
+                {view === "kanban" ? (
+                  <div className="grid gap-3 md:grid-cols-3">
+                    {cols.map((c) => {
+                      const items = sprintTickets.filter((t) => t.status === c.key);
+                      return (
+                        <div key={c.key} className="rounded-xl border bg-card/50 p-3">
+                          <div className="mb-3 flex items-center justify-between px-1">
+                            <div className="text-sm font-medium">{c.key}</div>
+                            <span className="rounded-full bg-accent px-2 py-0.5 text-[11px]">{items.length}</span>
+                          </div>
+                          <div className="space-y-2">
+                            {items.length === 0 && <div className="px-1 py-4 text-[11px] text-muted-foreground">No tickets</div>}
+                            {items.map((t) => (
+                              <Link key={t.id} to="/lab/$slug/ticket/$ticketId" params={{ slug: lab.slug, ticketId: t.id }}
+                                className="block rounded-lg border bg-card p-3 hover:border-primary/50 transition">
+                                <div className="flex items-center justify-between text-[11px] text-muted-foreground">
+                                  <span className="font-mono">{t.id}</span>
+                                  <DiffBadge value={t.difficulty} />
+                                </div>
+                                <div className="mt-1.5 text-sm font-medium leading-snug">{t.title}</div>
+                                <div className="mt-2 flex items-center justify-between text-[11px] text-muted-foreground">
+                                  <span>⏱ {t.estMin}m · {t.tag}</span>
+                                  <span className="inline-flex items-center gap-1 text-primary"><Zap className="h-3 w-3" />{t.xp}</span>
+                                </div>
+                                {t.status === "In Progress" && t.progress != null && (
+                                  <div className="mt-2 h-1 rounded-full bg-muted overflow-hidden">
+                                    <div className="h-full bg-info" style={{ width: `${t.progress}%` }} />
+                                  </div>
+                                )}
+                                {t.status === "Completed" && (
+                                  <div className="mt-2 flex items-center justify-between text-[11px]">
+                                    <span className="text-success">✓ Score {t.score}</span>
+                                    <Award className="h-3.5 w-3.5 text-warning" />
+                                  </div>
+                                )}
+                              </Link>
+                            ))}
+                          </div>
+                        </div>
+                      );
+                    })}
+                  </div>
+                ) : (
+                  <div className="rounded-xl border bg-card overflow-hidden">
+                    <table className="w-full text-sm">
+                      <thead className="bg-accent/40 text-xs text-muted-foreground">
+                        <tr><th className="text-left p-3">ID</th><th className="text-left">Title</th><th>Difficulty</th><th>Status</th><th>XP</th><th>Time</th><th>Score</th><th></th></tr>
+                      </thead>
+                      <tbody>
+                        {sprintTickets.map((t) => (
+                          <tr key={t.id} className="border-t hover:bg-accent/30">
+                            <td className="p-3 font-mono text-xs">{t.id}</td>
+                            <td>{t.title}</td>
+                            <td className="text-center"><DiffBadge value={t.difficulty} /></td>
+                            <td className="text-center"><StatusBadge value={t.status} /></td>
+                            <td className="text-center text-primary">{t.xp}</td>
+                            <td className="text-center text-muted-foreground">{t.estMin}m</td>
+                            <td className="text-center">{t.score ?? "—"}</td>
+                            <td className="text-right p-3">
+                              <Link to="/lab/$slug/ticket/$ticketId" params={{ slug: lab.slug, ticketId: t.id }} className="text-primary text-xs">Open →</Link>
+                            </td>
+                          </tr>
+                        ))}
+                      </tbody>
+                    </table>
+                  </div>
+                )}
+              </>
             )}
           </section>
 
