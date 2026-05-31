@@ -66,7 +66,7 @@ function SprintDetail() {
         <div className="rounded-xl border bg-card p-5">
           <div className="flex items-center justify-between mb-3">
             <h2 className="font-semibold flex items-center gap-2"><MessageSquare className="h-4 w-4 text-primary" /> Sprint Discussion</h2>
-            {myMember && <Link to="/collaboration/sprint/$id/workspace" params={{ id: sprint.id }} search={{ tab: "discussion" }} className="text-xs text-primary hover:underline">View all →</Link>}
+            {myMember && <Link to="/collaboration/sprint/$id/workspace" params={{ id: sprint.id }} className="text-xs text-primary hover:underline">View all →</Link>}
           </div>
           {threads.length === 0 ? <p className="text-sm text-muted-foreground">No threads yet.</p> : (
             <div className="divide-y">
