@@ -18,10 +18,16 @@ import { Route as AnalyticsRouteImport } from './routes/analytics'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as CollaborationIndexRouteImport } from './routes/collaboration.index'
 import { Route as LabSlugRouteImport } from './routes/lab.$slug'
+import { Route as CollaborationSquadsRouteImport } from './routes/collaboration.squads'
+import { Route as CollaborationConnectionsRouteImport } from './routes/collaboration.connections'
 import { Route as CollaborationBrowseRouteImport } from './routes/collaboration.browse'
 import { Route as CollaborationSprintIdRouteImport } from './routes/collaboration.sprint.$id'
 import { Route as LabSlugTicketTicketIdRouteImport } from './routes/lab.$slug.ticket.$ticketId'
+import { Route as CollaborationSprintIdWorkspaceRouteImport } from './routes/collaboration.sprint.$id.workspace'
 import { Route as LabSlugTicketTicketIdReviewRouteImport } from './routes/lab.$slug.ticket.$ticketId.review'
+import { Route as CollaborationSprintIdTicketTicketIdRouteImport } from './routes/collaboration.sprint.$id.ticket.$ticketId'
+import { Route as CollaborationSprintIdReportTeamRouteImport } from './routes/collaboration.sprint.$id.report.team'
+import { Route as CollaborationSprintIdReportIndividualRouteImport } from './routes/collaboration.sprint.$id.report.individual'
 
 const ProfileRoute = ProfileRouteImport.update({
   id: '/profile',
@@ -68,6 +74,17 @@ const LabSlugRoute = LabSlugRouteImport.update({
   path: '/lab/$slug',
   getParentRoute: () => rootRouteImport,
 } as any)
+const CollaborationSquadsRoute = CollaborationSquadsRouteImport.update({
+  id: '/squads',
+  path: '/squads',
+  getParentRoute: () => CollaborationRoute,
+} as any)
+const CollaborationConnectionsRoute =
+  CollaborationConnectionsRouteImport.update({
+    id: '/connections',
+    path: '/connections',
+    getParentRoute: () => CollaborationRoute,
+  } as any)
 const CollaborationBrowseRoute = CollaborationBrowseRouteImport.update({
   id: '/browse',
   path: '/browse',
@@ -83,11 +100,35 @@ const LabSlugTicketTicketIdRoute = LabSlugTicketTicketIdRouteImport.update({
   path: '/ticket/$ticketId',
   getParentRoute: () => LabSlugRoute,
 } as any)
+const CollaborationSprintIdWorkspaceRoute =
+  CollaborationSprintIdWorkspaceRouteImport.update({
+    id: '/workspace',
+    path: '/workspace',
+    getParentRoute: () => CollaborationSprintIdRoute,
+  } as any)
 const LabSlugTicketTicketIdReviewRoute =
   LabSlugTicketTicketIdReviewRouteImport.update({
     id: '/review',
     path: '/review',
     getParentRoute: () => LabSlugTicketTicketIdRoute,
+  } as any)
+const CollaborationSprintIdTicketTicketIdRoute =
+  CollaborationSprintIdTicketTicketIdRouteImport.update({
+    id: '/ticket/$ticketId',
+    path: '/ticket/$ticketId',
+    getParentRoute: () => CollaborationSprintIdRoute,
+  } as any)
+const CollaborationSprintIdReportTeamRoute =
+  CollaborationSprintIdReportTeamRouteImport.update({
+    id: '/report/team',
+    path: '/report/team',
+    getParentRoute: () => CollaborationSprintIdRoute,
+  } as any)
+const CollaborationSprintIdReportIndividualRoute =
+  CollaborationSprintIdReportIndividualRouteImport.update({
+    id: '/report/individual',
+    path: '/report/individual',
+    getParentRoute: () => CollaborationSprintIdRoute,
   } as any)
 
 export interface FileRoutesByFullPath {
@@ -99,10 +140,16 @@ export interface FileRoutesByFullPath {
   '/leaderboard': typeof LeaderboardRoute
   '/profile': typeof ProfileRoute
   '/collaboration/browse': typeof CollaborationBrowseRoute
+  '/collaboration/connections': typeof CollaborationConnectionsRoute
+  '/collaboration/squads': typeof CollaborationSquadsRoute
   '/lab/$slug': typeof LabSlugRouteWithChildren
   '/collaboration/': typeof CollaborationIndexRoute
-  '/collaboration/sprint/$id': typeof CollaborationSprintIdRoute
+  '/collaboration/sprint/$id': typeof CollaborationSprintIdRouteWithChildren
+  '/collaboration/sprint/$id/workspace': typeof CollaborationSprintIdWorkspaceRoute
   '/lab/$slug/ticket/$ticketId': typeof LabSlugTicketTicketIdRouteWithChildren
+  '/collaboration/sprint/$id/report/individual': typeof CollaborationSprintIdReportIndividualRoute
+  '/collaboration/sprint/$id/report/team': typeof CollaborationSprintIdReportTeamRoute
+  '/collaboration/sprint/$id/ticket/$ticketId': typeof CollaborationSprintIdTicketTicketIdRoute
   '/lab/$slug/ticket/$ticketId/review': typeof LabSlugTicketTicketIdReviewRoute
 }
 export interface FileRoutesByTo {
@@ -113,10 +160,16 @@ export interface FileRoutesByTo {
   '/leaderboard': typeof LeaderboardRoute
   '/profile': typeof ProfileRoute
   '/collaboration/browse': typeof CollaborationBrowseRoute
+  '/collaboration/connections': typeof CollaborationConnectionsRoute
+  '/collaboration/squads': typeof CollaborationSquadsRoute
   '/lab/$slug': typeof LabSlugRouteWithChildren
   '/collaboration': typeof CollaborationIndexRoute
-  '/collaboration/sprint/$id': typeof CollaborationSprintIdRoute
+  '/collaboration/sprint/$id': typeof CollaborationSprintIdRouteWithChildren
+  '/collaboration/sprint/$id/workspace': typeof CollaborationSprintIdWorkspaceRoute
   '/lab/$slug/ticket/$ticketId': typeof LabSlugTicketTicketIdRouteWithChildren
+  '/collaboration/sprint/$id/report/individual': typeof CollaborationSprintIdReportIndividualRoute
+  '/collaboration/sprint/$id/report/team': typeof CollaborationSprintIdReportTeamRoute
+  '/collaboration/sprint/$id/ticket/$ticketId': typeof CollaborationSprintIdTicketTicketIdRoute
   '/lab/$slug/ticket/$ticketId/review': typeof LabSlugTicketTicketIdReviewRoute
 }
 export interface FileRoutesById {
@@ -129,10 +182,16 @@ export interface FileRoutesById {
   '/leaderboard': typeof LeaderboardRoute
   '/profile': typeof ProfileRoute
   '/collaboration/browse': typeof CollaborationBrowseRoute
+  '/collaboration/connections': typeof CollaborationConnectionsRoute
+  '/collaboration/squads': typeof CollaborationSquadsRoute
   '/lab/$slug': typeof LabSlugRouteWithChildren
   '/collaboration/': typeof CollaborationIndexRoute
-  '/collaboration/sprint/$id': typeof CollaborationSprintIdRoute
+  '/collaboration/sprint/$id': typeof CollaborationSprintIdRouteWithChildren
+  '/collaboration/sprint/$id/workspace': typeof CollaborationSprintIdWorkspaceRoute
   '/lab/$slug/ticket/$ticketId': typeof LabSlugTicketTicketIdRouteWithChildren
+  '/collaboration/sprint/$id/report/individual': typeof CollaborationSprintIdReportIndividualRoute
+  '/collaboration/sprint/$id/report/team': typeof CollaborationSprintIdReportTeamRoute
+  '/collaboration/sprint/$id/ticket/$ticketId': typeof CollaborationSprintIdTicketTicketIdRoute
   '/lab/$slug/ticket/$ticketId/review': typeof LabSlugTicketTicketIdReviewRoute
 }
 export interface FileRouteTypes {
@@ -146,10 +205,16 @@ export interface FileRouteTypes {
     | '/leaderboard'
     | '/profile'
     | '/collaboration/browse'
+    | '/collaboration/connections'
+    | '/collaboration/squads'
     | '/lab/$slug'
     | '/collaboration/'
     | '/collaboration/sprint/$id'
+    | '/collaboration/sprint/$id/workspace'
     | '/lab/$slug/ticket/$ticketId'
+    | '/collaboration/sprint/$id/report/individual'
+    | '/collaboration/sprint/$id/report/team'
+    | '/collaboration/sprint/$id/ticket/$ticketId'
     | '/lab/$slug/ticket/$ticketId/review'
   fileRoutesByTo: FileRoutesByTo
   to:
@@ -160,10 +225,16 @@ export interface FileRouteTypes {
     | '/leaderboard'
     | '/profile'
     | '/collaboration/browse'
+    | '/collaboration/connections'
+    | '/collaboration/squads'
     | '/lab/$slug'
     | '/collaboration'
     | '/collaboration/sprint/$id'
+    | '/collaboration/sprint/$id/workspace'
     | '/lab/$slug/ticket/$ticketId'
+    | '/collaboration/sprint/$id/report/individual'
+    | '/collaboration/sprint/$id/report/team'
+    | '/collaboration/sprint/$id/ticket/$ticketId'
     | '/lab/$slug/ticket/$ticketId/review'
   id:
     | '__root__'
@@ -175,10 +246,16 @@ export interface FileRouteTypes {
     | '/leaderboard'
     | '/profile'
     | '/collaboration/browse'
+    | '/collaboration/connections'
+    | '/collaboration/squads'
     | '/lab/$slug'
     | '/collaboration/'
     | '/collaboration/sprint/$id'
+    | '/collaboration/sprint/$id/workspace'
     | '/lab/$slug/ticket/$ticketId'
+    | '/collaboration/sprint/$id/report/individual'
+    | '/collaboration/sprint/$id/report/team'
+    | '/collaboration/sprint/$id/ticket/$ticketId'
     | '/lab/$slug/ticket/$ticketId/review'
   fileRoutesById: FileRoutesById
 }
@@ -258,6 +335,20 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof LabSlugRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/collaboration/squads': {
+      id: '/collaboration/squads'
+      path: '/squads'
+      fullPath: '/collaboration/squads'
+      preLoaderRoute: typeof CollaborationSquadsRouteImport
+      parentRoute: typeof CollaborationRoute
+    }
+    '/collaboration/connections': {
+      id: '/collaboration/connections'
+      path: '/connections'
+      fullPath: '/collaboration/connections'
+      preLoaderRoute: typeof CollaborationConnectionsRouteImport
+      parentRoute: typeof CollaborationRoute
+    }
     '/collaboration/browse': {
       id: '/collaboration/browse'
       path: '/browse'
@@ -279,6 +370,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof LabSlugTicketTicketIdRouteImport
       parentRoute: typeof LabSlugRoute
     }
+    '/collaboration/sprint/$id/workspace': {
+      id: '/collaboration/sprint/$id/workspace'
+      path: '/workspace'
+      fullPath: '/collaboration/sprint/$id/workspace'
+      preLoaderRoute: typeof CollaborationSprintIdWorkspaceRouteImport
+      parentRoute: typeof CollaborationSprintIdRoute
+    }
     '/lab/$slug/ticket/$ticketId/review': {
       id: '/lab/$slug/ticket/$ticketId/review'
       path: '/review'
@@ -286,19 +384,65 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof LabSlugTicketTicketIdReviewRouteImport
       parentRoute: typeof LabSlugTicketTicketIdRoute
     }
+    '/collaboration/sprint/$id/ticket/$ticketId': {
+      id: '/collaboration/sprint/$id/ticket/$ticketId'
+      path: '/ticket/$ticketId'
+      fullPath: '/collaboration/sprint/$id/ticket/$ticketId'
+      preLoaderRoute: typeof CollaborationSprintIdTicketTicketIdRouteImport
+      parentRoute: typeof CollaborationSprintIdRoute
+    }
+    '/collaboration/sprint/$id/report/team': {
+      id: '/collaboration/sprint/$id/report/team'
+      path: '/report/team'
+      fullPath: '/collaboration/sprint/$id/report/team'
+      preLoaderRoute: typeof CollaborationSprintIdReportTeamRouteImport
+      parentRoute: typeof CollaborationSprintIdRoute
+    }
+    '/collaboration/sprint/$id/report/individual': {
+      id: '/collaboration/sprint/$id/report/individual'
+      path: '/report/individual'
+      fullPath: '/collaboration/sprint/$id/report/individual'
+      preLoaderRoute: typeof CollaborationSprintIdReportIndividualRouteImport
+      parentRoute: typeof CollaborationSprintIdRoute
+    }
   }
 }
 
+interface CollaborationSprintIdRouteChildren {
+  CollaborationSprintIdWorkspaceRoute: typeof CollaborationSprintIdWorkspaceRoute
+  CollaborationSprintIdReportIndividualRoute: typeof CollaborationSprintIdReportIndividualRoute
+  CollaborationSprintIdReportTeamRoute: typeof CollaborationSprintIdReportTeamRoute
+  CollaborationSprintIdTicketTicketIdRoute: typeof CollaborationSprintIdTicketTicketIdRoute
+}
+
+const CollaborationSprintIdRouteChildren: CollaborationSprintIdRouteChildren = {
+  CollaborationSprintIdWorkspaceRoute: CollaborationSprintIdWorkspaceRoute,
+  CollaborationSprintIdReportIndividualRoute:
+    CollaborationSprintIdReportIndividualRoute,
+  CollaborationSprintIdReportTeamRoute: CollaborationSprintIdReportTeamRoute,
+  CollaborationSprintIdTicketTicketIdRoute:
+    CollaborationSprintIdTicketTicketIdRoute,
+}
+
+const CollaborationSprintIdRouteWithChildren =
+  CollaborationSprintIdRoute._addFileChildren(
+    CollaborationSprintIdRouteChildren,
+  )
+
 interface CollaborationRouteChildren {
   CollaborationBrowseRoute: typeof CollaborationBrowseRoute
+  CollaborationConnectionsRoute: typeof CollaborationConnectionsRoute
+  CollaborationSquadsRoute: typeof CollaborationSquadsRoute
   CollaborationIndexRoute: typeof CollaborationIndexRoute
-  CollaborationSprintIdRoute: typeof CollaborationSprintIdRoute
+  CollaborationSprintIdRoute: typeof CollaborationSprintIdRouteWithChildren
 }
 
 const CollaborationRouteChildren: CollaborationRouteChildren = {
   CollaborationBrowseRoute: CollaborationBrowseRoute,
+  CollaborationConnectionsRoute: CollaborationConnectionsRoute,
+  CollaborationSquadsRoute: CollaborationSquadsRoute,
   CollaborationIndexRoute: CollaborationIndexRoute,
-  CollaborationSprintIdRoute: CollaborationSprintIdRoute,
+  CollaborationSprintIdRoute: CollaborationSprintIdRouteWithChildren,
 }
 
 const CollaborationRouteWithChildren = CollaborationRoute._addFileChildren(
