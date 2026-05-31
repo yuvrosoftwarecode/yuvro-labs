@@ -276,12 +276,8 @@ const mkForum = (sprintId: string): ForumThread[] => [
 
 const mkSprint = (overrides: Partial<Sprint> & Pick<Sprint, "id" | "title" | "domain" | "status">): Sprint => {
   const base: Sprint = {
-    id: overrides.id,
-    title: overrides.title,
-    domain: overrides.domain,
     description: "Ship an end-to-end production-style feature with a real cross-functional team. Each role owns their tickets and dependencies are real.",
     durationDays: 3,
-    status: overrides.status,
     requiredRoles: ["SQL", "Backend", "Frontend", "QA", "DevOps"],
     members: [
       { userId: "u-sofia", role: "SQL", status: "joined" },
