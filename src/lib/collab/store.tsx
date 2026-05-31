@@ -73,6 +73,7 @@ export function CollabProvider({ children }: { children: ReactNode }) {
   const [messages, setMessages] = useState<Record<string, ChatMsg[]>>(seedMessages);
   const [forum, setForum] = useState<Record<string, ForumThread[]>>(seedForum);
   const [squads, setSquads] = useState<Squad[]>(seedSquads);
+  const [teams, setTeams] = useState<Team[]>(seedTeams);
   const [connections, setConnections] = useState<string[]>(seedConnections);
   const [pendingIncoming, setPendingIncoming] = useState<string[]>(seedPendingIncoming);
   const [notifications, setNotifications] = useState<Notification[]>(seedNotifications);
