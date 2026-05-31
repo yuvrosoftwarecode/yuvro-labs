@@ -275,7 +275,7 @@ const mkForum = (sprintId: string): ForumThread[] => [
 ];
 
 const mkSprint = (overrides: Partial<Sprint> & Pick<Sprint, "id" | "title" | "domain" | "status">): Sprint => {
-  const base: Sprint = {
+  const base = {
     description: "Ship an end-to-end production-style feature with a real cross-functional team. Each role owns their tickets and dependencies are real.",
     durationDays: 3,
     requiredRoles: ["SQL", "Backend", "Frontend", "QA", "DevOps"],
