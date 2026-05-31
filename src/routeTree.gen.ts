@@ -16,7 +16,9 @@ import { Route as CollaborationRouteImport } from './routes/collaboration'
 import { Route as CertificatesRouteImport } from './routes/certificates'
 import { Route as AnalyticsRouteImport } from './routes/analytics'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as CollaborationIndexRouteImport } from './routes/collaboration.index'
 import { Route as LabSlugRouteImport } from './routes/lab.$slug'
+import { Route as CollaborationBrowseRouteImport } from './routes/collaboration.browse'
 import { Route as LabSlugTicketTicketIdRouteImport } from './routes/lab.$slug.ticket.$ticketId'
 import { Route as LabSlugTicketTicketIdReviewRouteImport } from './routes/lab.$slug.ticket.$ticketId.review'
 
@@ -55,10 +57,20 @@ const IndexRoute = IndexRouteImport.update({
   path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const CollaborationIndexRoute = CollaborationIndexRouteImport.update({
+  id: '/',
+  path: '/',
+  getParentRoute: () => CollaborationRoute,
+} as any)
 const LabSlugRoute = LabSlugRouteImport.update({
   id: '/lab/$slug',
   path: '/lab/$slug',
   getParentRoute: () => rootRouteImport,
+} as any)
+const CollaborationBrowseRoute = CollaborationBrowseRouteImport.update({
+  id: '/browse',
+  path: '/browse',
+  getParentRoute: () => CollaborationRoute,
 } as any)
 const LabSlugTicketTicketIdRoute = LabSlugTicketTicketIdRouteImport.update({
   id: '/ticket/$ticketId',
@@ -76,11 +88,13 @@ export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/analytics': typeof AnalyticsRoute
   '/certificates': typeof CertificatesRoute
-  '/collaboration': typeof CollaborationRoute
+  '/collaboration': typeof CollaborationRouteWithChildren
   '/forum': typeof ForumRoute
   '/leaderboard': typeof LeaderboardRoute
   '/profile': typeof ProfileRoute
+  '/collaboration/browse': typeof CollaborationBrowseRoute
   '/lab/$slug': typeof LabSlugRouteWithChildren
+  '/collaboration/': typeof CollaborationIndexRoute
   '/lab/$slug/ticket/$ticketId': typeof LabSlugTicketTicketIdRouteWithChildren
   '/lab/$slug/ticket/$ticketId/review': typeof LabSlugTicketTicketIdReviewRoute
 }
@@ -88,11 +102,12 @@ export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/analytics': typeof AnalyticsRoute
   '/certificates': typeof CertificatesRoute
-  '/collaboration': typeof CollaborationRoute
   '/forum': typeof ForumRoute
   '/leaderboard': typeof LeaderboardRoute
   '/profile': typeof ProfileRoute
+  '/collaboration/browse': typeof CollaborationBrowseRoute
   '/lab/$slug': typeof LabSlugRouteWithChildren
+  '/collaboration': typeof CollaborationIndexRoute
   '/lab/$slug/ticket/$ticketId': typeof LabSlugTicketTicketIdRouteWithChildren
   '/lab/$slug/ticket/$ticketId/review': typeof LabSlugTicketTicketIdReviewRoute
 }
@@ -101,11 +116,13 @@ export interface FileRoutesById {
   '/': typeof IndexRoute
   '/analytics': typeof AnalyticsRoute
   '/certificates': typeof CertificatesRoute
-  '/collaboration': typeof CollaborationRoute
+  '/collaboration': typeof CollaborationRouteWithChildren
   '/forum': typeof ForumRoute
   '/leaderboard': typeof LeaderboardRoute
   '/profile': typeof ProfileRoute
+  '/collaboration/browse': typeof CollaborationBrowseRoute
   '/lab/$slug': typeof LabSlugRouteWithChildren
+  '/collaboration/': typeof CollaborationIndexRoute
   '/lab/$slug/ticket/$ticketId': typeof LabSlugTicketTicketIdRouteWithChildren
   '/lab/$slug/ticket/$ticketId/review': typeof LabSlugTicketTicketIdReviewRoute
 }
@@ -119,7 +136,9 @@ export interface FileRouteTypes {
     | '/forum'
     | '/leaderboard'
     | '/profile'
+    | '/collaboration/browse'
     | '/lab/$slug'
+    | '/collaboration/'
     | '/lab/$slug/ticket/$ticketId'
     | '/lab/$slug/ticket/$ticketId/review'
   fileRoutesByTo: FileRoutesByTo
@@ -127,11 +146,12 @@ export interface FileRouteTypes {
     | '/'
     | '/analytics'
     | '/certificates'
-    | '/collaboration'
     | '/forum'
     | '/leaderboard'
     | '/profile'
+    | '/collaboration/browse'
     | '/lab/$slug'
+    | '/collaboration'
     | '/lab/$slug/ticket/$ticketId'
     | '/lab/$slug/ticket/$ticketId/review'
   id:
@@ -143,7 +163,9 @@ export interface FileRouteTypes {
     | '/forum'
     | '/leaderboard'
     | '/profile'
+    | '/collaboration/browse'
     | '/lab/$slug'
+    | '/collaboration/'
     | '/lab/$slug/ticket/$ticketId'
     | '/lab/$slug/ticket/$ticketId/review'
   fileRoutesById: FileRoutesById
@@ -152,7 +174,7 @@ export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   AnalyticsRoute: typeof AnalyticsRoute
   CertificatesRoute: typeof CertificatesRoute
-  CollaborationRoute: typeof CollaborationRoute
+  CollaborationRoute: typeof CollaborationRouteWithChildren
   ForumRoute: typeof ForumRoute
   LeaderboardRoute: typeof LeaderboardRoute
   ProfileRoute: typeof ProfileRoute
@@ -210,12 +232,26 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/collaboration/': {
+      id: '/collaboration/'
+      path: '/'
+      fullPath: '/collaboration/'
+      preLoaderRoute: typeof CollaborationIndexRouteImport
+      parentRoute: typeof CollaborationRoute
+    }
     '/lab/$slug': {
       id: '/lab/$slug'
       path: '/lab/$slug'
       fullPath: '/lab/$slug'
       preLoaderRoute: typeof LabSlugRouteImport
       parentRoute: typeof rootRouteImport
+    }
+    '/collaboration/browse': {
+      id: '/collaboration/browse'
+      path: '/browse'
+      fullPath: '/collaboration/browse'
+      preLoaderRoute: typeof CollaborationBrowseRouteImport
+      parentRoute: typeof CollaborationRoute
     }
     '/lab/$slug/ticket/$ticketId': {
       id: '/lab/$slug/ticket/$ticketId'
@@ -233,6 +269,20 @@ declare module '@tanstack/react-router' {
     }
   }
 }
+
+interface CollaborationRouteChildren {
+  CollaborationBrowseRoute: typeof CollaborationBrowseRoute
+  CollaborationIndexRoute: typeof CollaborationIndexRoute
+}
+
+const CollaborationRouteChildren: CollaborationRouteChildren = {
+  CollaborationBrowseRoute: CollaborationBrowseRoute,
+  CollaborationIndexRoute: CollaborationIndexRoute,
+}
+
+const CollaborationRouteWithChildren = CollaborationRoute._addFileChildren(
+  CollaborationRouteChildren,
+)
 
 interface LabSlugTicketTicketIdRouteChildren {
   LabSlugTicketTicketIdReviewRoute: typeof LabSlugTicketTicketIdReviewRoute
@@ -262,7 +312,7 @@ const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   AnalyticsRoute: AnalyticsRoute,
   CertificatesRoute: CertificatesRoute,
-  CollaborationRoute: CollaborationRoute,
+  CollaborationRoute: CollaborationRouteWithChildren,
   ForumRoute: ForumRoute,
   LeaderboardRoute: LeaderboardRoute,
   ProfileRoute: ProfileRoute,
@@ -271,3 +321,13 @@ const rootRouteChildren: RootRouteChildren = {
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
   ._addFileTypes<FileRouteTypes>()
+
+import type { getRouter } from './router.tsx'
+import type { startInstance } from './start.ts'
+declare module '@tanstack/react-start' {
+  interface Register {
+    ssr: true
+    router: Awaited<ReturnType<typeof getRouter>>
+    config: Awaited<ReturnType<typeof startInstance.getOptions>>
+  }
+}
