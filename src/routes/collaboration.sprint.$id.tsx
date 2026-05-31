@@ -66,6 +66,35 @@ function SprintDetail() {
 
         <div className="rounded-xl border bg-card p-5">
           <div className="flex items-center justify-between mb-3">
+            <h2 className="font-semibold flex items-center gap-2"><Users className="h-4 w-4 text-primary" /> Recruiting Teams</h2>
+            {!myMember && !readonly && <button onClick={() => setCreateOpen(true)} className="text-xs rounded-md bg-primary text-primary-foreground px-2 py-1 inline-flex items-center gap-1"><Plus className="h-3 w-3" /> Start a team</button>}
+          </div>
+          {recruitingTeams.length === 0 ? (
+            <p className="text-sm text-muted-foreground">No teams forming yet. Be the first to start one.</p>
+          ) : (
+            <div className="space-y-2">
+              {recruitingTeams.map(t => (
+                <div key={t.id} className="rounded-lg border p-3">
+                  <div className="flex items-center justify-between gap-2">
+                    <div className="min-w-0">
+                      <p className="text-sm font-semibold truncate">{t.name}</p>
+                      <p className="text-[11px] text-muted-foreground">led by {user(t.ownerId)?.name} · {t.memberIds.length} joined</p>
+                    </div>
+                    <span className="text-[10px] px-2 py-0.5 rounded bg-warning/15 text-warning border border-warning/30">{t.status}</span>
+                  </div>
+                  {t.openRoles.length > 0 && (
+                    <div className="mt-2 flex flex-wrap gap-1">
+                      {t.openRoles.map((r, i) => <span key={i} className="text-[10px] px-1.5 py-0.5 rounded border bg-accent/40">Open · {r.role}</span>)}
+                    </div>
+                  )}
+                </div>
+              ))}
+            </div>
+          )}
+        </div>
+
+        <div className="rounded-xl border bg-card p-5">
+          <div className="flex items-center justify-between mb-3">
             <h2 className="font-semibold flex items-center gap-2"><MessageSquare className="h-4 w-4 text-primary" /> Sprint Discussion</h2>
             {myMember && <Link to="/collaboration/sprint/$id/workspace" params={{ id: sprint.id }} className="text-xs text-primary hover:underline">View all →</Link>}
           </div>
