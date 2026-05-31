@@ -16,29 +16,7 @@ import { Route as CollaborationRouteImport } from './routes/collaboration'
 import { Route as CertificatesRouteImport } from './routes/certificates'
 import { Route as AnalyticsRouteImport } from './routes/analytics'
 import { Route as IndexRouteImport } from './routes/index'
-import { Route as CollaborationIndexRouteImport } from './routes/collaboration.index'
 import { Route as LabSlugRouteImport } from './routes/lab.$slug'
-import { Route as CollaborationSquadsRouteImport } from './routes/collaboration.squads'
-import { Route as CollaborationRequestsRouteImport } from './routes/collaboration.requests'
-import { Route as CollaborationReputationRouteImport } from './routes/collaboration.reputation'
-import { Route as CollaborationRecruiterRouteImport } from './routes/collaboration.recruiter'
-import { Route as CollaborationRankingsRouteImport } from './routes/collaboration.rankings'
-import { Route as CollaborationPairRouteImport } from './routes/collaboration.pair'
-import { Route as CollaborationNotificationsRouteImport } from './routes/collaboration.notifications'
-import { Route as CollaborationMentorshipRouteImport } from './routes/collaboration.mentorship'
-import { Route as CollaborationMarketplaceRouteImport } from './routes/collaboration.marketplace'
-import { Route as CollaborationLiveRouteImport } from './routes/collaboration.live'
-import { Route as CollaborationInvitationsRouteImport } from './routes/collaboration.invitations'
-import { Route as CollaborationIncidentsRouteImport } from './routes/collaboration.incidents'
-import { Route as CollaborationHandbookRouteImport } from './routes/collaboration.handbook'
-import { Route as CollaborationDiscoverRouteImport } from './routes/collaboration.discover'
-import { Route as CollaborationCreateRouteImport } from './routes/collaboration.create'
-import { Route as CollaborationAnalyticsRouteImport } from './routes/collaboration.analytics'
-import { Route as CollaborationWorkspaceIdRouteImport } from './routes/collaboration.workspace.$id'
-import { Route as CollaborationSquadIdRouteImport } from './routes/collaboration.squad.$id'
-import { Route as CollaborationRetroIdRouteImport } from './routes/collaboration.retro.$id'
-import { Route as CollaborationEngineerIdRouteImport } from './routes/collaboration.engineer.$id'
-import { Route as CollaborationCompleteIdRouteImport } from './routes/collaboration.complete.$id'
 import { Route as LabSlugTicketTicketIdRouteImport } from './routes/lab.$slug.ticket.$ticketId'
 import { Route as LabSlugTicketTicketIdReviewRouteImport } from './routes/lab.$slug.ticket.$ticketId.review'
 
@@ -77,124 +55,10 @@ const IndexRoute = IndexRouteImport.update({
   path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
-const CollaborationIndexRoute = CollaborationIndexRouteImport.update({
-  id: '/',
-  path: '/',
-  getParentRoute: () => CollaborationRoute,
-} as any)
 const LabSlugRoute = LabSlugRouteImport.update({
   id: '/lab/$slug',
   path: '/lab/$slug',
   getParentRoute: () => rootRouteImport,
-} as any)
-const CollaborationSquadsRoute = CollaborationSquadsRouteImport.update({
-  id: '/squads',
-  path: '/squads',
-  getParentRoute: () => CollaborationRoute,
-} as any)
-const CollaborationRequestsRoute = CollaborationRequestsRouteImport.update({
-  id: '/requests',
-  path: '/requests',
-  getParentRoute: () => CollaborationRoute,
-} as any)
-const CollaborationReputationRoute = CollaborationReputationRouteImport.update({
-  id: '/reputation',
-  path: '/reputation',
-  getParentRoute: () => CollaborationRoute,
-} as any)
-const CollaborationRecruiterRoute = CollaborationRecruiterRouteImport.update({
-  id: '/recruiter',
-  path: '/recruiter',
-  getParentRoute: () => CollaborationRoute,
-} as any)
-const CollaborationRankingsRoute = CollaborationRankingsRouteImport.update({
-  id: '/rankings',
-  path: '/rankings',
-  getParentRoute: () => CollaborationRoute,
-} as any)
-const CollaborationPairRoute = CollaborationPairRouteImport.update({
-  id: '/pair',
-  path: '/pair',
-  getParentRoute: () => CollaborationRoute,
-} as any)
-const CollaborationNotificationsRoute =
-  CollaborationNotificationsRouteImport.update({
-    id: '/notifications',
-    path: '/notifications',
-    getParentRoute: () => CollaborationRoute,
-  } as any)
-const CollaborationMentorshipRoute = CollaborationMentorshipRouteImport.update({
-  id: '/mentorship',
-  path: '/mentorship',
-  getParentRoute: () => CollaborationRoute,
-} as any)
-const CollaborationMarketplaceRoute =
-  CollaborationMarketplaceRouteImport.update({
-    id: '/marketplace',
-    path: '/marketplace',
-    getParentRoute: () => CollaborationRoute,
-  } as any)
-const CollaborationLiveRoute = CollaborationLiveRouteImport.update({
-  id: '/live',
-  path: '/live',
-  getParentRoute: () => CollaborationRoute,
-} as any)
-const CollaborationInvitationsRoute =
-  CollaborationInvitationsRouteImport.update({
-    id: '/invitations',
-    path: '/invitations',
-    getParentRoute: () => CollaborationRoute,
-  } as any)
-const CollaborationIncidentsRoute = CollaborationIncidentsRouteImport.update({
-  id: '/incidents',
-  path: '/incidents',
-  getParentRoute: () => CollaborationRoute,
-} as any)
-const CollaborationHandbookRoute = CollaborationHandbookRouteImport.update({
-  id: '/handbook',
-  path: '/handbook',
-  getParentRoute: () => CollaborationRoute,
-} as any)
-const CollaborationDiscoverRoute = CollaborationDiscoverRouteImport.update({
-  id: '/discover',
-  path: '/discover',
-  getParentRoute: () => CollaborationRoute,
-} as any)
-const CollaborationCreateRoute = CollaborationCreateRouteImport.update({
-  id: '/create',
-  path: '/create',
-  getParentRoute: () => CollaborationRoute,
-} as any)
-const CollaborationAnalyticsRoute = CollaborationAnalyticsRouteImport.update({
-  id: '/analytics',
-  path: '/analytics',
-  getParentRoute: () => CollaborationRoute,
-} as any)
-const CollaborationWorkspaceIdRoute =
-  CollaborationWorkspaceIdRouteImport.update({
-    id: '/workspace/$id',
-    path: '/workspace/$id',
-    getParentRoute: () => CollaborationRoute,
-  } as any)
-const CollaborationSquadIdRoute = CollaborationSquadIdRouteImport.update({
-  id: '/squad/$id',
-  path: '/squad/$id',
-  getParentRoute: () => CollaborationRoute,
-} as any)
-const CollaborationRetroIdRoute = CollaborationRetroIdRouteImport.update({
-  id: '/retro/$id',
-  path: '/retro/$id',
-  getParentRoute: () => CollaborationRoute,
-} as any)
-const CollaborationEngineerIdRoute = CollaborationEngineerIdRouteImport.update({
-  id: '/engineer/$id',
-  path: '/engineer/$id',
-  getParentRoute: () => CollaborationRoute,
-} as any)
-const CollaborationCompleteIdRoute = CollaborationCompleteIdRouteImport.update({
-  id: '/complete/$id',
-  path: '/complete/$id',
-  getParentRoute: () => CollaborationRoute,
 } as any)
 const LabSlugTicketTicketIdRoute = LabSlugTicketTicketIdRouteImport.update({
   id: '/ticket/$ticketId',
@@ -212,33 +76,11 @@ export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/analytics': typeof AnalyticsRoute
   '/certificates': typeof CertificatesRoute
-  '/collaboration': typeof CollaborationRouteWithChildren
+  '/collaboration': typeof CollaborationRoute
   '/forum': typeof ForumRoute
   '/leaderboard': typeof LeaderboardRoute
   '/profile': typeof ProfileRoute
-  '/collaboration/analytics': typeof CollaborationAnalyticsRoute
-  '/collaboration/create': typeof CollaborationCreateRoute
-  '/collaboration/discover': typeof CollaborationDiscoverRoute
-  '/collaboration/handbook': typeof CollaborationHandbookRoute
-  '/collaboration/incidents': typeof CollaborationIncidentsRoute
-  '/collaboration/invitations': typeof CollaborationInvitationsRoute
-  '/collaboration/live': typeof CollaborationLiveRoute
-  '/collaboration/marketplace': typeof CollaborationMarketplaceRoute
-  '/collaboration/mentorship': typeof CollaborationMentorshipRoute
-  '/collaboration/notifications': typeof CollaborationNotificationsRoute
-  '/collaboration/pair': typeof CollaborationPairRoute
-  '/collaboration/rankings': typeof CollaborationRankingsRoute
-  '/collaboration/recruiter': typeof CollaborationRecruiterRoute
-  '/collaboration/reputation': typeof CollaborationReputationRoute
-  '/collaboration/requests': typeof CollaborationRequestsRoute
-  '/collaboration/squads': typeof CollaborationSquadsRoute
   '/lab/$slug': typeof LabSlugRouteWithChildren
-  '/collaboration/': typeof CollaborationIndexRoute
-  '/collaboration/complete/$id': typeof CollaborationCompleteIdRoute
-  '/collaboration/engineer/$id': typeof CollaborationEngineerIdRoute
-  '/collaboration/retro/$id': typeof CollaborationRetroIdRoute
-  '/collaboration/squad/$id': typeof CollaborationSquadIdRoute
-  '/collaboration/workspace/$id': typeof CollaborationWorkspaceIdRoute
   '/lab/$slug/ticket/$ticketId': typeof LabSlugTicketTicketIdRouteWithChildren
   '/lab/$slug/ticket/$ticketId/review': typeof LabSlugTicketTicketIdReviewRoute
 }
@@ -246,32 +88,11 @@ export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/analytics': typeof AnalyticsRoute
   '/certificates': typeof CertificatesRoute
+  '/collaboration': typeof CollaborationRoute
   '/forum': typeof ForumRoute
   '/leaderboard': typeof LeaderboardRoute
   '/profile': typeof ProfileRoute
-  '/collaboration/analytics': typeof CollaborationAnalyticsRoute
-  '/collaboration/create': typeof CollaborationCreateRoute
-  '/collaboration/discover': typeof CollaborationDiscoverRoute
-  '/collaboration/handbook': typeof CollaborationHandbookRoute
-  '/collaboration/incidents': typeof CollaborationIncidentsRoute
-  '/collaboration/invitations': typeof CollaborationInvitationsRoute
-  '/collaboration/live': typeof CollaborationLiveRoute
-  '/collaboration/marketplace': typeof CollaborationMarketplaceRoute
-  '/collaboration/mentorship': typeof CollaborationMentorshipRoute
-  '/collaboration/notifications': typeof CollaborationNotificationsRoute
-  '/collaboration/pair': typeof CollaborationPairRoute
-  '/collaboration/rankings': typeof CollaborationRankingsRoute
-  '/collaboration/recruiter': typeof CollaborationRecruiterRoute
-  '/collaboration/reputation': typeof CollaborationReputationRoute
-  '/collaboration/requests': typeof CollaborationRequestsRoute
-  '/collaboration/squads': typeof CollaborationSquadsRoute
   '/lab/$slug': typeof LabSlugRouteWithChildren
-  '/collaboration': typeof CollaborationIndexRoute
-  '/collaboration/complete/$id': typeof CollaborationCompleteIdRoute
-  '/collaboration/engineer/$id': typeof CollaborationEngineerIdRoute
-  '/collaboration/retro/$id': typeof CollaborationRetroIdRoute
-  '/collaboration/squad/$id': typeof CollaborationSquadIdRoute
-  '/collaboration/workspace/$id': typeof CollaborationWorkspaceIdRoute
   '/lab/$slug/ticket/$ticketId': typeof LabSlugTicketTicketIdRouteWithChildren
   '/lab/$slug/ticket/$ticketId/review': typeof LabSlugTicketTicketIdReviewRoute
 }
@@ -280,33 +101,11 @@ export interface FileRoutesById {
   '/': typeof IndexRoute
   '/analytics': typeof AnalyticsRoute
   '/certificates': typeof CertificatesRoute
-  '/collaboration': typeof CollaborationRouteWithChildren
+  '/collaboration': typeof CollaborationRoute
   '/forum': typeof ForumRoute
   '/leaderboard': typeof LeaderboardRoute
   '/profile': typeof ProfileRoute
-  '/collaboration/analytics': typeof CollaborationAnalyticsRoute
-  '/collaboration/create': typeof CollaborationCreateRoute
-  '/collaboration/discover': typeof CollaborationDiscoverRoute
-  '/collaboration/handbook': typeof CollaborationHandbookRoute
-  '/collaboration/incidents': typeof CollaborationIncidentsRoute
-  '/collaboration/invitations': typeof CollaborationInvitationsRoute
-  '/collaboration/live': typeof CollaborationLiveRoute
-  '/collaboration/marketplace': typeof CollaborationMarketplaceRoute
-  '/collaboration/mentorship': typeof CollaborationMentorshipRoute
-  '/collaboration/notifications': typeof CollaborationNotificationsRoute
-  '/collaboration/pair': typeof CollaborationPairRoute
-  '/collaboration/rankings': typeof CollaborationRankingsRoute
-  '/collaboration/recruiter': typeof CollaborationRecruiterRoute
-  '/collaboration/reputation': typeof CollaborationReputationRoute
-  '/collaboration/requests': typeof CollaborationRequestsRoute
-  '/collaboration/squads': typeof CollaborationSquadsRoute
   '/lab/$slug': typeof LabSlugRouteWithChildren
-  '/collaboration/': typeof CollaborationIndexRoute
-  '/collaboration/complete/$id': typeof CollaborationCompleteIdRoute
-  '/collaboration/engineer/$id': typeof CollaborationEngineerIdRoute
-  '/collaboration/retro/$id': typeof CollaborationRetroIdRoute
-  '/collaboration/squad/$id': typeof CollaborationSquadIdRoute
-  '/collaboration/workspace/$id': typeof CollaborationWorkspaceIdRoute
   '/lab/$slug/ticket/$ticketId': typeof LabSlugTicketTicketIdRouteWithChildren
   '/lab/$slug/ticket/$ticketId/review': typeof LabSlugTicketTicketIdReviewRoute
 }
@@ -320,29 +119,7 @@ export interface FileRouteTypes {
     | '/forum'
     | '/leaderboard'
     | '/profile'
-    | '/collaboration/analytics'
-    | '/collaboration/create'
-    | '/collaboration/discover'
-    | '/collaboration/handbook'
-    | '/collaboration/incidents'
-    | '/collaboration/invitations'
-    | '/collaboration/live'
-    | '/collaboration/marketplace'
-    | '/collaboration/mentorship'
-    | '/collaboration/notifications'
-    | '/collaboration/pair'
-    | '/collaboration/rankings'
-    | '/collaboration/recruiter'
-    | '/collaboration/reputation'
-    | '/collaboration/requests'
-    | '/collaboration/squads'
     | '/lab/$slug'
-    | '/collaboration/'
-    | '/collaboration/complete/$id'
-    | '/collaboration/engineer/$id'
-    | '/collaboration/retro/$id'
-    | '/collaboration/squad/$id'
-    | '/collaboration/workspace/$id'
     | '/lab/$slug/ticket/$ticketId'
     | '/lab/$slug/ticket/$ticketId/review'
   fileRoutesByTo: FileRoutesByTo
@@ -350,32 +127,11 @@ export interface FileRouteTypes {
     | '/'
     | '/analytics'
     | '/certificates'
+    | '/collaboration'
     | '/forum'
     | '/leaderboard'
     | '/profile'
-    | '/collaboration/analytics'
-    | '/collaboration/create'
-    | '/collaboration/discover'
-    | '/collaboration/handbook'
-    | '/collaboration/incidents'
-    | '/collaboration/invitations'
-    | '/collaboration/live'
-    | '/collaboration/marketplace'
-    | '/collaboration/mentorship'
-    | '/collaboration/notifications'
-    | '/collaboration/pair'
-    | '/collaboration/rankings'
-    | '/collaboration/recruiter'
-    | '/collaboration/reputation'
-    | '/collaboration/requests'
-    | '/collaboration/squads'
     | '/lab/$slug'
-    | '/collaboration'
-    | '/collaboration/complete/$id'
-    | '/collaboration/engineer/$id'
-    | '/collaboration/retro/$id'
-    | '/collaboration/squad/$id'
-    | '/collaboration/workspace/$id'
     | '/lab/$slug/ticket/$ticketId'
     | '/lab/$slug/ticket/$ticketId/review'
   id:
@@ -387,29 +143,7 @@ export interface FileRouteTypes {
     | '/forum'
     | '/leaderboard'
     | '/profile'
-    | '/collaboration/analytics'
-    | '/collaboration/create'
-    | '/collaboration/discover'
-    | '/collaboration/handbook'
-    | '/collaboration/incidents'
-    | '/collaboration/invitations'
-    | '/collaboration/live'
-    | '/collaboration/marketplace'
-    | '/collaboration/mentorship'
-    | '/collaboration/notifications'
-    | '/collaboration/pair'
-    | '/collaboration/rankings'
-    | '/collaboration/recruiter'
-    | '/collaboration/reputation'
-    | '/collaboration/requests'
-    | '/collaboration/squads'
     | '/lab/$slug'
-    | '/collaboration/'
-    | '/collaboration/complete/$id'
-    | '/collaboration/engineer/$id'
-    | '/collaboration/retro/$id'
-    | '/collaboration/squad/$id'
-    | '/collaboration/workspace/$id'
     | '/lab/$slug/ticket/$ticketId'
     | '/lab/$slug/ticket/$ticketId/review'
   fileRoutesById: FileRoutesById
@@ -418,7 +152,7 @@ export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   AnalyticsRoute: typeof AnalyticsRoute
   CertificatesRoute: typeof CertificatesRoute
-  CollaborationRoute: typeof CollaborationRouteWithChildren
+  CollaborationRoute: typeof CollaborationRoute
   ForumRoute: typeof ForumRoute
   LeaderboardRoute: typeof LeaderboardRoute
   ProfileRoute: typeof ProfileRoute
@@ -476,166 +210,12 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/collaboration/': {
-      id: '/collaboration/'
-      path: '/'
-      fullPath: '/collaboration/'
-      preLoaderRoute: typeof CollaborationIndexRouteImport
-      parentRoute: typeof CollaborationRoute
-    }
     '/lab/$slug': {
       id: '/lab/$slug'
       path: '/lab/$slug'
       fullPath: '/lab/$slug'
       preLoaderRoute: typeof LabSlugRouteImport
       parentRoute: typeof rootRouteImport
-    }
-    '/collaboration/squads': {
-      id: '/collaboration/squads'
-      path: '/squads'
-      fullPath: '/collaboration/squads'
-      preLoaderRoute: typeof CollaborationSquadsRouteImport
-      parentRoute: typeof CollaborationRoute
-    }
-    '/collaboration/requests': {
-      id: '/collaboration/requests'
-      path: '/requests'
-      fullPath: '/collaboration/requests'
-      preLoaderRoute: typeof CollaborationRequestsRouteImport
-      parentRoute: typeof CollaborationRoute
-    }
-    '/collaboration/reputation': {
-      id: '/collaboration/reputation'
-      path: '/reputation'
-      fullPath: '/collaboration/reputation'
-      preLoaderRoute: typeof CollaborationReputationRouteImport
-      parentRoute: typeof CollaborationRoute
-    }
-    '/collaboration/recruiter': {
-      id: '/collaboration/recruiter'
-      path: '/recruiter'
-      fullPath: '/collaboration/recruiter'
-      preLoaderRoute: typeof CollaborationRecruiterRouteImport
-      parentRoute: typeof CollaborationRoute
-    }
-    '/collaboration/rankings': {
-      id: '/collaboration/rankings'
-      path: '/rankings'
-      fullPath: '/collaboration/rankings'
-      preLoaderRoute: typeof CollaborationRankingsRouteImport
-      parentRoute: typeof CollaborationRoute
-    }
-    '/collaboration/pair': {
-      id: '/collaboration/pair'
-      path: '/pair'
-      fullPath: '/collaboration/pair'
-      preLoaderRoute: typeof CollaborationPairRouteImport
-      parentRoute: typeof CollaborationRoute
-    }
-    '/collaboration/notifications': {
-      id: '/collaboration/notifications'
-      path: '/notifications'
-      fullPath: '/collaboration/notifications'
-      preLoaderRoute: typeof CollaborationNotificationsRouteImport
-      parentRoute: typeof CollaborationRoute
-    }
-    '/collaboration/mentorship': {
-      id: '/collaboration/mentorship'
-      path: '/mentorship'
-      fullPath: '/collaboration/mentorship'
-      preLoaderRoute: typeof CollaborationMentorshipRouteImport
-      parentRoute: typeof CollaborationRoute
-    }
-    '/collaboration/marketplace': {
-      id: '/collaboration/marketplace'
-      path: '/marketplace'
-      fullPath: '/collaboration/marketplace'
-      preLoaderRoute: typeof CollaborationMarketplaceRouteImport
-      parentRoute: typeof CollaborationRoute
-    }
-    '/collaboration/live': {
-      id: '/collaboration/live'
-      path: '/live'
-      fullPath: '/collaboration/live'
-      preLoaderRoute: typeof CollaborationLiveRouteImport
-      parentRoute: typeof CollaborationRoute
-    }
-    '/collaboration/invitations': {
-      id: '/collaboration/invitations'
-      path: '/invitations'
-      fullPath: '/collaboration/invitations'
-      preLoaderRoute: typeof CollaborationInvitationsRouteImport
-      parentRoute: typeof CollaborationRoute
-    }
-    '/collaboration/incidents': {
-      id: '/collaboration/incidents'
-      path: '/incidents'
-      fullPath: '/collaboration/incidents'
-      preLoaderRoute: typeof CollaborationIncidentsRouteImport
-      parentRoute: typeof CollaborationRoute
-    }
-    '/collaboration/handbook': {
-      id: '/collaboration/handbook'
-      path: '/handbook'
-      fullPath: '/collaboration/handbook'
-      preLoaderRoute: typeof CollaborationHandbookRouteImport
-      parentRoute: typeof CollaborationRoute
-    }
-    '/collaboration/discover': {
-      id: '/collaboration/discover'
-      path: '/discover'
-      fullPath: '/collaboration/discover'
-      preLoaderRoute: typeof CollaborationDiscoverRouteImport
-      parentRoute: typeof CollaborationRoute
-    }
-    '/collaboration/create': {
-      id: '/collaboration/create'
-      path: '/create'
-      fullPath: '/collaboration/create'
-      preLoaderRoute: typeof CollaborationCreateRouteImport
-      parentRoute: typeof CollaborationRoute
-    }
-    '/collaboration/analytics': {
-      id: '/collaboration/analytics'
-      path: '/analytics'
-      fullPath: '/collaboration/analytics'
-      preLoaderRoute: typeof CollaborationAnalyticsRouteImport
-      parentRoute: typeof CollaborationRoute
-    }
-    '/collaboration/workspace/$id': {
-      id: '/collaboration/workspace/$id'
-      path: '/workspace/$id'
-      fullPath: '/collaboration/workspace/$id'
-      preLoaderRoute: typeof CollaborationWorkspaceIdRouteImport
-      parentRoute: typeof CollaborationRoute
-    }
-    '/collaboration/squad/$id': {
-      id: '/collaboration/squad/$id'
-      path: '/squad/$id'
-      fullPath: '/collaboration/squad/$id'
-      preLoaderRoute: typeof CollaborationSquadIdRouteImport
-      parentRoute: typeof CollaborationRoute
-    }
-    '/collaboration/retro/$id': {
-      id: '/collaboration/retro/$id'
-      path: '/retro/$id'
-      fullPath: '/collaboration/retro/$id'
-      preLoaderRoute: typeof CollaborationRetroIdRouteImport
-      parentRoute: typeof CollaborationRoute
-    }
-    '/collaboration/engineer/$id': {
-      id: '/collaboration/engineer/$id'
-      path: '/engineer/$id'
-      fullPath: '/collaboration/engineer/$id'
-      preLoaderRoute: typeof CollaborationEngineerIdRouteImport
-      parentRoute: typeof CollaborationRoute
-    }
-    '/collaboration/complete/$id': {
-      id: '/collaboration/complete/$id'
-      path: '/complete/$id'
-      fullPath: '/collaboration/complete/$id'
-      preLoaderRoute: typeof CollaborationCompleteIdRouteImport
-      parentRoute: typeof CollaborationRoute
     }
     '/lab/$slug/ticket/$ticketId': {
       id: '/lab/$slug/ticket/$ticketId'
@@ -653,60 +233,6 @@ declare module '@tanstack/react-router' {
     }
   }
 }
-
-interface CollaborationRouteChildren {
-  CollaborationAnalyticsRoute: typeof CollaborationAnalyticsRoute
-  CollaborationCreateRoute: typeof CollaborationCreateRoute
-  CollaborationDiscoverRoute: typeof CollaborationDiscoverRoute
-  CollaborationHandbookRoute: typeof CollaborationHandbookRoute
-  CollaborationIncidentsRoute: typeof CollaborationIncidentsRoute
-  CollaborationInvitationsRoute: typeof CollaborationInvitationsRoute
-  CollaborationLiveRoute: typeof CollaborationLiveRoute
-  CollaborationMarketplaceRoute: typeof CollaborationMarketplaceRoute
-  CollaborationMentorshipRoute: typeof CollaborationMentorshipRoute
-  CollaborationNotificationsRoute: typeof CollaborationNotificationsRoute
-  CollaborationPairRoute: typeof CollaborationPairRoute
-  CollaborationRankingsRoute: typeof CollaborationRankingsRoute
-  CollaborationRecruiterRoute: typeof CollaborationRecruiterRoute
-  CollaborationReputationRoute: typeof CollaborationReputationRoute
-  CollaborationRequestsRoute: typeof CollaborationRequestsRoute
-  CollaborationSquadsRoute: typeof CollaborationSquadsRoute
-  CollaborationIndexRoute: typeof CollaborationIndexRoute
-  CollaborationCompleteIdRoute: typeof CollaborationCompleteIdRoute
-  CollaborationEngineerIdRoute: typeof CollaborationEngineerIdRoute
-  CollaborationRetroIdRoute: typeof CollaborationRetroIdRoute
-  CollaborationSquadIdRoute: typeof CollaborationSquadIdRoute
-  CollaborationWorkspaceIdRoute: typeof CollaborationWorkspaceIdRoute
-}
-
-const CollaborationRouteChildren: CollaborationRouteChildren = {
-  CollaborationAnalyticsRoute: CollaborationAnalyticsRoute,
-  CollaborationCreateRoute: CollaborationCreateRoute,
-  CollaborationDiscoverRoute: CollaborationDiscoverRoute,
-  CollaborationHandbookRoute: CollaborationHandbookRoute,
-  CollaborationIncidentsRoute: CollaborationIncidentsRoute,
-  CollaborationInvitationsRoute: CollaborationInvitationsRoute,
-  CollaborationLiveRoute: CollaborationLiveRoute,
-  CollaborationMarketplaceRoute: CollaborationMarketplaceRoute,
-  CollaborationMentorshipRoute: CollaborationMentorshipRoute,
-  CollaborationNotificationsRoute: CollaborationNotificationsRoute,
-  CollaborationPairRoute: CollaborationPairRoute,
-  CollaborationRankingsRoute: CollaborationRankingsRoute,
-  CollaborationRecruiterRoute: CollaborationRecruiterRoute,
-  CollaborationReputationRoute: CollaborationReputationRoute,
-  CollaborationRequestsRoute: CollaborationRequestsRoute,
-  CollaborationSquadsRoute: CollaborationSquadsRoute,
-  CollaborationIndexRoute: CollaborationIndexRoute,
-  CollaborationCompleteIdRoute: CollaborationCompleteIdRoute,
-  CollaborationEngineerIdRoute: CollaborationEngineerIdRoute,
-  CollaborationRetroIdRoute: CollaborationRetroIdRoute,
-  CollaborationSquadIdRoute: CollaborationSquadIdRoute,
-  CollaborationWorkspaceIdRoute: CollaborationWorkspaceIdRoute,
-}
-
-const CollaborationRouteWithChildren = CollaborationRoute._addFileChildren(
-  CollaborationRouteChildren,
-)
 
 interface LabSlugTicketTicketIdRouteChildren {
   LabSlugTicketTicketIdReviewRoute: typeof LabSlugTicketTicketIdReviewRoute
@@ -736,7 +262,7 @@ const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   AnalyticsRoute: AnalyticsRoute,
   CertificatesRoute: CertificatesRoute,
-  CollaborationRoute: CollaborationRouteWithChildren,
+  CollaborationRoute: CollaborationRoute,
   ForumRoute: ForumRoute,
   LeaderboardRoute: LeaderboardRoute,
   ProfileRoute: ProfileRoute,
@@ -745,13 +271,3 @@ const rootRouteChildren: RootRouteChildren = {
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
   ._addFileTypes<FileRouteTypes>()
-
-import type { getRouter } from './router.tsx'
-import type { startInstance } from './start.ts'
-declare module '@tanstack/react-start' {
-  interface Register {
-    ssr: true
-    router: Awaited<ReturnType<typeof getRouter>>
-    config: Awaited<ReturnType<typeof startInstance.getOptions>>
-  }
-}
