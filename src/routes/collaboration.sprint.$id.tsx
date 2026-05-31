@@ -1,9 +1,9 @@
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
-import { useState } from "react";
-import { useCollab, fmtCountdown } from "@/lib/collab/store";
+import { useMemo, useState } from "react";
+import { useCollab } from "@/lib/collab/store";
 import { DOMAIN_COLORS, ME_ID, type RoleKey, type SprintMember } from "@/lib/collab/data";
 import { Avatar, LevelBadge, RoleBadge } from "@/components/collab/Avatar";
-import { CheckCircle2, Circle, X, AlertTriangle, Shuffle, Bot, MessageSquare } from "lucide-react";
+import { CheckCircle2, Circle, X, AlertTriangle, Shuffle, Bot, MessageSquare, Users, Plus, Trash2 } from "lucide-react";
 
 export const Route = createFileRoute("/collaboration/sprint/$id")({ component: SprintDetail });
 
