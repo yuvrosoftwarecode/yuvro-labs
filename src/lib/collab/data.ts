@@ -278,7 +278,7 @@ const mkSprint = (overrides: Partial<Sprint> & Pick<Sprint, "id" | "title" | "do
   const base = {
     description: "Ship an end-to-end production-style feature with a real cross-functional team. Each role owns their tickets and dependencies are real.",
     durationDays: 3,
-    requiredRoles: ["SQL", "Backend", "Frontend", "QA", "DevOps"],
+    requiredRoles: ["SQL", "Backend", "Frontend", "QA", "DevOps"] as RoleKey[],
     members: [
       { userId: "u-sofia", role: "SQL", status: "joined" },
       { userId: ME_ID, role: "Backend", status: "joined" },
@@ -287,34 +287,35 @@ const mkSprint = (overrides: Partial<Sprint> & Pick<Sprint, "id" | "title" | "do
       { userId: "u-rohith", role: "Frontend", status: "inactive" },
       { userId: "u-noah", role: "QA", status: "joined" },
       { userId: "u-dev", role: "DevOps", status: "joined" },
-    ],
+    ] as SprintMember[],
     objectives: [
       "Ship login + checkout flows end-to-end",
       "All PRs reviewed within sprint window",
       "QA sign-off + staging deploy before deadline",
     ],
     dependencies: [
-      { role: "Backend", dependsOn: "SQL", unlocks: "User Tables schema merged" },
-      { role: "Frontend", dependsOn: "Backend", unlocks: "API tickets merged" },
-      { role: "QA", dependsOn: "Frontend", unlocks: "All dev tickets merged" },
-      { role: "DevOps", dependsOn: "QA", unlocks: "QA sign-off merged" },
+      { role: "Backend" as RoleKey, dependsOn: "SQL" as RoleKey, unlocks: "User Tables schema merged" },
+      { role: "Frontend" as RoleKey, dependsOn: "Backend" as RoleKey, unlocks: "API tickets merged" },
+      { role: "QA" as RoleKey, dependsOn: "Frontend" as RoleKey, unlocks: "All dev tickets merged" },
+      { role: "DevOps" as RoleKey, dependsOn: "QA" as RoleKey, unlocks: "QA sign-off merged" },
     ],
-    startedAt: now - hours(28),
-    deadlineAt: now + hours(44),
+    startedAt: now - hours(28) as number | undefined,
+    deadlineAt: now + hours(44) as number | undefined,
+    submittedAt: undefined as number | undefined,
     aiAutoFill: true,
     ...overrides,
   };
   if (overrides.status === "Open") {
     base.startedAt = undefined;
     base.deadlineAt = undefined;
-    base.members = base.members.map((m, i) => i < 3 ? m : { ...m, userId: null, status: "open" });
+    base.members = base.members.map((m, i) => i < 3 ? m : { ...m, userId: null, status: "open" as MemberStatus });
   }
   if (overrides.status === "Completed") {
     base.startedAt = now - days(5);
     base.deadlineAt = now - days(2);
-    base.submittedAt = now - days(2) - hours(3); // on time
+    base.submittedAt = now - days(2) - hours(3);
   }
-  return base;
+  return base as Sprint;
 };
 
 export const seedSprints: Sprint[] = [
