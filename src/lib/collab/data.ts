@@ -109,6 +109,18 @@ export interface Sprint {
   aiAutoFill?: boolean;
 }
 
+export interface Team {
+  id: string;
+  sprintId: string;
+  name: string;
+  status: "Recruiting" | "Full" | "Active";
+  ownerId: string;
+  memberIds: string[];           // accepted members
+  invites: { userId: string; role: RoleKey; status: "pending" | "accepted" | "declined" }[];
+  openRoles: { role: RoleKey; note?: string }[];   // public role requests
+  createdAt: number;
+}
+
 export interface Squad {
   id: string;
   name: string;
@@ -354,6 +366,11 @@ export const seedSquads: Squad[] = [
 export const seedConnections: string[] = ["u-priya", "u-liam", "u-sofia", "u-noah", "u-rohith", "u-anjali", "u-meera", "u-dev"];
 
 export const seedPendingIncoming: string[] = ["u-kavya", "u-arjun"];
+
+export const seedTeams: Team[] = [
+  { id: "tm-1", sprintId: "sp-4", name: "Pipeline Pirates", status: "Recruiting", ownerId: "u-anjali", memberIds: ["u-anjali", "u-sofia"], invites: [{ userId: "u-noah", role: "QA", status: "pending" }], openRoles: [{ role: "Frontend", note: "Need someone for grade dashboard UI" }, { role: "DevOps" }], createdAt: now - hours(5) },
+  { id: "tm-2", sprintId: "sp-5", name: "Route Wizards", status: "Recruiting", ownerId: "u-priya", memberIds: ["u-priya"], invites: [], openRoles: [{ role: "Frontend" }, { role: "SQL" }, { role: "QA" }, { role: "DevOps" }], createdAt: now - hours(12) },
+];
 
 export const seedNotifications: Notification[] = [
   { id: "n1", type: "pr-changes", message: "Anjali R. requested changes on your PR for #B02.", at: now - hours(2), read: false, link: "/collaboration/sprint/sp-1/workspace?tab=pr" },

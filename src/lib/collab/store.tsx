@@ -1,10 +1,10 @@
 import { createContext, useContext, useMemo, useState, ReactNode, useEffect, useCallback } from "react";
 import {
   seedUsers, seedSprints, seedTickets, seedPRs, seedMessages, seedForum,
-  seedSquads, seedConnections, seedPendingIncoming, seedNotifications,
+  seedSquads, seedConnections, seedPendingIncoming, seedNotifications, seedTeams,
   aiUser, ME_ID, AI_ID,
   type User, type Sprint, type Ticket, type PR, type ChatMsg, type ForumThread,
-  type Squad, type Notification, type RoleKey, type TicketStatus, type PRStatus, type SprintMember, type MemberStatus,
+  type Squad, type Team, type Notification, type RoleKey, type TicketStatus, type PRStatus, type SprintMember, type MemberStatus,
 } from "./data";
 
 interface CollabState {
@@ -15,6 +15,7 @@ interface CollabState {
   messages: Record<string, ChatMsg[]>;
   forum: Record<string, ForumThread[]>;
   squads: Squad[];
+  teams: Team[];
   connections: string[];
   pendingIncoming: string[];
   notifications: Notification[];
@@ -58,6 +59,8 @@ interface CollabActions {
   connect: (userId: string) => void;
   acceptConnect: (userId: string) => void;
   ignoreConnect: (userId: string) => void;
+
+  createTeam: (input: { sprintId: string; name: string; myRole: RoleKey; invites: { userId: string; role: RoleKey }[]; openRoles: { role: RoleKey; note?: string }[] }) => string;
 }
 
 const Ctx = createContext<(CollabState & CollabActions) | null>(null);
@@ -70,6 +73,7 @@ export function CollabProvider({ children }: { children: ReactNode }) {
   const [messages, setMessages] = useState<Record<string, ChatMsg[]>>(seedMessages);
   const [forum, setForum] = useState<Record<string, ForumThread[]>>(seedForum);
   const [squads, setSquads] = useState<Squad[]>(seedSquads);
+  const [teams, setTeams] = useState<Team[]>(seedTeams);
   const [connections, setConnections] = useState<string[]>(seedConnections);
   const [pendingIncoming, setPendingIncoming] = useState<string[]>(seedPendingIncoming);
   const [notifications, setNotifications] = useState<Notification[]>(seedNotifications);
@@ -212,8 +216,24 @@ export function CollabProvider({ children }: { children: ReactNode }) {
   const ignoreConnect = (userId: string) =>
     setPendingIncoming(p => p.filter(id => id !== userId));
 
+  const createTeam: CollabActions["createTeam"] = ({ sprintId, name, myRole, invites, openRoles }) => {
+    const id = `tm-${Date.now()}`;
+    const team: Team = {
+      id, sprintId, name, status: "Recruiting", ownerId: ME_ID,
+      memberIds: [ME_ID],
+      invites: invites.map(i => ({ ...i, status: "pending" as const })),
+      openRoles,
+      createdAt: Date.now(),
+    };
+    setTeams(t => [team, ...t]);
+    joinSprint(sprintId, myRole);
+    invites.forEach(i => pushNotification({ type: "sprint-invite", message: `Invite sent to ${user(i.userId)?.name ?? i.userId} for ${i.role}.`, link: `/collaboration/sprint/${sprintId}` }));
+    openRoles.forEach(r => pushNotification({ type: "role-request", message: `Public request posted: ${r.role}.`, link: `/collaboration/sprint/${sprintId}` }));
+    return id;
+  };
+
   const value = useMemo<CollabState & CollabActions>(() => ({
-    users, sprints, tickets, prs, messages, forum, squads, connections, pendingIncoming, notifications, meId: ME_ID,
+    users, sprints, tickets, prs, messages, forum, squads, teams, connections, pendingIncoming, notifications, meId: ME_ID,
     user, me, unreadCount, markAllRead, markRead, pushNotification,
     joinSprint, startSprint, submitSprint,
     updateTicket, setTicketStatus, addCommit,
@@ -221,7 +241,8 @@ export function CollabProvider({ children }: { children: ReactNode }) {
     sendMessage, addThread, upvoteThread, replyThread,
     createSquad, inviteToSquad, removeFromSquad, leaveSquad, disbandSquad,
     connect, acceptConnect, ignoreConnect,
-  }), [users, sprints, tickets, prs, messages, forum, squads, connections, pendingIncoming, notifications, user, me, unreadCount]);
+    createTeam,
+  }), [users, sprints, tickets, prs, messages, forum, squads, teams, connections, pendingIncoming, notifications, user, me, unreadCount]);
 
   return <Ctx.Provider value={value}>{children}</Ctx.Provider>;
 }
