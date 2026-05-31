@@ -109,6 +109,18 @@ export interface Sprint {
   aiAutoFill?: boolean;
 }
 
+export interface Team {
+  id: string;
+  sprintId: string;
+  name: string;
+  status: "Recruiting" | "Full" | "Active";
+  ownerId: string;
+  memberIds: string[];           // accepted members
+  invites: { userId: string; role: RoleKey; status: "pending" | "accepted" | "declined" }[];
+  openRoles: { role: RoleKey; note?: string }[];   // public role requests
+  createdAt: number;
+}
+
 export interface Squad {
   id: string;
   name: string;
