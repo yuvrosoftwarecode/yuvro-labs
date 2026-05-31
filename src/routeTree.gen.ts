@@ -19,6 +19,7 @@ import { Route as IndexRouteImport } from './routes/index'
 import { Route as CollaborationIndexRouteImport } from './routes/collaboration.index'
 import { Route as LabSlugRouteImport } from './routes/lab.$slug'
 import { Route as CollaborationBrowseRouteImport } from './routes/collaboration.browse'
+import { Route as CollaborationSprintIdRouteImport } from './routes/collaboration.sprint.$id'
 import { Route as LabSlugTicketTicketIdRouteImport } from './routes/lab.$slug.ticket.$ticketId'
 import { Route as LabSlugTicketTicketIdReviewRouteImport } from './routes/lab.$slug.ticket.$ticketId.review'
 
@@ -72,6 +73,11 @@ const CollaborationBrowseRoute = CollaborationBrowseRouteImport.update({
   path: '/browse',
   getParentRoute: () => CollaborationRoute,
 } as any)
+const CollaborationSprintIdRoute = CollaborationSprintIdRouteImport.update({
+  id: '/sprint/$id',
+  path: '/sprint/$id',
+  getParentRoute: () => CollaborationRoute,
+} as any)
 const LabSlugTicketTicketIdRoute = LabSlugTicketTicketIdRouteImport.update({
   id: '/ticket/$ticketId',
   path: '/ticket/$ticketId',
@@ -95,6 +101,7 @@ export interface FileRoutesByFullPath {
   '/collaboration/browse': typeof CollaborationBrowseRoute
   '/lab/$slug': typeof LabSlugRouteWithChildren
   '/collaboration/': typeof CollaborationIndexRoute
+  '/collaboration/sprint/$id': typeof CollaborationSprintIdRoute
   '/lab/$slug/ticket/$ticketId': typeof LabSlugTicketTicketIdRouteWithChildren
   '/lab/$slug/ticket/$ticketId/review': typeof LabSlugTicketTicketIdReviewRoute
 }
@@ -108,6 +115,7 @@ export interface FileRoutesByTo {
   '/collaboration/browse': typeof CollaborationBrowseRoute
   '/lab/$slug': typeof LabSlugRouteWithChildren
   '/collaboration': typeof CollaborationIndexRoute
+  '/collaboration/sprint/$id': typeof CollaborationSprintIdRoute
   '/lab/$slug/ticket/$ticketId': typeof LabSlugTicketTicketIdRouteWithChildren
   '/lab/$slug/ticket/$ticketId/review': typeof LabSlugTicketTicketIdReviewRoute
 }
@@ -123,6 +131,7 @@ export interface FileRoutesById {
   '/collaboration/browse': typeof CollaborationBrowseRoute
   '/lab/$slug': typeof LabSlugRouteWithChildren
   '/collaboration/': typeof CollaborationIndexRoute
+  '/collaboration/sprint/$id': typeof CollaborationSprintIdRoute
   '/lab/$slug/ticket/$ticketId': typeof LabSlugTicketTicketIdRouteWithChildren
   '/lab/$slug/ticket/$ticketId/review': typeof LabSlugTicketTicketIdReviewRoute
 }
@@ -139,6 +148,7 @@ export interface FileRouteTypes {
     | '/collaboration/browse'
     | '/lab/$slug'
     | '/collaboration/'
+    | '/collaboration/sprint/$id'
     | '/lab/$slug/ticket/$ticketId'
     | '/lab/$slug/ticket/$ticketId/review'
   fileRoutesByTo: FileRoutesByTo
@@ -152,6 +162,7 @@ export interface FileRouteTypes {
     | '/collaboration/browse'
     | '/lab/$slug'
     | '/collaboration'
+    | '/collaboration/sprint/$id'
     | '/lab/$slug/ticket/$ticketId'
     | '/lab/$slug/ticket/$ticketId/review'
   id:
@@ -166,6 +177,7 @@ export interface FileRouteTypes {
     | '/collaboration/browse'
     | '/lab/$slug'
     | '/collaboration/'
+    | '/collaboration/sprint/$id'
     | '/lab/$slug/ticket/$ticketId'
     | '/lab/$slug/ticket/$ticketId/review'
   fileRoutesById: FileRoutesById
@@ -253,6 +265,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof CollaborationBrowseRouteImport
       parentRoute: typeof CollaborationRoute
     }
+    '/collaboration/sprint/$id': {
+      id: '/collaboration/sprint/$id'
+      path: '/sprint/$id'
+      fullPath: '/collaboration/sprint/$id'
+      preLoaderRoute: typeof CollaborationSprintIdRouteImport
+      parentRoute: typeof CollaborationRoute
+    }
     '/lab/$slug/ticket/$ticketId': {
       id: '/lab/$slug/ticket/$ticketId'
       path: '/ticket/$ticketId'
@@ -273,11 +292,13 @@ declare module '@tanstack/react-router' {
 interface CollaborationRouteChildren {
   CollaborationBrowseRoute: typeof CollaborationBrowseRoute
   CollaborationIndexRoute: typeof CollaborationIndexRoute
+  CollaborationSprintIdRoute: typeof CollaborationSprintIdRoute
 }
 
 const CollaborationRouteChildren: CollaborationRouteChildren = {
   CollaborationBrowseRoute: CollaborationBrowseRoute,
   CollaborationIndexRoute: CollaborationIndexRoute,
+  CollaborationSprintIdRoute: CollaborationSprintIdRoute,
 }
 
 const CollaborationRouteWithChildren = CollaborationRoute._addFileChildren(
