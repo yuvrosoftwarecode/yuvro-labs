@@ -13,9 +13,10 @@ const links = [
   { to: "/profile", label: "Profile", icon: User },
 ];
 
-export function TopNav() {
+export function TopNav({ rightSlot, activeOverride }: { rightSlot?: React.ReactNode; activeOverride?: string } = {}) {
   const path = useRouterState({ select: (s) => s.location.pathname });
   const { theme, toggle } = useTheme();
+  const activePath = activeOverride ?? path;
   return (
     <header className="sticky top-0 z-40 glass border-b border-border">
       <div className="mx-auto flex h-14 max-w-[1400px] items-center gap-6 px-4">
@@ -25,7 +26,7 @@ export function TopNav() {
         </Link>
         <nav className="hidden md:flex items-center gap-1 text-sm">
           {links.map((l) => {
-            const active = l.to === "/" ? path === "/" : path.startsWith(l.to);
+            const active = l.to === "/" ? activePath === "/" : activePath.startsWith(l.to);
             const Icon = l.icon;
             return (
               <Link key={l.to} to={l.to}
@@ -36,6 +37,7 @@ export function TopNav() {
           })}
         </nav>
         <div className="ml-auto flex items-center gap-3 text-sm">
+          {rightSlot}
           <button onClick={toggle} title={`Switch to ${theme === "dark" ? "light" : "dark"} mode`}
             className="grid h-8 w-8 place-items-center rounded-md border hover:bg-accent text-muted-foreground hover:text-foreground transition-colors">
             {theme === "dark" ? <Sun className="h-4 w-4" /> : <Moon className="h-4 w-4" />}
