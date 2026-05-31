@@ -59,6 +59,8 @@ interface CollabActions {
   connect: (userId: string) => void;
   acceptConnect: (userId: string) => void;
   ignoreConnect: (userId: string) => void;
+
+  createTeam: (input: { sprintId: string; name: string; myRole: RoleKey; invites: { userId: string; role: RoleKey }[]; openRoles: { role: RoleKey; note?: string }[] }) => string;
 }
 
 const Ctx = createContext<(CollabState & CollabActions) | null>(null);
