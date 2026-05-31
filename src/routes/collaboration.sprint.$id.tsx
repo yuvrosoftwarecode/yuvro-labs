@@ -233,138 +233,174 @@ function RoleConfirmModal({ role, onClose, onConfirm }: { role: RoleKey; onClose
   );
 }
 
-const RANDOM_NAMES = ["Rocket Squad", "Night Owls", "Ship Fast", "Bug Hunters", "API Whisperers", "Pixel Pushers", "Merge Masters"];
+const RANDOM_NAMES = ["Rocket Squad", "Night Owls", "Ship Fast", "Bug Hunters", "API Whisperers", "Pixel Pushers", "Merge Masters", "Code Owls", "Sprint Sharks"];
+const randomName = () => RANDOM_NAMES[Math.floor(Math.random() * RANDOM_NAMES.length)];
 
 function CreateTeamModal({ sprintId, onClose }: { sprintId: string; onClose: () => void }) {
-  const { sprints, users, connections, squads, user, joinSprint, pushNotification } = useCollab();
+  const { sprints, users, connections, squads, user, createTeam } = useCollab();
   const nav = useNavigate();
   const sprint = sprints.find(s => s.id === sprintId)!;
-  const [step, setStep] = useState<1 | 2>(1);
-  const [name, setName] = useState("");
+
+  const [name, setName] = useState(randomName());
   const [myRole, setMyRole] = useState<RoleKey>(sprint.requiredRoles[0]);
   const [search, setSearch] = useState("");
   const [onlyConnections, setOnlyConnections] = useState(true);
   const [invited, setInvited] = useState<{ userId: string; role: RoleKey }[]>([]);
   const [squadId, setSquadId] = useState<string>("");
+  const [squadPicked, setSquadPicked] = useState<Record<string, RoleKey | "">>({});
+  const [openRoles, setOpenRoles] = useState<{ role: RoleKey; note?: string }[]>([]);
   const [requestRole, setRequestRole] = useState<RoleKey>(sprint.requiredRoles[1] ?? sprint.requiredRoles[0]);
-  const [requestMsg, setRequestMsg] = useState("");
-  const [aiFill, setAiFill] = useState(true);
+  const [requestNote, setRequestNote] = useState("");
 
-  const searchPool = users.filter(u => u.id !== ME_ID && u.id !== "u-ai" && (!onlyConnections || connections.includes(u.id)))
-    .filter(u => !search || u.name.toLowerCase().includes(search.toLowerCase()) || u.username.includes(search.toLowerCase()));
+  const searchPool = useMemo(() => users.filter(u => u.id !== ME_ID && u.id !== "u-ai" && (!onlyConnections || connections.includes(u.id)))
+    .filter(u => !search || u.name.toLowerCase().includes(search.toLowerCase()) || u.username.includes(search.toLowerCase())), [users, connections, onlyConnections, search]);
+
+  const toggleInvite = (userId: string, role: RoleKey) => {
+    setInvited(i => {
+      const exists = i.find(x => x.userId === userId);
+      if (exists && exists.role === role) return i.filter(x => x.userId !== userId);
+      return [...i.filter(x => x.userId !== userId), { userId, role }];
+    });
+  };
+
+  const squad = squads.find(s => s.id === squadId);
+
+  const submit = () => {
+    if (!name.trim()) return;
+    const squadInvites = Object.entries(squadPicked).filter(([, r]) => !!r).map(([uid, role]) => ({ userId: uid, role: role as RoleKey }));
+    const allInvites = [...invited, ...squadInvites.filter(s => !invited.some(i => i.userId === s.userId))];
+    createTeam({ sprintId, name: name.trim(), myRole, invites: allInvites, openRoles });
+    onClose();
+    nav({ to: "/collaboration/sprint/$id/workspace", params: { id: sprintId } });
+  };
 
   return (
     <div className="fixed inset-0 z-50 bg-black/60" onClick={onClose}>
-      <div className="absolute right-0 top-0 bottom-0 w-full sm:w-[520px] bg-card border-l overflow-y-auto animate-in slide-in-from-right" onClick={e => e.stopPropagation()}>
-        <div className="flex items-center justify-between p-4 border-b">
-          <h2 className="font-semibold">Create Team · Step {step} of 2</h2>
+      <div className="absolute right-0 top-0 bottom-0 w-full sm:w-[560px] bg-card border-l overflow-y-auto" onClick={e => e.stopPropagation()}>
+        <div className="flex items-center justify-between p-4 border-b sticky top-0 bg-card z-10">
+          <div>
+            <h2 className="font-semibold">Create Team</h2>
+            <p className="text-[11px] text-muted-foreground">{sprint.title}</p>
+          </div>
           <button onClick={onClose} className="grid h-7 w-7 place-items-center rounded hover:bg-accent"><X className="h-4 w-4" /></button>
         </div>
 
-        {step === 1 ? (
-          <div className="p-5 space-y-4">
-            <div>
-              <label className="text-xs text-muted-foreground">Team name</label>
-              <div className="mt-1 flex gap-2">
-                <input value={name} onChange={e => setName(e.target.value)} placeholder="e.g. Ship Fast" className="flex-1 px-3 py-2 text-sm rounded-md border bg-background" />
-                <button onClick={() => setName(RANDOM_NAMES[Math.floor(Math.random() * RANDOM_NAMES.length)])} className="rounded-md border px-3 py-2 text-sm hover:bg-accent inline-flex items-center gap-1"><Shuffle className="h-3.5 w-3.5" /> Random</button>
-              </div>
+        <div className="p-5 space-y-6">
+          {/* Team name */}
+          <section>
+            <label className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">Team name</label>
+            <div className="mt-2 flex gap-2">
+              <input value={name} onChange={e => setName(e.target.value)} className="flex-1 px-3 py-2 text-sm rounded-md border bg-background" />
+              <button onClick={() => setName(randomName())} className="rounded-md border px-3 py-2 text-sm hover:bg-accent inline-flex items-center gap-1"><Shuffle className="h-3.5 w-3.5" /> Random</button>
             </div>
-            <div>
-              <label className="text-xs text-muted-foreground">Your role</label>
-              <select value={myRole} onChange={e => setMyRole(e.target.value as RoleKey)} className="mt-1 w-full px-3 py-2 text-sm rounded-md border bg-background">
-                {sprint.requiredRoles.map(r => <option key={r} value={r}>{r}</option>)}
-              </select>
+          </section>
+
+          {/* My role */}
+          <section>
+            <label className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">Your role</label>
+            <select value={myRole} onChange={e => setMyRole(e.target.value as RoleKey)} className="mt-2 w-full px-3 py-2 text-sm rounded-md border bg-background">
+              {sprint.requiredRoles.map(r => <option key={r} value={r}>{r}</option>)}
+            </select>
+          </section>
+
+          {/* Invite members */}
+          <section>
+            <h3 className="text-xs font-semibold text-muted-foreground uppercase tracking-wider mb-2">Invite members</h3>
+            <div className="flex gap-2 mb-2">
+              <input value={search} onChange={e => setSearch(e.target.value)} placeholder="Search by name or @username" className="flex-1 px-3 py-2 text-sm rounded-md border bg-background" />
+              <label className="text-xs flex items-center gap-1.5 px-2 py-2 rounded border"><input type="checkbox" checked={onlyConnections} onChange={e => setOnlyConnections(e.target.checked)} /> Connections only</label>
             </div>
-            <button disabled={!name.trim()} onClick={() => setStep(2)} className="w-full rounded-md bg-primary text-primary-foreground px-3 py-2 text-sm font-medium hover:opacity-90 disabled:opacity-50">Create Team</button>
-          </div>
-        ) : (
-          <div className="p-5 space-y-5">
-            <section>
-              <h3 className="text-sm font-semibold mb-2">Invite by username / connection</h3>
-              <div className="flex gap-2 mb-2">
-                <input value={search} onChange={e => setSearch(e.target.value)} placeholder="Search users..." className="flex-1 px-3 py-2 text-sm rounded-md border bg-background" />
-                <label className="text-xs flex items-center gap-1.5"><input type="checkbox" checked={onlyConnections} onChange={e => setOnlyConnections(e.target.checked)} /> My connections</label>
-              </div>
-              <div className="rounded-lg border max-h-40 overflow-y-auto divide-y">
-                {searchPool.slice(0, 6).map(u => (
+            <div className="rounded-lg border max-h-48 overflow-y-auto divide-y">
+              {searchPool.length === 0 && <p className="p-3 text-xs text-muted-foreground text-center">No users found.</p>}
+              {searchPool.slice(0, 8).map(u => {
+                const inv = invited.find(x => x.userId === u.id);
+                return (
                   <div key={u.id} className="flex items-center gap-2 p-2">
                     <Avatar userId={u.id} size={28} />
-                    <div className="flex-1 min-w-0"><div className="text-xs font-medium truncate">{u.name}</div><LevelBadge level={u.level} /></div>
-                    <select onChange={e => setInvited(i => [...i.filter(x => x.userId !== u.id), { userId: u.id, role: e.target.value as RoleKey }])} className="text-xs rounded border bg-background px-1.5 py-1">
-                      <option value="">Role…</option>
+                    <div className="flex-1 min-w-0"><div className="text-xs font-medium truncate">{u.name}</div><div className="flex items-center gap-1"><LevelBadge level={u.level} /><span className="text-[10px] text-muted-foreground">{u.roles.join(", ")}</span></div></div>
+                    <select value={inv?.role ?? ""} onChange={e => e.target.value ? toggleInvite(u.id, e.target.value as RoleKey) : setInvited(i => i.filter(x => x.userId !== u.id))} className="text-xs rounded border bg-background px-1.5 py-1">
+                      <option value="">— Role —</option>
                       {sprint.requiredRoles.map(r => <option key={r} value={r}>{r}</option>)}
                     </select>
                   </div>
+                );
+              })}
+            </div>
+            {invited.length > 0 && (
+              <div className="mt-2 flex flex-wrap gap-1.5">
+                {invited.map(inv => (
+                  <span key={inv.userId} className="inline-flex items-center gap-1 text-[11px] bg-accent/60 rounded-full pl-1 pr-2 py-0.5">
+                    <Avatar userId={inv.userId} size={16} /> {user(inv.userId)?.name} <RoleBadge role={inv.role} />
+                    <button onClick={() => setInvited(i => i.filter(x => x.userId !== inv.userId))} className="ml-1 text-muted-foreground hover:text-destructive"><X className="h-3 w-3" /></button>
+                  </span>
                 ))}
               </div>
-              {invited.length > 0 && (
-                <div className="mt-2 space-y-1">
-                  {invited.map(inv => {
-                    const u = user(inv.userId);
-                    return (
-                      <div key={inv.userId} className="flex items-center gap-2 text-xs bg-accent/40 rounded p-2">
-                        <Avatar userId={inv.userId} size={20} /> <span className="flex-1">{u?.name}</span>
-                        <RoleBadge role={inv.role} />
-                        <button onClick={() => setInvited(i => i.filter(x => x.userId !== inv.userId))} className="text-muted-foreground hover:text-destructive"><X className="h-3 w-3" /></button>
-                      </div>
-                    );
-                  })}
-                </div>
-              )}
-            </section>
+            )}
+          </section>
 
-            <section>
-              <h3 className="text-sm font-semibold mb-2">Bring my squad</h3>
-              <select value={squadId} onChange={e => setSquadId(e.target.value)} className="w-full px-3 py-2 text-sm rounded-md border bg-background">
-                <option value="">Pick a squad…</option>
-                {squads.map(sq => <option key={sq.id} value={sq.id}>{sq.name} ({sq.memberIds.length})</option>)}
-              </select>
-              {squadId && (
-                <div className="mt-2 space-y-1">
-                  {(squads.find(s => s.id === squadId)?.memberIds ?? []).filter(id => id !== ME_ID).map(id => {
-                    const u = user(id);
-                    return (
-                      <label key={id} className="flex items-center gap-2 text-xs p-1.5 rounded hover:bg-accent/40">
-                        <input type="checkbox" />
-                        <Avatar userId={id} size={20} /> <span className="flex-1">{u?.name}</span>
-                        <span className="text-muted-foreground">{u?.roles.join(", ")}</span>
-                      </label>
-                    );
-                  })}
-                </div>
-              )}
-            </section>
+          {/* Squad */}
+          <section>
+            <h3 className="text-xs font-semibold text-muted-foreground uppercase tracking-wider mb-2">Join with my squad</h3>
+            <select value={squadId} onChange={e => { setSquadId(e.target.value); setSquadPicked({}); }} className="w-full px-3 py-2 text-sm rounded-md border bg-background">
+              <option value="">— Pick a squad —</option>
+              {squads.filter(s => s.memberIds.includes(ME_ID)).map(sq => <option key={sq.id} value={sq.id}>{sq.name} ({sq.memberIds.length} members)</option>)}
+            </select>
+            {squad && (
+              <div className="mt-2 rounded-lg border divide-y">
+                {squad.memberIds.filter(mid => mid !== ME_ID).map(mid => {
+                  const u = user(mid);
+                  return (
+                    <div key={mid} className="flex items-center gap-2 p-2">
+                      <Avatar userId={mid} size={24} />
+                      <span className="text-xs flex-1">{u?.name}</span>
+                      <select value={squadPicked[mid] ?? ""} onChange={e => setSquadPicked(p => ({ ...p, [mid]: e.target.value as RoleKey | "" }))} className="text-xs rounded border bg-background px-1.5 py-1">
+                        <option value="">— Skip —</option>
+                        {sprint.requiredRoles.filter(r => u?.roles.includes(r)).map(r => <option key={r} value={r}>{r}</option>)}
+                      </select>
+                    </div>
+                  );
+                })}
+              </div>
+            )}
+          </section>
 
-            <section>
-              <h3 className="text-sm font-semibold mb-2">Post role request</h3>
-              <select value={requestRole} onChange={e => setRequestRole(e.target.value as RoleKey)} className="w-full px-3 py-2 text-sm rounded-md border bg-background mb-2">
+          {/* Public role request */}
+          <section>
+            <h3 className="text-xs font-semibold text-muted-foreground uppercase tracking-wider mb-2">Post public role request</h3>
+            <div className="flex gap-2">
+              <select value={requestRole} onChange={e => setRequestRole(e.target.value as RoleKey)} className="px-3 py-2 text-sm rounded-md border bg-background">
                 {sprint.requiredRoles.map(r => <option key={r} value={r}>{r}</option>)}
               </select>
-              <textarea value={requestMsg} onChange={e => setRequestMsg(e.target.value)} placeholder="Looking for an experienced QA…" className="w-full px-3 py-2 text-sm rounded-md border bg-background" rows={2} />
-              <button onClick={() => { pushNotification({ type: "role-request", message: `Posted public request for ${requestRole}.`, link: `/collaboration/sprint/${sprint.id}` }); setRequestMsg(""); }} className="mt-2 text-xs rounded-md border px-3 py-1.5 hover:bg-accent">Post Request</button>
-            </section>
-
-            <section>
-              <h3 className="text-sm font-semibold mb-2 flex items-center gap-2"><Bot className="h-4 w-4 text-warning" /> AI fill</h3>
-              <label className="flex items-center gap-2 text-xs">
-                <input type="checkbox" checked={aiFill} onChange={e => setAiFill(e.target.checked)} />
-                Auto-fill remaining roles with AI members when sprint starts
-              </label>
-              <p className="text-[11px] text-muted-foreground mt-1">If a role is still open when you click Start Sprint, an AI team member will fill it automatically.</p>
-            </section>
-
-            <div className="flex gap-2 sticky bottom-0 bg-card pt-3 border-t">
-              <button onClick={() => setStep(1)} className="rounded-md border px-3 py-2 text-sm hover:bg-accent">Back</button>
-              <button onClick={() => {
-                joinSprint(sprint.id, myRole);
-                onClose();
-                nav({ to: "/collaboration/sprint/$id/workspace", params: { id: sprint.id } });
-              }} className="flex-1 rounded-md bg-primary text-primary-foreground px-3 py-2 text-sm font-medium hover:opacity-90">Finish & View Team</button>
+              <input value={requestNote} onChange={e => setRequestNote(e.target.value)} placeholder="Optional note (e.g. needs JWT exp.)" className="flex-1 px-3 py-2 text-sm rounded-md border bg-background" />
+              <button onClick={() => { setOpenRoles(o => [...o, { role: requestRole, note: requestNote || undefined }]); setRequestNote(""); }} className="rounded-md border px-3 text-sm hover:bg-accent inline-flex items-center gap-1"><Plus className="h-3.5 w-3.5" /></button>
             </div>
+            {openRoles.length > 0 && (
+              <div className="mt-2 space-y-1">
+                {openRoles.map((r, i) => (
+                  <div key={i} className="flex items-center gap-2 text-xs bg-accent/40 rounded p-2">
+                    <span className="font-medium">{r.role}</span>
+                    <span className="flex-1 text-muted-foreground truncate">{r.note ?? "Open application"}</span>
+                    <button onClick={() => setOpenRoles(o => o.filter((_, j) => j !== i))} className="text-muted-foreground hover:text-destructive"><Trash2 className="h-3 w-3" /></button>
+                  </div>
+                ))}
+              </div>
+            )}
+          </section>
+
+          <div className="flex items-start gap-2 rounded-md border border-info/30 bg-info/10 p-3 text-xs">
+            <Bot className="h-4 w-4 text-info shrink-0 mt-0.5" />
+            <span>Any role still open when the sprint starts will be auto-filled by an AI member, so your team can begin immediately.</span>
           </div>
-        )}
+        </div>
+
+        <div className="sticky bottom-0 bg-card border-t p-4 flex gap-2">
+          <button onClick={onClose} className="rounded-md border px-4 py-2 text-sm hover:bg-accent">Cancel</button>
+          <button onClick={submit} disabled={!name.trim()} className="flex-1 rounded-md bg-primary text-primary-foreground px-3 py-2 text-sm font-medium hover:opacity-90 disabled:opacity-50">
+            Create Team · Status: Recruiting
+          </button>
+        </div>
       </div>
     </div>
   );
 }
+
