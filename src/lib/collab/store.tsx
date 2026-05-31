@@ -1,10 +1,10 @@
 import { createContext, useContext, useMemo, useState, ReactNode, useEffect, useCallback } from "react";
 import {
   seedUsers, seedSprints, seedTickets, seedPRs, seedMessages, seedForum,
-  seedSquads, seedConnections, seedPendingIncoming, seedNotifications,
+  seedSquads, seedConnections, seedPendingIncoming, seedNotifications, seedTeams,
   aiUser, ME_ID, AI_ID,
   type User, type Sprint, type Ticket, type PR, type ChatMsg, type ForumThread,
-  type Squad, type Notification, type RoleKey, type TicketStatus, type PRStatus, type SprintMember, type MemberStatus,
+  type Squad, type Team, type Notification, type RoleKey, type TicketStatus, type PRStatus, type SprintMember, type MemberStatus,
 } from "./data";
 
 interface CollabState {
@@ -15,6 +15,7 @@ interface CollabState {
   messages: Record<string, ChatMsg[]>;
   forum: Record<string, ForumThread[]>;
   squads: Squad[];
+  teams: Team[];
   connections: string[];
   pendingIncoming: string[];
   notifications: Notification[];
