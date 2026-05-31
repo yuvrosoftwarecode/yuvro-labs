@@ -9,7 +9,7 @@ export const Route = createFileRoute("/collaboration/sprint/$id")({ component: S
 
 function SprintDetail() {
   const { id } = Route.useParams();
-  const { sprints, forum, joinSprint } = useCollab();
+  const { sprints, forum, teams, joinSprint, user } = useCollab();
   const nav = useNavigate();
   const sprint = sprints.find(s => s.id === id);
   const [joinRole, setJoinRole] = useState<RoleKey | null>(null);
@@ -21,6 +21,7 @@ function SprintDetail() {
   const isFull = sprint.requiredRoles.every(r => sprint.members.some(m => m.role === r && (m.status === "joined" || m.status === "ai")));
   const readonly = (sprint.status === "In Progress" || sprint.status === "Completed") && !myMember;
   const threads = (forum[sprint.id] ?? []).slice(0, 3);
+  const recruitingTeams = teams.filter(t => t.sprintId === sprint.id && t.status === "Recruiting");
 
   return (
     <main className="mx-auto max-w-[1400px] px-4 sm:px-6 py-6 grid lg:grid-cols-[2fr_1fr] gap-6">
