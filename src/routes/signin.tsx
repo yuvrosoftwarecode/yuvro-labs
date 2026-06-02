@@ -29,7 +29,10 @@ function SignIn() {
         Sign In <ArrowRight className="h-4 w-4" />
       </button>
     </form>
-    <p className="mt-6 text-center text-sm text-white/60">
+    <div className="mt-4 rounded-md border border-white/10 bg-white/5 p-3 text-xs text-white/50">
+      <strong className="text-white/70">Demo credentials:</strong> alex@example.com / password
+    </div>
+    <p className="mt-4 text-center text-sm text-white/60">
       New here? <Link to="/signup" className="text-emerald-400 hover:underline">Create an account</Link>
     </p>
     <p className="mt-2 text-center text-xs text-white/40">
