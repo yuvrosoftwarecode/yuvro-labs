@@ -419,40 +419,8 @@ function TicketEditor() {
               </div>
             </div>
 
-            {/* Live progress */}
-            {showProgress && (
-              <div className="hidden xl:flex w-60 flex-col gap-2 border-l bg-editor-panel/80 p-3 text-xs">
-                <div className="flex items-center justify-between">
-                  <div className="font-semibold text-sm">Live Progress</div>
-                  <button onClick={() => setShowProgress(false)} className="text-muted-foreground hover:text-foreground">×</button>
-                </div>
-                <ProgressTile icon={CheckCircle2} label="Tests passed" value={`${passed}/${tests.length}`} tone={allPass ? "success" : "warning"} pct={(passed / tests.length) * 100} />
-                <ProgressTile icon={Gauge} label="Code quality" value={`${Math.max(4, 10 - (code.match(/TODO/g)?.length ?? 0))}/10`} tone="info" pct={Math.max(40, 100 - (code.match(/TODO/g)?.length ?? 0) * 10)} />
-                <ProgressTile icon={Clock} label="Time spent" value={timeStr} tone="muted" pct={Math.min(100, (elapsed / (ticket.estMin * 60)) * 100)} />
-                <ProgressTile icon={Zap} label="XP on submit" value={`+${ticket.xp}`} tone="primary" pct={100} />
-
-                <div className="mt-2 rounded-md border bg-editor-bg p-2">
-                  <div className="flex items-center gap-1 text-[11px] font-semibold"><Lightbulb className="h-3 w-3 text-warning" />Active hints</div>
-                  <div className="mt-1 text-muted-foreground">Level {hintLevel} unlocked</div>
-                  <button onClick={() => setTab("hints")} className="mt-1.5 w-full rounded border border-dashed py-1 text-[11px] hover:bg-accent">Open hints panel</button>
-                </div>
-
-                <div className="mt-auto space-y-1.5">
-                  <button onClick={handleReset} className="w-full inline-flex items-center justify-center gap-1 rounded-md border px-2 py-1.5 hover:bg-accent"><RotateCcw className="h-3 w-3" />Reset code</button>
-                  <button onClick={handleCopy} className="w-full inline-flex items-center justify-center gap-1 rounded-md border px-2 py-1.5 hover:bg-accent">
-                    {copied ? <Check className="h-3 w-3 text-success" /> : <Copy className="h-3 w-3" />}{copied ? "Copied" : "Copy template"}
-                  </button>
-                  <button onClick={handleShare} className="w-full inline-flex items-center justify-center gap-1 rounded-md border px-2 py-1.5 hover:bg-accent"><Share2 className="h-3 w-3" />Share code</button>
-                </div>
-              </div>
-            )}
           </div>
 
-          {!showProgress && (
-            <button onClick={() => setShowProgress(true)} className="absolute right-3 top-12 rounded-full border bg-card p-2 shadow-lg hover:bg-accent" title="Show progress">
-              <Sparkles className="h-4 w-4 text-primary" />
-            </button>
-          )}
         </section>
       </div>
 
