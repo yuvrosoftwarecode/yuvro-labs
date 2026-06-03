@@ -15,7 +15,9 @@ import { Route as ForumRouteImport } from './routes/forum'
 import { Route as DashboardRouteImport } from './routes/dashboard'
 import { Route as CollaborationRouteImport } from './routes/collaboration'
 import { Route as CertificatesRouteImport } from './routes/certificates'
+import { Route as AuthRouteImport } from './routes/auth'
 import { Route as AnalyticsRouteImport } from './routes/analytics'
+import { Route as AdminRouteImport } from './routes/admin'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as CollaborationIndexRouteImport } from './routes/collaboration.index'
 import { Route as LabSlugRouteImport } from './routes/lab.$slug'
@@ -60,9 +62,19 @@ const CertificatesRoute = CertificatesRouteImport.update({
   path: '/certificates',
   getParentRoute: () => rootRouteImport,
 } as any)
+const AuthRoute = AuthRouteImport.update({
+  id: '/auth',
+  path: '/auth',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const AnalyticsRoute = AnalyticsRouteImport.update({
   id: '/analytics',
   path: '/analytics',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AdminRoute = AdminRouteImport.update({
+  id: '/admin',
+  path: '/admin',
   getParentRoute: () => rootRouteImport,
 } as any)
 const IndexRoute = IndexRouteImport.update({
@@ -139,7 +151,9 @@ const CollaborationSprintIdReportIndividualRoute =
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/admin': typeof AdminRoute
   '/analytics': typeof AnalyticsRoute
+  '/auth': typeof AuthRoute
   '/certificates': typeof CertificatesRoute
   '/collaboration': typeof CollaborationRouteWithChildren
   '/dashboard': typeof DashboardRoute
@@ -161,7 +175,9 @@ export interface FileRoutesByFullPath {
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/admin': typeof AdminRoute
   '/analytics': typeof AnalyticsRoute
+  '/auth': typeof AuthRoute
   '/certificates': typeof CertificatesRoute
   '/dashboard': typeof DashboardRoute
   '/forum': typeof ForumRoute
@@ -183,7 +199,9 @@ export interface FileRoutesByTo {
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
+  '/admin': typeof AdminRoute
   '/analytics': typeof AnalyticsRoute
+  '/auth': typeof AuthRoute
   '/certificates': typeof CertificatesRoute
   '/collaboration': typeof CollaborationRouteWithChildren
   '/dashboard': typeof DashboardRoute
@@ -207,7 +225,9 @@ export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
   fullPaths:
     | '/'
+    | '/admin'
     | '/analytics'
+    | '/auth'
     | '/certificates'
     | '/collaboration'
     | '/dashboard'
@@ -229,7 +249,9 @@ export interface FileRouteTypes {
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
+    | '/admin'
     | '/analytics'
+    | '/auth'
     | '/certificates'
     | '/dashboard'
     | '/forum'
@@ -250,7 +272,9 @@ export interface FileRouteTypes {
   id:
     | '__root__'
     | '/'
+    | '/admin'
     | '/analytics'
+    | '/auth'
     | '/certificates'
     | '/collaboration'
     | '/dashboard'
@@ -273,7 +297,9 @@ export interface FileRouteTypes {
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
+  AdminRoute: typeof AdminRoute
   AnalyticsRoute: typeof AnalyticsRoute
+  AuthRoute: typeof AuthRoute
   CertificatesRoute: typeof CertificatesRoute
   CollaborationRoute: typeof CollaborationRouteWithChildren
   DashboardRoute: typeof DashboardRoute
@@ -327,11 +353,25 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof CertificatesRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/auth': {
+      id: '/auth'
+      path: '/auth'
+      fullPath: '/auth'
+      preLoaderRoute: typeof AuthRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/analytics': {
       id: '/analytics'
       path: '/analytics'
       fullPath: '/analytics'
       preLoaderRoute: typeof AnalyticsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/admin': {
+      id: '/admin'
+      path: '/admin'
+      fullPath: '/admin'
+      preLoaderRoute: typeof AdminRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/': {
@@ -495,7 +535,9 @@ const LabSlugRouteWithChildren =
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
+  AdminRoute: AdminRoute,
   AnalyticsRoute: AnalyticsRoute,
+  AuthRoute: AuthRoute,
   CertificatesRoute: CertificatesRoute,
   CollaborationRoute: CollaborationRouteWithChildren,
   DashboardRoute: DashboardRoute,
