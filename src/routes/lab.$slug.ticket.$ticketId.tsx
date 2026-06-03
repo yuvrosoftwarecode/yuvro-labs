@@ -263,8 +263,6 @@ function TicketEditor() {
           <span className="hidden md:inline">{leftCollapsed ? "Show" : "Hide"} panel</span>
         </button>
         <div className="flex items-center gap-1.5 text-muted-foreground">
-          <Link to="/dashboard" className="hover:text-foreground">Practical Labs</Link><ChevronRight className="h-3 w-3" />
-          <Link to="/lab/$slug" params={{ slug }} className="hover:text-foreground">{lab.name}</Link><ChevronRight className="h-3 w-3" />
           <span className="text-foreground font-mono">{ticket.id}</span>
         </div>
         <StatusBadge value={ticket.status} />
@@ -274,10 +272,14 @@ function TicketEditor() {
         {savedAt && <span className="text-success inline-flex items-center gap-1"><Check className="h-3 w-3" />Saved {savedAt}</span>}
 
         <div className="ml-auto flex items-center gap-1.5">
-          <button onClick={() => setTab("hints")} className="inline-flex items-center gap-1 rounded-md border px-2.5 py-1 hover:bg-accent"><HelpCircle className="h-3 w-3" />Hints</button>
-          <button onClick={() => showToast("Issue reported · #4821")} className="inline-flex items-center gap-1 rounded-md border px-2.5 py-1 hover:bg-accent"><Flag className="h-3 w-3" />Report</button>
-          <button onClick={() => showToast("Feedback submitted")} className="inline-flex items-center gap-1 rounded-md border px-2.5 py-1 hover:bg-accent"><MessageSquare className="h-3 w-3" />Feedback</button>
-          <button onClick={handleSave} className="inline-flex items-center gap-1 rounded-md border px-2.5 py-1 hover:bg-accent"><Save className="h-3 w-3" />Save</button>
+          <button onClick={() => setSidePanel((p) => p === "preview" ? null : "preview")}
+            className={`inline-flex items-center gap-1 rounded-md border px-2.5 py-1 hover:bg-accent ${sidePanel === "preview" ? "bg-accent text-foreground border-primary/40" : ""}`}>
+            <Globe className="h-3 w-3" />Preview
+          </button>
+          <button onClick={() => setSidePanel((p) => p === "mentor" ? null : "mentor")}
+            className={`inline-flex items-center gap-1 rounded-md border px-2.5 py-1 hover:bg-accent ${sidePanel === "mentor" ? "bg-accent text-foreground border-primary/40" : ""}`}>
+            <Sparkles className="h-3 w-3" />AI Mentor
+          </button>
           <button onClick={handleRun} disabled={running} className="inline-flex items-center gap-1 rounded-md bg-success/20 text-success border border-success/40 px-3 py-1 hover:bg-success/30 font-medium disabled:opacity-60">
             <Play className="h-3 w-3" />{running ? "Running…" : "Run"} <kbd className="hidden md:inline rounded bg-success/20 px-1 text-[10px]">⌘↵</kbd>
           </button>
