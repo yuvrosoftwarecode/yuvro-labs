@@ -5,7 +5,7 @@ import { tickets, labs } from "@/lib/dummy";
 import {
   CheckCircle2, XCircle, Zap, Award, Clock, TrendingUp, Sparkles, ArrowRight,
   Code2, MessageSquare, Share2, BookOpen, Trophy, Flame, ChevronDown, ChevronRight,
-  Gauge, Target, Users, Rocket,
+  Gauge, Target, Users, Rocket, Flag,
 } from "lucide-react";
 
 export const Route = createFileRoute("/lab/$slug/ticket/$ticketId/review")({ component: Review });
