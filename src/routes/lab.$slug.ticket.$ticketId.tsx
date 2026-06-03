@@ -75,6 +75,8 @@ function TicketEditor() {
   const [elapsed, setElapsed] = useState(0);
   const [theme, setTheme] = useState<"dark" | "light">("dark");
   const [showProgress, setShowProgress] = useState(true);
+  const [fileTreeOpen, setFileTreeOpen] = useState(true);
+  const [sidePanel, setSidePanel] = useState<null | "preview" | "mentor">(null);
   const [files, setFiles] = useState<Record<FileName, string>>({
     "Main.java": STARTER_MAIN,
     "MainTest.java": STARTER_TEST,
@@ -261,8 +263,6 @@ function TicketEditor() {
           <span className="hidden md:inline">{leftCollapsed ? "Show" : "Hide"} panel</span>
         </button>
         <div className="flex items-center gap-1.5 text-muted-foreground">
-          <Link to="/dashboard" className="hover:text-foreground">Practical Labs</Link><ChevronRight className="h-3 w-3" />
-          <Link to="/lab/$slug" params={{ slug }} className="hover:text-foreground">{lab.name}</Link><ChevronRight className="h-3 w-3" />
           <span className="text-foreground font-mono">{ticket.id}</span>
         </div>
         <StatusBadge value={ticket.status} />
@@ -272,10 +272,14 @@ function TicketEditor() {
         {savedAt && <span className="text-success inline-flex items-center gap-1"><Check className="h-3 w-3" />Saved {savedAt}</span>}
 
         <div className="ml-auto flex items-center gap-1.5">
-          <button onClick={() => setTab("hints")} className="inline-flex items-center gap-1 rounded-md border px-2.5 py-1 hover:bg-accent"><HelpCircle className="h-3 w-3" />Hints</button>
-          <button onClick={() => showToast("Issue reported · #4821")} className="inline-flex items-center gap-1 rounded-md border px-2.5 py-1 hover:bg-accent"><Flag className="h-3 w-3" />Report</button>
-          <button onClick={() => showToast("Feedback submitted")} className="inline-flex items-center gap-1 rounded-md border px-2.5 py-1 hover:bg-accent"><MessageSquare className="h-3 w-3" />Feedback</button>
-          <button onClick={handleSave} className="inline-flex items-center gap-1 rounded-md border px-2.5 py-1 hover:bg-accent"><Save className="h-3 w-3" />Save</button>
+          <button onClick={() => setSidePanel((p) => p === "preview" ? null : "preview")}
+            className={`inline-flex items-center gap-1 rounded-md border px-2.5 py-1 hover:bg-accent ${sidePanel === "preview" ? "bg-accent text-foreground border-primary/40" : ""}`}>
+            <Globe className="h-3 w-3" />Preview
+          </button>
+          <button onClick={() => setSidePanel((p) => p === "mentor" ? null : "mentor")}
+            className={`inline-flex items-center gap-1 rounded-md border px-2.5 py-1 hover:bg-accent ${sidePanel === "mentor" ? "bg-accent text-foreground border-primary/40" : ""}`}>
+            <Sparkles className="h-3 w-3" />AI Mentor
+          </button>
           <button onClick={handleRun} disabled={running} className="inline-flex items-center gap-1 rounded-md bg-success/20 text-success border border-success/40 px-3 py-1 hover:bg-success/30 font-medium disabled:opacity-60">
             <Play className="h-3 w-3" />{running ? "Running…" : "Run"} <kbd className="hidden md:inline rounded bg-success/20 px-1 text-[10px]">⌘↵</kbd>
           </button>
@@ -290,8 +294,13 @@ function TicketEditor() {
       <div className="flex flex-1 min-h-0">
         {/* Activity bar */}
         <div className="flex w-11 flex-col items-center gap-1 border-r bg-editor-panel py-2 text-muted-foreground">
-          {[FileCode2, Search, GitBranch, Bug, Package].map((I, i) => (
-            <button key={i} className={`grid h-9 w-9 place-items-center rounded ${i === 0 ? "text-foreground bg-accent" : "hover:text-foreground"}`}><I className="h-4 w-4" /></button>
+          <button
+            onClick={() => setFileTreeOpen((v) => !v)}
+            title={fileTreeOpen ? "Hide Explorer" : "Show Explorer"}
+            className={`grid h-9 w-9 place-items-center rounded ${fileTreeOpen ? "text-foreground bg-accent" : "hover:text-foreground"}`}
+          ><FileCode2 className="h-4 w-4" /></button>
+          {[Search, GitBranch, Bug, Package].map((I, i) => (
+            <button key={i} className="grid h-9 w-9 place-items-center rounded hover:text-foreground"><I className="h-4 w-4" /></button>
           ))}
           <Settings className="mt-auto h-4 w-4" />
         </div>
@@ -342,26 +351,31 @@ function TicketEditor() {
         <section className="flex flex-1 min-w-0 flex-col relative">
           <div className="flex flex-1 min-h-0">
             {/* File tree */}
-            <div className="hidden lg:flex w-52 flex-col border-r bg-editor-panel text-xs">
-              <div className="px-3 py-2 text-[11px] uppercase tracking-wide text-muted-foreground">Explorer</div>
-              <div className="px-2 space-y-0.5">
-                <TreeFolder label={ticket.id.toLowerCase()} open>
-                  <TreeFolder label="src" open>
-                    <TreeFile name="Main.java" active={activeFile === "Main.java"} onClick={() => setActiveFile("Main.java")} modified={dirty["Main.java"]} />
+            {fileTreeOpen && (
+              <div className="hidden lg:flex w-52 flex-col border-r bg-editor-panel text-xs">
+                <div className="px-3 py-2 text-[11px] uppercase tracking-wide text-muted-foreground">Explorer</div>
+                <div className="px-2 space-y-0.5">
+                  <TreeFolder label={ticket.id.toLowerCase()} open>
+                    <TreeFolder label="src" open>
+                      <TreeFile name="Main.java" active={activeFile === "Main.java"} onClick={() => setActiveFile("Main.java")} modified={dirty["Main.java"]} />
+                    </TreeFolder>
+                    <TreeFolder label="tests" open>
+                      <TreeFile name="MainTest.java" onClick={() => setActiveFile("MainTest.java")} active={activeFile === "MainTest.java"} modified={dirty["MainTest.java"]} />
+                    </TreeFolder>
+                    <TreeFile name="README.md" onClick={() => setActiveFile("README.md")} active={activeFile === "README.md"} modified={dirty["README.md"]} />
+                    <TreeFile name="pom.xml" onClick={() => showToast("Read-only file")} />
                   </TreeFolder>
-                  <TreeFolder label="tests" open>
-                    <TreeFile name="MainTest.java" onClick={() => setActiveFile("MainTest.java")} active={activeFile === "MainTest.java"} modified={dirty["MainTest.java"]} />
-                  </TreeFolder>
-                  <TreeFile name="README.md" onClick={() => setActiveFile("README.md")} active={activeFile === "README.md"} modified={dirty["README.md"]} />
-                  <TreeFile name="pom.xml" onClick={() => showToast("Read-only file")} />
-                </TreeFolder>
+                </div>
+                <div className="mt-auto border-t px-3 py-2 text-[11px] text-muted-foreground">
+                  <div className="flex items-center gap-1"><GitBranch className="h-3 w-3" /> main</div>
+                </div>
               </div>
-              <div className="mt-auto border-t px-3 py-2 text-[11px] text-muted-foreground">
-                <div className="flex items-center gap-1"><GitBranch className="h-3 w-3" /> main</div>
-              </div>
-            </div>
+            )}
 
-            <div className="flex flex-1 min-w-0 flex-col">
+            <div
+              className="flex min-w-0 flex-col"
+              style={{ flex: sidePanel ? `0 0 ${sidePanel === "preview" ? 60 : 70}%` : "1 1 0%" }}
+            >
               {/* Tabs row */}
               <div className="flex items-center border-b bg-editor-panel text-xs overflow-x-auto">
                 {FILE_LIST.map((f) => (
@@ -373,7 +387,6 @@ function TicketEditor() {
                 ))}
                 <div className="ml-auto flex items-center gap-2 pr-3 text-[11px] text-muted-foreground whitespace-nowrap">
                   <CompileBadge state={compileState} />
-                  <span className="hidden md:inline">Quality <span className="text-foreground">{Math.max(4, 10 - (code.match(/TODO/g)?.length ?? 0))}/10</span></span>
                   <button onClick={toggleTheme} className="rounded border px-2 py-0.5 hover:bg-accent">
                     {theme === "dark" ? "☀ Light" : "🌙 Dark"}
                   </button>
@@ -418,6 +431,23 @@ function TicketEditor() {
                 </div>
               </div>
             </div>
+
+            {sidePanel && (
+              <aside
+                className="flex flex-col border-l bg-editor-panel min-w-0"
+                style={{ flex: `0 0 ${sidePanel === "preview" ? 40 : 30}%` }}
+              >
+                <div className="flex items-center justify-between border-b px-3 py-2 text-xs">
+                  <span className="inline-flex items-center gap-1.5 font-medium">
+                    {sidePanel === "preview" ? <><Globe className="h-3 w-3" />Live Preview</> : <><Sparkles className="h-3 w-3 text-primary" />AI Mentor</>}
+                  </span>
+                  <button onClick={() => setSidePanel(null)} className="text-muted-foreground hover:text-foreground">✕</button>
+                </div>
+                <div className="flex-1 overflow-auto scrollbar-thin p-3 text-xs">
+                  {sidePanel === "preview" ? <SidePreview /> : <SideMentor onAsk={(q) => showToast(`Mentor: ${q}`)} />}
+                </div>
+              </aside>
+            )}
 
           </div>
 
@@ -626,6 +656,72 @@ function PreviewView() {
         {["Mobile 375", "Tablet 768", "Desktop 1280"].map((d) => (
           <button key={d} className="block w-full rounded border px-2 py-1 text-left hover:bg-accent">{d}</button>
         ))}
+      </div>
+    </div>
+  );
+}
+
+function SidePreview() {
+  const [device, setDevice] = useState<"Mobile" | "Tablet" | "Desktop">("Desktop");
+  const w = device === "Mobile" ? 375 : device === "Tablet" ? 768 : "100%";
+  return (
+    <div className="flex h-full flex-col gap-2">
+      <div className="flex items-center gap-1">
+        {(["Mobile", "Tablet", "Desktop"] as const).map((d) => (
+          <button key={d} onClick={() => setDevice(d)}
+            className={`rounded border px-2 py-0.5 text-[11px] ${device === d ? "bg-accent text-foreground" : "text-muted-foreground hover:bg-accent"}`}>
+            {d}
+          </button>
+        ))}
+        <span className="ml-auto text-[10px] text-muted-foreground">localhost:3000</span>
+      </div>
+      <div className="flex-1 grid place-items-center overflow-auto rounded border bg-accent/30 p-2">
+        <div className="mx-auto h-full overflow-auto rounded bg-white text-black shadow" style={{ width: w, maxWidth: "100%" }}>
+          <div className="p-4 space-y-2">
+            <div className="text-[10px] uppercase tracking-wider text-gray-500">Live preview</div>
+            <h2 className="text-xl font-semibold">Hello Java</h2>
+            <p className="text-sm text-gray-600">Integer: 42 · Double: 3.14</p>
+            <p className="text-sm text-gray-600">Length: 10 · Char[0]: H</p>
+            <button className="rounded bg-blue-600 px-3 py-1 text-xs text-white">Run sample</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function SideMentor({ onAsk }: { onAsk: (q: string) => void }) {
+  const [msgs, setMsgs] = useState<{ role: "ai" | "me"; text: string }[]>([
+    { role: "ai", text: "Hi! I'm your AI mentor. I can give Socratic hints — what are you stuck on?" },
+  ]);
+  const [input, setInput] = useState("");
+  const send = () => {
+    if (!input.trim()) return;
+    const q = input.trim();
+    setMsgs((m) => [...m, { role: "me", text: q }, { role: "ai", text: `Think about what type each value should be. Try declaring an \`int\` and a \`double\`, then cast between them. What happens when you narrow \`3.99\` to \`int\`?` }]);
+    onAsk(q);
+    setInput("");
+  };
+  return (
+    <div className="flex h-full flex-col gap-2">
+      <div className="flex-1 space-y-2 overflow-auto pr-1">
+        {msgs.map((m, i) => (
+          <div key={i} className={`flex ${m.role === "me" ? "justify-end" : ""}`}>
+            <div className={`max-w-[85%] rounded-md px-2.5 py-1.5 text-[12px] ${m.role === "me" ? "bg-primary text-primary-foreground" : "bg-accent text-foreground"}`}>
+              {m.text}
+            </div>
+          </div>
+        ))}
+      </div>
+      <div className="flex flex-wrap gap-1">
+        {["Explain this error", "Give a hint", "Review my code", "Why is my test failing?"].map((s) => (
+          <button key={s} onClick={() => { setInput(s); }} className="rounded-full border px-2 py-0.5 text-[11px] text-muted-foreground hover:bg-accent">{s}</button>
+        ))}
+      </div>
+      <div className="flex gap-1">
+        <input value={input} onChange={(e) => setInput(e.target.value)} onKeyDown={(e) => e.key === "Enter" && send()}
+          placeholder="Ask AI mentor…" className="flex-1 rounded border bg-background px-2 py-1.5 text-xs outline-none focus:border-primary" />
+        <button onClick={send} className="rounded bg-primary px-3 text-xs text-primary-foreground">Ask</button>
       </div>
     </div>
   );
