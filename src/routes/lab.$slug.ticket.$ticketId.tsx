@@ -661,6 +661,72 @@ function PreviewView() {
   );
 }
 
+function SidePreview() {
+  const [device, setDevice] = useState<"Mobile" | "Tablet" | "Desktop">("Desktop");
+  const w = device === "Mobile" ? 375 : device === "Tablet" ? 768 : "100%";
+  return (
+    <div className="flex h-full flex-col gap-2">
+      <div className="flex items-center gap-1">
+        {(["Mobile", "Tablet", "Desktop"] as const).map((d) => (
+          <button key={d} onClick={() => setDevice(d)}
+            className={`rounded border px-2 py-0.5 text-[11px] ${device === d ? "bg-accent text-foreground" : "text-muted-foreground hover:bg-accent"}`}>
+            {d}
+          </button>
+        ))}
+        <span className="ml-auto text-[10px] text-muted-foreground">localhost:3000</span>
+      </div>
+      <div className="flex-1 grid place-items-center overflow-auto rounded border bg-accent/30 p-2">
+        <div className="mx-auto h-full overflow-auto rounded bg-white text-black shadow" style={{ width: w, maxWidth: "100%" }}>
+          <div className="p-4 space-y-2">
+            <div className="text-[10px] uppercase tracking-wider text-gray-500">Live preview</div>
+            <h2 className="text-xl font-semibold">Hello Java</h2>
+            <p className="text-sm text-gray-600">Integer: 42 · Double: 3.14</p>
+            <p className="text-sm text-gray-600">Length: 10 · Char[0]: H</p>
+            <button className="rounded bg-blue-600 px-3 py-1 text-xs text-white">Run sample</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function SideMentor({ onAsk }: { onAsk: (q: string) => void }) {
+  const [msgs, setMsgs] = useState<{ role: "ai" | "me"; text: string }[]>([
+    { role: "ai", text: "Hi! I'm your AI mentor. I can give Socratic hints — what are you stuck on?" },
+  ]);
+  const [input, setInput] = useState("");
+  const send = () => {
+    if (!input.trim()) return;
+    const q = input.trim();
+    setMsgs((m) => [...m, { role: "me", text: q }, { role: "ai", text: `Think about what type each value should be. Try declaring an \`int\` and a \`double\`, then cast between them. What happens when you narrow \`3.99\` to \`int\`?` }]);
+    onAsk(q);
+    setInput("");
+  };
+  return (
+    <div className="flex h-full flex-col gap-2">
+      <div className="flex-1 space-y-2 overflow-auto pr-1">
+        {msgs.map((m, i) => (
+          <div key={i} className={`flex ${m.role === "me" ? "justify-end" : ""}`}>
+            <div className={`max-w-[85%] rounded-md px-2.5 py-1.5 text-[12px] ${m.role === "me" ? "bg-primary text-primary-foreground" : "bg-accent text-foreground"}`}>
+              {m.text}
+            </div>
+          </div>
+        ))}
+      </div>
+      <div className="flex flex-wrap gap-1">
+        {["Explain this error", "Give a hint", "Review my code", "Why is my test failing?"].map((s) => (
+          <button key={s} onClick={() => { setInput(s); }} className="rounded-full border px-2 py-0.5 text-[11px] text-muted-foreground hover:bg-accent">{s}</button>
+        ))}
+      </div>
+      <div className="flex gap-1">
+        <input value={input} onChange={(e) => setInput(e.target.value)} onKeyDown={(e) => e.key === "Enter" && send()}
+          placeholder="Ask AI mentor…" className="flex-1 rounded border bg-background px-2 py-1.5 text-xs outline-none focus:border-primary" />
+        <button onClick={send} className="rounded bg-primary px-3 text-xs text-primary-foreground">Ask</button>
+      </div>
+    </div>
+  );
+}
+
 function TerminalView() {
   return (
     <div className="font-mono text-muted-foreground space-y-0.5">
