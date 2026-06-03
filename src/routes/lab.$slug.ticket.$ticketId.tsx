@@ -261,7 +261,7 @@ function TicketEditor() {
           <span className="hidden md:inline">{leftCollapsed ? "Show" : "Hide"} panel</span>
         </button>
         <div className="flex items-center gap-1.5 text-muted-foreground">
-          <Link to="/" className="hover:text-foreground">Practical Labs</Link><ChevronRight className="h-3 w-3" />
+          <Link to="/dashboard" className="hover:text-foreground">Practical Labs</Link><ChevronRight className="h-3 w-3" />
           <Link to="/lab/$slug" params={{ slug }} className="hover:text-foreground">{lab.name}</Link><ChevronRight className="h-3 w-3" />
           <span className="text-foreground font-mono">{ticket.id}</span>
         </div>

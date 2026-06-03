@@ -54,7 +54,7 @@ function LabDashboard() {
       <TopNav />
       <main className="mx-auto max-w-[1500px] px-4 py-6">
         <div className="mb-4 flex items-center gap-2 text-sm text-muted-foreground">
-          <Link to="/" className="hover:text-foreground">Practical Labs</Link>
+          <Link to="/dashboard" className="hover:text-foreground">Practical Labs</Link>
           <span>/</span><span className="text-foreground">{lab.name}</span>
         </div>
 
