@@ -432,6 +432,23 @@ function TicketEditor() {
               </div>
             </div>
 
+            {sidePanel && (
+              <aside
+                className="flex flex-col border-l bg-editor-panel min-w-0"
+                style={{ flex: `0 0 ${sidePanel === "preview" ? 40 : 30}%` }}
+              >
+                <div className="flex items-center justify-between border-b px-3 py-2 text-xs">
+                  <span className="inline-flex items-center gap-1.5 font-medium">
+                    {sidePanel === "preview" ? <><Globe className="h-3 w-3" />Live Preview</> : <><Sparkles className="h-3 w-3 text-primary" />AI Mentor</>}
+                  </span>
+                  <button onClick={() => setSidePanel(null)} className="text-muted-foreground hover:text-foreground">✕</button>
+                </div>
+                <div className="flex-1 overflow-auto scrollbar-thin p-3 text-xs">
+                  {sidePanel === "preview" ? <SidePreview /> : <SideMentor onAsk={(q) => showToast(`Mentor: ${q}`)} />}
+                </div>
+              </aside>
+            )}
+
           </div>
 
         </section>
