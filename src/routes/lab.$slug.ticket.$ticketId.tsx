@@ -351,26 +351,31 @@ function TicketEditor() {
         <section className="flex flex-1 min-w-0 flex-col relative">
           <div className="flex flex-1 min-h-0">
             {/* File tree */}
-            <div className="hidden lg:flex w-52 flex-col border-r bg-editor-panel text-xs">
-              <div className="px-3 py-2 text-[11px] uppercase tracking-wide text-muted-foreground">Explorer</div>
-              <div className="px-2 space-y-0.5">
-                <TreeFolder label={ticket.id.toLowerCase()} open>
-                  <TreeFolder label="src" open>
-                    <TreeFile name="Main.java" active={activeFile === "Main.java"} onClick={() => setActiveFile("Main.java")} modified={dirty["Main.java"]} />
+            {fileTreeOpen && (
+              <div className="hidden lg:flex w-52 flex-col border-r bg-editor-panel text-xs">
+                <div className="px-3 py-2 text-[11px] uppercase tracking-wide text-muted-foreground">Explorer</div>
+                <div className="px-2 space-y-0.5">
+                  <TreeFolder label={ticket.id.toLowerCase()} open>
+                    <TreeFolder label="src" open>
+                      <TreeFile name="Main.java" active={activeFile === "Main.java"} onClick={() => setActiveFile("Main.java")} modified={dirty["Main.java"]} />
+                    </TreeFolder>
+                    <TreeFolder label="tests" open>
+                      <TreeFile name="MainTest.java" onClick={() => setActiveFile("MainTest.java")} active={activeFile === "MainTest.java"} modified={dirty["MainTest.java"]} />
+                    </TreeFolder>
+                    <TreeFile name="README.md" onClick={() => setActiveFile("README.md")} active={activeFile === "README.md"} modified={dirty["README.md"]} />
+                    <TreeFile name="pom.xml" onClick={() => showToast("Read-only file")} />
                   </TreeFolder>
-                  <TreeFolder label="tests" open>
-                    <TreeFile name="MainTest.java" onClick={() => setActiveFile("MainTest.java")} active={activeFile === "MainTest.java"} modified={dirty["MainTest.java"]} />
-                  </TreeFolder>
-                  <TreeFile name="README.md" onClick={() => setActiveFile("README.md")} active={activeFile === "README.md"} modified={dirty["README.md"]} />
-                  <TreeFile name="pom.xml" onClick={() => showToast("Read-only file")} />
-                </TreeFolder>
+                </div>
+                <div className="mt-auto border-t px-3 py-2 text-[11px] text-muted-foreground">
+                  <div className="flex items-center gap-1"><GitBranch className="h-3 w-3" /> main</div>
+                </div>
               </div>
-              <div className="mt-auto border-t px-3 py-2 text-[11px] text-muted-foreground">
-                <div className="flex items-center gap-1"><GitBranch className="h-3 w-3" /> main</div>
-              </div>
-            </div>
+            )}
 
-            <div className="flex flex-1 min-w-0 flex-col">
+            <div
+              className="flex min-w-0 flex-col"
+              style={{ flex: sidePanel ? `0 0 ${sidePanel === "preview" ? 60 : 70}%` : "1 1 0%" }}
+            >
               {/* Tabs row */}
               <div className="flex items-center border-b bg-editor-panel text-xs overflow-x-auto">
                 {FILE_LIST.map((f) => (
