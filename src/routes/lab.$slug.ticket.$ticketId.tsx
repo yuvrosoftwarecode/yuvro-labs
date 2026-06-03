@@ -387,7 +387,6 @@ function TicketEditor() {
                 ))}
                 <div className="ml-auto flex items-center gap-2 pr-3 text-[11px] text-muted-foreground whitespace-nowrap">
                   <CompileBadge state={compileState} />
-                  <span className="hidden md:inline">Quality <span className="text-foreground">{Math.max(4, 10 - (code.match(/TODO/g)?.length ?? 0))}/10</span></span>
                   <button onClick={toggleTheme} className="rounded border px-2 py-0.5 hover:bg-accent">
                     {theme === "dark" ? "☀ Light" : "🌙 Dark"}
                   </button>
