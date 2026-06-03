@@ -75,6 +75,8 @@ function TicketEditor() {
   const [elapsed, setElapsed] = useState(0);
   const [theme, setTheme] = useState<"dark" | "light">("dark");
   const [showProgress, setShowProgress] = useState(true);
+  const [fileTreeOpen, setFileTreeOpen] = useState(true);
+  const [sidePanel, setSidePanel] = useState<null | "preview" | "mentor">(null);
   const [files, setFiles] = useState<Record<FileName, string>>({
     "Main.java": STARTER_MAIN,
     "MainTest.java": STARTER_TEST,
