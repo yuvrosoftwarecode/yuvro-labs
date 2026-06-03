@@ -29,7 +29,7 @@ export function TopNav({ rightSlot, activeOverride }: { rightSlot?: React.ReactN
         </Link>
         <nav className="hidden md:flex items-center gap-1 text-sm">
           {links.map((l) => {
-            const active = l.to === "/" ? activePath === "/" : activePath.startsWith(l.to);
+            const active = l.to === "/dashboard" ? activePath === "/dashboard" : activePath.startsWith(l.to);
             const Icon = l.icon;
             return (
               <Link key={l.to} to={l.to}
