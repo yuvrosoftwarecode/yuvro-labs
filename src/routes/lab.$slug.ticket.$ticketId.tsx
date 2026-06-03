@@ -294,8 +294,13 @@ function TicketEditor() {
       <div className="flex flex-1 min-h-0">
         {/* Activity bar */}
         <div className="flex w-11 flex-col items-center gap-1 border-r bg-editor-panel py-2 text-muted-foreground">
-          {[FileCode2, Search, GitBranch, Bug, Package].map((I, i) => (
-            <button key={i} className={`grid h-9 w-9 place-items-center rounded ${i === 0 ? "text-foreground bg-accent" : "hover:text-foreground"}`}><I className="h-4 w-4" /></button>
+          <button
+            onClick={() => setFileTreeOpen((v) => !v)}
+            title={fileTreeOpen ? "Hide Explorer" : "Show Explorer"}
+            className={`grid h-9 w-9 place-items-center rounded ${fileTreeOpen ? "text-foreground bg-accent" : "hover:text-foreground"}`}
+          ><FileCode2 className="h-4 w-4" /></button>
+          {[Search, GitBranch, Bug, Package].map((I, i) => (
+            <button key={i} className="grid h-9 w-9 place-items-center rounded hover:text-foreground"><I className="h-4 w-4" /></button>
           ))}
           <Settings className="mt-auto h-4 w-4" />
         </div>
