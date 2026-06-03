@@ -17,13 +17,15 @@ const links = [
 export function TopNav({ rightSlot, activeOverride }: { rightSlot?: React.ReactNode; activeOverride?: string } = {}) {
   const path = useRouterState({ select: (s) => s.location.pathname });
   const { theme, toggle } = useTheme();
+  const { user, logout } = useAuth();
+  const nav = useNavigate();
   const activePath = activeOverride ?? path;
   return (
     <header className="sticky top-0 z-40 glass border-b border-border">
       <div className="mx-auto flex h-14 max-w-[1400px] items-center gap-6 px-4">
-        <Link to="/" className="flex items-center gap-2 font-semibold tracking-tight">
-          <div className="grid h-7 w-7 place-items-center rounded-md bg-primary text-primary-foreground font-mono text-xs">PL</div>
-          <span>Practical Labs</span>
+        <Link to="/dashboard" className="flex items-center gap-2 font-semibold tracking-tight">
+          <div className="grid h-7 w-7 place-items-center rounded-md bg-gradient-to-br from-primary to-ui text-primary-foreground font-mono text-xs">Y</div>
+          <span>Yuvro Labs</span>
         </Link>
         <nav className="hidden md:flex items-center gap-1 text-sm">
           {links.map((l) => {
