@@ -671,19 +671,12 @@ function PreviewView() {
   );
 }
 
-function SidePreview() {
-  const [device, setDevice] = useState<"Mobile" | "Tablet" | "Desktop">("Desktop");
+function SidePreview({ device }: { device: "Mobile" | "Tablet" | "Desktop" }) {
   const w = device === "Mobile" ? 375 : device === "Tablet" ? 768 : "100%";
   return (
     <div className="flex h-full flex-col gap-2">
-      <div className="flex items-center gap-1">
-        {(["Mobile", "Tablet", "Desktop"] as const).map((d) => (
-          <button key={d} onClick={() => setDevice(d)}
-            className={`rounded border px-2 py-0.5 text-[11px] ${device === d ? "bg-accent text-foreground" : "text-muted-foreground hover:bg-accent"}`}>
-            {d}
-          </button>
-        ))}
-        <span className="ml-auto text-[10px] text-muted-foreground">localhost:3000</span>
+      <div className="flex items-center text-[10px] text-muted-foreground">
+        <span className="ml-auto">localhost:3000</span>
       </div>
       <div className="flex-1 grid place-items-center overflow-auto rounded border bg-accent/30 p-2">
         <div className="mx-auto h-full overflow-auto rounded bg-white text-black shadow" style={{ width: w, maxWidth: "100%" }}>
