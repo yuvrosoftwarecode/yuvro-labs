@@ -675,9 +675,7 @@ function SidePreview({ device }: { device: "Mobile" | "Tablet" | "Desktop" }) {
   const w = device === "Mobile" ? 375 : device === "Tablet" ? 768 : "100%";
   return (
     <div className="flex h-full flex-col gap-2">
-      <div className="flex items-center text-[10px] text-muted-foreground">
-        <span className="ml-auto">localhost:3000</span>
-      </div>
+
       <div className="flex-1 grid place-items-center overflow-auto rounded border bg-accent/30 p-2">
         <div className="mx-auto h-full overflow-auto rounded bg-white text-black shadow" style={{ width: w, maxWidth: "100%" }}>
           <div className="p-4 space-y-2">
