@@ -208,57 +208,53 @@ function Trust() {
 
 function HowItWorks() {
   const steps = [
-    { t: "Choose Practical Lab", d: "Pick from 500+ industry simulations." },
-    { t: "Solve Real Engineering Tickets", d: "Jira-style tickets, real codebases." },
-    { t: "Collaborate With Teams", d: "Standups, PRs, sprint planning." },
-    { t: "Receive AI Reviews", d: "Architecture, security, and performance feedback." },
-    { t: "Build Engineering Reputation", d: "Reliability, leadership, collaboration scores." },
-    { t: "Showcase Practical Skills", d: "Recruiter-ready engineering profile." },
+    { t: "Choose Practical Lab", d: "Pick a stack: backend, frontend, SQL, DevOps, security, or system design." },
+    { t: "Solve Real Engineering Tickets", d: "Work production-style tickets in a full in-browser IDE." },
+    { t: "Collaborate With Teams", d: "Pair, review and merge with engineers across the world." },
+    { t: "Receive AI Reviews", d: "Get senior-engineer-quality feedback on every PR." },
+    { t: "Build Engineering Reputation", d: "Earn reliability, collaboration and leadership scores." },
+    { t: "Showcase Practical Skills", d: "Share a recruiter-ready portfolio of real engineering work." },
   ];
   return (
-    <section id="how" className="border-b border-border/50 py-24 bg-gradient-to-b from-transparent via-card/20 to-transparent">
-      <div className="mx-auto max-w-6xl px-6">
-        <div className="text-center max-w-2xl mx-auto mb-20">
+    <section id="how" className="border-b border-border/50 py-20 bg-gradient-to-b from-transparent via-card/20 to-transparent">
+      <div className="mx-auto max-w-5xl px-6">
+        <div className="text-center max-w-2xl mx-auto mb-14">
           <span className="text-xs font-medium text-primary uppercase tracking-wider">How it works</span>
           <h2 className="mt-2 text-3xl md:text-4xl font-semibold tracking-tight">From learner to shipped engineer in 6 steps.</h2>
         </div>
 
         <div className="relative">
-          {/* center line */}
           <div className="absolute left-1/2 -translate-x-1/2 top-0 bottom-0 w-px bg-gradient-to-b from-transparent via-primary/30 to-transparent" />
 
-          <div className="space-y-20 md:space-y-24">
+          <div className="space-y-12 md:space-y-14">
             {steps.map((s, i) => {
               const left = i % 2 === 0;
               const num = String(i + 1).padStart(2, "0");
               return (
-                <div key={i} className="relative grid grid-cols-[1fr_auto_1fr] items-center gap-4 md:gap-8">
-                  {/* left text */}
-                  <div className={`${left ? "text-right pr-2 md:pr-8" : ""}`}>
+                <div key={i} className="relative grid grid-cols-[1fr_auto_1fr] items-center gap-4 md:gap-6">
+                  <div className={`${left ? "text-right pr-2 md:pr-6" : ""}`}>
                     {left && (
                       <>
-                        <div className="text-[11px] md:text-xs font-medium text-primary uppercase tracking-[0.2em]">Step {num}</div>
-                        <h3 className="mt-2 text-xl md:text-3xl font-semibold tracking-tight text-foreground">{s.t}</h3>
-                        <p className="mt-2 text-sm md:text-base text-muted-foreground">{s.d}</p>
+                        <div className="text-[10px] font-medium text-primary uppercase tracking-[0.2em]">Step {num}</div>
+                        <h3 className="mt-1.5 text-base md:text-lg font-semibold tracking-tight text-foreground">{s.t}</h3>
+                        <p className="mt-1.5 text-sm text-muted-foreground leading-relaxed">{s.d}</p>
                       </>
                     )}
                   </div>
 
-                  {/* node */}
                   <div className="relative grid place-items-center">
-                    <div className="absolute h-14 w-14 rounded-full bg-primary/20 blur-xl" />
-                    <div className="relative h-10 w-10 md:h-12 md:w-12 rounded-full border border-primary/60 bg-background grid place-items-center text-sm md:text-base font-mono text-primary shadow-[0_0_20px_rgba(99,102,241,0.35)]">
+                    <div className="absolute h-9 w-9 rounded-full bg-primary/20 blur-md" />
+                    <div className="relative h-7 w-7 rounded-full border border-primary/60 bg-background grid place-items-center text-[11px] font-mono text-primary shadow-[0_0_12px_rgba(99,102,241,0.35)]">
                       {i + 1}
                     </div>
                   </div>
 
-                  {/* right text */}
-                  <div className={`${!left ? "text-left pl-2 md:pl-8" : ""}`}>
+                  <div className={`${!left ? "text-left pl-2 md:pl-6" : ""}`}>
                     {!left && (
                       <>
-                        <div className="text-[11px] md:text-xs font-medium text-primary uppercase tracking-[0.2em]">Step {num}</div>
-                        <h3 className="mt-2 text-xl md:text-3xl font-semibold tracking-tight text-foreground">{s.t}</h3>
-                        <p className="mt-2 text-sm md:text-base text-muted-foreground">{s.d}</p>
+                        <div className="text-[10px] font-medium text-primary uppercase tracking-[0.2em]">Step {num}</div>
+                        <h3 className="mt-1.5 text-base md:text-lg font-semibold tracking-tight text-foreground">{s.t}</h3>
+                        <p className="mt-1.5 text-sm text-muted-foreground leading-relaxed">{s.d}</p>
                       </>
                     )}
                   </div>
