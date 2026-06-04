@@ -208,42 +208,63 @@ function Trust() {
 
 function HowItWorks() {
   const steps = [
-    { n: 1, t: "Choose Practical Lab", d: "Pick a stack: backend, frontend, SQL, DevOps, security, or system design.", i: Layers },
-    { n: 2, t: "Solve Real Engineering Tickets", d: "Work production-style tickets in a full in-browser IDE.", i: Code2 },
-    { n: 3, t: "Collaborate With Teams", d: "Pair, review and merge with engineers across the world.", i: Users },
-    { n: 4, t: "Receive AI Reviews", d: "Get senior-engineer-quality feedback on every PR.", i: Bot },
-    { n: 5, t: "Build Engineering Reputation", d: "Earn reliability, collaboration and leadership scores.", i: Trophy },
-    { n: 6, t: "Showcase Practical Skills", d: "Share a recruiter-ready portfolio of real engineering work.", i: Award },
+    { t: "Choose Practical Lab", d: "Pick from 500+ industry simulations." },
+    { t: "Solve Real Engineering Tickets", d: "Jira-style tickets, real codebases." },
+    { t: "Collaborate With Teams", d: "Standups, PRs, sprint planning." },
+    { t: "Receive AI Reviews", d: "Architecture, security, and performance feedback." },
+    { t: "Build Engineering Reputation", d: "Reliability, leadership, collaboration scores." },
+    { t: "Showcase Practical Skills", d: "Recruiter-ready engineering profile." },
   ];
   return (
-    <section id="how" className="border-b border-border/50 py-20 bg-gradient-to-b from-transparent via-card/20 to-transparent">
-      <div className="mx-auto max-w-7xl px-6">
-        <div className="text-center max-w-2xl mx-auto">
+    <section id="how" className="border-b border-border/50 py-24 bg-gradient-to-b from-transparent via-card/20 to-transparent">
+      <div className="mx-auto max-w-6xl px-6">
+        <div className="text-center max-w-2xl mx-auto mb-20">
           <span className="text-xs font-medium text-primary uppercase tracking-wider">How it works</span>
           <h2 className="mt-2 text-3xl md:text-4xl font-semibold tracking-tight">From learner to shipped engineer in 6 steps.</h2>
         </div>
-        <div className="relative mt-14">
-          <div className="absolute left-1/2 top-0 bottom-0 w-px bg-gradient-to-b from-transparent via-primary/40 to-transparent hidden md:block" />
-          <div className="space-y-6">
-            {steps.map((s, i) => (
-              <div key={s.n} className={`grid md:grid-cols-2 gap-6 items-center ${i % 2 ? "md:[&>*:first-child]:order-2" : ""}`}>
-                <div className={`${i % 2 ? "md:text-left md:pl-12" : "md:text-right md:pr-12"}`}>
-                  <div className={`inline-flex items-center gap-3 ${i % 2 ? "" : "md:flex-row-reverse"}`}>
-                    <div className="grid h-12 w-12 place-items-center rounded-xl bg-gradient-to-br from-primary to-ui text-primary-foreground font-mono font-semibold shadow-lg shadow-primary/30">{s.n}</div>
-                    <h3 className="text-xl font-semibold">{s.t}</h3>
+
+        <div className="relative">
+          {/* center line */}
+          <div className="absolute left-1/2 -translate-x-1/2 top-0 bottom-0 w-px bg-gradient-to-b from-transparent via-primary/30 to-transparent" />
+
+          <div className="space-y-20 md:space-y-24">
+            {steps.map((s, i) => {
+              const left = i % 2 === 0;
+              const num = String(i + 1).padStart(2, "0");
+              return (
+                <div key={i} className="relative grid grid-cols-[1fr_auto_1fr] items-center gap-4 md:gap-8">
+                  {/* left text */}
+                  <div className={`${left ? "text-right pr-2 md:pr-8" : ""}`}>
+                    {left && (
+                      <>
+                        <div className="text-[11px] md:text-xs font-medium text-primary uppercase tracking-[0.2em]">Step {num}</div>
+                        <h3 className="mt-2 text-xl md:text-3xl font-semibold tracking-tight text-foreground">{s.t}</h3>
+                        <p className="mt-2 text-sm md:text-base text-muted-foreground">{s.d}</p>
+                      </>
+                    )}
                   </div>
-                  <p className="mt-3 text-muted-foreground max-w-md md:inline-block">{s.d}</p>
-                </div>
-                <div className={`rounded-xl border border-border/60 bg-card/50 backdrop-blur p-6 ${i % 2 ? "md:mr-12" : "md:ml-12"}`}>
-                  <s.i className="h-8 w-8 text-primary mb-3" />
-                  <div className="space-y-1.5">
-                    <div className="h-2 w-3/4 rounded bg-muted-foreground/20" />
-                    <div className="h-2 w-1/2 rounded bg-muted-foreground/15" />
-                    <div className="h-2 w-5/6 rounded bg-muted-foreground/10" />
+
+                  {/* node */}
+                  <div className="relative grid place-items-center">
+                    <div className="absolute h-14 w-14 rounded-full bg-primary/20 blur-xl" />
+                    <div className="relative h-10 w-10 md:h-12 md:w-12 rounded-full border border-primary/60 bg-background grid place-items-center text-sm md:text-base font-mono text-primary shadow-[0_0_20px_rgba(99,102,241,0.35)]">
+                      {i + 1}
+                    </div>
+                  </div>
+
+                  {/* right text */}
+                  <div className={`${!left ? "text-left pl-2 md:pl-8" : ""}`}>
+                    {!left && (
+                      <>
+                        <div className="text-[11px] md:text-xs font-medium text-primary uppercase tracking-[0.2em]">Step {num}</div>
+                        <h3 className="mt-2 text-xl md:text-3xl font-semibold tracking-tight text-foreground">{s.t}</h3>
+                        <p className="mt-2 text-sm md:text-base text-muted-foreground">{s.d}</p>
+                      </>
+                    )}
                   </div>
                 </div>
-              </div>
-            ))}
+              );
+            })}
           </div>
         </div>
       </div>
