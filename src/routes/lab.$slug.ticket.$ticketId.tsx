@@ -372,10 +372,8 @@ function TicketEditor() {
               </div>
             )}
 
-            <div
-              className="flex min-w-0 flex-col"
-              style={{ flex: sidePanel ? `0 0 ${sidePanel === "preview" ? 60 : 70}%` : "1 1 0%" }}
-            >
+            <div className="flex flex-1 min-w-0 flex-col">
+
               {/* Tabs row */}
               <div className="flex items-center border-b bg-editor-panel text-xs overflow-x-auto">
                 {FILE_LIST.map((f) => (
