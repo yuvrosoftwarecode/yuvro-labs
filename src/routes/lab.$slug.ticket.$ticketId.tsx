@@ -377,7 +377,7 @@ function TicketEditor() {
 
         {/* Center editor */}
         <section className="flex flex-1 min-w-0 flex-col relative">
-          <div className="flex flex-1 min-h-0">
+          <div ref={splitContainerRef} className="flex flex-1 min-h-0">
             {/* File tree */}
             {fileTreeOpen && (
               <div className="hidden lg:flex w-52 flex-col border-r bg-editor-panel text-xs">
