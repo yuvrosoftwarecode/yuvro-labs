@@ -458,9 +458,19 @@ function TicketEditor() {
             </div>
 
             {sidePanel && (
+              <div
+                role="separator"
+                onMouseDown={startResize}
+                className="w-1 cursor-col-resize bg-border hover:bg-primary/50 transition-colors"
+                title="Drag to resize"
+              />
+            )}
+            {sidePanel && (
               <aside
-                className="flex flex-col border-l bg-editor-panel min-w-0"
-                style={{ flex: `0 0 ${sidePanel === "preview" ? "clamp(360px, 44%, 680px)" : "clamp(320px, 36%, 540px)"}` }}
+                className="flex flex-col bg-editor-panel min-w-0"
+                style={{ flex: sideWidth != null
+                  ? `0 0 ${sideWidth}px`
+                  : `0 0 ${sidePanel === "preview" ? "clamp(360px, 44%, 680px)" : "clamp(320px, 36%, 540px)"}` }}
               >
                 <div className="flex items-center gap-2 border-b px-3 py-2 text-xs">
                   <span className="inline-flex items-center gap-1.5 font-medium whitespace-nowrap">
