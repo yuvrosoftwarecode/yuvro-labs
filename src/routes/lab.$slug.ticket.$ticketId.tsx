@@ -78,6 +78,33 @@ function TicketEditor() {
   const [fileTreeOpen, setFileTreeOpen] = useState(true);
   const [sidePanel, setSidePanel] = useState<null | "preview" | "mentor">(null);
   const [previewDevice, setPreviewDevice] = useState<"Mobile" | "Tablet" | "Desktop">("Desktop");
+  const [sideWidth, setSideWidth] = useState<number | null>(null);
+  const splitContainerRef = useRef<HTMLDivElement>(null);
+
+  function startResize(e: React.MouseEvent) {
+    e.preventDefault();
+    const container = splitContainerRef.current;
+    if (!container) return;
+    const onMove = (ev: MouseEvent) => {
+      const rect = container.getBoundingClientRect();
+      const next = rect.right - ev.clientX;
+      const min = 260;
+      const max = Math.max(min + 100, rect.width - 320);
+      setSideWidth(Math.min(max, Math.max(min, next)));
+    };
+    const onUp = () => {
+      window.removeEventListener("mousemove", onMove);
+      window.removeEventListener("mouseup", onUp);
+      document.body.style.cursor = "";
+      document.body.style.userSelect = "";
+    };
+    document.body.style.cursor = "col-resize";
+    document.body.style.userSelect = "none";
+    window.addEventListener("mousemove", onMove);
+    window.addEventListener("mouseup", onUp);
+  }
+
+  useEffect(() => { setSideWidth(null); }, [sidePanel]);
   const [files, setFiles] = useState<Record<FileName, string>>({
     "Main.java": STARTER_MAIN,
     "MainTest.java": STARTER_TEST,
