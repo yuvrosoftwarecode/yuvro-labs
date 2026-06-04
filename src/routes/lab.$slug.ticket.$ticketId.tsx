@@ -77,6 +77,7 @@ function TicketEditor() {
   const [showProgress, setShowProgress] = useState(true);
   const [fileTreeOpen, setFileTreeOpen] = useState(true);
   const [sidePanel, setSidePanel] = useState<null | "preview" | "mentor">(null);
+  const [previewDevice, setPreviewDevice] = useState<"Mobile" | "Tablet" | "Desktop">("Desktop");
   const [files, setFiles] = useState<Record<FileName, string>>({
     "Main.java": STARTER_MAIN,
     "MainTest.java": STARTER_TEST,
@@ -372,10 +373,8 @@ function TicketEditor() {
               </div>
             )}
 
-            <div
-              className="flex min-w-0 flex-col"
-              style={{ flex: sidePanel ? `0 0 ${sidePanel === "preview" ? 60 : 70}%` : "1 1 0%" }}
-            >
+            <div className="flex flex-1 min-w-0 flex-col">
+
               {/* Tabs row */}
               <div className="flex items-center border-b bg-editor-panel text-xs overflow-x-auto">
                 {FILE_LIST.map((f) => (
@@ -394,10 +393,9 @@ function TicketEditor() {
                 </div>
               </div>
 
-              {/* Editor + minimap */}
+              {/* Editor */}
               <div className="flex flex-1 min-h-0">
                 <CodeEditor code={code} onChange={updateCode} language={activeFile.endsWith(".md") ? "md" : "java"} />
-                <Minimap code={code} />
               </div>
 
               {/* Bottom panel */}
@@ -435,16 +433,28 @@ function TicketEditor() {
             {sidePanel && (
               <aside
                 className="flex flex-col border-l bg-editor-panel min-w-0"
-                style={{ flex: `0 0 ${sidePanel === "preview" ? 40 : 30}%` }}
+                style={{ flex: `0 0 ${sidePanel === "preview" ? "clamp(360px, 44%, 680px)" : "clamp(320px, 36%, 540px)"}` }}
               >
-                <div className="flex items-center justify-between border-b px-3 py-2 text-xs">
-                  <span className="inline-flex items-center gap-1.5 font-medium">
+                <div className="flex items-center gap-2 border-b px-3 py-2 text-xs">
+                  <span className="inline-flex items-center gap-1.5 font-medium whitespace-nowrap">
                     {sidePanel === "preview" ? <><Globe className="h-3 w-3" />Live Preview</> : <><Sparkles className="h-3 w-3 text-primary" />AI Mentor</>}
                   </span>
-                  <button onClick={() => setSidePanel(null)} className="text-muted-foreground hover:text-foreground">✕</button>
+                  {sidePanel === "preview" && (
+                    <div className="flex items-center gap-1">
+                      {(["Mobile", "Tablet", "Desktop"] as const).map((d) => (
+                        <button key={d} onClick={() => setPreviewDevice(d)}
+                          className={`rounded border px-2 py-0.5 text-[10px] ${previewDevice === d ? "bg-accent text-foreground border-primary/40" : "text-muted-foreground hover:bg-accent"}`}>
+                          {d}
+                        </button>
+                      ))}
+                    </div>
+                  )}
+                  <button onClick={() => setSidePanel(null)} className="ml-auto text-muted-foreground hover:text-foreground">✕</button>
                 </div>
-                <div className="flex-1 overflow-auto scrollbar-thin p-3 text-xs">
-                  {sidePanel === "preview" ? <SidePreview /> : <SideMentor onAsk={(q) => showToast(`Mentor: ${q}`)} />}
+                <div className="flex-1 overflow-auto scrollbar-thin p-3 text-xs min-w-0">
+                  {sidePanel === "preview"
+                    ? <SidePreview device={previewDevice} />
+                    : <SideMentor onAsk={(q) => showToast(`Mentor: ${q}`)} />}
                 </div>
               </aside>
             )}
@@ -661,19 +671,12 @@ function PreviewView() {
   );
 }
 
-function SidePreview() {
-  const [device, setDevice] = useState<"Mobile" | "Tablet" | "Desktop">("Desktop");
+function SidePreview({ device }: { device: "Mobile" | "Tablet" | "Desktop" }) {
   const w = device === "Mobile" ? 375 : device === "Tablet" ? 768 : "100%";
   return (
     <div className="flex h-full flex-col gap-2">
-      <div className="flex items-center gap-1">
-        {(["Mobile", "Tablet", "Desktop"] as const).map((d) => (
-          <button key={d} onClick={() => setDevice(d)}
-            className={`rounded border px-2 py-0.5 text-[11px] ${device === d ? "bg-accent text-foreground" : "text-muted-foreground hover:bg-accent"}`}>
-            {d}
-          </button>
-        ))}
-        <span className="ml-auto text-[10px] text-muted-foreground">localhost:3000</span>
+      <div className="flex items-center text-[10px] text-muted-foreground">
+        <span className="ml-auto">localhost:3000</span>
       </div>
       <div className="flex-1 grid place-items-center overflow-auto rounded border bg-accent/30 p-2">
         <div className="mx-auto h-full overflow-auto rounded bg-white text-black shadow" style={{ width: w, maxWidth: "100%" }}>
