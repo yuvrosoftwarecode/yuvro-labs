@@ -78,6 +78,33 @@ function TicketEditor() {
   const [fileTreeOpen, setFileTreeOpen] = useState(true);
   const [sidePanel, setSidePanel] = useState<null | "preview" | "mentor">(null);
   const [previewDevice, setPreviewDevice] = useState<"Mobile" | "Tablet" | "Desktop">("Desktop");
+  const [sideWidth, setSideWidth] = useState<number | null>(null);
+  const splitContainerRef = useRef<HTMLDivElement>(null);
+
+  function startResize(e: React.MouseEvent) {
+    e.preventDefault();
+    const container = splitContainerRef.current;
+    if (!container) return;
+    const onMove = (ev: MouseEvent) => {
+      const rect = container.getBoundingClientRect();
+      const next = rect.right - ev.clientX;
+      const min = 260;
+      const max = Math.max(min + 100, rect.width - 320);
+      setSideWidth(Math.min(max, Math.max(min, next)));
+    };
+    const onUp = () => {
+      window.removeEventListener("mousemove", onMove);
+      window.removeEventListener("mouseup", onUp);
+      document.body.style.cursor = "";
+      document.body.style.userSelect = "";
+    };
+    document.body.style.cursor = "col-resize";
+    document.body.style.userSelect = "none";
+    window.addEventListener("mousemove", onMove);
+    window.addEventListener("mouseup", onUp);
+  }
+
+  useEffect(() => { setSideWidth(null); }, [sidePanel]);
   const [files, setFiles] = useState<Record<FileName, string>>({
     "Main.java": STARTER_MAIN,
     "MainTest.java": STARTER_TEST,
@@ -350,7 +377,7 @@ function TicketEditor() {
 
         {/* Center editor */}
         <section className="flex flex-1 min-w-0 flex-col relative">
-          <div className="flex flex-1 min-h-0">
+          <div ref={splitContainerRef} className="flex flex-1 min-h-0">
             {/* File tree */}
             {fileTreeOpen && (
               <div className="hidden lg:flex w-52 flex-col border-r bg-editor-panel text-xs">
@@ -431,9 +458,19 @@ function TicketEditor() {
             </div>
 
             {sidePanel && (
+              <div
+                role="separator"
+                onMouseDown={startResize}
+                className="w-1 cursor-col-resize bg-border hover:bg-primary/50 transition-colors"
+                title="Drag to resize"
+              />
+            )}
+            {sidePanel && (
               <aside
-                className="flex flex-col border-l bg-editor-panel min-w-0"
-                style={{ flex: `0 0 ${sidePanel === "preview" ? "clamp(360px, 44%, 680px)" : "clamp(320px, 36%, 540px)"}` }}
+                className="flex flex-col bg-editor-panel min-w-0"
+                style={{ flex: sideWidth != null
+                  ? `0 0 ${sideWidth}px`
+                  : `0 0 ${sidePanel === "preview" ? "clamp(360px, 44%, 680px)" : "clamp(320px, 36%, 540px)"}` }}
               >
                 <div className="flex items-center gap-2 border-b px-3 py-2 text-xs">
                   <span className="inline-flex items-center gap-1.5 font-medium whitespace-nowrap">
@@ -675,9 +712,7 @@ function SidePreview({ device }: { device: "Mobile" | "Tablet" | "Desktop" }) {
   const w = device === "Mobile" ? 375 : device === "Tablet" ? 768 : "100%";
   return (
     <div className="flex h-full flex-col gap-2">
-      <div className="flex items-center text-[10px] text-muted-foreground">
-        <span className="ml-auto">localhost:3000</span>
-      </div>
+
       <div className="flex-1 grid place-items-center overflow-auto rounded border bg-accent/30 p-2">
         <div className="mx-auto h-full overflow-auto rounded bg-white text-black shadow" style={{ width: w, maxWidth: "100%" }}>
           <div className="p-4 space-y-2">
