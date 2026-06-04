@@ -394,10 +394,9 @@ function TicketEditor() {
                 </div>
               </div>
 
-              {/* Editor + minimap */}
+              {/* Editor */}
               <div className="flex flex-1 min-h-0">
                 <CodeEditor code={code} onChange={updateCode} language={activeFile.endsWith(".md") ? "md" : "java"} />
-                <Minimap code={code} />
               </div>
 
               {/* Bottom panel */}
