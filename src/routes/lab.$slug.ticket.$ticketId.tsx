@@ -1463,3 +1463,222 @@ function highlight(line: string): string {
   h = h.replace(/\b([a-zA-Z_][\w]*)(?=\()/g, '<span style="color:var(--syntax-fn)">$1</span>');
   return h;
 }
+
+/* ---------- VS Code-like File Tree ---------- */
+
+type TreeNode = {
+  name: string;
+  path: string; // full path from root
+  isFile: boolean;
+  children: TreeNode[];
+};
+
+function buildTree(paths: readonly string[]): TreeNode {
+  const root: TreeNode = { name: "", path: "", isFile: false, children: [] };
+  for (const full of paths) {
+    const parts = full.split("/");
+    let cursor = root;
+    for (let i = 0; i < parts.length; i++) {
+      const seg = parts[i];
+      const isLast = i === parts.length - 1;
+      const segPath = parts.slice(0, i + 1).join("/");
+      let next = cursor.children.find((c) => c.name === seg && c.isFile === isLast);
+      if (!next) {
+        next = { name: seg, path: segPath, isFile: isLast, children: [] };
+        cursor.children.push(next);
+      }
+      cursor = next;
+    }
+  }
+  // sort: folders first, then alpha
+  const sort = (n: TreeNode) => {
+    n.children.sort((a, b) => (a.isFile === b.isFile ? a.name.localeCompare(b.name) : a.isFile ? 1 : -1));
+    n.children.forEach(sort);
+  };
+  sort(root);
+  return root;
+}
+
+type FileTreeProps = {
+  rootLabel: string;
+  paths: readonly string[];
+  activeFile: string;
+  dirty: Record<string, boolean>;
+  onOpenFile: (path: string) => void;
+  onCreateFile: (path: string, contents?: string) => void;
+  onRenameFile: (oldPath: string, newPath: string) => void;
+  onDeleteFile: (path: string) => void;
+  onDeleteFolder: (prefix: string) => void;
+  isFolderOpen: (key: string) => boolean;
+  toggleFolder: (key: string) => void;
+};
+
+function FileTree(props: FileTreeProps) {
+  const tree = useMemo(() => buildTree(props.paths), [props.paths]);
+  return (
+    <div className="space-y-0.5">
+      <TreeFolderNode
+        node={{ ...tree, name: props.rootLabel, path: "" }}
+        depth={0}
+        isRoot
+        {...props}
+      />
+    </div>
+  );
+}
+
+function TreeFolderNode({
+  node, depth, isRoot,
+  activeFile, dirty,
+  onOpenFile, onCreateFile, onRenameFile, onDeleteFile, onDeleteFolder,
+  isFolderOpen, toggleFolder,
+}: { node: TreeNode; depth: number; isRoot?: boolean } & Omit<FileTreeProps, "paths" | "rootLabel">) {
+  const key = node.path || "__root__";
+  const open = isFolderOpen(key);
+  const pad = { paddingLeft: depth * 10 + 4 };
+
+  const handleNewFile = () => {
+    const seed = node.path ? `${node.path}/new-file.py` : "new-file.py";
+    const v = prompt("New file path", seed);
+    if (v) onCreateFile(v);
+  };
+  const handleNewFolder = () => {
+    const seed = node.path ? `${node.path}/new-folder` : "new-folder";
+    const v = prompt("New folder path", seed);
+    if (v) onCreateFile(`${v.replace(/\/+$/, "")}/.gitkeep`, "");
+  };
+
+  return (
+    <div>
+      <ContextMenu>
+        <ContextMenuTrigger asChild>
+          <button
+            onClick={() => toggleFolder(key)}
+            style={pad}
+            className="group flex w-full items-center gap-1 rounded py-0.5 pr-1 text-left hover:bg-accent/60"
+          >
+            {open ? <ChevronDown className="h-3 w-3 shrink-0" /> : <ChevronRight className="h-3 w-3 shrink-0" />}
+            {open ? <FolderOpen className="h-3 w-3 shrink-0 text-info" /> : <Folder className="h-3 w-3 shrink-0 text-info" />}
+            <span className="truncate">{node.name}</span>
+          </button>
+        </ContextMenuTrigger>
+        <ContextMenuContent className="w-44">
+          <ContextMenuItem onSelect={handleNewFile}><FilePlus className="mr-2 h-3.5 w-3.5" />New File</ContextMenuItem>
+          <ContextMenuItem onSelect={handleNewFolder}><FolderPlus className="mr-2 h-3.5 w-3.5" />New Folder</ContextMenuItem>
+          {!isRoot && (
+            <>
+              <ContextMenuSeparator />
+              <ContextMenuItem
+                onSelect={() => {
+                  const next = prompt("Rename folder", node.path);
+                  if (next && next !== node.path) {
+                    // rename every file under prefix
+                    const prefix = node.path + "/";
+                    const newPrefix = next.replace(/\/+$/, "") + "/";
+                    // gather then rename one-by-one
+                    const affected = props_get_paths_under(node, prefix);
+                    affected.forEach((p) => onRenameFile(p, p.replace(prefix, newPrefix)));
+                  }
+                }}
+              ><Pencil className="mr-2 h-3.5 w-3.5" />Rename Folder</ContextMenuItem>
+              <ContextMenuItem
+                className="text-destructive focus:text-destructive"
+                onSelect={() => onDeleteFolder(node.path)}
+              ><Trash2 className="mr-2 h-3.5 w-3.5" />Delete Folder</ContextMenuItem>
+            </>
+          )}
+        </ContextMenuContent>
+      </ContextMenu>
+      {open && (
+        <div>
+          {node.children.map((child) =>
+            child.isFile ? (
+              <TreeFileNode
+                key={child.path}
+                node={child}
+                depth={depth + 1}
+                active={activeFile === child.path}
+                modified={dirty[child.path]}
+                onOpenFile={onOpenFile}
+                onRenameFile={onRenameFile}
+                onDeleteFile={onDeleteFile}
+              />
+            ) : (
+              <TreeFolderNode
+                key={child.path}
+                node={child}
+                depth={depth + 1}
+                activeFile={activeFile}
+                dirty={dirty}
+                onOpenFile={onOpenFile}
+                onCreateFile={onCreateFile}
+                onRenameFile={onRenameFile}
+                onDeleteFile={onDeleteFile}
+                onDeleteFolder={onDeleteFolder}
+                isFolderOpen={isFolderOpen}
+                toggleFolder={toggleFolder}
+              />
+            )
+          )}
+        </div>
+      )}
+    </div>
+  );
+}
+
+// helper: collect file paths under a folder node
+function props_get_paths_under(node: TreeNode, _prefix: string): string[] {
+  const out: string[] = [];
+  const walk = (n: TreeNode) => {
+    if (n.isFile) out.push(n.path);
+    else n.children.forEach(walk);
+  };
+  walk(node);
+  return out;
+}
+
+function TreeFileNode({
+  node, depth, active, modified, onOpenFile, onRenameFile, onDeleteFile,
+}: {
+  node: TreeNode;
+  depth: number;
+  active: boolean;
+  modified?: boolean;
+  onOpenFile: (path: string) => void;
+  onRenameFile: (oldPath: string, newPath: string) => void;
+  onDeleteFile: (path: string) => void;
+}) {
+  const pad = { paddingLeft: depth * 10 + 4 };
+  return (
+    <ContextMenu>
+      <ContextMenuTrigger asChild>
+        <button
+          onClick={() => onOpenFile(node.path)}
+          style={pad}
+          className={`flex w-full items-center gap-1.5 rounded py-0.5 pr-1 text-left ${
+            active ? "bg-accent text-foreground" : "text-muted-foreground hover:bg-accent/60"
+          }`}
+        >
+          <span className="w-3" />
+          <FileCode2 className="h-3 w-3 shrink-0" />
+          <span className="flex-1 truncate">{node.name}</span>
+          {modified && <span className="h-1.5 w-1.5 rounded-full bg-warning" />}
+        </button>
+      </ContextMenuTrigger>
+      <ContextMenuContent className="w-44">
+        <ContextMenuItem onSelect={() => onOpenFile(node.path)}>Open</ContextMenuItem>
+        <ContextMenuSeparator />
+        <ContextMenuItem
+          onSelect={() => {
+            const next = prompt("Rename file", node.path);
+            if (next && next !== node.path) onRenameFile(node.path, next);
+          }}
+        ><Pencil className="mr-2 h-3.5 w-3.5" />Rename</ContextMenuItem>
+        <ContextMenuItem
+          className="text-destructive focus:text-destructive"
+          onSelect={() => onDeleteFile(node.path)}
+        ><Trash2 className="mr-2 h-3.5 w-3.5" />Delete</ContextMenuItem>
+      </ContextMenuContent>
+    </ContextMenu>
+  );
+}
