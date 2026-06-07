@@ -720,10 +720,31 @@ function TicketEditor() {
                 </div>
               </div>
 
+              {/* Breadcrumb path (VS Code style) */}
+              <div className="flex items-center gap-1 border-b bg-editor-bg/60 px-3 py-1 text-[11px] text-muted-foreground overflow-x-auto whitespace-nowrap">
+                <Folder className="h-3 w-3 text-info shrink-0" />
+                {activeFile.split("/").map((seg, i, arr) => {
+                  const isLast = i === arr.length - 1;
+                  return (
+                    <span key={i} className="inline-flex items-center gap-1">
+                      {i > 0 && <ChevronRight className="h-3 w-3 opacity-60" />}
+                      <span className={isLast ? "text-foreground" : ""}>
+                        {isLast ? <FileCode2 className="inline h-3 w-3 mr-1 text-info" /> : null}
+                        {seg}
+                      </span>
+                    </span>
+                  );
+                })}
+                <span className="ml-auto pl-3 text-[10px] uppercase tracking-wider">
+                  {editorLanguage(activeFile)}
+                </span>
+              </div>
+
               {/* Editor */}
               <div className="flex flex-1 min-h-0">
                 <CodeEditor code={code} onChange={updateCode} language={editorLanguage(activeFile)} />
               </div>
+
 
               {/* Bottom panel */}
               <div className="border-t bg-editor-panel">
