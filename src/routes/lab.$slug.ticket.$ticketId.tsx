@@ -9,7 +9,21 @@ import {
   CircleDot, Terminal as TerminalIcon, CheckCircle2, XCircle, Clock, Zap,
   MessageSquare, Lock, Unlock, RotateCcw, Copy, Share2, Flag, HelpCircle,
   Sparkles, Gauge, Wand2, Globe, Check, ArrowLeft, PanelLeftClose, PanelLeftOpen, BookOpen,
+  FilePlus, FolderPlus, Pencil, Trash2,
 } from "lucide-react";
+import CodeMirror from "@uiw/react-codemirror";
+import { python } from "@codemirror/lang-python";
+import { java } from "@codemirror/lang-java";
+import { html as cmHtml } from "@codemirror/lang-html";
+import { markdown as cmMarkdown } from "@codemirror/lang-markdown";
+import { vscodeDark, vscodeLight } from "@uiw/codemirror-theme-vscode";
+import {
+  ContextMenu,
+  ContextMenuContent,
+  ContextMenuItem,
+  ContextMenuSeparator,
+  ContextMenuTrigger,
+} from "@/components/ui/context-menu";
 
 export const Route = createFileRoute("/lab/$slug/ticket/$ticketId")({ component: TicketEditor });
 
