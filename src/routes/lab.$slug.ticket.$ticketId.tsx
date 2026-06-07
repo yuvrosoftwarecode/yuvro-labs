@@ -55,7 +55,269 @@ casts, and use String methods (length, charAt, substring).
 Run with: \`javac Main.java && java Main\``;
 
 const FILE_LIST = ["Main.java", "MainTest.java", "README.md"] as const;
-type FileName = typeof FILE_LIST[number];
+type FileName = string;
+
+/* ---------- Django Todo App (Python) starters ---------- */
+const DJANGO_FILES = [
+  "todoproject/settings.py",
+  "todoproject/urls.py",
+  "todos/models.py",
+  "todos/views.py",
+  "todos/urls.py",
+  "todos/forms.py",
+  "todos/admin.py",
+  "todos/templates/todos/base.html",
+  "todos/templates/todos/todo_list.html",
+  "manage.py",
+  "requirements.txt",
+  "README.md",
+] as const;
+
+const DJANGO_STARTERS: Record<string, string> = {
+  "manage.py": `#!/usr/bin/env python
+"""Django's command-line utility for administrative tasks."""
+import os
+import sys
+
+
+def main():
+    os.environ.setdefault("DJANGO_SETTINGS_MODULE", "todoproject.settings")
+    try:
+        from django.core.management import execute_from_command_line
+    except ImportError as exc:
+        raise ImportError(
+            "Couldn't import Django. Are you sure it's installed and "
+            "available on your PYTHONPATH environment variable?"
+        ) from exc
+    execute_from_command_line(sys.argv)
+
+
+if __name__ == "__main__":
+    main()
+`,
+  "requirements.txt": `Django>=5.0,<6.0
+`,
+  "todoproject/settings.py": `from pathlib import Path
+
+BASE_DIR = Path(__file__).resolve().parent.parent
+
+SECRET_KEY = "dev-secret-change-me"
+DEBUG = True
+ALLOWED_HOSTS = ["*"]
+
+INSTALLED_APPS = [
+    "django.contrib.admin",
+    "django.contrib.auth",
+    "django.contrib.contenttypes",
+    "django.contrib.sessions",
+    "django.contrib.messages",
+    "django.contrib.staticfiles",
+    "todos",
+]
+
+MIDDLEWARE = [
+    "django.middleware.security.SecurityMiddleware",
+    "django.contrib.sessions.middleware.SessionMiddleware",
+    "django.middleware.common.CommonMiddleware",
+    "django.middleware.csrf.CsrfViewMiddleware",
+    "django.contrib.auth.middleware.AuthenticationMiddleware",
+    "django.contrib.messages.middleware.MessageMiddleware",
+]
+
+ROOT_URLCONF = "todoproject.urls"
+
+TEMPLATES = [
+    {
+        "BACKEND": "django.template.backends.django.DjangoTemplates",
+        "DIRS": [],
+        "APP_DIRS": True,
+        "OPTIONS": {
+            "context_processors": [
+                "django.template.context_processors.debug",
+                "django.template.context_processors.request",
+                "django.contrib.auth.context_processors.auth",
+                "django.contrib.messages.context_processors.messages",
+            ],
+        },
+    },
+]
+
+DATABASES = {
+    "default": {
+        "ENGINE": "django.db.backends.sqlite3",
+        "NAME": BASE_DIR / "db.sqlite3",
+    }
+}
+
+STATIC_URL = "static/"
+DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
+`,
+  "todoproject/urls.py": `from django.contrib import admin
+from django.urls import include, path
+
+urlpatterns = [
+    path("admin/", admin.site.urls),
+    path("", include("todos.urls")),
+]
+`,
+  "todos/models.py": `from django.db import models
+
+
+class Todo(models.Model):
+    title = models.CharField(max_length=200)
+    description = models.TextField(blank=True)
+    completed = models.BooleanField(default=False)
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        ordering = ["completed", "-created_at"]
+
+    def __str__(self) -> str:
+        return self.title
+`,
+  "todos/views.py": `from django.shortcuts import get_object_or_404, redirect, render
+from django.views.decorators.http import require_POST
+
+from .forms import TodoForm
+from .models import Todo
+
+
+def todo_list(request):
+    if request.method == "POST":
+        form = TodoForm(request.POST)
+        if form.is_valid():
+            form.save()
+            return redirect("todo_list")
+    else:
+        form = TodoForm()
+
+    todos = Todo.objects.all()
+    return render(
+        request,
+        "todos/todo_list.html",
+        {"todos": todos, "form": form},
+    )
+
+
+@require_POST
+def toggle_todo(request, pk: int):
+    todo = get_object_or_404(Todo, pk=pk)
+    todo.completed = not todo.completed
+    todo.save(update_fields=["completed"])
+    return redirect("todo_list")
+
+
+@require_POST
+def delete_todo(request, pk: int):
+    todo = get_object_or_404(Todo, pk=pk)
+    todo.delete()
+    return redirect("todo_list")
+`,
+  "todos/urls.py": `from django.urls import path
+
+from . import views
+
+urlpatterns = [
+    path("", views.todo_list, name="todo_list"),
+    path("<int:pk>/toggle/", views.toggle_todo, name="toggle_todo"),
+    path("<int:pk>/delete/", views.delete_todo, name="delete_todo"),
+]
+`,
+  "todos/forms.py": `from django import forms
+
+from .models import Todo
+
+
+class TodoForm(forms.ModelForm):
+    class Meta:
+        model = Todo
+        fields = ["title", "description"]
+        widgets = {
+            "title": forms.TextInput(attrs={"placeholder": "What needs doing?"}),
+            "description": forms.Textarea(attrs={"rows": 2}),
+        }
+`,
+  "todos/admin.py": `from django.contrib import admin
+
+from .models import Todo
+
+
+@admin.register(Todo)
+class TodoAdmin(admin.ModelAdmin):
+    list_display = ("title", "completed", "created_at")
+    list_filter = ("completed",)
+    search_fields = ("title", "description")
+`,
+  "todos/templates/todos/base.html": `<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>{% block title %}Todos{% endblock %}</title>
+  <style>
+    body { font-family: system-ui, sans-serif; max-width: 640px; margin: 2rem auto; padding: 0 1rem; }
+    h1 { margin-bottom: .25rem; }
+    ul { list-style: none; padding: 0; }
+    li { display: flex; gap: .5rem; align-items: center; padding: .5rem 0; border-bottom: 1px solid #eee; }
+    .done { text-decoration: line-through; color: #888; }
+    form.inline { display: inline; }
+    input[type=text], textarea { width: 100%; padding: .5rem; }
+    button { cursor: pointer; }
+  </style>
+</head>
+<body>
+  {% block content %}{% endblock %}
+</body>
+</html>
+`,
+  "todos/templates/todos/todo_list.html": `{% extends "todos/base.html" %}
+
+{% block title %}My Todos{% endblock %}
+
+{% block content %}
+  <h1>Todos</h1>
+  <p>{{ todos|length }} item{{ todos|length|pluralize }}</p>
+
+  <form method="post">
+    {% csrf_token %}
+    {{ form.title }}
+    {{ form.description }}
+    <button type="submit">Add</button>
+  </form>
+
+  <ul>
+    {% for todo in todos %}
+      <li>
+        <form class="inline" method="post" action="{% url 'toggle_todo' todo.pk %}">
+          {% csrf_token %}
+          <button type="submit">{% if todo.completed %}↩{% else %}✓{% endif %}</button>
+        </form>
+        <span class="{% if todo.completed %}done{% endif %}">{{ todo.title }}</span>
+        <form class="inline" method="post" action="{% url 'delete_todo' todo.pk %}" style="margin-left:auto">
+          {% csrf_token %}
+          <button type="submit">🗑</button>
+        </form>
+      </li>
+    {% empty %}
+      <li>No todos yet — add one above.</li>
+    {% endfor %}
+  </ul>
+{% endblock %}
+`,
+  "README.md": `# Django Todo App
+
+A small Django project that stores todos in SQLite and renders them with HTML templates.
+
+## Run
+
+\`\`\`bash
+pip install -r requirements.txt
+python manage.py migrate
+python manage.py runserver
+\`\`\`
+
+Open http://127.0.0.1:8000/ to use the app.
+`,
+};
 
 type TestResult = { name: string; pass: boolean; time: string; expected?: string; got?: string };
 type BottomTab = "output" | "errors" | "tests" | "quality" | "preview" | "terminal";
@@ -66,16 +328,25 @@ function TicketEditor() {
   const reviewMatch = useMatch({ from: "/lab/$slug/ticket/$ticketId/review", shouldThrow: false });
   const lab = labs.find((l) => l.slug === slug) ?? labs[0];
   const ticket = tickets.find((t) => t.id === ticketId) ?? tickets[0];
+  const isDjango = ticket.tag === "Django Todo";
+  const fileList: readonly string[] = isDjango ? DJANGO_FILES : FILE_LIST;
+  const starters: Record<string, string> = isDjango
+    ? DJANGO_STARTERS
+    : { "Main.java": STARTER_MAIN, "MainTest.java": STARTER_TEST, "README.md": STARTER_README };
+  const primaryFile = isDjango ? "todos/views.py" : "Main.java";
 
   const [tab, setTab] = useState<"problem" | "hints" | "discuss">("problem");
   const [leftCollapsed, setLeftCollapsed] = useState(false);
-  const [activeFile, setActiveFile] = useState<FileName>("Main.java");
+  const [activeFile, setActiveFile] = useState<FileName>(fileList[0]);
   const [bottomTab, setBottomTab] = useState<BottomTab>("tests");
   const [hintLevel, setHintLevel] = useState(2);
   const [elapsed, setElapsed] = useState(0);
   const [theme, setTheme] = useState<"dark" | "light">("dark");
   const [showProgress, setShowProgress] = useState(true);
   const [fileTreeOpen, setFileTreeOpen] = useState(true);
+  const [openFolders, setOpenFolders] = useState<Record<string, boolean>>({});
+  const toggleFolder = (k: string) => setOpenFolders((o) => ({ ...o, [k]: !(o[k] ?? true) }));
+  const isFolderOpen = (k: string) => openFolders[k] ?? true;
   const [sidePanel, setSidePanel] = useState<null | "preview" | "mentor">(null);
   const [previewDevice, setPreviewDevice] = useState<"Mobile" | "Tablet" | "Desktop">("Desktop");
   const [sideWidth, setSideWidth] = useState<number | null>(null);
@@ -105,12 +376,18 @@ function TicketEditor() {
   }
 
   useEffect(() => { setSideWidth(null); }, [sidePanel]);
-  const [files, setFiles] = useState<Record<FileName, string>>({
-    "Main.java": STARTER_MAIN,
-    "MainTest.java": STARTER_TEST,
-    "README.md": STARTER_README,
-  });
-  const [dirty, setDirty] = useState<Record<FileName, boolean>>({ "Main.java": false, "MainTest.java": false, "README.md": false });
+  const [files, setFiles] = useState<Record<string, string>>(starters);
+  const [dirty, setDirty] = useState<Record<string, boolean>>({});
+
+  // Reset file state when switching tickets (esp. between Java and Django sets)
+  useEffect(() => {
+    setFiles(starters);
+    setDirty({});
+    setActiveFile(fileList[0]);
+    setTestsRan(false);
+    setOutput("");
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [ticket.id]);
   const [output, setOutput] = useState<string>("");
   const [running, setRunning] = useState(false);
   const [tests, setTests] = useState<TestResult[]>([
@@ -380,19 +657,42 @@ function TicketEditor() {
           <div ref={splitContainerRef} className="flex flex-1 min-h-0">
             {/* File tree */}
             {fileTreeOpen && (
-              <div className="hidden lg:flex w-52 flex-col border-r bg-editor-panel text-xs">
+              <div className="hidden lg:flex w-56 flex-col border-r bg-editor-panel text-xs">
                 <div className="px-3 py-2 text-[11px] uppercase tracking-wide text-muted-foreground">Explorer</div>
                 <div className="px-2 space-y-0.5">
-                  <TreeFolder label={ticket.id.toLowerCase()} open>
-                    <TreeFolder label="src" open>
-                      <TreeFile name="Main.java" active={activeFile === "Main.java"} onClick={() => setActiveFile("Main.java")} modified={dirty["Main.java"]} />
+                  {isDjango ? (
+                    <TreeFolder label="todo-app" open={isFolderOpen("root")} onToggle={() => toggleFolder("root")}>
+                      <TreeFolder label="todoproject" open={isFolderOpen("todoproject")} onToggle={() => toggleFolder("todoproject")}>
+                        <TreeFile name="settings.py" active={activeFile === "todoproject/settings.py"} onClick={() => setActiveFile("todoproject/settings.py")} modified={dirty["todoproject/settings.py"]} />
+                        <TreeFile name="urls.py" active={activeFile === "todoproject/urls.py"} onClick={() => setActiveFile("todoproject/urls.py")} modified={dirty["todoproject/urls.py"]} />
+                      </TreeFolder>
+                      <TreeFolder label="todos" open={isFolderOpen("todos")} onToggle={() => toggleFolder("todos")}>
+                        <TreeFolder label="templates/todos" open={isFolderOpen("templates")} onToggle={() => toggleFolder("templates")}>
+                          <TreeFile name="base.html" active={activeFile === "todos/templates/todos/base.html"} onClick={() => setActiveFile("todos/templates/todos/base.html")} modified={dirty["todos/templates/todos/base.html"]} />
+                          <TreeFile name="todo_list.html" active={activeFile === "todos/templates/todos/todo_list.html"} onClick={() => setActiveFile("todos/templates/todos/todo_list.html")} modified={dirty["todos/templates/todos/todo_list.html"]} />
+                        </TreeFolder>
+                        <TreeFile name="models.py" active={activeFile === "todos/models.py"} onClick={() => setActiveFile("todos/models.py")} modified={dirty["todos/models.py"]} />
+                        <TreeFile name="views.py" active={activeFile === "todos/views.py"} onClick={() => setActiveFile("todos/views.py")} modified={dirty["todos/views.py"]} />
+                        <TreeFile name="urls.py" active={activeFile === "todos/urls.py"} onClick={() => setActiveFile("todos/urls.py")} modified={dirty["todos/urls.py"]} />
+                        <TreeFile name="forms.py" active={activeFile === "todos/forms.py"} onClick={() => setActiveFile("todos/forms.py")} modified={dirty["todos/forms.py"]} />
+                        <TreeFile name="admin.py" active={activeFile === "todos/admin.py"} onClick={() => setActiveFile("todos/admin.py")} modified={dirty["todos/admin.py"]} />
+                      </TreeFolder>
+                      <TreeFile name="manage.py" active={activeFile === "manage.py"} onClick={() => setActiveFile("manage.py")} modified={dirty["manage.py"]} />
+                      <TreeFile name="requirements.txt" active={activeFile === "requirements.txt"} onClick={() => setActiveFile("requirements.txt")} modified={dirty["requirements.txt"]} />
+                      <TreeFile name="README.md" active={activeFile === "README.md"} onClick={() => setActiveFile("README.md")} modified={dirty["README.md"]} />
                     </TreeFolder>
-                    <TreeFolder label="tests" open>
-                      <TreeFile name="MainTest.java" onClick={() => setActiveFile("MainTest.java")} active={activeFile === "MainTest.java"} modified={dirty["MainTest.java"]} />
+                  ) : (
+                    <TreeFolder label={ticket.id.toLowerCase()} open={isFolderOpen("root")} onToggle={() => toggleFolder("root")}>
+                      <TreeFolder label="src" open={isFolderOpen("src")} onToggle={() => toggleFolder("src")}>
+                        <TreeFile name="Main.java" active={activeFile === "Main.java"} onClick={() => setActiveFile("Main.java")} modified={dirty["Main.java"]} />
+                      </TreeFolder>
+                      <TreeFolder label="tests" open={isFolderOpen("tests")} onToggle={() => toggleFolder("tests")}>
+                        <TreeFile name="MainTest.java" onClick={() => setActiveFile("MainTest.java")} active={activeFile === "MainTest.java"} modified={dirty["MainTest.java"]} />
+                      </TreeFolder>
+                      <TreeFile name="README.md" onClick={() => setActiveFile("README.md")} active={activeFile === "README.md"} modified={dirty["README.md"]} />
+                      <TreeFile name="pom.xml" onClick={() => showToast("Read-only file")} />
                     </TreeFolder>
-                    <TreeFile name="README.md" onClick={() => setActiveFile("README.md")} active={activeFile === "README.md"} modified={dirty["README.md"]} />
-                    <TreeFile name="pom.xml" onClick={() => showToast("Read-only file")} />
-                  </TreeFolder>
+                  )}
                 </div>
                 <div className="mt-auto border-t px-3 py-2 text-[11px] text-muted-foreground">
                   <div className="flex items-center gap-1"><GitBranch className="h-3 w-3" /> main</div>
@@ -404,15 +704,15 @@ function TicketEditor() {
 
               {/* Tabs row */}
               <div className="flex items-center border-b bg-editor-panel text-xs overflow-x-auto">
-                {FILE_LIST.map((f) => (
+                {fileList.map((f) => (
                   <button key={f} onClick={() => setActiveFile(f)}
                     className={`flex items-center gap-2 border-r px-3 py-2 whitespace-nowrap ${activeFile === f ? "bg-editor-bg text-foreground" : "text-muted-foreground hover:text-foreground"}`}>
-                    <FileCode2 className="h-3 w-3" />{f}
+                    <FileCode2 className="h-3 w-3" />{f.split("/").pop()}
                     {dirty[f] && <CircleDot className="h-2.5 w-2.5 text-warning" />}
                   </button>
                 ))}
                 <div className="ml-auto flex items-center gap-2 pr-3 text-[11px] text-muted-foreground whitespace-nowrap">
-                  <CompileBadge state={compileState} />
+                  {!isDjango && <CompileBadge state={compileState} />}
                   <button onClick={toggleTheme} className="rounded border px-2 py-0.5 hover:bg-accent">
                     {theme === "dark" ? "☀ Light" : "🌙 Dark"}
                   </button>
@@ -422,7 +722,7 @@ function TicketEditor() {
 
               {/* Editor */}
               <div className="flex flex-1 min-h-0">
-                <CodeEditor code={code} onChange={updateCode} language={activeFile.endsWith(".md") ? "md" : "java"} />
+                <CodeEditor code={code} onChange={updateCode} language={editorLanguage(activeFile)} />
               </div>
 
               {/* Bottom panel */}
@@ -504,14 +804,16 @@ function TicketEditor() {
       {/* Status bar */}
       <div className="flex items-center gap-3 border-t bg-primary/90 px-3 py-1 text-[11px] text-primary-foreground">
         <span className="inline-flex items-center gap-1"><GitBranch className="h-3 w-3" /> main</span>
-        <span>Java 17</span>
+        <span>{isDjango ? "Python 3.12 · Django 5" : "Java 17"}</span>
         <span>UTF-8</span>
         <span>LF</span>
-        <span className="inline-flex items-center gap-1">
-          {compileState === "ok" && <><CheckCircle2 className="h-3 w-3" />Compiled</>}
-          {compileState === "warn" && <><AlertTriangle className="h-3 w-3" />1 warning</>}
-          {compileState === "err" && <><XCircle className="h-3 w-3" />Compile error</>}
-        </span>
+        {!isDjango && (
+          <span className="inline-flex items-center gap-1">
+            {compileState === "ok" && <><CheckCircle2 className="h-3 w-3" />Compiled</>}
+            {compileState === "warn" && <><AlertTriangle className="h-3 w-3" />1 warning</>}
+            {compileState === "err" && <><XCircle className="h-3 w-3" />Compile error</>}
+          </span>
+        )}
         <span className="ml-auto">{activeFile} · {code.split("\n").length} lines</span>
       </div>
 
@@ -527,7 +829,16 @@ function TicketEditor() {
 
 /* ---------- Editor ---------- */
 
-function CodeEditor({ code, onChange, language }: { code: string; onChange: (v: string) => void; language: "java" | "md" }) {
+type EditorLang = "java" | "py" | "html" | "md" | "txt";
+function editorLanguage(file: string): EditorLang {
+  if (file.endsWith(".py")) return "py";
+  if (file.endsWith(".html")) return "html";
+  if (file.endsWith(".md")) return "md";
+  if (file.endsWith(".java")) return "java";
+  return "txt";
+}
+
+function CodeEditor({ code, onChange, language }: { code: string; onChange: (v: string) => void; language: EditorLang }) {
   const taRef = useRef<HTMLTextAreaElement>(null);
   const preRef = useRef<HTMLPreElement>(null);
   const lines = code.split("\n");
@@ -950,11 +1261,14 @@ function Section({ title, children }: { title: string; children: React.ReactNode
   );
 }
 
-function TreeFolder({ label, open: defaultOpen = false, children }: { label: string; open?: boolean; children: React.ReactNode }) {
-  const [open, setOpen] = useState(defaultOpen);
+function TreeFolder({ label, open: openProp, onToggle, children }: { label: string; open?: boolean; onToggle?: () => void; children: React.ReactNode }) {
+  const [internalOpen, setInternalOpen] = useState(openProp ?? false);
+  const isControlled = onToggle !== undefined;
+  const open = isControlled ? (openProp ?? false) : internalOpen;
+  const handleClick = () => (isControlled ? onToggle!() : setInternalOpen((o) => !o));
   return (
     <div>
-      <button onClick={() => setOpen((o) => !o)} className="flex w-full items-center gap-1 rounded px-1.5 py-0.5 hover:bg-accent/60">
+      <button onClick={handleClick} className="flex w-full items-center gap-1 rounded px-1.5 py-0.5 hover:bg-accent/60">
         {open ? <ChevronDown className="h-3 w-3" /> : <ChevronRight className="h-3 w-3" />}
         {open ? <FolderOpen className="h-3 w-3 text-info" /> : <Folder className="h-3 w-3 text-info" />}
         <span>{label}</span>

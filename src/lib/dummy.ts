@@ -68,6 +68,17 @@ export const tickets: Ticket[] = [
   mk(18, "JDBC Basics", "Advanced", "Not Started", "DB", 80, 320),
   mk(19, "JUnit Testing", "Intermediate", "Not Started", "Testing", 60, 220),
   mk(20, "Design Patterns I", "Advanced", "Not Started", "Patterns", 100, 400),
+  // ---- Python · Django Todo App sprint ----
+  { id: "PYDJ-201", title: "Bootstrap Django project & app", difficulty: "Beginner", estMin: 40, xp: 150, tag: "Django Todo", status: "Completed", score: 90,
+    description: "Create a Django project `todoproject` and a `todos` app. Register the app in INSTALLED_APPS and wire urls.py." },
+  { id: "PYDJ-202", title: "Todo model & migrations", difficulty: "Beginner", estMin: 45, xp: 180, tag: "Django Todo", status: "In Progress", progress: 55,
+    description: "Define a `Todo` model with title, description, completed and created_at. Generate and apply migrations." },
+  { id: "PYDJ-203", title: "List & create todos (views + templates)", difficulty: "Intermediate", estMin: 60, xp: 240, tag: "Django Todo", status: "In Progress", progress: 20,
+    description: "Implement list and create views using class-based or function views. Render with Django HTML templates." },
+  { id: "PYDJ-204", title: "Toggle complete & delete", difficulty: "Intermediate", estMin: 50, xp: 220, tag: "Django Todo", status: "Not Started",
+    description: "Add POST endpoints to mark a todo complete and delete it. Use Django forms and CSRF tokens." },
+  { id: "PYDJ-205", title: "Style with template inheritance", difficulty: "Intermediate", estMin: 55, xp: 220, tag: "Django Todo", status: "Not Started",
+    description: "Create base.html with blocks and extend it from todos templates. Add minimal CSS for a clean look." },
 ];
 
 export const leaderboard = [
