@@ -9,7 +9,21 @@ import {
   CircleDot, Terminal as TerminalIcon, CheckCircle2, XCircle, Clock, Zap,
   MessageSquare, Lock, Unlock, RotateCcw, Copy, Share2, Flag, HelpCircle,
   Sparkles, Gauge, Wand2, Globe, Check, ArrowLeft, PanelLeftClose, PanelLeftOpen, BookOpen,
+  FilePlus, FolderPlus, Pencil, Trash2,
 } from "lucide-react";
+import CodeMirror from "@uiw/react-codemirror";
+import { python } from "@codemirror/lang-python";
+import { java } from "@codemirror/lang-java";
+import { html as cmHtml } from "@codemirror/lang-html";
+import { markdown as cmMarkdown } from "@codemirror/lang-markdown";
+import { vscodeDark, vscodeLight } from "@uiw/codemirror-theme-vscode";
+import {
+  ContextMenu,
+  ContextMenuContent,
+  ContextMenuItem,
+  ContextMenuSeparator,
+  ContextMenuTrigger,
+} from "@/components/ui/context-menu";
 
 export const Route = createFileRoute("/lab/$slug/ticket/$ticketId")({ component: TicketEditor });
 
@@ -329,7 +343,7 @@ function TicketEditor() {
   const lab = labs.find((l) => l.slug === slug) ?? labs[0];
   const ticket = tickets.find((t) => t.id === ticketId) ?? tickets[0];
   const isDjango = ticket.tag === "Django Todo";
-  const fileList: readonly string[] = isDjango ? DJANGO_FILES : FILE_LIST;
+  const initialFileList: readonly string[] = isDjango ? DJANGO_FILES : FILE_LIST;
   const starters: Record<string, string> = isDjango
     ? DJANGO_STARTERS
     : { "Main.java": STARTER_MAIN, "MainTest.java": STARTER_TEST, "README.md": STARTER_README };
@@ -337,7 +351,7 @@ function TicketEditor() {
 
   const [tab, setTab] = useState<"problem" | "hints" | "discuss">("problem");
   const [leftCollapsed, setLeftCollapsed] = useState(false);
-  const [activeFile, setActiveFile] = useState<FileName>(fileList[0]);
+  const [activeFile, setActiveFile] = useState<FileName>(initialFileList[0]);
   const [bottomTab, setBottomTab] = useState<BottomTab>("tests");
   const [hintLevel, setHintLevel] = useState(2);
   const [elapsed, setElapsed] = useState(0);
@@ -378,16 +392,75 @@ function TicketEditor() {
   useEffect(() => { setSideWidth(null); }, [sidePanel]);
   const [files, setFiles] = useState<Record<string, string>>(starters);
   const [dirty, setDirty] = useState<Record<string, boolean>>({});
+  const fileList = useMemo(() => Object.keys(files), [files]);
 
   // Reset file state when switching tickets (esp. between Java and Django sets)
   useEffect(() => {
     setFiles(starters);
     setDirty({});
-    setActiveFile(fileList[0]);
+    setActiveFile(initialFileList[0]);
     setTestsRan(false);
     setOutput("");
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [ticket.id]);
+
+  // ---- File ops (VS Code-like): create / rename / delete ----
+  function createFile(path: string, contents = "") {
+    const trimmed = path.trim().replace(/^\/+/, "");
+    if (!trimmed) return;
+    if (files[trimmed] !== undefined) { showToast("File already exists"); return; }
+    setFiles((f) => ({ ...f, [trimmed]: contents }));
+    setDirty((d) => ({ ...d, [trimmed]: true }));
+    setActiveFile(trimmed);
+  }
+  function renameFile(oldPath: string, newPath: string) {
+    const trimmed = newPath.trim().replace(/^\/+/, "");
+    if (!trimmed || trimmed === oldPath) return;
+    if (files[trimmed] !== undefined) { showToast("Target path already exists"); return; }
+    setFiles((f) => {
+      const { [oldPath]: content, ...rest } = f;
+      return { ...rest, [trimmed]: content ?? "" };
+    });
+    setDirty((d) => {
+      const { [oldPath]: was, ...rest } = d;
+      return { ...rest, [trimmed]: true };
+    });
+    if (activeFile === oldPath) setActiveFile(trimmed);
+  }
+  function deleteFile(path: string) {
+    if (!confirm(`Delete ${path}?`)) return;
+    setFiles((f) => {
+      const { [path]: _drop, ...rest } = f;
+      return rest;
+    });
+    setDirty((d) => {
+      const { [path]: _drop, ...rest } = d;
+      return rest;
+    });
+    if (activeFile === path) {
+      const next = Object.keys(files).filter((p) => p !== path)[0];
+      if (next) setActiveFile(next);
+    }
+  }
+  function deleteFolder(prefix: string) {
+    const targets = Object.keys(files).filter((p) => p === prefix || p.startsWith(prefix + "/"));
+    if (targets.length === 0) return;
+    if (!confirm(`Delete folder ${prefix}/ and ${targets.length} file(s)?`)) return;
+    setFiles((f) => {
+      const next = { ...f };
+      targets.forEach((p) => { delete next[p]; });
+      return next;
+    });
+    setDirty((d) => {
+      const next = { ...d };
+      targets.forEach((p) => { delete next[p]; });
+      return next;
+    });
+    if (targets.includes(activeFile)) {
+      const remaining = Object.keys(files).filter((p) => !targets.includes(p));
+      if (remaining[0]) setActiveFile(remaining[0]);
+    }
+  }
   const [output, setOutput] = useState<string>("");
   const [running, setRunning] = useState(false);
   const [tests, setTests] = useState<TestResult[]>([
@@ -657,48 +730,52 @@ function TicketEditor() {
           <div ref={splitContainerRef} className="flex flex-1 min-h-0">
             {/* File tree */}
             {fileTreeOpen && (
-              <div className="flex w-56 shrink-0 flex-col border-r bg-editor-panel text-xs">
-                <div className="px-3 py-2 text-[11px] uppercase tracking-wide text-muted-foreground">Explorer</div>
-                <div className="px-2 space-y-0.5">
-                  {isDjango ? (
-                    <TreeFolder label="todo-app" open={isFolderOpen("root")} onToggle={() => toggleFolder("root")}>
-                      <TreeFolder label="todoproject" open={isFolderOpen("todoproject")} onToggle={() => toggleFolder("todoproject")}>
-                        <TreeFile name="settings.py" active={activeFile === "todoproject/settings.py"} onClick={() => setActiveFile("todoproject/settings.py")} modified={dirty["todoproject/settings.py"]} />
-                        <TreeFile name="urls.py" active={activeFile === "todoproject/urls.py"} onClick={() => setActiveFile("todoproject/urls.py")} modified={dirty["todoproject/urls.py"]} />
-                      </TreeFolder>
-                      <TreeFolder label="todos" open={isFolderOpen("todos")} onToggle={() => toggleFolder("todos")}>
-                        <TreeFolder label="templates/todos" open={isFolderOpen("templates")} onToggle={() => toggleFolder("templates")}>
-                          <TreeFile name="base.html" active={activeFile === "todos/templates/todos/base.html"} onClick={() => setActiveFile("todos/templates/todos/base.html")} modified={dirty["todos/templates/todos/base.html"]} />
-                          <TreeFile name="todo_list.html" active={activeFile === "todos/templates/todos/todo_list.html"} onClick={() => setActiveFile("todos/templates/todos/todo_list.html")} modified={dirty["todos/templates/todos/todo_list.html"]} />
-                        </TreeFolder>
-                        <TreeFile name="models.py" active={activeFile === "todos/models.py"} onClick={() => setActiveFile("todos/models.py")} modified={dirty["todos/models.py"]} />
-                        <TreeFile name="views.py" active={activeFile === "todos/views.py"} onClick={() => setActiveFile("todos/views.py")} modified={dirty["todos/views.py"]} />
-                        <TreeFile name="urls.py" active={activeFile === "todos/urls.py"} onClick={() => setActiveFile("todos/urls.py")} modified={dirty["todos/urls.py"]} />
-                        <TreeFile name="forms.py" active={activeFile === "todos/forms.py"} onClick={() => setActiveFile("todos/forms.py")} modified={dirty["todos/forms.py"]} />
-                        <TreeFile name="admin.py" active={activeFile === "todos/admin.py"} onClick={() => setActiveFile("todos/admin.py")} modified={dirty["todos/admin.py"]} />
-                      </TreeFolder>
-                      <TreeFile name="manage.py" active={activeFile === "manage.py"} onClick={() => setActiveFile("manage.py")} modified={dirty["manage.py"]} />
-                      <TreeFile name="requirements.txt" active={activeFile === "requirements.txt"} onClick={() => setActiveFile("requirements.txt")} modified={dirty["requirements.txt"]} />
-                      <TreeFile name="README.md" active={activeFile === "README.md"} onClick={() => setActiveFile("README.md")} modified={dirty["README.md"]} />
-                    </TreeFolder>
-                  ) : (
-                    <TreeFolder label={ticket.id.toLowerCase()} open={isFolderOpen("root")} onToggle={() => toggleFolder("root")}>
-                      <TreeFolder label="src" open={isFolderOpen("src")} onToggle={() => toggleFolder("src")}>
-                        <TreeFile name="Main.java" active={activeFile === "Main.java"} onClick={() => setActiveFile("Main.java")} modified={dirty["Main.java"]} />
-                      </TreeFolder>
-                      <TreeFolder label="tests" open={isFolderOpen("tests")} onToggle={() => toggleFolder("tests")}>
-                        <TreeFile name="MainTest.java" onClick={() => setActiveFile("MainTest.java")} active={activeFile === "MainTest.java"} modified={dirty["MainTest.java"]} />
-                      </TreeFolder>
-                      <TreeFile name="README.md" onClick={() => setActiveFile("README.md")} active={activeFile === "README.md"} modified={dirty["README.md"]} />
-                      <TreeFile name="pom.xml" onClick={() => showToast("Read-only file")} />
-                    </TreeFolder>
-                  )}
+              <div className="flex w-60 shrink-0 flex-col border-r bg-editor-panel text-xs">
+                <div className="flex items-center justify-between px-3 py-2 text-[11px] uppercase tracking-wide text-muted-foreground">
+                  <span>Explorer</span>
+                  <div className="flex items-center gap-1 normal-case">
+                    <button
+                      title="New File"
+                      onClick={() => {
+                        const name = prompt("New file path (e.g. todos/utils.py)");
+                        if (name) createFile(name);
+                      }}
+                      className="grid h-5 w-5 place-items-center rounded hover:bg-accent text-muted-foreground hover:text-foreground"
+                    ><FilePlus className="h-3.5 w-3.5" /></button>
+                    <button
+                      title="New Folder"
+                      onClick={() => {
+                        const name = prompt("New folder path (e.g. todos/api)");
+                        if (name) {
+                          const folder = name.replace(/\/+$/, "");
+                          createFile(`${folder}/.gitkeep`, "");
+                        }
+                      }}
+                      className="grid h-5 w-5 place-items-center rounded hover:bg-accent text-muted-foreground hover:text-foreground"
+                    ><FolderPlus className="h-3.5 w-3.5" /></button>
+                  </div>
+                </div>
+                <div className="flex-1 overflow-auto px-1 pb-2">
+                  <FileTree
+                    rootLabel={isDjango ? "todo-app" : ticket.id.toLowerCase()}
+                    paths={fileList}
+                    activeFile={activeFile}
+                    dirty={dirty}
+                    onOpenFile={setActiveFile}
+                    onCreateFile={createFile}
+                    onRenameFile={renameFile}
+                    onDeleteFile={deleteFile}
+                    onDeleteFolder={deleteFolder}
+                    isFolderOpen={isFolderOpen}
+                    toggleFolder={toggleFolder}
+                  />
                 </div>
                 <div className="mt-auto border-t px-3 py-2 text-[11px] text-muted-foreground">
                   <div className="flex items-center gap-1"><GitBranch className="h-3 w-3" /> main</div>
                 </div>
               </div>
             )}
+
 
             <div className="flex flex-1 min-w-0 flex-col">
 
@@ -742,7 +819,7 @@ function TicketEditor() {
 
               {/* Editor */}
               <div className="flex flex-1 min-h-0">
-                <CodeEditor code={code} onChange={updateCode} language={editorLanguage(activeFile)} />
+                <CodeEditor code={code} onChange={updateCode} language={editorLanguage(activeFile)} theme={theme} />
               </div>
 
 
@@ -851,54 +928,48 @@ function editorLanguage(file: string): EditorLang {
   return "txt";
 }
 
-function CodeEditor({ code, onChange, language }: { code: string; onChange: (v: string) => void; language: EditorLang }) {
-  const taRef = useRef<HTMLTextAreaElement>(null);
-  const preRef = useRef<HTMLPreElement>(null);
-  const lines = code.split("\n");
+function CodeEditor({ code, onChange, language, theme }: { code: string; onChange: (v: string) => void; language: EditorLang; theme: "dark" | "light" }) {
+  const [mounted, setMounted] = useState(false);
+  useEffect(() => { setMounted(true); }, []);
 
-  const syncScroll = () => {
-    if (preRef.current && taRef.current) {
-      preRef.current.scrollTop = taRef.current.scrollTop;
-      preRef.current.scrollLeft = taRef.current.scrollLeft;
+  const extensions = useMemo(() => {
+    switch (language) {
+      case "py": return [python()];
+      case "java": return [java()];
+      case "html": return [cmHtml()];
+      case "md": return [cmMarkdown()];
+      default: return [];
     }
-  };
+  }, [language]);
 
-  // Tab indent
-  const onKey = (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
-    if (e.key === "Tab") {
-      e.preventDefault();
-      const ta = e.currentTarget;
-      const s = ta.selectionStart, en = ta.selectionEnd;
-      const v = ta.value;
-      const next = v.slice(0, s) + "    " + v.slice(en);
-      onChange(next);
-      requestAnimationFrame(() => { ta.selectionStart = ta.selectionEnd = s + 4; });
-    }
-  };
+  if (!mounted) {
+    return (
+      <div className="flex flex-1 min-w-0 overflow-hidden bg-editor-bg font-mono text-[13px] leading-6">
+        <pre className="flex-1 overflow-auto p-3 text-muted-foreground whitespace-pre">{code}</pre>
+      </div>
+    );
+  }
 
   return (
-    <div className="relative flex flex-1 min-w-0 overflow-hidden bg-editor-bg font-mono text-[13px] leading-6">
-      <div aria-hidden className="select-none px-3 py-3 text-right text-editor-gutter border-r border-editor-line/40 bg-editor-panel/40">
-        {lines.map((_, i) => <div key={i} className="h-6">{i + 1}</div>)}
-      </div>
-      <div className="relative flex-1 min-w-0">
-        <pre ref={preRef} aria-hidden
-          className="pointer-events-none absolute inset-0 overflow-auto whitespace-pre py-3 px-3 scrollbar-thin">
-          {lines.map((l, i) => (
-            <div key={i} className="h-6" dangerouslySetInnerHTML={{ __html: language === "java" ? (highlight(l) || "&nbsp;") : escapeHtml(l) || "&nbsp;" }} />
-          ))}
-        </pre>
-        <textarea
-          ref={taRef}
-          value={code}
-          onChange={(e) => onChange(e.target.value)}
-          onScroll={syncScroll}
-          onKeyDown={onKey}
-          spellCheck={false}
-          className="absolute inset-0 w-full h-full resize-none overflow-auto whitespace-pre py-3 px-3 bg-transparent text-transparent caret-foreground outline-none scrollbar-thin selection:bg-primary/30"
-          style={{ caretColor: "var(--foreground)" }}
-        />
-      </div>
+    <div className="flex flex-1 min-w-0 overflow-hidden bg-editor-bg">
+      <CodeMirror
+        value={code}
+        onChange={(v) => onChange(v)}
+        theme={theme === "dark" ? vscodeDark : vscodeLight}
+        extensions={extensions}
+        basicSetup={{
+          lineNumbers: true,
+          highlightActiveLine: true,
+          highlightActiveLineGutter: true,
+          foldGutter: true,
+          autocompletion: true,
+          bracketMatching: true,
+          closeBrackets: true,
+          indentOnInput: true,
+        }}
+        height="100%"
+        style={{ flex: 1, fontSize: 13, height: "100%" }}
+      />
     </div>
   );
 }
@@ -1391,4 +1462,223 @@ function highlight(line: string): string {
   h = h.replace(/\b(\d+\.?\d*)\b/g, '<span style="color:var(--syntax-number)">$1</span>');
   h = h.replace(/\b([a-zA-Z_][\w]*)(?=\()/g, '<span style="color:var(--syntax-fn)">$1</span>');
   return h;
+}
+
+/* ---------- VS Code-like File Tree ---------- */
+
+type TreeNode = {
+  name: string;
+  path: string; // full path from root
+  isFile: boolean;
+  children: TreeNode[];
+};
+
+function buildTree(paths: readonly string[]): TreeNode {
+  const root: TreeNode = { name: "", path: "", isFile: false, children: [] };
+  for (const full of paths) {
+    const parts = full.split("/");
+    let cursor = root;
+    for (let i = 0; i < parts.length; i++) {
+      const seg = parts[i];
+      const isLast = i === parts.length - 1;
+      const segPath = parts.slice(0, i + 1).join("/");
+      let next = cursor.children.find((c) => c.name === seg && c.isFile === isLast);
+      if (!next) {
+        next = { name: seg, path: segPath, isFile: isLast, children: [] };
+        cursor.children.push(next);
+      }
+      cursor = next;
+    }
+  }
+  // sort: folders first, then alpha
+  const sort = (n: TreeNode) => {
+    n.children.sort((a, b) => (a.isFile === b.isFile ? a.name.localeCompare(b.name) : a.isFile ? 1 : -1));
+    n.children.forEach(sort);
+  };
+  sort(root);
+  return root;
+}
+
+type FileTreeProps = {
+  rootLabel: string;
+  paths: readonly string[];
+  activeFile: string;
+  dirty: Record<string, boolean>;
+  onOpenFile: (path: string) => void;
+  onCreateFile: (path: string, contents?: string) => void;
+  onRenameFile: (oldPath: string, newPath: string) => void;
+  onDeleteFile: (path: string) => void;
+  onDeleteFolder: (prefix: string) => void;
+  isFolderOpen: (key: string) => boolean;
+  toggleFolder: (key: string) => void;
+};
+
+function FileTree(props: FileTreeProps) {
+  const tree = useMemo(() => buildTree(props.paths), [props.paths]);
+  return (
+    <div className="space-y-0.5">
+      <TreeFolderNode
+        node={{ ...tree, name: props.rootLabel, path: "" }}
+        depth={0}
+        isRoot
+        {...props}
+      />
+    </div>
+  );
+}
+
+function TreeFolderNode({
+  node, depth, isRoot,
+  activeFile, dirty,
+  onOpenFile, onCreateFile, onRenameFile, onDeleteFile, onDeleteFolder,
+  isFolderOpen, toggleFolder,
+}: { node: TreeNode; depth: number; isRoot?: boolean } & Omit<FileTreeProps, "paths" | "rootLabel">) {
+  const key = node.path || "__root__";
+  const open = isFolderOpen(key);
+  const pad = { paddingLeft: depth * 10 + 4 };
+
+  const handleNewFile = () => {
+    const seed = node.path ? `${node.path}/new-file.py` : "new-file.py";
+    const v = prompt("New file path", seed);
+    if (v) onCreateFile(v);
+  };
+  const handleNewFolder = () => {
+    const seed = node.path ? `${node.path}/new-folder` : "new-folder";
+    const v = prompt("New folder path", seed);
+    if (v) onCreateFile(`${v.replace(/\/+$/, "")}/.gitkeep`, "");
+  };
+
+  return (
+    <div>
+      <ContextMenu>
+        <ContextMenuTrigger asChild>
+          <button
+            onClick={() => toggleFolder(key)}
+            style={pad}
+            className="group flex w-full items-center gap-1 rounded py-0.5 pr-1 text-left hover:bg-accent/60"
+          >
+            {open ? <ChevronDown className="h-3 w-3 shrink-0" /> : <ChevronRight className="h-3 w-3 shrink-0" />}
+            {open ? <FolderOpen className="h-3 w-3 shrink-0 text-info" /> : <Folder className="h-3 w-3 shrink-0 text-info" />}
+            <span className="truncate">{node.name}</span>
+          </button>
+        </ContextMenuTrigger>
+        <ContextMenuContent className="w-44">
+          <ContextMenuItem onSelect={handleNewFile}><FilePlus className="mr-2 h-3.5 w-3.5" />New File</ContextMenuItem>
+          <ContextMenuItem onSelect={handleNewFolder}><FolderPlus className="mr-2 h-3.5 w-3.5" />New Folder</ContextMenuItem>
+          {!isRoot && (
+            <>
+              <ContextMenuSeparator />
+              <ContextMenuItem
+                onSelect={() => {
+                  const next = prompt("Rename folder", node.path);
+                  if (next && next !== node.path) {
+                    // rename every file under prefix
+                    const prefix = node.path + "/";
+                    const newPrefix = next.replace(/\/+$/, "") + "/";
+                    // gather then rename one-by-one
+                    const affected = props_get_paths_under(node, prefix);
+                    affected.forEach((p) => onRenameFile(p, p.replace(prefix, newPrefix)));
+                  }
+                }}
+              ><Pencil className="mr-2 h-3.5 w-3.5" />Rename Folder</ContextMenuItem>
+              <ContextMenuItem
+                className="text-destructive focus:text-destructive"
+                onSelect={() => onDeleteFolder(node.path)}
+              ><Trash2 className="mr-2 h-3.5 w-3.5" />Delete Folder</ContextMenuItem>
+            </>
+          )}
+        </ContextMenuContent>
+      </ContextMenu>
+      {open && (
+        <div>
+          {node.children.map((child) =>
+            child.isFile ? (
+              <TreeFileNode
+                key={child.path}
+                node={child}
+                depth={depth + 1}
+                active={activeFile === child.path}
+                modified={dirty[child.path]}
+                onOpenFile={onOpenFile}
+                onRenameFile={onRenameFile}
+                onDeleteFile={onDeleteFile}
+              />
+            ) : (
+              <TreeFolderNode
+                key={child.path}
+                node={child}
+                depth={depth + 1}
+                activeFile={activeFile}
+                dirty={dirty}
+                onOpenFile={onOpenFile}
+                onCreateFile={onCreateFile}
+                onRenameFile={onRenameFile}
+                onDeleteFile={onDeleteFile}
+                onDeleteFolder={onDeleteFolder}
+                isFolderOpen={isFolderOpen}
+                toggleFolder={toggleFolder}
+              />
+            )
+          )}
+        </div>
+      )}
+    </div>
+  );
+}
+
+// helper: collect file paths under a folder node
+function props_get_paths_under(node: TreeNode, _prefix: string): string[] {
+  const out: string[] = [];
+  const walk = (n: TreeNode) => {
+    if (n.isFile) out.push(n.path);
+    else n.children.forEach(walk);
+  };
+  walk(node);
+  return out;
+}
+
+function TreeFileNode({
+  node, depth, active, modified, onOpenFile, onRenameFile, onDeleteFile,
+}: {
+  node: TreeNode;
+  depth: number;
+  active: boolean;
+  modified?: boolean;
+  onOpenFile: (path: string) => void;
+  onRenameFile: (oldPath: string, newPath: string) => void;
+  onDeleteFile: (path: string) => void;
+}) {
+  const pad = { paddingLeft: depth * 10 + 4 };
+  return (
+    <ContextMenu>
+      <ContextMenuTrigger asChild>
+        <button
+          onClick={() => onOpenFile(node.path)}
+          style={pad}
+          className={`flex w-full items-center gap-1.5 rounded py-0.5 pr-1 text-left ${
+            active ? "bg-accent text-foreground" : "text-muted-foreground hover:bg-accent/60"
+          }`}
+        >
+          <span className="w-3" />
+          <FileCode2 className="h-3 w-3 shrink-0" />
+          <span className="flex-1 truncate">{node.name}</span>
+          {modified && <span className="h-1.5 w-1.5 rounded-full bg-warning" />}
+        </button>
+      </ContextMenuTrigger>
+      <ContextMenuContent className="w-44">
+        <ContextMenuItem onSelect={() => onOpenFile(node.path)}>Open</ContextMenuItem>
+        <ContextMenuSeparator />
+        <ContextMenuItem
+          onSelect={() => {
+            const next = prompt("Rename file", node.path);
+            if (next && next !== node.path) onRenameFile(node.path, next);
+          }}
+        ><Pencil className="mr-2 h-3.5 w-3.5" />Rename</ContextMenuItem>
+        <ContextMenuItem
+          className="text-destructive focus:text-destructive"
+          onSelect={() => onDeleteFile(node.path)}
+        ><Trash2 className="mr-2 h-3.5 w-3.5" />Delete</ContextMenuItem>
+      </ContextMenuContent>
+    </ContextMenu>
+  );
 }
