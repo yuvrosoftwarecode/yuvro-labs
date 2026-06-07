@@ -829,7 +829,16 @@ function TicketEditor() {
 
 /* ---------- Editor ---------- */
 
-function CodeEditor({ code, onChange, language }: { code: string; onChange: (v: string) => void; language: "java" | "md" }) {
+type EditorLang = "java" | "py" | "html" | "md" | "txt";
+function editorLanguage(file: string): EditorLang {
+  if (file.endsWith(".py")) return "py";
+  if (file.endsWith(".html")) return "html";
+  if (file.endsWith(".md")) return "md";
+  if (file.endsWith(".java")) return "java";
+  return "txt";
+}
+
+function CodeEditor({ code, onChange, language }: { code: string; onChange: (v: string) => void; language: EditorLang }) {
   const taRef = useRef<HTMLTextAreaElement>(null);
   const preRef = useRef<HTMLPreElement>(null);
   const lines = code.split("\n");
