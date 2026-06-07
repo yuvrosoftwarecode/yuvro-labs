@@ -328,16 +328,25 @@ function TicketEditor() {
   const reviewMatch = useMatch({ from: "/lab/$slug/ticket/$ticketId/review", shouldThrow: false });
   const lab = labs.find((l) => l.slug === slug) ?? labs[0];
   const ticket = tickets.find((t) => t.id === ticketId) ?? tickets[0];
+  const isDjango = ticket.tag === "Django Todo";
+  const fileList: readonly string[] = isDjango ? DJANGO_FILES : FILE_LIST;
+  const starters: Record<string, string> = isDjango
+    ? DJANGO_STARTERS
+    : { "Main.java": STARTER_MAIN, "MainTest.java": STARTER_TEST, "README.md": STARTER_README };
+  const primaryFile = isDjango ? "todos/views.py" : "Main.java";
 
   const [tab, setTab] = useState<"problem" | "hints" | "discuss">("problem");
   const [leftCollapsed, setLeftCollapsed] = useState(false);
-  const [activeFile, setActiveFile] = useState<FileName>("Main.java");
+  const [activeFile, setActiveFile] = useState<FileName>(fileList[0]);
   const [bottomTab, setBottomTab] = useState<BottomTab>("tests");
   const [hintLevel, setHintLevel] = useState(2);
   const [elapsed, setElapsed] = useState(0);
   const [theme, setTheme] = useState<"dark" | "light">("dark");
   const [showProgress, setShowProgress] = useState(true);
   const [fileTreeOpen, setFileTreeOpen] = useState(true);
+  const [openFolders, setOpenFolders] = useState<Record<string, boolean>>({});
+  const toggleFolder = (k: string) => setOpenFolders((o) => ({ ...o, [k]: !(o[k] ?? true) }));
+  const isFolderOpen = (k: string) => openFolders[k] ?? true;
   const [sidePanel, setSidePanel] = useState<null | "preview" | "mentor">(null);
   const [previewDevice, setPreviewDevice] = useState<"Mobile" | "Tablet" | "Desktop">("Desktop");
   const [sideWidth, setSideWidth] = useState<number | null>(null);
@@ -367,12 +376,18 @@ function TicketEditor() {
   }
 
   useEffect(() => { setSideWidth(null); }, [sidePanel]);
-  const [files, setFiles] = useState<Record<FileName, string>>({
-    "Main.java": STARTER_MAIN,
-    "MainTest.java": STARTER_TEST,
-    "README.md": STARTER_README,
-  });
-  const [dirty, setDirty] = useState<Record<FileName, boolean>>({ "Main.java": false, "MainTest.java": false, "README.md": false });
+  const [files, setFiles] = useState<Record<string, string>>(starters);
+  const [dirty, setDirty] = useState<Record<string, boolean>>({});
+
+  // Reset file state when switching tickets (esp. between Java and Django sets)
+  useEffect(() => {
+    setFiles(starters);
+    setDirty({});
+    setActiveFile(fileList[0]);
+    setTestsRan(false);
+    setOutput("");
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [ticket.id]);
   const [output, setOutput] = useState<string>("");
   const [running, setRunning] = useState(false);
   const [tests, setTests] = useState<TestResult[]>([
