@@ -1250,11 +1250,14 @@ function Section({ title, children }: { title: string; children: React.ReactNode
   );
 }
 
-function TreeFolder({ label, open: defaultOpen = false, children }: { label: string; open?: boolean; children: React.ReactNode }) {
-  const [open, setOpen] = useState(defaultOpen);
+function TreeFolder({ label, open: openProp, onToggle, children }: { label: string; open?: boolean; onToggle?: () => void; children: React.ReactNode }) {
+  const [internalOpen, setInternalOpen] = useState(openProp ?? false);
+  const isControlled = onToggle !== undefined;
+  const open = isControlled ? (openProp ?? false) : internalOpen;
+  const handleClick = () => (isControlled ? onToggle!() : setInternalOpen((o) => !o));
   return (
     <div>
-      <button onClick={() => setOpen((o) => !o)} className="flex w-full items-center gap-1 rounded px-1.5 py-0.5 hover:bg-accent/60">
+      <button onClick={handleClick} className="flex w-full items-center gap-1 rounded px-1.5 py-0.5 hover:bg-accent/60">
         {open ? <ChevronDown className="h-3 w-3" /> : <ChevronRight className="h-3 w-3" />}
         {open ? <FolderOpen className="h-3 w-3 text-info" /> : <Folder className="h-3 w-3 text-info" />}
         <span>{label}</span>
