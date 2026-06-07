@@ -731,8 +731,6 @@ function TicketEditor() {
                   {[
                     { k: "output", label: "Console", icon: TerminalIcon },
                     { k: "errors", label: "Errors", icon: AlertTriangle },
-                    { k: "tests", label: `Tests${testsRan ? ` (${passed}/${tests.length})` : ""}`, icon: CheckCircle2 },
-                    { k: "quality", label: "Quality", icon: Gauge },
                     { k: "preview", label: "Preview", icon: Globe },
                     { k: "terminal", label: "Terminal", icon: TerminalIcon },
                   ].map((t) => (
@@ -741,17 +739,11 @@ function TicketEditor() {
                       <t.icon className="h-3 w-3" />{t.label}
                     </button>
                   ))}
-                  <div className="ml-auto flex items-center gap-2 px-3 text-[11px] text-muted-foreground whitespace-nowrap">
-                    <button onClick={handleRunTests} className="rounded border px-2 py-0.5 hover:bg-accent text-foreground">Run tests</button>
-                    {testsRan && <span>{allPass ? "✓ ready to submit" : "fix failing tests"}</span>}
-                  </div>
                 </div>
                 <div className="h-52 overflow-auto scrollbar-thin p-3 text-xs">
-                  {bottomTab === "tests" && <TestsView tests={tests} ran={testsRan} onRun={handleRunTests} />}
                   {bottomTab === "output" && <OutputView output={output} />}
                   {bottomTab === "errors" && <ErrorsView state={compileState} />}
-                  {bottomTab === "quality" && <QualityView code={code} />}
-                  {bottomTab === "preview" && <PreviewView />}
+                  {bottomTab === "preview" && (isDjango ? <DjangoTodoPreview /> : <PreviewView />)}
                   {bottomTab === "terminal" && <TerminalView />}
                 </div>
               </div>
