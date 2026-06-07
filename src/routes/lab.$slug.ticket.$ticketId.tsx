@@ -55,9 +55,270 @@ casts, and use String methods (length, charAt, substring).
 Run with: \`javac Main.java && java Main\``;
 
 const FILE_LIST = ["Main.java", "MainTest.java", "README.md"] as const;
-type FileName = typeof FILE_LIST[number];
+type FileName = string;
 
-type TestResult = { name: string; pass: boolean; time: string; expected?: string; got?: string };
+/* ---------- Django Todo App (Python) starters ---------- */
+const DJANGO_FILES = [
+  "todoproject/settings.py",
+  "todoproject/urls.py",
+  "todos/models.py",
+  "todos/views.py",
+  "todos/urls.py",
+  "todos/forms.py",
+  "todos/admin.py",
+  "todos/templates/todos/base.html",
+  "todos/templates/todos/todo_list.html",
+  "manage.py",
+  "requirements.txt",
+  "README.md",
+] as const;
+
+const DJANGO_STARTERS: Record<string, string> = {
+  "manage.py": `#!/usr/bin/env python
+"""Django's command-line utility for administrative tasks."""
+import os
+import sys
+
+
+def main():
+    os.environ.setdefault("DJANGO_SETTINGS_MODULE", "todoproject.settings")
+    try:
+        from django.core.management import execute_from_command_line
+    except ImportError as exc:
+        raise ImportError(
+            "Couldn't import Django. Are you sure it's installed and "
+            "available on your PYTHONPATH environment variable?"
+        ) from exc
+    execute_from_command_line(sys.argv)
+
+
+if __name__ == "__main__":
+    main()
+`,
+  "requirements.txt": `Django>=5.0,<6.0
+`,
+  "todoproject/settings.py": `from pathlib import Path
+
+BASE_DIR = Path(__file__).resolve().parent.parent
+
+SECRET_KEY = "dev-secret-change-me"
+DEBUG = True
+ALLOWED_HOSTS = ["*"]
+
+INSTALLED_APPS = [
+    "django.contrib.admin",
+    "django.contrib.auth",
+    "django.contrib.contenttypes",
+    "django.contrib.sessions",
+    "django.contrib.messages",
+    "django.contrib.staticfiles",
+    "todos",
+]
+
+MIDDLEWARE = [
+    "django.middleware.security.SecurityMiddleware",
+    "django.contrib.sessions.middleware.SessionMiddleware",
+    "django.middleware.common.CommonMiddleware",
+    "django.middleware.csrf.CsrfViewMiddleware",
+    "django.contrib.auth.middleware.AuthenticationMiddleware",
+    "django.contrib.messages.middleware.MessageMiddleware",
+]
+
+ROOT_URLCONF = "todoproject.urls"
+
+TEMPLATES = [
+    {
+        "BACKEND": "django.template.backends.django.DjangoTemplates",
+        "DIRS": [],
+        "APP_DIRS": True,
+        "OPTIONS": {
+            "context_processors": [
+                "django.template.context_processors.debug",
+                "django.template.context_processors.request",
+                "django.contrib.auth.context_processors.auth",
+                "django.contrib.messages.context_processors.messages",
+            ],
+        },
+    },
+]
+
+DATABASES = {
+    "default": {
+        "ENGINE": "django.db.backends.sqlite3",
+        "NAME": BASE_DIR / "db.sqlite3",
+    }
+}
+
+STATIC_URL = "static/"
+DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
+`,
+  "todoproject/urls.py": `from django.contrib import admin
+from django.urls import include, path
+
+urlpatterns = [
+    path("admin/", admin.site.urls),
+    path("", include("todos.urls")),
+]
+`,
+  "todos/models.py": `from django.db import models
+
+
+class Todo(models.Model):
+    title = models.CharField(max_length=200)
+    description = models.TextField(blank=True)
+    completed = models.BooleanField(default=False)
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        ordering = ["completed", "-created_at"]
+
+    def __str__(self) -> str:
+        return self.title
+`,
+  "todos/views.py": `from django.shortcuts import get_object_or_404, redirect, render
+from django.views.decorators.http import require_POST
+
+from .forms import TodoForm
+from .models import Todo
+
+
+def todo_list(request):
+    if request.method == "POST":
+        form = TodoForm(request.POST)
+        if form.is_valid():
+            form.save()
+            return redirect("todo_list")
+    else:
+        form = TodoForm()
+
+    todos = Todo.objects.all()
+    return render(
+        request,
+        "todos/todo_list.html",
+        {"todos": todos, "form": form},
+    )
+
+
+@require_POST
+def toggle_todo(request, pk: int):
+    todo = get_object_or_404(Todo, pk=pk)
+    todo.completed = not todo.completed
+    todo.save(update_fields=["completed"])
+    return redirect("todo_list")
+
+
+@require_POST
+def delete_todo(request, pk: int):
+    todo = get_object_or_404(Todo, pk=pk)
+    todo.delete()
+    return redirect("todo_list")
+`,
+  "todos/urls.py": `from django.urls import path
+
+from . import views
+
+urlpatterns = [
+    path("", views.todo_list, name="todo_list"),
+    path("<int:pk>/toggle/", views.toggle_todo, name="toggle_todo"),
+    path("<int:pk>/delete/", views.delete_todo, name="delete_todo"),
+]
+`,
+  "todos/forms.py": `from django import forms
+
+from .models import Todo
+
+
+class TodoForm(forms.ModelForm):
+    class Meta:
+        model = Todo
+        fields = ["title", "description"]
+        widgets = {
+            "title": forms.TextInput(attrs={"placeholder": "What needs doing?"}),
+            "description": forms.Textarea(attrs={"rows": 2}),
+        }
+`,
+  "todos/admin.py": `from django.contrib import admin
+
+from .models import Todo
+
+
+@admin.register(Todo)
+class TodoAdmin(admin.ModelAdmin):
+    list_display = ("title", "completed", "created_at")
+    list_filter = ("completed",)
+    search_fields = ("title", "description")
+`,
+  "todos/templates/todos/base.html": `<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>{% block title %}Todos{% endblock %}</title>
+  <style>
+    body { font-family: system-ui, sans-serif; max-width: 640px; margin: 2rem auto; padding: 0 1rem; }
+    h1 { margin-bottom: .25rem; }
+    ul { list-style: none; padding: 0; }
+    li { display: flex; gap: .5rem; align-items: center; padding: .5rem 0; border-bottom: 1px solid #eee; }
+    .done { text-decoration: line-through; color: #888; }
+    form.inline { display: inline; }
+    input[type=text], textarea { width: 100%; padding: .5rem; }
+    button { cursor: pointer; }
+  </style>
+</head>
+<body>
+  {% block content %}{% endblock %}
+</body>
+</html>
+`,
+  "todos/templates/todos/todo_list.html": `{% extends "todos/base.html" %}
+
+{% block title %}My Todos{% endblock %}
+
+{% block content %}
+  <h1>Todos</h1>
+  <p>{{ todos|length }} item{{ todos|length|pluralize }}</p>
+
+  <form method="post">
+    {% csrf_token %}
+    {{ form.title }}
+    {{ form.description }}
+    <button type="submit">Add</button>
+  </form>
+
+  <ul>
+    {% for todo in todos %}
+      <li>
+        <form class="inline" method="post" action="{% url 'toggle_todo' todo.pk %}">
+          {% csrf_token %}
+          <button type="submit">{% if todo.completed %}↩{% else %}✓{% endif %}</button>
+        </form>
+        <span class="{% if todo.completed %}done{% endif %}">{{ todo.title }}</span>
+        <form class="inline" method="post" action="{% url 'delete_todo' todo.pk %}" style="margin-left:auto">
+          {% csrf_token %}
+          <button type="submit">🗑</button>
+        </form>
+      </li>
+    {% empty %}
+      <li>No todos yet — add one above.</li>
+    {% endfor %}
+  </ul>
+{% endblock %}
+`,
+  "README.md": `# Django Todo App
+
+A small Django project that stores todos in SQLite and renders them with HTML templates.
+
+## Run
+
+\`\`\`bash
+pip install -r requirements.txt
+python manage.py migrate
+python manage.py runserver
+\`\`\`
+
+Open http://127.0.0.1:8000/ to use the app.
+`,
+};
+
 type BottomTab = "output" | "errors" | "tests" | "quality" | "preview" | "terminal";
 
 function TicketEditor() {
