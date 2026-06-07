@@ -819,7 +819,7 @@ function TicketEditor() {
 
               {/* Editor */}
               <div className="flex flex-1 min-h-0">
-                <CodeEditor code={code} onChange={updateCode} language={editorLanguage(activeFile)} />
+                <CodeEditor code={code} onChange={updateCode} language={editorLanguage(activeFile)} theme={theme} />
               </div>
 
 
