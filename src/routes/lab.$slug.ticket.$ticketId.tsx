@@ -319,6 +319,7 @@ Open http://127.0.0.1:8000/ to use the app.
 `,
 };
 
+type TestResult = { name: string; pass: boolean; time: string; expected?: string; got?: string };
 type BottomTab = "output" | "errors" | "tests" | "quality" | "preview" | "terminal";
 
 function TicketEditor() {
