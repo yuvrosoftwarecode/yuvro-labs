@@ -657,19 +657,42 @@ function TicketEditor() {
           <div ref={splitContainerRef} className="flex flex-1 min-h-0">
             {/* File tree */}
             {fileTreeOpen && (
-              <div className="hidden lg:flex w-52 flex-col border-r bg-editor-panel text-xs">
+              <div className="hidden lg:flex w-56 flex-col border-r bg-editor-panel text-xs">
                 <div className="px-3 py-2 text-[11px] uppercase tracking-wide text-muted-foreground">Explorer</div>
                 <div className="px-2 space-y-0.5">
-                  <TreeFolder label={ticket.id.toLowerCase()} open>
-                    <TreeFolder label="src" open>
-                      <TreeFile name="Main.java" active={activeFile === "Main.java"} onClick={() => setActiveFile("Main.java")} modified={dirty["Main.java"]} />
+                  {isDjango ? (
+                    <TreeFolder label="todo-app" open={isFolderOpen("root")} onToggle={() => toggleFolder("root")}>
+                      <TreeFolder label="todoproject" open={isFolderOpen("todoproject")} onToggle={() => toggleFolder("todoproject")}>
+                        <TreeFile name="settings.py" active={activeFile === "todoproject/settings.py"} onClick={() => setActiveFile("todoproject/settings.py")} modified={dirty["todoproject/settings.py"]} />
+                        <TreeFile name="urls.py" active={activeFile === "todoproject/urls.py"} onClick={() => setActiveFile("todoproject/urls.py")} modified={dirty["todoproject/urls.py"]} />
+                      </TreeFolder>
+                      <TreeFolder label="todos" open={isFolderOpen("todos")} onToggle={() => toggleFolder("todos")}>
+                        <TreeFolder label="templates/todos" open={isFolderOpen("templates")} onToggle={() => toggleFolder("templates")}>
+                          <TreeFile name="base.html" active={activeFile === "todos/templates/todos/base.html"} onClick={() => setActiveFile("todos/templates/todos/base.html")} modified={dirty["todos/templates/todos/base.html"]} />
+                          <TreeFile name="todo_list.html" active={activeFile === "todos/templates/todos/todo_list.html"} onClick={() => setActiveFile("todos/templates/todos/todo_list.html")} modified={dirty["todos/templates/todos/todo_list.html"]} />
+                        </TreeFolder>
+                        <TreeFile name="models.py" active={activeFile === "todos/models.py"} onClick={() => setActiveFile("todos/models.py")} modified={dirty["todos/models.py"]} />
+                        <TreeFile name="views.py" active={activeFile === "todos/views.py"} onClick={() => setActiveFile("todos/views.py")} modified={dirty["todos/views.py"]} />
+                        <TreeFile name="urls.py" active={activeFile === "todos/urls.py"} onClick={() => setActiveFile("todos/urls.py")} modified={dirty["todos/urls.py"]} />
+                        <TreeFile name="forms.py" active={activeFile === "todos/forms.py"} onClick={() => setActiveFile("todos/forms.py")} modified={dirty["todos/forms.py"]} />
+                        <TreeFile name="admin.py" active={activeFile === "todos/admin.py"} onClick={() => setActiveFile("todos/admin.py")} modified={dirty["todos/admin.py"]} />
+                      </TreeFolder>
+                      <TreeFile name="manage.py" active={activeFile === "manage.py"} onClick={() => setActiveFile("manage.py")} modified={dirty["manage.py"]} />
+                      <TreeFile name="requirements.txt" active={activeFile === "requirements.txt"} onClick={() => setActiveFile("requirements.txt")} modified={dirty["requirements.txt"]} />
+                      <TreeFile name="README.md" active={activeFile === "README.md"} onClick={() => setActiveFile("README.md")} modified={dirty["README.md"]} />
                     </TreeFolder>
-                    <TreeFolder label="tests" open>
-                      <TreeFile name="MainTest.java" onClick={() => setActiveFile("MainTest.java")} active={activeFile === "MainTest.java"} modified={dirty["MainTest.java"]} />
+                  ) : (
+                    <TreeFolder label={ticket.id.toLowerCase()} open={isFolderOpen("root")} onToggle={() => toggleFolder("root")}>
+                      <TreeFolder label="src" open={isFolderOpen("src")} onToggle={() => toggleFolder("src")}>
+                        <TreeFile name="Main.java" active={activeFile === "Main.java"} onClick={() => setActiveFile("Main.java")} modified={dirty["Main.java"]} />
+                      </TreeFolder>
+                      <TreeFolder label="tests" open={isFolderOpen("tests")} onToggle={() => toggleFolder("tests")}>
+                        <TreeFile name="MainTest.java" onClick={() => setActiveFile("MainTest.java")} active={activeFile === "MainTest.java"} modified={dirty["MainTest.java"]} />
+                      </TreeFolder>
+                      <TreeFile name="README.md" onClick={() => setActiveFile("README.md")} active={activeFile === "README.md"} modified={dirty["README.md"]} />
+                      <TreeFile name="pom.xml" onClick={() => showToast("Read-only file")} />
                     </TreeFolder>
-                    <TreeFile name="README.md" onClick={() => setActiveFile("README.md")} active={activeFile === "README.md"} modified={dirty["README.md"]} />
-                    <TreeFile name="pom.xml" onClick={() => showToast("Read-only file")} />
-                  </TreeFolder>
+                  )}
                 </div>
                 <div className="mt-auto border-t px-3 py-2 text-[11px] text-muted-foreground">
                   <div className="flex items-center gap-1"><GitBranch className="h-3 w-3" /> main</div>
@@ -681,15 +704,15 @@ function TicketEditor() {
 
               {/* Tabs row */}
               <div className="flex items-center border-b bg-editor-panel text-xs overflow-x-auto">
-                {FILE_LIST.map((f) => (
+                {fileList.map((f) => (
                   <button key={f} onClick={() => setActiveFile(f)}
                     className={`flex items-center gap-2 border-r px-3 py-2 whitespace-nowrap ${activeFile === f ? "bg-editor-bg text-foreground" : "text-muted-foreground hover:text-foreground"}`}>
-                    <FileCode2 className="h-3 w-3" />{f}
+                    <FileCode2 className="h-3 w-3" />{f.split("/").pop()}
                     {dirty[f] && <CircleDot className="h-2.5 w-2.5 text-warning" />}
                   </button>
                 ))}
                 <div className="ml-auto flex items-center gap-2 pr-3 text-[11px] text-muted-foreground whitespace-nowrap">
-                  <CompileBadge state={compileState} />
+                  {!isDjango && <CompileBadge state={compileState} />}
                   <button onClick={toggleTheme} className="rounded border px-2 py-0.5 hover:bg-accent">
                     {theme === "dark" ? "☀ Light" : "🌙 Dark"}
                   </button>
@@ -699,7 +722,7 @@ function TicketEditor() {
 
               {/* Editor */}
               <div className="flex flex-1 min-h-0">
-                <CodeEditor code={code} onChange={updateCode} language={activeFile.endsWith(".md") ? "md" : "java"} />
+                <CodeEditor code={code} onChange={updateCode} language={editorLanguage(activeFile)} />
               </div>
 
               {/* Bottom panel */}
