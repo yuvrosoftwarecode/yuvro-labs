@@ -46,7 +46,7 @@ function LabDashboard() {
   const lab = labs.find((l) => l.slug === slug) ?? labs[0];
   const [view, setView] = useState<"kanban" | "list">("kanban");
   const [activeSprint, setActiveSprint] = useState<string | null>(null);
-  const sprints = useMemo(() => buildSprints(tickets), []);
+  const sprints = useMemo(() => buildSprints(slug, tickets), [slug]);
   const sprint = sprints.find((s) => s.id === activeSprint) ?? null;
   const sprintTickets = sprint ? tickets.filter((t) => sprint.ticketIds.includes(t.id)) : tickets;
   const cols: { key: "Not Started" | "In Progress" | "Completed"; }[] = [{ key: "Not Started" }, { key: "In Progress" }, { key: "Completed" }];
