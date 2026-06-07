@@ -657,7 +657,7 @@ function TicketEditor() {
           <div ref={splitContainerRef} className="flex flex-1 min-h-0">
             {/* File tree */}
             {fileTreeOpen && (
-              <div className="hidden lg:flex w-56 flex-col border-r bg-editor-panel text-xs">
+              <div className="flex w-56 shrink-0 flex-col border-r bg-editor-panel text-xs">
                 <div className="px-3 py-2 text-[11px] uppercase tracking-wide text-muted-foreground">Explorer</div>
                 <div className="px-2 space-y-0.5">
                   {isDjango ? (
