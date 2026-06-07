@@ -928,54 +928,48 @@ function editorLanguage(file: string): EditorLang {
   return "txt";
 }
 
-function CodeEditor({ code, onChange, language }: { code: string; onChange: (v: string) => void; language: EditorLang }) {
-  const taRef = useRef<HTMLTextAreaElement>(null);
-  const preRef = useRef<HTMLPreElement>(null);
-  const lines = code.split("\n");
+function CodeEditor({ code, onChange, language, theme }: { code: string; onChange: (v: string) => void; language: EditorLang; theme: "dark" | "light" }) {
+  const [mounted, setMounted] = useState(false);
+  useEffect(() => { setMounted(true); }, []);
 
-  const syncScroll = () => {
-    if (preRef.current && taRef.current) {
-      preRef.current.scrollTop = taRef.current.scrollTop;
-      preRef.current.scrollLeft = taRef.current.scrollLeft;
+  const extensions = useMemo(() => {
+    switch (language) {
+      case "py": return [python()];
+      case "java": return [java()];
+      case "html": return [cmHtml()];
+      case "md": return [cmMarkdown()];
+      default: return [];
     }
-  };
+  }, [language]);
 
-  // Tab indent
-  const onKey = (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
-    if (e.key === "Tab") {
-      e.preventDefault();
-      const ta = e.currentTarget;
-      const s = ta.selectionStart, en = ta.selectionEnd;
-      const v = ta.value;
-      const next = v.slice(0, s) + "    " + v.slice(en);
-      onChange(next);
-      requestAnimationFrame(() => { ta.selectionStart = ta.selectionEnd = s + 4; });
-    }
-  };
+  if (!mounted) {
+    return (
+      <div className="flex flex-1 min-w-0 overflow-hidden bg-editor-bg font-mono text-[13px] leading-6">
+        <pre className="flex-1 overflow-auto p-3 text-muted-foreground whitespace-pre">{code}</pre>
+      </div>
+    );
+  }
 
   return (
-    <div className="relative flex flex-1 min-w-0 overflow-hidden bg-editor-bg font-mono text-[13px] leading-6">
-      <div aria-hidden className="select-none px-3 py-3 text-right text-editor-gutter border-r border-editor-line/40 bg-editor-panel/40">
-        {lines.map((_, i) => <div key={i} className="h-6">{i + 1}</div>)}
-      </div>
-      <div className="relative flex-1 min-w-0">
-        <pre ref={preRef} aria-hidden
-          className="pointer-events-none absolute inset-0 overflow-auto whitespace-pre py-3 px-3 scrollbar-thin">
-          {lines.map((l, i) => (
-            <div key={i} className="h-6" dangerouslySetInnerHTML={{ __html: language === "java" ? (highlight(l) || "&nbsp;") : escapeHtml(l) || "&nbsp;" }} />
-          ))}
-        </pre>
-        <textarea
-          ref={taRef}
-          value={code}
-          onChange={(e) => onChange(e.target.value)}
-          onScroll={syncScroll}
-          onKeyDown={onKey}
-          spellCheck={false}
-          className="absolute inset-0 w-full h-full resize-none overflow-auto whitespace-pre py-3 px-3 bg-transparent text-transparent caret-foreground outline-none scrollbar-thin selection:bg-primary/30"
-          style={{ caretColor: "var(--foreground)" }}
-        />
-      </div>
+    <div className="flex flex-1 min-w-0 overflow-hidden bg-editor-bg">
+      <CodeMirror
+        value={code}
+        onChange={(v) => onChange(v)}
+        theme={theme === "dark" ? vscodeDark : vscodeLight}
+        extensions={extensions}
+        basicSetup={{
+          lineNumbers: true,
+          highlightActiveLine: true,
+          highlightActiveLineGutter: true,
+          foldGutter: true,
+          autocompletion: true,
+          bracketMatching: true,
+          closeBrackets: true,
+          indentOnInput: true,
+        }}
+        height="100%"
+        style={{ flex: 1, fontSize: 13, height: "100%" }}
+      />
     </div>
   );
 }
