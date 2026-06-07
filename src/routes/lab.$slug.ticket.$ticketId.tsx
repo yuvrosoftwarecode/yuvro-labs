@@ -343,7 +343,7 @@ function TicketEditor() {
   const lab = labs.find((l) => l.slug === slug) ?? labs[0];
   const ticket = tickets.find((t) => t.id === ticketId) ?? tickets[0];
   const isDjango = ticket.tag === "Django Todo";
-  const fileList: readonly string[] = isDjango ? DJANGO_FILES : FILE_LIST;
+  const initialFileList: readonly string[] = isDjango ? DJANGO_FILES : FILE_LIST;
   const starters: Record<string, string> = isDjango
     ? DJANGO_STARTERS
     : { "Main.java": STARTER_MAIN, "MainTest.java": STARTER_TEST, "README.md": STARTER_README };
