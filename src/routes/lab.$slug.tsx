@@ -18,14 +18,19 @@ interface Sprint {
   status: SprintStatus;
 }
 
-function buildSprints(allTickets: Ticket[]): Sprint[] {
-  const groups: { id: string; name: string; goal: string; range: string; tags: string[] }[] = [
+function buildSprints(slug: string, allTickets: Ticket[]): Sprint[] {
+  const javaGroups = [
     { id: "S1", name: "Sprint 1 · Foundations", goal: "Master language fundamentals & control flow", range: "Apr 1 – Apr 7", tags: ["Fundamentals"] },
     { id: "S2", name: "Sprint 2 · OOP Core", goal: "Classes, inheritance and interfaces", range: "Apr 8 – Apr 14", tags: ["OOP"] },
     { id: "S3", name: "Sprint 3 · Generics & Errors", goal: "Type-safe APIs and resilient error handling", range: "Apr 15 – Apr 21", tags: ["Generics", "Errors", "I/O"] },
     { id: "S4", name: "Sprint 4 · Collections", goal: "Lists, maps and idiomatic data access", range: "Apr 22 – Apr 28", tags: ["Collections"] },
     { id: "S5", name: "Sprint 5 · Advanced Java", goal: "Streams, concurrency, testing & patterns", range: "Apr 29 – May 12", tags: ["Streams", "FP", "Threads", "DB", "Testing", "Patterns"] },
   ];
+  const pythonGroups = [
+    { id: "PS1", name: "Sprint · Django Todo App", goal: "Build a full Django todo app with HTML templates", range: "May 13 – May 26", tags: ["Django Todo"] },
+    ...javaGroups,
+  ];
+  const groups = slug === "python" ? pythonGroups : javaGroups;
   return groups.map((g) => {
     const ts = allTickets.filter((t) => g.tags.includes(t.tag));
     const completed = ts.filter((t) => t.status === "Completed").length;
