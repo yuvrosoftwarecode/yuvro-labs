@@ -731,8 +731,6 @@ function TicketEditor() {
                   {[
                     { k: "output", label: "Console", icon: TerminalIcon },
                     { k: "errors", label: "Errors", icon: AlertTriangle },
-                    { k: "tests", label: `Tests${testsRan ? ` (${passed}/${tests.length})` : ""}`, icon: CheckCircle2 },
-                    { k: "quality", label: "Quality", icon: Gauge },
                     { k: "preview", label: "Preview", icon: Globe },
                     { k: "terminal", label: "Terminal", icon: TerminalIcon },
                   ].map((t) => (
@@ -741,17 +739,11 @@ function TicketEditor() {
                       <t.icon className="h-3 w-3" />{t.label}
                     </button>
                   ))}
-                  <div className="ml-auto flex items-center gap-2 px-3 text-[11px] text-muted-foreground whitespace-nowrap">
-                    <button onClick={handleRunTests} className="rounded border px-2 py-0.5 hover:bg-accent text-foreground">Run tests</button>
-                    {testsRan && <span>{allPass ? "✓ ready to submit" : "fix failing tests"}</span>}
-                  </div>
                 </div>
                 <div className="h-52 overflow-auto scrollbar-thin p-3 text-xs">
-                  {bottomTab === "tests" && <TestsView tests={tests} ran={testsRan} onRun={handleRunTests} />}
                   {bottomTab === "output" && <OutputView output={output} />}
                   {bottomTab === "errors" && <ErrorsView state={compileState} />}
-                  {bottomTab === "quality" && <QualityView code={code} />}
-                  {bottomTab === "preview" && <PreviewView />}
+                  {bottomTab === "preview" && (isDjango ? <DjangoTodoPreview /> : <PreviewView />)}
                   {bottomTab === "terminal" && <TerminalView />}
                 </div>
               </div>
@@ -790,7 +782,7 @@ function TicketEditor() {
                 </div>
                 <div className="flex-1 overflow-auto scrollbar-thin p-3 text-xs min-w-0">
                   {sidePanel === "preview"
-                    ? <SidePreview device={previewDevice} />
+                    ? <SidePreview device={previewDevice} isDjango={isDjango} />
                     : <SideMentor onAsk={(q) => showToast(`Mentor: ${q}`)} />}
                 </div>
               </aside>
@@ -1019,22 +1011,101 @@ function PreviewView() {
   );
 }
 
-function SidePreview({ device }: { device: "Mobile" | "Tablet" | "Desktop" }) {
+function SidePreview({ device, isDjango }: { device: "Mobile" | "Tablet" | "Desktop"; isDjango?: boolean }) {
   const w = device === "Mobile" ? 375 : device === "Tablet" ? 768 : "100%";
   return (
     <div className="flex h-full flex-col gap-2">
-
       <div className="flex-1 grid place-items-center overflow-auto rounded border bg-accent/30 p-2">
         <div className="mx-auto h-full overflow-auto rounded bg-white text-black shadow" style={{ width: w, maxWidth: "100%" }}>
-          <div className="p-4 space-y-2">
-            <div className="text-[10px] uppercase tracking-wider text-gray-500">Live preview</div>
-            <h2 className="text-xl font-semibold">Hello Java</h2>
-            <p className="text-sm text-gray-600">Integer: 42 · Double: 3.14</p>
-            <p className="text-sm text-gray-600">Length: 10 · Char[0]: H</p>
-            <button className="rounded bg-blue-600 px-3 py-1 text-xs text-white">Run sample</button>
-          </div>
+          {isDjango ? (
+            <DjangoTodoApp />
+          ) : (
+            <div className="p-4 space-y-2">
+              <div className="text-[10px] uppercase tracking-wider text-gray-500">Live preview</div>
+              <h2 className="text-xl font-semibold">Hello Java</h2>
+              <p className="text-sm text-gray-600">Integer: 42 · Double: 3.14</p>
+              <p className="text-sm text-gray-600">Length: 10 · Char[0]: H</p>
+              <button className="rounded bg-blue-600 px-3 py-1 text-xs text-white">Run sample</button>
+            </div>
+          )}
         </div>
       </div>
+    </div>
+  );
+}
+
+function DjangoTodoPreview() {
+  return (
+    <div className="h-full overflow-auto rounded border bg-white text-black">
+      <DjangoTodoApp />
+    </div>
+  );
+}
+
+type TodoItem = { id: number; title: string; completed: boolean };
+
+function DjangoTodoApp() {
+  const [todos, setTodos] = useState<TodoItem[]>([
+    { id: 1, title: "Ship Django todo MVP", completed: false },
+    { id: 2, title: "Write models.py", completed: true },
+    { id: 3, title: "Render templates with template inheritance", completed: false },
+  ]);
+  const [title, setTitle] = useState("");
+  const nextId = useRef(4);
+
+  const add = (e: React.FormEvent) => {
+    e.preventDefault();
+    const t = title.trim();
+    if (!t) return;
+    setTodos((ts) => [{ id: nextId.current++, title: t, completed: false }, ...ts]);
+    setTitle("");
+  };
+  const toggle = (id: number) =>
+    setTodos((ts) => ts.map((t) => (t.id === id ? { ...t, completed: !t.completed } : t)));
+  const remove = (id: number) => setTodos((ts) => ts.filter((t) => t.id !== id));
+
+  const remaining = todos.filter((t) => !t.completed).length;
+
+  return (
+    <div className="mx-auto max-w-[560px] p-5 font-sans">
+      <div className="mb-3 flex items-center justify-between">
+        <h1 className="text-2xl font-semibold text-gray-900">Todos</h1>
+        <span className="rounded-full bg-gray-100 px-2 py-0.5 text-[11px] text-gray-600">{remaining} left</span>
+      </div>
+      <p className="mb-4 text-xs text-gray-500">Django 5 · SQLite · {todos.length} item{todos.length === 1 ? "" : "s"}</p>
+
+      <form onSubmit={add} className="mb-4 flex gap-2">
+        <input
+          value={title}
+          onChange={(e) => setTitle(e.target.value)}
+          placeholder="What needs doing?"
+          className="flex-1 rounded border border-gray-300 px-3 py-2 text-sm outline-none focus:border-blue-500"
+        />
+        <button type="submit" className="rounded bg-blue-600 px-3 py-2 text-sm font-medium text-white hover:bg-blue-700">
+          Add
+        </button>
+      </form>
+
+      <ul className="divide-y divide-gray-200 rounded border border-gray-200">
+        {todos.length === 0 && <li className="p-4 text-center text-sm text-gray-500">No todos yet — add one above.</li>}
+        {todos.map((t) => (
+          <li key={t.id} className="flex items-center gap-3 px-3 py-2">
+            <button
+              onClick={() => toggle(t.id)}
+              aria-label="toggle"
+              className={`grid h-5 w-5 place-items-center rounded border ${t.completed ? "border-green-600 bg-green-600 text-white" : "border-gray-400 bg-white text-transparent"}`}
+            >
+              ✓
+            </button>
+            <span className={`flex-1 text-sm ${t.completed ? "text-gray-400 line-through" : "text-gray-900"}`}>{t.title}</span>
+            <button onClick={() => remove(t.id)} className="text-xs text-gray-400 hover:text-red-600" aria-label="delete">
+              🗑
+            </button>
+          </li>
+        ))}
+      </ul>
+
+      <p className="mt-3 text-[10px] uppercase tracking-wider text-gray-400">POST /todos/ · CSRF protected</p>
     </div>
   );
 }
