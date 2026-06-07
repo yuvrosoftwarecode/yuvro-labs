@@ -804,14 +804,16 @@ function TicketEditor() {
       {/* Status bar */}
       <div className="flex items-center gap-3 border-t bg-primary/90 px-3 py-1 text-[11px] text-primary-foreground">
         <span className="inline-flex items-center gap-1"><GitBranch className="h-3 w-3" /> main</span>
-        <span>Java 17</span>
+        <span>{isDjango ? "Python 3.12 · Django 5" : "Java 17"}</span>
         <span>UTF-8</span>
         <span>LF</span>
-        <span className="inline-flex items-center gap-1">
-          {compileState === "ok" && <><CheckCircle2 className="h-3 w-3" />Compiled</>}
-          {compileState === "warn" && <><AlertTriangle className="h-3 w-3" />1 warning</>}
-          {compileState === "err" && <><XCircle className="h-3 w-3" />Compile error</>}
-        </span>
+        {!isDjango && (
+          <span className="inline-flex items-center gap-1">
+            {compileState === "ok" && <><CheckCircle2 className="h-3 w-3" />Compiled</>}
+            {compileState === "warn" && <><AlertTriangle className="h-3 w-3" />1 warning</>}
+            {compileState === "err" && <><XCircle className="h-3 w-3" />Compile error</>}
+          </span>
+        )}
         <span className="ml-auto">{activeFile} · {code.split("\n").length} lines</span>
       </div>
 
