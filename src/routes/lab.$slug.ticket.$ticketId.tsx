@@ -392,16 +392,75 @@ function TicketEditor() {
   useEffect(() => { setSideWidth(null); }, [sidePanel]);
   const [files, setFiles] = useState<Record<string, string>>(starters);
   const [dirty, setDirty] = useState<Record<string, boolean>>({});
+  const fileList = useMemo(() => Object.keys(files), [files]);
 
   // Reset file state when switching tickets (esp. between Java and Django sets)
   useEffect(() => {
     setFiles(starters);
     setDirty({});
-    setActiveFile(fileList[0]);
+    setActiveFile(initialFileList[0]);
     setTestsRan(false);
     setOutput("");
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [ticket.id]);
+
+  // ---- File ops (VS Code-like): create / rename / delete ----
+  function createFile(path: string, contents = "") {
+    const trimmed = path.trim().replace(/^\/+/, "");
+    if (!trimmed) return;
+    if (files[trimmed] !== undefined) { showToast("File already exists"); return; }
+    setFiles((f) => ({ ...f, [trimmed]: contents }));
+    setDirty((d) => ({ ...d, [trimmed]: true }));
+    setActiveFile(trimmed);
+  }
+  function renameFile(oldPath: string, newPath: string) {
+    const trimmed = newPath.trim().replace(/^\/+/, "");
+    if (!trimmed || trimmed === oldPath) return;
+    if (files[trimmed] !== undefined) { showToast("Target path already exists"); return; }
+    setFiles((f) => {
+      const { [oldPath]: content, ...rest } = f;
+      return { ...rest, [trimmed]: content ?? "" };
+    });
+    setDirty((d) => {
+      const { [oldPath]: was, ...rest } = d;
+      return { ...rest, [trimmed]: true };
+    });
+    if (activeFile === oldPath) setActiveFile(trimmed);
+  }
+  function deleteFile(path: string) {
+    if (!confirm(`Delete ${path}?`)) return;
+    setFiles((f) => {
+      const { [path]: _drop, ...rest } = f;
+      return rest;
+    });
+    setDirty((d) => {
+      const { [path]: _drop, ...rest } = d;
+      return rest;
+    });
+    if (activeFile === path) {
+      const next = Object.keys(files).filter((p) => p !== path)[0];
+      if (next) setActiveFile(next);
+    }
+  }
+  function deleteFolder(prefix: string) {
+    const targets = Object.keys(files).filter((p) => p === prefix || p.startsWith(prefix + "/"));
+    if (targets.length === 0) return;
+    if (!confirm(`Delete folder ${prefix}/ and ${targets.length} file(s)?`)) return;
+    setFiles((f) => {
+      const next = { ...f };
+      targets.forEach((p) => { delete next[p]; });
+      return next;
+    });
+    setDirty((d) => {
+      const next = { ...d };
+      targets.forEach((p) => { delete next[p]; });
+      return next;
+    });
+    if (targets.includes(activeFile)) {
+      const remaining = Object.keys(files).filter((p) => !targets.includes(p));
+      if (remaining[0]) setActiveFile(remaining[0]);
+    }
+  }
   const [output, setOutput] = useState<string>("");
   const [running, setRunning] = useState(false);
   const [tests, setTests] = useState<TestResult[]>([
