@@ -152,6 +152,30 @@ export const tickets: Ticket[] = [
     description: "Read an EXPLAIN plan. Add a covering index to remove a sequential scan." },
   { id: "SQL-302", title: "Normalize & denormalize", difficulty: "Advanced", estMin: 60, xp: 280, tag: "Tuning", status: "Not Started",
     description: "Take a flat reporting table to 3NF, then design a denormalized read model for a dashboard." },
+
+  // ---- MongoDB Lab · CRUD ----
+  { id: "MDB-101", title: "Insert & find documents", difficulty: "Beginner", estMin: 30, xp: 120, tag: "Mongo CRUD", status: "In Progress", progress: 40,
+    description: "Insert a few users with insertOne / insertMany, then read them back with find() and findOne()." },
+  { id: "MDB-102", title: "Update operators ($set, $inc, $push)", difficulty: "Beginner", estMin: 40, xp: 160, tag: "Mongo CRUD", status: "Not Started",
+    description: "Use updateOne / updateMany with $set, $inc, $push to evolve a user profile." },
+  { id: "MDB-103", title: "Delete with filters", difficulty: "Beginner", estMin: 25, xp: 110, tag: "Mongo CRUD", status: "Not Started",
+    description: "Remove documents using deleteMany with comparison operators." },
+
+  // ---- MongoDB Lab · Query Operators ----
+  { id: "MDB-201", title: "Comparison & logical operators", difficulty: "Intermediate", estMin: 45, xp: 200, tag: "Mongo Query", status: "Not Started",
+    description: "Build queries with $gt, $in, $and, $or against an orders collection." },
+  { id: "MDB-202", title: "Array & nested fields", difficulty: "Intermediate", estMin: 50, xp: 220, tag: "Mongo Query", status: "Not Started",
+    description: "Query nested documents and arrays with dot-notation and $elemMatch." },
+
+  // ---- MongoDB Lab · Aggregation ----
+  { id: "MDB-301", title: "Aggregation: $match + $group", difficulty: "Advanced", estMin: 60, xp: 260, tag: "Aggregation", status: "Not Started",
+    description: "Build a pipeline that totals revenue per category using $match and $group." },
+  { id: "MDB-302", title: "Aggregation: $lookup join", difficulty: "Advanced", estMin: 70, xp: 300, tag: "Aggregation", status: "Not Started",
+    description: "Use $lookup to join orders with users and project a clean shape." },
+
+  // ---- MongoDB Lab · Indexes ----
+  { id: "MDB-401", title: "Single & compound indexes", difficulty: "Advanced", estMin: 55, xp: 260, tag: "Mongo Indexes", status: "Not Started",
+    description: "Create indexes and use explain() to confirm an IXSCAN over COLLSCAN." },
 ];
 
 export const leaderboard = [
