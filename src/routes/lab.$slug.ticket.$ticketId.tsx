@@ -1057,7 +1057,7 @@ function TicketEditor() {
                 </div>
                 <div className="flex-1 overflow-auto px-1 pb-2">
                   <FileTree
-                    rootLabel={isDjango ? "todo-app" : ticket.id.toLowerCase()}
+                    rootLabel={kit.rootLabel}
                     paths={fileList}
                     activeFile={activeFile}
                     dirty={dirty}
