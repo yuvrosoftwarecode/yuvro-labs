@@ -27,10 +27,27 @@ function buildSprints(slug: string, allTickets: Ticket[]): Sprint[] {
     { id: "S5", name: "Sprint 5 · Advanced Java", goal: "Streams, concurrency, testing & patterns", range: "Apr 29 – May 12", tags: ["Streams", "FP", "Threads", "DB", "Testing", "Patterns"] },
   ];
   const pythonGroups = [
-    { id: "PS1", name: "Sprint · Django Todo App", goal: "Build a full Django todo app with HTML templates", range: "May 13 – May 26", tags: ["Django Todo"] },
-    ...javaGroups,
+    { id: "PS1", name: "Sprint 1 · Python Foundations", goal: "Types, collections, control flow & functions", range: "Apr 1 – Apr 10", tags: ["Py Fundamentals"] },
+    { id: "PS2", name: "Sprint 2 · Data & APIs", goal: "Files, JSON, requests and pandas basics", range: "Apr 11 – Apr 24", tags: ["Py Data"] },
+    { id: "PS3", name: "Sprint 3 · Django Todo App", goal: "Build a full Django todo app with HTML templates", range: "May 13 – May 26", tags: ["Django Todo"] },
   ];
-  const groups = slug === "python" ? pythonGroups : javaGroups;
+  const uiGroups = [
+    { id: "US1", name: "Sprint 1 · HTML & CSS", goal: "Semantic markup, box model and specificity", range: "Apr 1 – Apr 10", tags: ["HTML/CSS"] },
+    { id: "US2", name: "Sprint 2 · Layout", goal: "Flexbox, Grid and responsive breakpoints", range: "Apr 11 – Apr 20", tags: ["Layout"] },
+    { id: "US3", name: "Sprint 3 · React Essentials", goal: "Components, state, effects and custom hooks", range: "Apr 21 – May 4", tags: ["React"] },
+    { id: "US4", name: "Sprint 4 · Accessibility", goal: "Build inclusive UI: keyboard, focus, contrast", range: "May 5 – May 12", tags: ["Accessibility"] },
+  ];
+  const sqlGroups = [
+    { id: "QS1", name: "Sprint 1 · Querying", goal: "SELECT, filtering, aggregates and CTEs", range: "Apr 1 – Apr 10", tags: ["Querying"] },
+    { id: "QS2", name: "Sprint 2 · Joins", goal: "Combine tables with INNER, LEFT and multi-joins", range: "Apr 11 – Apr 18", tags: ["Joins"] },
+    { id: "QS3", name: "Sprint 3 · Window Functions", goal: "Ranking, LAG/LEAD and running totals", range: "Apr 19 – Apr 28", tags: ["Windows"] },
+    { id: "QS4", name: "Sprint 4 · Performance & Modeling", goal: "EXPLAIN, indexes and normalization", range: "Apr 29 – May 8", tags: ["Tuning"] },
+  ];
+  const groups =
+    slug === "python" ? pythonGroups :
+    slug === "ui" ? uiGroups :
+    slug === "sql" ? sqlGroups :
+    javaGroups;
   return groups.map((g) => {
     const ts = allTickets.filter((t) => g.tags.includes(t.tag));
     const completed = ts.filter((t) => t.status === "Completed").length;
