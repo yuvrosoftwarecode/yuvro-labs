@@ -637,12 +637,16 @@ function TicketEditor() {
   const reviewMatch = useMatch({ from: "/lab/$slug/ticket/$ticketId/review", shouldThrow: false });
   const lab = labs.find((l) => l.slug === slug) ?? labs[0];
   const ticket = tickets.find((t) => t.id === ticketId) ?? tickets[0];
-  const isDjango = ticket.tag === "Django Todo";
-  const initialFileList: readonly string[] = isDjango ? DJANGO_FILES : FILE_LIST;
-  const starters: Record<string, string> = isDjango
-    ? DJANGO_STARTERS
-    : { "Main.java": STARTER_MAIN, "MainTest.java": STARTER_TEST, "README.md": STARTER_README };
-  const primaryFile = isDjango ? "todos/views.py" : "Main.java";
+  const kit = useMemo(() => getKit(slug, ticket.tag), [slug, ticket.tag]);
+  const isDjango = kit.name === "django";
+  const isJava = kit.name === "java";
+  const isSql = kit.name === "sql";
+  const isMongo = kit.name === "mongo";
+  const isUi = kit.name === "ui";
+  const isPython = kit.name === "python";
+  const initialFileList: readonly string[] = kit.fileList;
+  const starters: Record<string, string> = kit.files;
+  const primaryFile = kit.primary;
 
   const [tab, setTab] = useState<"problem" | "hints" | "discuss">("problem");
   const [leftCollapsed, setLeftCollapsed] = useState(false);
