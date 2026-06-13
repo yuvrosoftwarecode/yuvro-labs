@@ -36,6 +36,9 @@
   --color-python: var(--python);
   --color-ui: var(--ui);
   --color-sql: var(--sql);
+  --color-mongo: var(--mongo);
+  --color-prog: var(--prog);
+  --color-ds: var(--ds);
   --color-editor-bg: var(--editor-bg);
   --color-editor-panel: var(--editor-panel);
   --color-editor-line: var(--editor-line);
