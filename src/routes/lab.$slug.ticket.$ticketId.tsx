@@ -650,6 +650,11 @@ function TicketEditor() {
   const isMongo = kit.name === "mongo";
   const isUi = kit.name === "ui";
   const isPython = kit.name === "python";
+  const isMultiLang = slug === "programming" || slug === "datastructures";
+  type ProgLang = "python" | "c" | "cpp" | "js";
+  const PROG_EXT: Record<ProgLang, string> = { python: "py", c: "c", cpp: "cpp", js: "js" };
+  const PROG_LABEL: Record<ProgLang, string> = { python: "Python 3", c: "C (gcc)", cpp: "C++ (g++)", js: "Node.js" };
+  const [progLang, setProgLang] = useState<ProgLang>("python");
   const initialFileList: readonly string[] = kit.fileList;
   const starters: Record<string, string> = kit.files;
   const primaryFile = kit.primary;
