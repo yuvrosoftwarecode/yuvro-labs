@@ -88,8 +88,15 @@ function EditLab() {
             </Panel>
           )}
           {step === 1 && (
-            <Panel title="Sprints & tasks">
-              <SprintBuilder sprints={sprints} setSprints={setSprints} />
+            <Panel title="Sprints">
+              <SprintBuilder
+                sprints={sprints}
+                setSprints={setSprints}
+                onConfigureTasks={(sprintId) => {
+                  saveSprints(lab.id, sprints);
+                  nav({ to: "/admin/labs/$id/sprints/$sprintId", params: { id: lab.id, sprintId } });
+                }}
+              />
             </Panel>
           )}
 
