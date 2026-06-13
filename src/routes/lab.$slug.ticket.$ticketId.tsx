@@ -2006,3 +2006,180 @@ function TreeFileNode({
     </ContextMenu>
   );
 }
+
+/* ---------- SQL query results viewer ---------- */
+
+type SqlRow = Record<string, string | number>;
+function runSqlQuery(q: string): { columns: string[]; rows: SqlRow[]; note: string; ms: number } {
+  const lower = q.toLowerCase();
+  // Tiny pretend engine: pattern-match a few shapes against seed.sql data.
+  const customers = [
+    { id: 1, name: "Ada Lovelace",   country: "UK", signed_up_at: "2024-02-11" },
+    { id: 2, name: "Linus Torvalds", country: "FI", signed_up_at: "2024-05-04" },
+    { id: 3, name: "Grace Hopper",   country: "US", signed_up_at: "2023-09-30" },
+    { id: 4, name: "Hedy Lamarr",    country: "AT", signed_up_at: "2024-07-12" },
+    { id: 5, name: "Alan Turing",    country: "UK", signed_up_at: "2024-11-01" },
+  ];
+  const orders = [
+    { id: 1, customer_id: 1, amount: 120.0, created_at: "2024-03-01" },
+    { id: 2, customer_id: 1, amount: 45.5,  created_at: "2024-04-12" },
+    { id: 3, customer_id: 2, amount: 300.0, created_at: "2024-06-20" },
+    { id: 4, customer_id: 4, amount: 80.25, created_at: "2024-08-09" },
+    { id: 5, customer_id: 5, amount: 19.99, created_at: "2024-11-15" },
+  ];
+
+  if (lower.includes("group by") && lower.includes("country")) {
+    const byC: Record<string, { customers: number; total: number }> = {};
+    for (const c of customers) {
+      if (lower.includes("2024") && c.signed_up_at < "2024-01-01") continue;
+      byC[c.country] ??= { customers: 0, total: 0 };
+      byC[c.country].customers += 1;
+      byC[c.country].total += orders.filter((o) => o.customer_id === c.id).reduce((a, o) => a + o.amount, 0);
+    }
+    const rows: SqlRow[] = Object.entries(byC)
+      .map(([country, v]) => ({ country, customers: v.customers, total_revenue: v.total.toFixed(2) }))
+      .sort((a, b) => Number(b.total_revenue) - Number(a.total_revenue));
+    return { columns: ["country", "customers", "total_revenue"], rows, note: `${rows.length} row(s)`, ms: 7 };
+  }
+  if (lower.includes("from customers")) {
+    return { columns: ["id", "name", "country", "signed_up_at"], rows: customers, note: `${customers.length} row(s)`, ms: 3 };
+  }
+  if (lower.includes("from orders")) {
+    return { columns: ["id", "customer_id", "amount", "created_at"], rows: orders, note: `${orders.length} row(s)`, ms: 2 };
+  }
+  return { columns: [], rows: [], note: "No matching mock data. Try a SELECT against customers or orders.", ms: 1 };
+}
+
+function SqlResultsView({ query }: { query: string }) {
+  const res = useMemo(() => runSqlQuery(query), [query]);
+  if (res.columns.length === 0) {
+    return <div className="text-muted-foreground p-2">{res.note}</div>;
+  }
+  return (
+    <div className="text-[12px]">
+      <div className="mb-2 flex items-center justify-between text-muted-foreground">
+        <span>{res.note}</span>
+        <span>executed in {res.ms}ms</span>
+      </div>
+      <div className="overflow-auto rounded border">
+        <table className="w-full font-mono">
+          <thead className="bg-accent/40 text-muted-foreground">
+            <tr>{res.columns.map((c) => <th key={c} className="px-2 py-1 text-left font-medium">{c}</th>)}</tr>
+          </thead>
+          <tbody>
+            {res.rows.map((r, i) => (
+              <tr key={i} className="border-t hover:bg-accent/30">
+                {res.columns.map((c) => <td key={c} className="px-2 py-1 whitespace-nowrap">{String(r[c])}</td>)}
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+    </div>
+  );
+}
+
+/* ---------- Mongo query results viewer ---------- */
+
+function runMongoQuery(q: string): { rows: unknown[]; note: string; ms: number } {
+  const lower = q.toLowerCase();
+  const users = [
+    { name: "Ada",   email: "ada@example.com",   country: "UK", active: true,  createdAt: "2024-02-11" },
+    { name: "Linus", email: "linus@example.com", country: "FI", active: true,  createdAt: "2024-05-04" },
+    { name: "Grace", email: "grace@example.com", country: "US", active: false, createdAt: "2023-09-30" },
+    { name: "Alan",  email: "alan@example.com",  country: "UK", active: true,  createdAt: "2024-11-01" },
+  ];
+  const orders = [
+    { userId: 1, category: "Books", amount: 12.5, status: "paid" },
+    { userId: 2, category: "Music", amount: 9.99, status: "paid" },
+    { userId: 1, category: "Books", amount: 4.2,  status: "refunded" },
+    { userId: 4, category: "Games", amount: 29.0, status: "paid" },
+  ];
+
+  if (lower.includes("db.orders.aggregate")) {
+    const byCat: Record<string, { total: number; n: number }> = {};
+    for (const o of orders.filter((x) => x.status === "paid")) {
+      byCat[o.category] ??= { total: 0, n: 0 };
+      byCat[o.category].total += o.amount;
+      byCat[o.category].n += 1;
+    }
+    const rows = Object.entries(byCat).map(([_id, v]) => ({ _id, total: v.total, n: v.n })).sort((a, b) => b.total - a.total);
+    return { rows, note: `${rows.length} document(s)`, ms: 6 };
+  }
+  if (lower.includes("db.users.find")) {
+    let rows = users.slice();
+    if (lower.includes('country: "uk"') || lower.includes("country: 'uk'")) rows = rows.filter((u) => u.country === "UK");
+    if (lower.includes("active: true")) rows = rows.filter((u) => u.active);
+    return { rows: rows.map(({ name, email, country }) => ({ name, email, country })), note: `${rows.length} document(s)`, ms: 3 };
+  }
+  if (lower.includes("db.orders.find")) {
+    return { rows: orders, note: `${orders.length} document(s)`, ms: 2 };
+  }
+  return { rows: [], note: "No matching mock data. Try db.users.find(...) or db.orders.aggregate([...]).", ms: 1 };
+}
+
+function MongoResultsView({ query }: { query: string }) {
+  const res = useMemo(() => runMongoQuery(query), [query]);
+  if (res.rows.length === 0) {
+    return <div className="text-muted-foreground p-2">{res.note}</div>;
+  }
+  return (
+    <div className="text-[12px]">
+      <div className="mb-2 flex items-center justify-between text-muted-foreground">
+        <span>{res.note}</span>
+        <span>executed in {res.ms}ms</span>
+      </div>
+      <pre className="overflow-auto rounded border bg-editor-bg p-2 font-mono text-foreground/90">{JSON.stringify(res.rows, null, 2)}</pre>
+    </div>
+  );
+}
+
+/* ---------- UI iframe preview (HTML/CSS/JS) ---------- */
+
+function UiPreview({ files, fullHeight }: { files: Record<string, string>; fullHeight?: boolean }) {
+  const srcDoc = useMemo(() => {
+    const html = files["index.html"] ?? "<!doctype html><html><body><p>No index.html</p></body></html>";
+    const cssText = files["styles.css"] ?? "";
+    const jsText = files["app.js"] ?? "";
+    const cssTag = `<style>${cssText}</style>`;
+    const jsTag = `<script>\ntry { ${jsText} } catch (e) { document.body.insertAdjacentHTML('beforeend', '<pre style="color:#b00">'+(e && e.message || e)+'</pre>'); }\n<\/script>`;
+    // Strip external <link rel=stylesheet href="styles.css"> and <script src="app.js"> then inject inline.
+    let out = html
+      .replace(/<link[^>]*href=["']styles\.css["'][^>]*>/i, cssTag)
+      .replace(/<script[^>]*src=["']app\.js["'][^>]*><\/script>/i, jsTag);
+    if (!/<style>/i.test(out)) out = out.replace(/<\/head>/i, `${cssTag}</head>`);
+    if (!out.includes("<script>")) out = out.replace(/<\/body>/i, `${jsTag}</body>`);
+    return out;
+  }, [files]);
+  return (
+    <iframe
+      title="UI preview"
+      sandbox="allow-scripts"
+      srcDoc={srcDoc}
+      className={`w-full rounded border bg-white ${fullHeight ? "h-full" : "h-48"}`}
+    />
+  );
+}
+
+/* ---------- Python "output" view (heuristic) ---------- */
+
+function PythonOutputView({ code }: { code: string }) {
+  const lines = useMemo(() => {
+    const out: string[] = [];
+    const re = /print\(([^)]*)\)/g;
+    let m: RegExpExecArray | null;
+    while ((m = re.exec(code))) {
+      const arg = m[1].trim();
+      // strip wrapping quotes / f-string prefix for a quick visible result
+      const stripped = arg.replace(/^f?["']/, "").replace(/["']$/, "");
+      out.push(stripped);
+    }
+    if (out.length === 0) out.push("(no print() statements found)");
+    return out;
+  }, [code]);
+  return (
+    <pre className="font-mono text-foreground/90 whitespace-pre-wrap">
+{"$ python " + (Object.keys({}).length ? "" : "main.py") + "\n" + lines.join("\n")}
+    </pre>
+  );
+}
