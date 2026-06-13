@@ -4,7 +4,7 @@ import { useEffect, useMemo, useState } from "react";
 import { Plus, Trash2, ChevronDown, ChevronRight, Pencil, X, Save, GripVertical } from "lucide-react";
 import { getLab, type AdminLab } from "@/lib/adminLabs";
 import {
-  loadSprints, saveSprints, newSprint, newTask,
+  loadSprintsWithSeed, saveSprints, newSprint, newTask,
   EDITORS, LANGUAGES, type LabSprint, type LabTask, type EditorKind, type Language,
 } from "@/lib/labSprints";
 
@@ -49,7 +49,7 @@ function SprintsPage() {
     const found = getLab(id);
     if (!found) { nav({ to: "/admin/labs" }); return; }
     setLab(found);
-    const sp = loadSprints(id);
+    const sp = loadSprintsWithSeed(id, found.slug);
     setSprints(sp);
     setOpen(Object.fromEntries(sp.map(s => [s.id, true])));
   }, [id, nav]);

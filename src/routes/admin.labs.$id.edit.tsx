@@ -3,7 +3,7 @@ import { AdminShell, Panel, Badge } from "@/components/admin/AdminShell";
 import { useEffect, useState } from "react";
 import { Check, ChevronRight } from "lucide-react";
 import { getLab, updateLab, CATEGORIES, DIFFS, type AdminLab } from "@/lib/adminLabs";
-import { loadSprints, saveSprints, type LabSprint } from "@/lib/labSprints";
+import { loadSprintsWithSeed, saveSprints, type LabSprint } from "@/lib/labSprints";
 import { SprintBuilder } from "@/components/admin/SprintBuilder";
 
 export const Route = createFileRoute("/admin/labs/$id/edit")({ component: EditLab });
@@ -23,7 +23,7 @@ function EditLab() {
     const found = getLab(id);
     if (!found) { nav({ to: "/admin/labs" }); return; }
     setLab(found);
-    setSprints(loadSprints(found.id));
+    setSprints(loadSprintsWithSeed(found.id, found.slug));
   }, [id, nav]);
 
   if (!lab) return null;
