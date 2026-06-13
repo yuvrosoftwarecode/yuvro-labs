@@ -879,7 +879,7 @@ function TicketEditor() {
   }
 
   function handleSave() {
-    setDirty({ "Main.java": false, "MainTest.java": false, "README.md": false });
+    setDirty(Object.fromEntries(Object.keys(files).map((k) => [k, false])));
     const now = new Date();
     setSavedAt(`${now.getHours()}:${String(now.getMinutes()).padStart(2, "0")}`);
     showToast("Saved");
@@ -887,8 +887,9 @@ function TicketEditor() {
 
   function handleReset() {
     if (!confirm("Reset code to starter template?")) return;
-    setFiles({ "Main.java": STARTER_MAIN, "MainTest.java": STARTER_TEST, "README.md": STARTER_README });
-    setDirty({ "Main.java": false, "MainTest.java": false, "README.md": false });
+    setFiles({ ...starters });
+    setDirty({});
+    setActiveFile(initialFileList[0]);
     setTestsRan(false);
     setOutput("");
     showToast("Code reset");
