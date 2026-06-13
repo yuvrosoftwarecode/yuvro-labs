@@ -96,7 +96,7 @@ function EditLab() {
           )}
           {step === 1 && (
             <Panel title="Sprints & tasks">
-              <SprintBuilder sprints={sprints} setSprints={setSprints} />
+              <SprintBuilder sprints={sprints} setSprints={setSprints} labName={lab.name} />
             </Panel>
           )}
 
