@@ -1422,23 +1422,28 @@ function PreviewView() {
   );
 }
 
-function SidePreview({ device, isDjango }: { device: "Mobile" | "Tablet" | "Desktop"; isDjango?: boolean }) {
+function SidePreview({ device, kit, files, activeFile }: { device: "Mobile" | "Tablet" | "Desktop"; kit: Kit; files: Record<string, string>; activeFile: string }) {
   const w = device === "Mobile" ? 375 : device === "Tablet" ? 768 : "100%";
+  const body =
+    kit.name === "django" ? <DjangoTodoApp /> :
+    kit.name === "ui"     ? <UiPreview files={files} fullHeight /> :
+    kit.name === "sql"    ? <SqlResultsView query={files[activeFile] ?? ""} /> :
+    kit.name === "mongo"  ? <MongoResultsView query={files[activeFile] ?? ""} /> :
+    kit.name === "python" ? <PythonOutputView code={files[activeFile] ?? ""} /> :
+    (
+      <div className="p-4 space-y-2">
+        <div className="text-[10px] uppercase tracking-wider text-gray-500">Live preview</div>
+        <h2 className="text-xl font-semibold">Hello Java</h2>
+        <p className="text-sm text-gray-600">Integer: 42 · Double: 3.14</p>
+        <p className="text-sm text-gray-600">Length: 10 · Char[0]: H</p>
+        <button className="rounded bg-blue-600 px-3 py-1 text-xs text-white">Run sample</button>
+      </div>
+    );
   return (
     <div className="flex h-full flex-col gap-2">
       <div className="flex-1 grid place-items-center overflow-auto rounded border bg-accent/30 p-2">
-        <div className="mx-auto h-full overflow-auto rounded bg-white text-black shadow" style={{ width: w, maxWidth: "100%" }}>
-          {isDjango ? (
-            <DjangoTodoApp />
-          ) : (
-            <div className="p-4 space-y-2">
-              <div className="text-[10px] uppercase tracking-wider text-gray-500">Live preview</div>
-              <h2 className="text-xl font-semibold">Hello Java</h2>
-              <p className="text-sm text-gray-600">Integer: 42 · Double: 3.14</p>
-              <p className="text-sm text-gray-600">Length: 10 · Char[0]: H</p>
-              <button className="rounded bg-blue-600 px-3 py-1 text-xs text-white">Run sample</button>
-            </div>
-          )}
+        <div className="mx-auto h-full w-full overflow-auto rounded bg-white text-black shadow" style={{ width: w, maxWidth: "100%" }}>
+          {body}
         </div>
       </div>
     </div>
