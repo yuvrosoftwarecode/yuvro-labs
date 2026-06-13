@@ -43,10 +43,17 @@ function buildSprints(slug: string, allTickets: Ticket[]): Sprint[] {
     { id: "QS3", name: "Sprint 3 · Window Functions", goal: "Ranking, LAG/LEAD and running totals", range: "Apr 19 – Apr 28", tags: ["Windows"] },
     { id: "QS4", name: "Sprint 4 · Performance & Modeling", goal: "EXPLAIN, indexes and normalization", range: "Apr 29 – May 8", tags: ["Tuning"] },
   ];
+  const mongoGroups = [
+    { id: "MS1", name: "Sprint 1 · CRUD basics", goal: "Insert, find, update and delete documents", range: "Apr 1 – Apr 8", tags: ["Mongo CRUD"] },
+    { id: "MS2", name: "Sprint 2 · Query Operators", goal: "Comparison, logical, array and nested queries", range: "Apr 9 – Apr 16", tags: ["Mongo Query"] },
+    { id: "MS3", name: "Sprint 3 · Aggregation Pipelines", goal: "$match, $group, $lookup and projections", range: "Apr 17 – Apr 26", tags: ["Aggregation"] },
+    { id: "MS4", name: "Sprint 4 · Indexes & Performance", goal: "Design indexes and read explain plans", range: "Apr 27 – May 4", tags: ["Mongo Indexes"] },
+  ];
   const groups =
     slug === "python" ? pythonGroups :
     slug === "ui" ? uiGroups :
     slug === "sql" ? sqlGroups :
+    slug === "mongo" ? mongoGroups :
     javaGroups;
   return groups.map((g) => {
     const ts = allTickets.filter((t) => g.tags.includes(t.tag));

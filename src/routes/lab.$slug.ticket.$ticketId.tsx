@@ -16,6 +16,10 @@ import { python } from "@codemirror/lang-python";
 import { java } from "@codemirror/lang-java";
 import { html as cmHtml } from "@codemirror/lang-html";
 import { markdown as cmMarkdown } from "@codemirror/lang-markdown";
+import { sql } from "@codemirror/lang-sql";
+import { javascript } from "@codemirror/lang-javascript";
+import { css } from "@codemirror/lang-css";
+import { json as jsonLang } from "@codemirror/lang-json";
 import { vscodeDark, vscodeLight } from "@uiw/codemirror-theme-vscode";
 import {
   ContextMenu,
@@ -333,6 +337,301 @@ Open http://127.0.0.1:8000/ to use the app.
 `,
 };
 
+/* ---------- Per-lab starter kits ---------- */
+
+type KitName = "java" | "django" | "python" | "sql" | "mongo" | "ui";
+interface Kit {
+  name: KitName;
+  files: Record<string, string>;
+  fileList: string[];
+  primary: string;
+  rootLabel: string;
+  runtime: string; // for status bar
+}
+
+const PY_KITS: Record<string, Kit> = {
+  "Py Fundamentals": {
+    name: "python", rootLabel: "py-fundamentals", primary: "main.py", runtime: "Python 3.12",
+    fileList: ["main.py", "test_main.py", "README.md"],
+    files: {
+      "main.py": `"""Variables, types and f-strings."""
+
+
+def describe(name: str, age: int, height: float) -> str:
+    """Return a one-line summary using an f-string."""
+    return f"{name} is {age}y, {height:.2f}m"
+
+
+def fizzbuzz(n: int) -> list[str]:
+    out: list[str] = []
+    for i in range(1, n + 1):
+        if i % 15 == 0:
+            out.append("FizzBuzz")
+        elif i % 3 == 0:
+            out.append("Fizz")
+        elif i % 5 == 0:
+            out.append("Buzz")
+        else:
+            out.append(str(i))
+    return out
+
+
+if __name__ == "__main__":
+    print(describe("Ada", 36, 1.7))
+    print(fizzbuzz(15))
+`,
+      "test_main.py": `from main import describe, fizzbuzz
+
+
+def test_describe():
+    assert describe("Ada", 36, 1.7) == "Ada is 36y, 1.70m"
+
+
+def test_fizzbuzz_small():
+    assert fizzbuzz(5) == ["1", "2", "Fizz", "4", "Buzz"]
+
+
+def test_fizzbuzz_fifteen():
+    assert fizzbuzz(15)[-1] == "FizzBuzz"
+`,
+      "README.md": `# Python Fundamentals
+
+Implement \`describe\` and \`fizzbuzz\` in \`main.py\` and make the tests pass.
+
+\`\`\`bash
+python -m pytest -q
+\`\`\`
+`,
+    },
+  },
+  "Py Data": {
+    name: "python", rootLabel: "py-data", primary: "app.py", runtime: "Python 3.12",
+    fileList: ["app.py", "data/sales.csv", "requirements.txt", "README.md"],
+    files: {
+      "app.py": `"""Read sales.csv, group by category and print totals."""
+import csv
+from collections import defaultdict
+from pathlib import Path
+
+
+def totals_by_category(path: str) -> dict[str, float]:
+    totals: dict[str, float] = defaultdict(float)
+    with open(path, newline="") as f:
+        for row in csv.DictReader(f):
+            totals[row["category"]] += float(row["amount"])
+    return dict(totals)
+
+
+if __name__ == "__main__":
+    here = Path(__file__).parent
+    for cat, total in totals_by_category(here / "data" / "sales.csv").items():
+        print(f"{cat:<12} {total:>8.2f}")
+`,
+      "data/sales.csv": `id,category,amount
+1,Books,12.50
+2,Music,9.99
+3,Books,4.20
+4,Games,29.00
+5,Music,14.50
+6,Games,19.99
+`,
+      "requirements.txt": `# stdlib only
+`,
+      "README.md": `# CSV aggregation
+
+Aggregate \`data/sales.csv\` by category. Run with \`python app.py\`.
+`,
+    },
+  },
+};
+
+const SQL_KIT_DEFAULT: Kit = {
+  name: "sql", rootLabel: "sql-lab", primary: "query.sql", runtime: "PostgreSQL 16",
+  fileList: ["query.sql", "schema.sql", "seed.sql", "README.md"],
+  files: {
+    "query.sql": `-- Write a query that returns:
+--   country, customers, total_revenue
+-- for customers who signed up in 2024, ordered by revenue desc.
+
+SELECT
+  c.country,
+  COUNT(*)                       AS customers,
+  COALESCE(SUM(o.amount), 0)::numeric(10,2) AS total_revenue
+FROM customers c
+LEFT JOIN orders o ON o.customer_id = c.id
+WHERE c.signed_up_at >= DATE '2024-01-01'
+GROUP BY c.country
+ORDER BY total_revenue DESC;
+`,
+    "schema.sql": `CREATE TABLE customers (
+  id            SERIAL PRIMARY KEY,
+  name          TEXT NOT NULL,
+  country       TEXT NOT NULL,
+  signed_up_at  DATE NOT NULL
+);
+
+CREATE TABLE orders (
+  id           SERIAL PRIMARY KEY,
+  customer_id  INT REFERENCES customers(id),
+  amount       NUMERIC(10,2) NOT NULL,
+  created_at   DATE NOT NULL
+);
+
+CREATE INDEX orders_customer_idx ON orders(customer_id);
+`,
+    "seed.sql": `INSERT INTO customers (name, country, signed_up_at) VALUES
+  ('Ada Lovelace',   'UK', '2024-02-11'),
+  ('Linus Torvalds', 'FI', '2024-05-04'),
+  ('Grace Hopper',   'US', '2023-09-30'),
+  ('Hedy Lamarr',    'AT', '2024-07-12'),
+  ('Alan Turing',    'UK', '2024-11-01');
+
+INSERT INTO orders (customer_id, amount, created_at) VALUES
+  (1, 120.00, '2024-03-01'),
+  (1,  45.50, '2024-04-12'),
+  (2, 300.00, '2024-06-20'),
+  (4,  80.25, '2024-08-09'),
+  (5,  19.99, '2024-11-15');
+`,
+    "README.md": `# SQL Query Lab
+
+Edit \`query.sql\` and press **Run** to execute against the seeded schema.
+Results appear in the bottom **Results** panel.
+`,
+  },
+};
+
+const MONGO_KIT_DEFAULT: Kit = {
+  name: "mongo", rootLabel: "mongo-lab", primary: "query.js", runtime: "MongoDB 7 · mongosh",
+  fileList: ["query.js", "seed.js", "README.md"],
+  files: {
+    "query.js": `// Mongo shell — write a query and press Run.
+// The bottom "Results" panel shows the returned documents.
+
+// 1) All active users from the UK, newest first
+db.users.find(
+  { country: "UK", active: true },
+  { _id: 0, name: 1, email: 1, country: 1 }
+).sort({ createdAt: -1 });
+
+// 2) Aggregate revenue per category (uncomment to try)
+// db.orders.aggregate([
+//   { $match: { status: "paid" } },
+//   { $group: { _id: "$category", total: { $sum: "$amount" }, n: { $sum: 1 } } },
+//   { $sort: { total: -1 } }
+// ]);
+`,
+    "seed.js": `db.users.insertMany([
+  { name: "Ada",   email: "ada@example.com",   country: "UK", active: true,  createdAt: new Date("2024-02-11") },
+  { name: "Linus", email: "linus@example.com", country: "FI", active: true,  createdAt: new Date("2024-05-04") },
+  { name: "Grace", email: "grace@example.com", country: "US", active: false, createdAt: new Date("2023-09-30") },
+  { name: "Alan",  email: "alan@example.com",  country: "UK", active: true,  createdAt: new Date("2024-11-01") }
+]);
+
+db.orders.insertMany([
+  { userId: 1, category: "Books", amount: 12.5,  status: "paid" },
+  { userId: 2, category: "Music", amount: 9.99,  status: "paid" },
+  { userId: 1, category: "Books", amount: 4.2,   status: "refunded" },
+  { userId: 4, category: "Games", amount: 29.0,  status: "paid" }
+]);
+`,
+    "README.md": `# MongoDB Lab
+
+Mongo shell-style queries. Edit \`query.js\` and press **Run** to see results.
+`,
+  },
+};
+
+const UI_KIT_DEFAULT: Kit = {
+  name: "ui", rootLabel: "ui-lab", primary: "index.html", runtime: "Static · HTML/CSS/JS",
+  fileList: ["index.html", "styles.css", "app.js", "README.md"],
+  files: {
+    "index.html": `<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>UI Lab</title>
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <header class="site-header">
+    <a class="logo" href="#">◆ Acme</a>
+    <nav>
+      <a href="#">Product</a>
+      <a href="#">Pricing</a>
+      <a href="#">Docs</a>
+    </nav>
+    <button id="cta" class="cta">Get started</button>
+  </header>
+
+  <main>
+    <section class="hero">
+      <h1>Build pixel-perfect UI</h1>
+      <p>Compose components with Flexbox, Grid and modern CSS.</p>
+      <p>Clicks: <output id="count">0</output></p>
+    </section>
+  </main>
+
+  <script src="app.js"></script>
+</body>
+</html>
+`,
+    "styles.css": `:root { --brand: #4f46e5; --ink: #111827; --muted: #6b7280; }
+* { box-sizing: border-box; }
+body { margin: 0; font-family: system-ui, sans-serif; color: var(--ink); }
+
+.site-header {
+  display: flex; align-items: center; gap: 1rem;
+  padding: 1rem 1.25rem; border-bottom: 1px solid #e5e7eb;
+}
+.site-header nav { display: flex; gap: 1rem; margin-left: 1rem; }
+.site-header nav a { color: var(--muted); text-decoration: none; }
+.site-header nav a:hover { color: var(--ink); }
+.logo { font-weight: 700; color: var(--brand); text-decoration: none; }
+.cta {
+  margin-left: auto; background: var(--brand); color: #fff;
+  border: 0; padding: .55rem 1rem; border-radius: .5rem; cursor: pointer;
+}
+
+.hero { max-width: 720px; margin: 4rem auto; padding: 0 1.25rem; text-align: center; }
+.hero h1 { font-size: 2.25rem; margin-bottom: .5rem; }
+.hero p  { color: var(--muted); margin: .25rem 0; }
+`,
+    "app.js": `const cta = document.getElementById("cta");
+const count = document.getElementById("count");
+let n = 0;
+cta.addEventListener("click", () => {
+  n += 1;
+  count.textContent = String(n);
+});
+`,
+    "README.md": `# UI Lab
+
+Edit \`index.html\`, \`styles.css\` and \`app.js\`. The **Preview** panel renders
+your code live (it re-runs whenever you save).
+`,
+  },
+};
+
+function getKit(slug: string, tag: string): Kit {
+  if (tag === "Django Todo") {
+    return {
+      name: "django", rootLabel: "todo-app", primary: "todos/views.py", runtime: "Python 3.12 · Django 5",
+      fileList: [...DJANGO_FILES], files: { ...DJANGO_STARTERS },
+    };
+  }
+  if (slug === "python") return PY_KITS[tag] ?? PY_KITS["Py Fundamentals"];
+  if (slug === "sql") return SQL_KIT_DEFAULT;
+  if (slug === "mongo") return MONGO_KIT_DEFAULT;
+  if (slug === "ui") return UI_KIT_DEFAULT;
+  return {
+    name: "java", rootLabel: "java-101", primary: "Main.java", runtime: "Java 17",
+    fileList: [...FILE_LIST],
+    files: { "Main.java": STARTER_MAIN, "MainTest.java": STARTER_TEST, "README.md": STARTER_README },
+  };
+}
+
 type TestResult = { name: string; pass: boolean; time: string; expected?: string; got?: string };
 type BottomTab = "output" | "errors" | "tests" | "quality" | "preview" | "terminal";
 
@@ -342,12 +641,16 @@ function TicketEditor() {
   const reviewMatch = useMatch({ from: "/lab/$slug/ticket/$ticketId/review", shouldThrow: false });
   const lab = labs.find((l) => l.slug === slug) ?? labs[0];
   const ticket = tickets.find((t) => t.id === ticketId) ?? tickets[0];
-  const isDjango = ticket.tag === "Django Todo";
-  const initialFileList: readonly string[] = isDjango ? DJANGO_FILES : FILE_LIST;
-  const starters: Record<string, string> = isDjango
-    ? DJANGO_STARTERS
-    : { "Main.java": STARTER_MAIN, "MainTest.java": STARTER_TEST, "README.md": STARTER_README };
-  const primaryFile = isDjango ? "todos/views.py" : "Main.java";
+  const kit = useMemo(() => getKit(slug, ticket.tag), [slug, ticket.tag]);
+  const isDjango = kit.name === "django";
+  const isJava = kit.name === "java";
+  const isSql = kit.name === "sql";
+  const isMongo = kit.name === "mongo";
+  const isUi = kit.name === "ui";
+  const isPython = kit.name === "python";
+  const initialFileList: readonly string[] = kit.fileList;
+  const starters: Record<string, string> = kit.files;
+  const primaryFile = kit.primary;
 
   const [tab, setTab] = useState<"problem" | "hints" | "discuss">("problem");
   const [leftCollapsed, setLeftCollapsed] = useState(false);
@@ -580,7 +883,7 @@ function TicketEditor() {
   }
 
   function handleSave() {
-    setDirty({ "Main.java": false, "MainTest.java": false, "README.md": false });
+    setDirty(Object.fromEntries(Object.keys(files).map((k) => [k, false])));
     const now = new Date();
     setSavedAt(`${now.getHours()}:${String(now.getMinutes()).padStart(2, "0")}`);
     showToast("Saved");
@@ -588,8 +891,9 @@ function TicketEditor() {
 
   function handleReset() {
     if (!confirm("Reset code to starter template?")) return;
-    setFiles({ "Main.java": STARTER_MAIN, "MainTest.java": STARTER_TEST, "README.md": STARTER_README });
-    setDirty({ "Main.java": false, "MainTest.java": false, "README.md": false });
+    setFiles({ ...starters });
+    setDirty({});
+    setActiveFile(initialFileList[0]);
     setTestsRan(false);
     setOutput("");
     showToast("Code reset");
@@ -757,7 +1061,7 @@ function TicketEditor() {
                 </div>
                 <div className="flex-1 overflow-auto px-1 pb-2">
                   <FileTree
-                    rootLabel={isDjango ? "todo-app" : ticket.id.toLowerCase()}
+                    rootLabel={kit.rootLabel}
                     paths={fileList}
                     activeFile={activeFile}
                     dirty={dirty}
@@ -789,7 +1093,7 @@ function TicketEditor() {
                   </button>
                 ))}
                 <div className="ml-auto flex items-center gap-2 pr-3 text-[11px] text-muted-foreground whitespace-nowrap">
-                  {!isDjango && <CompileBadge state={compileState} />}
+                  {isJava && <CompileBadge state={compileState} />}
                   <button onClick={toggleTheme} className="rounded border px-2 py-0.5 hover:bg-accent">
                     {theme === "dark" ? "☀ Light" : "🌙 Dark"}
                   </button>
@@ -829,7 +1133,7 @@ function TicketEditor() {
                   {[
                     { k: "output", label: "Console", icon: TerminalIcon },
                     { k: "errors", label: "Errors", icon: AlertTriangle },
-                    { k: "preview", label: "Preview", icon: Globe },
+                    { k: "preview", label: isSql || isMongo ? "Results" : "Preview", icon: Globe },
                     { k: "terminal", label: "Terminal", icon: TerminalIcon },
                   ].map((t) => (
                     <button key={t.k} onClick={() => setBottomTab(t.k as BottomTab)}
@@ -841,7 +1145,14 @@ function TicketEditor() {
                 <div className="h-52 overflow-auto scrollbar-thin p-3 text-xs">
                   {bottomTab === "output" && <OutputView output={output} />}
                   {bottomTab === "errors" && <ErrorsView state={compileState} />}
-                  {bottomTab === "preview" && (isDjango ? <DjangoTodoPreview /> : <PreviewView />)}
+                  {bottomTab === "preview" && (
+                    isDjango ? <DjangoTodoPreview /> :
+                    isSql    ? <SqlResultsView query={files[activeFile] ?? ""} /> :
+                    isMongo  ? <MongoResultsView query={files[activeFile] ?? ""} /> :
+                    isUi     ? <UiPreview files={files} /> :
+                    isPython ? <PythonOutputView code={files[activeFile] ?? ""} /> :
+                               <PreviewView />
+                  )}
                   {bottomTab === "terminal" && <TerminalView />}
                 </div>
               </div>
@@ -880,7 +1191,7 @@ function TicketEditor() {
                 </div>
                 <div className="flex-1 overflow-auto scrollbar-thin p-3 text-xs min-w-0">
                   {sidePanel === "preview"
-                    ? <SidePreview device={previewDevice} isDjango={isDjango} />
+                    ? <SidePreview device={previewDevice} kit={kit} files={files} activeFile={activeFile} />
                     : <SideMentor onAsk={(q) => showToast(`Mentor: ${q}`)} />}
                 </div>
               </aside>
@@ -894,10 +1205,10 @@ function TicketEditor() {
       {/* Status bar */}
       <div className="flex items-center gap-3 border-t bg-primary/90 px-3 py-1 text-[11px] text-primary-foreground">
         <span className="inline-flex items-center gap-1"><GitBranch className="h-3 w-3" /> main</span>
-        <span>{isDjango ? "Python 3.12 · Django 5" : "Java 17"}</span>
+        <span>{kit.runtime}</span>
         <span>UTF-8</span>
         <span>LF</span>
-        {!isDjango && (
+        {isJava && (
           <span className="inline-flex items-center gap-1">
             {compileState === "ok" && <><CheckCircle2 className="h-3 w-3" />Compiled</>}
             {compileState === "warn" && <><AlertTriangle className="h-3 w-3" />1 warning</>}
@@ -919,12 +1230,16 @@ function TicketEditor() {
 
 /* ---------- Editor ---------- */
 
-type EditorLang = "java" | "py" | "html" | "md" | "txt";
+type EditorLang = "java" | "py" | "html" | "md" | "txt" | "sql" | "js" | "css" | "json";
 function editorLanguage(file: string): EditorLang {
   if (file.endsWith(".py")) return "py";
   if (file.endsWith(".html")) return "html";
   if (file.endsWith(".md")) return "md";
   if (file.endsWith(".java")) return "java";
+  if (file.endsWith(".sql")) return "sql";
+  if (file.endsWith(".js") || file.endsWith(".ts")) return "js";
+  if (file.endsWith(".css")) return "css";
+  if (file.endsWith(".json")) return "json";
   return "txt";
 }
 
@@ -938,6 +1253,10 @@ function CodeEditor({ code, onChange, language, theme }: { code: string; onChang
       case "java": return [java()];
       case "html": return [cmHtml()];
       case "md": return [cmMarkdown()];
+      case "sql": return [sql()];
+      case "js": return [javascript({ typescript: true })];
+      case "css": return [css()];
+      case "json": return [jsonLang()];
       default: return [];
     }
   }, [language]);
@@ -1103,23 +1422,28 @@ function PreviewView() {
   );
 }
 
-function SidePreview({ device, isDjango }: { device: "Mobile" | "Tablet" | "Desktop"; isDjango?: boolean }) {
+function SidePreview({ device, kit, files, activeFile }: { device: "Mobile" | "Tablet" | "Desktop"; kit: Kit; files: Record<string, string>; activeFile: string }) {
   const w = device === "Mobile" ? 375 : device === "Tablet" ? 768 : "100%";
+  const body =
+    kit.name === "django" ? <DjangoTodoApp /> :
+    kit.name === "ui"     ? <UiPreview files={files} fullHeight /> :
+    kit.name === "sql"    ? <SqlResultsView query={files[activeFile] ?? ""} /> :
+    kit.name === "mongo"  ? <MongoResultsView query={files[activeFile] ?? ""} /> :
+    kit.name === "python" ? <PythonOutputView code={files[activeFile] ?? ""} /> :
+    (
+      <div className="p-4 space-y-2">
+        <div className="text-[10px] uppercase tracking-wider text-gray-500">Live preview</div>
+        <h2 className="text-xl font-semibold">Hello Java</h2>
+        <p className="text-sm text-gray-600">Integer: 42 · Double: 3.14</p>
+        <p className="text-sm text-gray-600">Length: 10 · Char[0]: H</p>
+        <button className="rounded bg-blue-600 px-3 py-1 text-xs text-white">Run sample</button>
+      </div>
+    );
   return (
     <div className="flex h-full flex-col gap-2">
       <div className="flex-1 grid place-items-center overflow-auto rounded border bg-accent/30 p-2">
-        <div className="mx-auto h-full overflow-auto rounded bg-white text-black shadow" style={{ width: w, maxWidth: "100%" }}>
-          {isDjango ? (
-            <DjangoTodoApp />
-          ) : (
-            <div className="p-4 space-y-2">
-              <div className="text-[10px] uppercase tracking-wider text-gray-500">Live preview</div>
-              <h2 className="text-xl font-semibold">Hello Java</h2>
-              <p className="text-sm text-gray-600">Integer: 42 · Double: 3.14</p>
-              <p className="text-sm text-gray-600">Length: 10 · Char[0]: H</p>
-              <button className="rounded bg-blue-600 px-3 py-1 text-xs text-white">Run sample</button>
-            </div>
-          )}
+        <div className="mx-auto h-full w-full overflow-auto rounded bg-white text-black shadow" style={{ width: w, maxWidth: "100%" }}>
+          {body}
         </div>
       </div>
     </div>
@@ -1680,5 +2004,182 @@ function TreeFileNode({
         ><Trash2 className="mr-2 h-3.5 w-3.5" />Delete</ContextMenuItem>
       </ContextMenuContent>
     </ContextMenu>
+  );
+}
+
+/* ---------- SQL query results viewer ---------- */
+
+type SqlRow = Record<string, string | number>;
+function runSqlQuery(q: string): { columns: string[]; rows: SqlRow[]; note: string; ms: number } {
+  const lower = q.toLowerCase();
+  // Tiny pretend engine: pattern-match a few shapes against seed.sql data.
+  const customers = [
+    { id: 1, name: "Ada Lovelace",   country: "UK", signed_up_at: "2024-02-11" },
+    { id: 2, name: "Linus Torvalds", country: "FI", signed_up_at: "2024-05-04" },
+    { id: 3, name: "Grace Hopper",   country: "US", signed_up_at: "2023-09-30" },
+    { id: 4, name: "Hedy Lamarr",    country: "AT", signed_up_at: "2024-07-12" },
+    { id: 5, name: "Alan Turing",    country: "UK", signed_up_at: "2024-11-01" },
+  ];
+  const orders = [
+    { id: 1, customer_id: 1, amount: 120.0, created_at: "2024-03-01" },
+    { id: 2, customer_id: 1, amount: 45.5,  created_at: "2024-04-12" },
+    { id: 3, customer_id: 2, amount: 300.0, created_at: "2024-06-20" },
+    { id: 4, customer_id: 4, amount: 80.25, created_at: "2024-08-09" },
+    { id: 5, customer_id: 5, amount: 19.99, created_at: "2024-11-15" },
+  ];
+
+  if (lower.includes("group by") && lower.includes("country")) {
+    const byC: Record<string, { customers: number; total: number }> = {};
+    for (const c of customers) {
+      if (lower.includes("2024") && c.signed_up_at < "2024-01-01") continue;
+      byC[c.country] ??= { customers: 0, total: 0 };
+      byC[c.country].customers += 1;
+      byC[c.country].total += orders.filter((o) => o.customer_id === c.id).reduce((a, o) => a + o.amount, 0);
+    }
+    const rows: SqlRow[] = Object.entries(byC)
+      .map(([country, v]) => ({ country, customers: v.customers, total_revenue: v.total.toFixed(2) }))
+      .sort((a, b) => Number(b.total_revenue) - Number(a.total_revenue));
+    return { columns: ["country", "customers", "total_revenue"], rows, note: `${rows.length} row(s)`, ms: 7 };
+  }
+  if (lower.includes("from customers")) {
+    return { columns: ["id", "name", "country", "signed_up_at"], rows: customers, note: `${customers.length} row(s)`, ms: 3 };
+  }
+  if (lower.includes("from orders")) {
+    return { columns: ["id", "customer_id", "amount", "created_at"], rows: orders, note: `${orders.length} row(s)`, ms: 2 };
+  }
+  return { columns: [], rows: [], note: "No matching mock data. Try a SELECT against customers or orders.", ms: 1 };
+}
+
+function SqlResultsView({ query }: { query: string }) {
+  const res = useMemo(() => runSqlQuery(query), [query]);
+  if (res.columns.length === 0) {
+    return <div className="text-muted-foreground p-2">{res.note}</div>;
+  }
+  return (
+    <div className="text-[12px]">
+      <div className="mb-2 flex items-center justify-between text-muted-foreground">
+        <span>{res.note}</span>
+        <span>executed in {res.ms}ms</span>
+      </div>
+      <div className="overflow-auto rounded border">
+        <table className="w-full font-mono">
+          <thead className="bg-accent/40 text-muted-foreground">
+            <tr>{res.columns.map((c) => <th key={c} className="px-2 py-1 text-left font-medium">{c}</th>)}</tr>
+          </thead>
+          <tbody>
+            {res.rows.map((r, i) => (
+              <tr key={i} className="border-t hover:bg-accent/30">
+                {res.columns.map((c) => <td key={c} className="px-2 py-1 whitespace-nowrap">{String(r[c])}</td>)}
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+    </div>
+  );
+}
+
+/* ---------- Mongo query results viewer ---------- */
+
+function runMongoQuery(q: string): { rows: unknown[]; note: string; ms: number } {
+  const lower = q.toLowerCase();
+  const users = [
+    { name: "Ada",   email: "ada@example.com",   country: "UK", active: true,  createdAt: "2024-02-11" },
+    { name: "Linus", email: "linus@example.com", country: "FI", active: true,  createdAt: "2024-05-04" },
+    { name: "Grace", email: "grace@example.com", country: "US", active: false, createdAt: "2023-09-30" },
+    { name: "Alan",  email: "alan@example.com",  country: "UK", active: true,  createdAt: "2024-11-01" },
+  ];
+  const orders = [
+    { userId: 1, category: "Books", amount: 12.5, status: "paid" },
+    { userId: 2, category: "Music", amount: 9.99, status: "paid" },
+    { userId: 1, category: "Books", amount: 4.2,  status: "refunded" },
+    { userId: 4, category: "Games", amount: 29.0, status: "paid" },
+  ];
+
+  if (lower.includes("db.orders.aggregate")) {
+    const byCat: Record<string, { total: number; n: number }> = {};
+    for (const o of orders.filter((x) => x.status === "paid")) {
+      byCat[o.category] ??= { total: 0, n: 0 };
+      byCat[o.category].total += o.amount;
+      byCat[o.category].n += 1;
+    }
+    const rows = Object.entries(byCat).map(([_id, v]) => ({ _id, total: v.total, n: v.n })).sort((a, b) => b.total - a.total);
+    return { rows, note: `${rows.length} document(s)`, ms: 6 };
+  }
+  if (lower.includes("db.users.find")) {
+    let rows = users.slice();
+    if (lower.includes('country: "uk"') || lower.includes("country: 'uk'")) rows = rows.filter((u) => u.country === "UK");
+    if (lower.includes("active: true")) rows = rows.filter((u) => u.active);
+    return { rows: rows.map(({ name, email, country }) => ({ name, email, country })), note: `${rows.length} document(s)`, ms: 3 };
+  }
+  if (lower.includes("db.orders.find")) {
+    return { rows: orders, note: `${orders.length} document(s)`, ms: 2 };
+  }
+  return { rows: [], note: "No matching mock data. Try db.users.find(...) or db.orders.aggregate([...]).", ms: 1 };
+}
+
+function MongoResultsView({ query }: { query: string }) {
+  const res = useMemo(() => runMongoQuery(query), [query]);
+  if (res.rows.length === 0) {
+    return <div className="text-muted-foreground p-2">{res.note}</div>;
+  }
+  return (
+    <div className="text-[12px]">
+      <div className="mb-2 flex items-center justify-between text-muted-foreground">
+        <span>{res.note}</span>
+        <span>executed in {res.ms}ms</span>
+      </div>
+      <pre className="overflow-auto rounded border bg-editor-bg p-2 font-mono text-foreground/90">{JSON.stringify(res.rows, null, 2)}</pre>
+    </div>
+  );
+}
+
+/* ---------- UI iframe preview (HTML/CSS/JS) ---------- */
+
+function UiPreview({ files, fullHeight }: { files: Record<string, string>; fullHeight?: boolean }) {
+  const srcDoc = useMemo(() => {
+    const html = files["index.html"] ?? "<!doctype html><html><body><p>No index.html</p></body></html>";
+    const cssText = files["styles.css"] ?? "";
+    const jsText = files["app.js"] ?? "";
+    const cssTag = `<style>${cssText}</style>`;
+    const jsTag = `<script>\ntry { ${jsText} } catch (e) { document.body.insertAdjacentHTML('beforeend', '<pre style="color:#b00">'+(e && e.message || e)+'</pre>'); }\n<\/script>`;
+    // Strip external <link rel=stylesheet href="styles.css"> and <script src="app.js"> then inject inline.
+    let out = html
+      .replace(/<link[^>]*href=["']styles\.css["'][^>]*>/i, cssTag)
+      .replace(/<script[^>]*src=["']app\.js["'][^>]*><\/script>/i, jsTag);
+    if (!/<style>/i.test(out)) out = out.replace(/<\/head>/i, `${cssTag}</head>`);
+    if (!out.includes("<script>")) out = out.replace(/<\/body>/i, `${jsTag}</body>`);
+    return out;
+  }, [files]);
+  return (
+    <iframe
+      title="UI preview"
+      sandbox="allow-scripts"
+      srcDoc={srcDoc}
+      className={`w-full rounded border bg-white ${fullHeight ? "h-full" : "h-48"}`}
+    />
+  );
+}
+
+/* ---------- Python "output" view (heuristic) ---------- */
+
+function PythonOutputView({ code }: { code: string }) {
+  const lines = useMemo(() => {
+    const out: string[] = [];
+    const re = /print\(([^)]*)\)/g;
+    let m: RegExpExecArray | null;
+    while ((m = re.exec(code))) {
+      const arg = m[1].trim();
+      // strip wrapping quotes / f-string prefix for a quick visible result
+      const stripped = arg.replace(/^f?["']/, "").replace(/["']$/, "");
+      out.push(stripped);
+    }
+    if (out.length === 0) out.push("(no print() statements found)");
+    return out;
+  }, [code]);
+  return (
+    <pre className="font-mono text-foreground/90 whitespace-pre-wrap">
+{"$ python " + (Object.keys({}).length ? "" : "main.py") + "\n" + lines.join("\n")}
+    </pre>
   );
 }
