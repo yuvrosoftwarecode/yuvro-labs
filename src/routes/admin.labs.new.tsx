@@ -30,7 +30,10 @@ function LabBuilder() {
     skills: "",
     tags: "",
     description: "",
+    repoUrl: "",
+    repoBranch: "main",
   });
+
   const set = <K extends keyof typeof form>(k: K, v: (typeof form)[K]) => setForm(s => ({ ...s, [k]: v }));
 
   const [error, setError] = useState<string | null>(null);
@@ -57,7 +60,10 @@ function LabBuilder() {
       duration: form.duration,
       skills: form.skills,
       tags: form.tags,
+      repoUrl: form.repoUrl,
+      repoBranch: form.repoBranch,
     });
+
     if (sprints.length) saveSprints(created.id, sprints);
     setSaved(true);
     setTimeout(() => nav({ to: "/admin/labs" }), 600);
@@ -104,6 +110,8 @@ function LabBuilder() {
                 <Field label="Skills covered" full><input value={form.skills} onChange={e => set("skills", e.target.value)} placeholder="Coroutines, Flow, Channels…" className="w-full bg-transparent border border-border rounded-md px-3 py-2" /></Field>
                 <Field label="Industry tags" full><input value={form.tags} onChange={e => set("tags", e.target.value)} placeholder="Fintech, Mobile, Backend" className="w-full bg-transparent border border-border rounded-md px-3 py-2" /></Field>
                 <Field label="Description *" full><textarea rows={4} value={form.description} onChange={e => set("description", e.target.value)} placeholder="What learners will build and master in this lab." className="w-full bg-transparent border border-border rounded-md px-3 py-2" /></Field>
+                <Field label="GitHub starter repo URL" full><input value={form.repoUrl} onChange={e => set("repoUrl", e.target.value)} placeholder="https://github.com/org/lab-starter" className="w-full bg-transparent border border-border rounded-md px-3 py-2 font-mono text-xs" /></Field>
+                <Field label="Default branch"><input value={form.repoBranch} onChange={e => set("repoBranch", e.target.value)} placeholder="main" className="w-full bg-transparent border border-border rounded-md px-3 py-2 font-mono text-xs" /></Field>
               </div>
             </Panel>
           )}

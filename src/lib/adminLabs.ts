@@ -20,6 +20,8 @@ export interface AdminLab {
   duration?: number;
   skills?: string;
   tags?: string;
+  repoUrl?: string;
+  repoBranch?: string;
   custom?: boolean;
   createdAt?: number;
 }
