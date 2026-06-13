@@ -18,6 +18,9 @@ function LabBuilder() {
   const [step, setStep] = useState(0);
   const [env, setEnv] = useState<Record<string, boolean>>({ "VS Code": true, "Terminal": true, "Browser": false, "Database": true, "API Simulator": false, "Docker Environment": false, "Microservices": false, "CI/CD": false });
   const [evalConf, setEvalConf] = useState<Record<string, number>>({ Functional: 30, "Code Quality": 20, Security: 15, Performance: 15, Architecture: 10, Testing: 10 });
+  const [sprints, setSprintsState] = useState<LabSprint[]>([]);
+  const [activeSprint, setActiveSprint] = useState<string | null>(null);
+  const [activeTask, setActiveTask] = useState<string | null>(null);
 
   const [form, setForm] = useState({
     name: "",
