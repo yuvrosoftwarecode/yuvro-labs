@@ -1187,7 +1187,7 @@ function TicketEditor() {
                 </div>
                 <div className="flex-1 overflow-auto scrollbar-thin p-3 text-xs min-w-0">
                   {sidePanel === "preview"
-                    ? <SidePreview device={previewDevice} isDjango={isDjango} />
+                    ? <SidePreview device={previewDevice} kit={kit} files={files} activeFile={activeFile} />
                     : <SideMentor onAsk={(q) => showToast(`Mentor: ${q}`)} />}
                 </div>
               </aside>
