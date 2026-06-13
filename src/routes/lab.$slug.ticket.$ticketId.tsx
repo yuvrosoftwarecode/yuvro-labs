@@ -1201,10 +1201,10 @@ function TicketEditor() {
       {/* Status bar */}
       <div className="flex items-center gap-3 border-t bg-primary/90 px-3 py-1 text-[11px] text-primary-foreground">
         <span className="inline-flex items-center gap-1"><GitBranch className="h-3 w-3" /> main</span>
-        <span>{isDjango ? "Python 3.12 · Django 5" : "Java 17"}</span>
+        <span>{kit.runtime}</span>
         <span>UTF-8</span>
         <span>LF</span>
-        {!isDjango && (
+        {isJava && (
           <span className="inline-flex items-center gap-1">
             {compileState === "ok" && <><CheckCircle2 className="h-3 w-3" />Compiled</>}
             {compileState === "warn" && <><AlertTriangle className="h-3 w-3" />1 warning</>}
