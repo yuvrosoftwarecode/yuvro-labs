@@ -89,21 +89,17 @@ function EditLab() {
                 <Field label="Completion %"><input type="number" min={0} max={100} value={lab.comp} onChange={e => set("comp", Number(e.target.value))} className="w-full bg-transparent border border-border rounded-md px-3 py-2" /></Field>
                 <Field label="Rating"><input type="number" step={0.1} min={0} max={5} value={lab.rating} onChange={e => set("rating", Number(e.target.value))} className="w-full bg-transparent border border-border rounded-md px-3 py-2" /></Field>
                 <Field label="Description *" full><textarea rows={4} value={lab.description} onChange={e => set("description", e.target.value)} className="w-full bg-transparent border border-border rounded-md px-3 py-2" /></Field>
+                <Field label="GitHub starter repo URL" full><input value={lab.repoUrl ?? ""} onChange={e => set("repoUrl", e.target.value)} placeholder="https://github.com/org/repo" className="w-full bg-transparent border border-border rounded-md px-3 py-2 font-mono text-xs" /></Field>
+                <Field label="Default branch"><input value={lab.repoBranch ?? ""} onChange={e => set("repoBranch", e.target.value)} placeholder="main" className="w-full bg-transparent border border-border rounded-md px-3 py-2 font-mono text-xs" /></Field>
               </div>
             </Panel>
           )}
           {step === 1 && (
-            <Panel title="Sprints">
-              <SprintBuilder
-                sprints={sprints}
-                setSprints={setSprints}
-                onConfigureTasks={(sprintId) => {
-                  saveSprints(lab.id, sprints);
-                  nav({ to: "/admin/labs/$id/sprints/$sprintId", params: { id: lab.id, sprintId } });
-                }}
-              />
+            <Panel title="Sprints & tasks">
+              <SprintBuilder sprints={sprints} setSprints={setSprints} />
             </Panel>
           )}
+
 
           <div className="flex items-center justify-between gap-2 flex-wrap">
             <button disabled={step === 0} onClick={() => setStep(s => s - 1)} className="text-xs px-3 py-1.5 rounded-md border border-border hover:bg-accent disabled:opacity-40">← Back</button>
