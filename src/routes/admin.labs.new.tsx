@@ -1,16 +1,51 @@
-import { createFileRoute, Link } from "@tanstack/react-router";
+import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { AdminShell, Panel, Badge } from "@/components/admin/AdminShell";
 import { useState } from "react";
 import { Check, ChevronRight } from "lucide-react";
+import { saveAdminLab } from "@/lib/adminLabs";
 
 export const Route = createFileRoute("/admin/labs/new")({ component: LabBuilder });
 
 const STEPS = ["Basic info", "Environment", "Evaluation", "AI Mentor", "Publish"];
+const CATEGORIES = ["Java Backend", "Python", "Frontend/UI", "SQL", "DevOps", "Security", "System Design", "Collaboration"];
 
 function LabBuilder() {
+  const nav = useNavigate();
   const [step, setStep] = useState(0);
   const [env, setEnv] = useState<Record<string, boolean>>({ "VS Code": true, "Terminal": true, "Browser": false, "Database": true, "API Simulator": false, "Docker Environment": false, "Microservices": false, "CI/CD": false });
   const [evalConf, setEvalConf] = useState<Record<string, number>>({ Functional: 30, "Code Quality": 20, Security: 15, Performance: 15, Architecture: 10, Testing: 10 });
+
+  const [form, setForm] = useState({
+    name: "Payment Service Resilience",
+    cat: "Java Backend",
+    diff: "Medium" as "Easy" | "Medium" | "Hard",
+    duration: 6,
+    skills: "",
+    tags: "",
+    description: "Build a resilient payment retry layer with idempotency, exponential backoff and observability.",
+  });
+  const set = <K extends keyof typeof form>(k: K, v: (typeof form)[K]) => setForm(s => ({ ...s, [k]: v }));
+
+  const [saved, setSaved] = useState(false);
+  const publish = () => {
+    if (!form.name.trim()) return;
+    saveAdminLab({
+      name: form.name.trim(),
+      cat: form.cat,
+      diff: form.diff,
+      users: 0,
+      tickets: 0,
+      sprints: 0,
+      comp: 0,
+      rating: 0,
+      description: form.description,
+      duration: form.duration,
+      skills: form.skills,
+      tags: form.tags,
+    });
+    setSaved(true);
+    setTimeout(() => nav({ to: "/admin/labs" }), 600);
+  };
 
   return (
     <AdminShell title="Lab Builder" breadcrumb={["Engineering", "Labs", "New"]} right={
@@ -33,13 +68,21 @@ function LabBuilder() {
           {step === 0 && (
             <Panel title="Basic info">
               <div className="grid md:grid-cols-2 gap-4 text-sm">
-                <Field label="Lab name"><input className="w-full bg-transparent border border-border rounded-md px-3 py-2" defaultValue="Payment Service Resilience" /></Field>
-                <Field label="Category"><select className="w-full bg-transparent border border-border rounded-md px-3 py-2"><option>Java Backend</option><option>Python</option><option>Frontend/UI</option><option>SQL</option><option>DevOps</option></select></Field>
-                <Field label="Difficulty"><select className="w-full bg-transparent border border-border rounded-md px-3 py-2"><option>Easy</option><option>Medium</option><option>Hard</option></select></Field>
-                <Field label="Estimated duration (hrs)"><input type="number" defaultValue={6} className="w-full bg-transparent border border-border rounded-md px-3 py-2" /></Field>
-                <Field label="Skills covered" full><input placeholder="Exception handling, Retry logic, Idempotency…" className="w-full bg-transparent border border-border rounded-md px-3 py-2" /></Field>
-                <Field label="Industry tags" full><input placeholder="Fintech, Payments, Banking" className="w-full bg-transparent border border-border rounded-md px-3 py-2" /></Field>
-                <Field label="Description" full><textarea rows={4} className="w-full bg-transparent border border-border rounded-md px-3 py-2" defaultValue="Build a resilient payment retry layer with idempotency, exponential backoff and observability." /></Field>
+                <Field label="Lab name"><input value={form.name} onChange={e => set("name", e.target.value)} className="w-full bg-transparent border border-border rounded-md px-3 py-2" /></Field>
+                <Field label="Category">
+                  <select value={form.cat} onChange={e => set("cat", e.target.value)} className="w-full bg-transparent border border-border rounded-md px-3 py-2">
+                    {CATEGORIES.map(c => <option key={c}>{c}</option>)}
+                  </select>
+                </Field>
+                <Field label="Difficulty">
+                  <select value={form.diff} onChange={e => set("diff", e.target.value as any)} className="w-full bg-transparent border border-border rounded-md px-3 py-2">
+                    <option>Easy</option><option>Medium</option><option>Hard</option>
+                  </select>
+                </Field>
+                <Field label="Estimated duration (hrs)"><input type="number" value={form.duration} onChange={e => set("duration", Number(e.target.value))} className="w-full bg-transparent border border-border rounded-md px-3 py-2" /></Field>
+                <Field label="Skills covered" full><input value={form.skills} onChange={e => set("skills", e.target.value)} placeholder="Exception handling, Retry logic, Idempotency…" className="w-full bg-transparent border border-border rounded-md px-3 py-2" /></Field>
+                <Field label="Industry tags" full><input value={form.tags} onChange={e => set("tags", e.target.value)} placeholder="Fintech, Payments, Banking" className="w-full bg-transparent border border-border rounded-md px-3 py-2" /></Field>
+                <Field label="Description" full><textarea rows={4} value={form.description} onChange={e => set("description", e.target.value)} className="w-full bg-transparent border border-border rounded-md px-3 py-2" /></Field>
               </div>
             </Panel>
           )}
@@ -80,11 +123,13 @@ function LabBuilder() {
           {step === 4 && (
             <Panel title="Review & publish">
               <div className="text-sm space-y-2">
-                <div className="flex items-center gap-2"><Badge tone="success">ready</Badge> Basic info complete</div>
-                <div className="flex items-center gap-2"><Badge tone="success">ready</Badge> Environment configured</div>
-                <div className="flex items-center gap-2"><Badge tone="success">ready</Badge> Evaluation weights total 100%</div>
+                <div className="flex items-center gap-2"><Badge tone="success">ready</Badge> {form.name} · {form.cat} · {form.diff}</div>
+                <div className="flex items-center gap-2"><Badge tone="success">ready</Badge> Environment configured ({Object.values(env).filter(Boolean).length} tools)</div>
+                <div className="flex items-center gap-2"><Badge tone={Object.values(evalConf).reduce((a,b)=>a+b,0) === 100 ? "success" : "warning"}>{Object.values(evalConf).reduce((a,b)=>a+b,0)}%</Badge> Evaluation weights</div>
                 <div className="flex items-center gap-2"><Badge tone="success">ready</Badge> AI Mentor rules saved</div>
-                <button className="mt-4 px-4 py-2 rounded-md bg-primary text-primary-foreground text-sm">Publish lab</button>
+                <button onClick={publish} disabled={saved} className="mt-4 px-4 py-2 rounded-md bg-primary text-primary-foreground text-sm disabled:opacity-60">
+                  {saved ? "Published — redirecting…" : "Publish lab"}
+                </button>
               </div>
             </Panel>
           )}
