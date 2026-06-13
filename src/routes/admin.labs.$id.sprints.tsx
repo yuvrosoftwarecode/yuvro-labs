@@ -49,7 +49,7 @@ function SprintsPage() {
     const found = getLab(id);
     if (!found) { nav({ to: "/admin/labs" }); return; }
     setLab(found);
-    const sp = loadSprints(id);
+    const sp = loadSprintsWithSeed(id, found.slug);
     setSprints(sp);
     setOpen(Object.fromEntries(sp.map(s => [s.id, true])));
   }, [id, nav]);
