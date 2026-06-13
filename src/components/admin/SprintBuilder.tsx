@@ -203,30 +203,23 @@ function TaskConfig({ task, sprintName, labName, onChange, onDelete }: {
   onChange: (p: Partial<LabTask>) => void;
   onDelete: () => void;
 }) {
-  const [mode, setMode] = useState<"configure" | "preview">("configure");
+  const [previewOpen, setPreviewOpen] = useState(false);
   return (
-    <div className="p-5 space-y-4">
-      <div className="flex items-start justify-between gap-3 flex-wrap">
-        <div>
-          <div className="text-[10px] uppercase tracking-wider text-muted-foreground">{sprintName} · Task</div>
-          <h3 className="text-lg font-semibold mt-0.5">{mode === "preview" ? "Student preview" : "Configure task"}</h3>
-        </div>
-        <div className="flex items-center gap-2">
-          <div className="inline-flex rounded-md border border-border overflow-hidden">
-            <button onClick={() => setMode("configure")} className={`text-[11px] px-2 py-1 inline-flex items-center gap-1 ${mode === "configure" ? "bg-primary text-primary-foreground" : "hover:bg-accent"}`}>
-              <Settings2 className="h-3 w-3" /> Configure
-            </button>
-            <button onClick={() => setMode("preview")} className={`text-[11px] px-2 py-1 inline-flex items-center gap-1 ${mode === "preview" ? "bg-primary text-primary-foreground" : "hover:bg-accent"}`}>
+    <>
+      <div className="p-5 space-y-4">
+        <div className="flex items-start justify-between gap-3 flex-wrap">
+          <div>
+            <div className="text-[10px] uppercase tracking-wider text-muted-foreground">{sprintName} · Task</div>
+            <h3 className="text-lg font-semibold mt-0.5">Configure task</h3>
+          </div>
+          <div className="flex items-center gap-2">
+            <button onClick={() => setPreviewOpen(true)} className="text-[11px] px-2 py-1 rounded-md border border-primary/40 text-primary hover:bg-primary/10 inline-flex items-center gap-1">
               <Eye className="h-3 w-3" /> Preview
             </button>
+            <button onClick={onDelete} className="text-[11px] px-2 py-1 rounded-md border border-destructive/40 text-destructive hover:bg-destructive/10 inline-flex items-center gap-1"><Trash2 className="h-3 w-3" /> Delete</button>
           </div>
-          <button onClick={onDelete} className="text-[11px] px-2 py-1 rounded-md border border-destructive/40 text-destructive hover:bg-destructive/10 inline-flex items-center gap-1"><Trash2 className="h-3 w-3" /> Delete</button>
         </div>
-      </div>
 
-      {mode === "preview" ? (
-        <TaskPreview task={task} sprintName={sprintName} labName={labName} />
-      ) : (
         <div className="grid grid-cols-2 gap-3">
           <Field label="Title" full>
             <input value={task.title} onChange={e => onChange({ title: e.target.value })} className="w-full bg-transparent border border-border rounded-md px-3 py-2 text-sm" />
@@ -264,10 +257,15 @@ function TaskConfig({ task, sprintName, labName, onChange, onDelete }: {
             </Field>
           )}
         </div>
+      </div>
+
+      {previewOpen && (
+        <TaskPreview task={task} sprintName={sprintName} labName={labName} onClose={() => setPreviewOpen(false)} />
       )}
-    </div>
+    </>
   );
 }
+
 
 
 function Field({ label, children, full }: { label: string; children: React.ReactNode; full?: boolean }) {
