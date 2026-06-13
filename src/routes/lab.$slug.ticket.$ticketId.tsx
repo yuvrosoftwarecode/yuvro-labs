@@ -1201,6 +1201,21 @@ function TicketEditor() {
                   </button>
                 ))}
                 <div className="ml-auto flex items-center gap-2 pr-3 text-[11px] text-muted-foreground whitespace-nowrap">
+                  {isMultiLang && (
+                    <label className="flex items-center gap-1">
+                      <span className="opacity-70">Lang</span>
+                      <select
+                        value={progLang}
+                        onChange={(e) => switchProgLang(e.target.value as ProgLang)}
+                        className="rounded border bg-background px-1.5 py-0.5 text-[11px] text-foreground"
+                      >
+                        <option value="python">Python</option>
+                        <option value="c">C</option>
+                        <option value="cpp">C++</option>
+                        <option value="js">JavaScript</option>
+                      </select>
+                    </label>
+                  )}
                   {isJava && <CompileBadge state={compileState} />}
                   <button onClick={toggleTheme} className="rounded border px-2 py-0.5 hover:bg-accent">
                     {theme === "dark" ? "☀ Light" : "🌙 Dark"}
