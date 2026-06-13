@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { Plus, Trash2, ChevronDown, ChevronRight, FileCode, Layers, Eye, Settings2 } from "lucide-react";
+import { Plus, Trash2, ChevronDown, ChevronRight, FileCode, Layers, Eye } from "lucide-react";
 import {
   newSprint, newTask, EDITORS, LANGUAGES,
   type LabSprint, type LabTask, type EditorKind, type Language,
