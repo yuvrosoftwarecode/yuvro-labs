@@ -1226,12 +1226,16 @@ function TicketEditor() {
 
 /* ---------- Editor ---------- */
 
-type EditorLang = "java" | "py" | "html" | "md" | "txt";
+type EditorLang = "java" | "py" | "html" | "md" | "txt" | "sql" | "js" | "css" | "json";
 function editorLanguage(file: string): EditorLang {
   if (file.endsWith(".py")) return "py";
   if (file.endsWith(".html")) return "html";
   if (file.endsWith(".md")) return "md";
   if (file.endsWith(".java")) return "java";
+  if (file.endsWith(".sql")) return "sql";
+  if (file.endsWith(".js") || file.endsWith(".ts")) return "js";
+  if (file.endsWith(".css")) return "css";
+  if (file.endsWith(".json")) return "json";
   return "txt";
 }
 
@@ -1245,6 +1249,10 @@ function CodeEditor({ code, onChange, language, theme }: { code: string; onChang
       case "java": return [java()];
       case "html": return [cmHtml()];
       case "md": return [cmMarkdown()];
+      case "sql": return [sql()];
+      case "js": return [javascript({ typescript: true })];
+      case "css": return [css()];
+      case "json": return [jsonLang()];
       default: return [];
     }
   }, [language]);
