@@ -5,6 +5,7 @@ import {
   LayoutDashboard, Users, FlaskConical, Ticket, Network, BarChart3, Briefcase,
   Bot, Bell, Search, LogOut, GitBranch, Database, Building2, GraduationCap,
   Brain, Cpu, AlertTriangle, ListChecks, Activity, Sparkles, ChevronRight,
+  PanelLeftClose, PanelLeftOpen,
 } from "lucide-react";
 
 const NAV: { group: string; items: { to: string; label: string; icon: any }[] }[] = [
