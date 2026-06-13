@@ -79,6 +79,76 @@ export const tickets: Ticket[] = [
     description: "Add POST endpoints to mark a todo complete and delete it. Use Django forms and CSRF tokens." },
   { id: "PYDJ-205", title: "Style with template inheritance", difficulty: "Intermediate", estMin: 55, xp: 220, tag: "Django Todo", status: "Not Started",
     description: "Create base.html with blocks and extend it from todos templates. Add minimal CSS for a clean look." },
+
+  // ---- Python · Core Foundations ----
+  { id: "PY-101", title: "Variables, Types & f-strings", difficulty: "Beginner", estMin: 25, xp: 100, tag: "Py Fundamentals", status: "Completed", score: 95,
+    description: "Practice int/float/str/bool, type casting, and f-string formatting with width and precision." },
+  { id: "PY-102", title: "Lists, Tuples & Dicts", difficulty: "Beginner", estMin: 35, xp: 130, tag: "Py Fundamentals", status: "Completed", score: 88,
+    description: "Build and mutate collections. Use slicing, unpacking and dict comprehensions." },
+  { id: "PY-103", title: "Control Flow & Loops", difficulty: "Beginner", estMin: 30, xp: 120, tag: "Py Fundamentals", status: "In Progress", progress: 60,
+    description: "Use if/elif/else, for/while, break/continue. Implement FizzBuzz and a number guessing game." },
+  { id: "PY-104", title: "Functions & *args/**kwargs", difficulty: "Beginner", estMin: 40, xp: 150, tag: "Py Fundamentals", status: "Not Started",
+    description: "Write pure functions with default args, *args and **kwargs. Add type hints." },
+  { id: "PY-105", title: "List Comprehensions", difficulty: "Intermediate", estMin: 35, xp: 160, tag: "Py Fundamentals", status: "Not Started",
+    description: "Refactor for-loops into idiomatic comprehensions including nested and conditional forms." },
+
+  // ---- Python · Data & APIs ----
+  { id: "PY-201", title: "File I/O & CSV parsing", difficulty: "Intermediate", estMin: 50, xp: 200, tag: "Py Data", status: "Not Started",
+    description: "Read/write text and CSV. Aggregate a sales.csv into totals per category." },
+  { id: "PY-202", title: "JSON & requests", difficulty: "Intermediate", estMin: 55, xp: 220, tag: "Py Data", status: "Not Started",
+    description: "Fetch JSON from a public API with `requests`, handle status codes and serialize results." },
+  { id: "PY-203", title: "Pandas DataFrame basics", difficulty: "Advanced", estMin: 70, xp: 300, tag: "Py Data", status: "Not Started",
+    description: "Load a CSV into a DataFrame, filter, group-by and plot a quick chart." },
+
+  // ---- UI Lab · HTML & CSS ----
+  { id: "UI-101", title: "Semantic HTML landing page", difficulty: "Beginner", estMin: 35, xp: 120, tag: "HTML/CSS", status: "Completed", score: 91,
+    description: "Build a landing page using header, nav, main, section, article and footer with proper headings." },
+  { id: "UI-102", title: "CSS Box Model & Specificity", difficulty: "Beginner", estMin: 40, xp: 140, tag: "HTML/CSS", status: "Completed", score: 84,
+    description: "Demonstrate margin/padding/border. Resolve a specificity conflict without !important." },
+  { id: "UI-103", title: "Flexbox navbar", difficulty: "Intermediate", estMin: 45, xp: 180, tag: "HTML/CSS", status: "In Progress", progress: 40,
+    description: "Build a responsive nav with logo left, links center, CTA right using flex utilities." },
+  { id: "UI-104", title: "CSS Grid dashboard", difficulty: "Intermediate", estMin: 55, xp: 220, tag: "Layout", status: "In Progress", progress: 15,
+    description: "Compose a 12-col grid dashboard with sidebar, header and main content using grid-template-areas." },
+  { id: "UI-105", title: "Mobile-first media queries", difficulty: "Intermediate", estMin: 40, xp: 180, tag: "Layout", status: "Not Started",
+    description: "Convert a desktop layout to mobile-first with breakpoints at 640/768/1024px." },
+
+  // ---- UI Lab · React ----
+  { id: "UI-201", title: "React: Todo with useState", difficulty: "Intermediate", estMin: 60, xp: 240, tag: "React", status: "Not Started",
+    description: "Build a todo app with add, toggle, delete and filter All/Active/Done using useState." },
+  { id: "UI-202", title: "useEffect & data fetching", difficulty: "Intermediate", estMin: 55, xp: 240, tag: "React", status: "Not Started",
+    description: "Fetch posts from an API on mount. Handle loading, error and empty states cleanly." },
+  { id: "UI-203", title: "Custom hook: useLocalStorage", difficulty: "Advanced", estMin: 50, xp: 260, tag: "React", status: "Not Started",
+    description: "Write a reusable hook that syncs a state value to localStorage with SSR safety." },
+
+  // ---- UI Lab · Accessibility ----
+  { id: "UI-301", title: "Keyboard-accessible modal", difficulty: "Advanced", estMin: 60, xp: 280, tag: "Accessibility", status: "Not Started",
+    description: "Build a modal with focus trap, ESC to close, and proper aria-* attributes." },
+  { id: "UI-302", title: "Color contrast audit", difficulty: "Beginner", estMin: 25, xp: 110, tag: "Accessibility", status: "Not Started",
+    description: "Audit a page against WCAG AA contrast. Fix failing pairs without breaking the palette." },
+
+  // ---- SQL Lab · Querying ----
+  { id: "SQL-101", title: "SELECT, WHERE & ORDER BY", difficulty: "Beginner", estMin: 25, xp: 100, tag: "Querying", status: "Completed", score: 97,
+    description: "Query the `customers` table. Filter by country and sort by signup date desc." },
+  { id: "SQL-102", title: "Aggregates & GROUP BY", difficulty: "Beginner", estMin: 35, xp: 140, tag: "Querying", status: "In Progress", progress: 50,
+    description: "Compute total revenue per month using SUM, COUNT and GROUP BY with HAVING." },
+  { id: "SQL-103", title: "INNER vs LEFT JOIN", difficulty: "Intermediate", estMin: 50, xp: 200, tag: "Joins", status: "In Progress", progress: 20,
+    description: "Join `orders` and `customers`. Find customers with no orders using LEFT JOIN." },
+  { id: "SQL-104", title: "Multi-table JOIN", difficulty: "Intermediate", estMin: 55, xp: 220, tag: "Joins", status: "Not Started",
+    description: "Join orders → order_items → products to produce a line-item revenue report." },
+  { id: "SQL-105", title: "Subqueries & CTEs", difficulty: "Intermediate", estMin: 60, xp: 240, tag: "Querying", status: "Not Started",
+    description: "Rewrite a correlated subquery as a WITH cte for readability and performance." },
+
+  // ---- SQL Lab · Window functions ----
+  { id: "SQL-201", title: "ROW_NUMBER & RANK", difficulty: "Advanced", estMin: 65, xp: 280, tag: "Windows", status: "Not Started",
+    description: "Rank top 3 products per category using a window function partitioned by category." },
+  { id: "SQL-202", title: "LAG, LEAD & running totals", difficulty: "Advanced", estMin: 70, xp: 300, tag: "Windows", status: "Not Started",
+    description: "Compute month-over-month growth and a running revenue total per region." },
+
+  // ---- SQL Lab · Performance ----
+  { id: "SQL-301", title: "EXPLAIN & indexes", difficulty: "Advanced", estMin: 70, xp: 320, tag: "Tuning", status: "Not Started",
+    description: "Read an EXPLAIN plan. Add a covering index to remove a sequential scan." },
+  { id: "SQL-302", title: "Normalize & denormalize", difficulty: "Advanced", estMin: 60, xp: 280, tag: "Tuning", status: "Not Started",
+    description: "Take a flat reporting table to 3NF, then design a denormalized read model for a dashboard." },
 ];
 
 export const leaderboard = [
