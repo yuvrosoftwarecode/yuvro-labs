@@ -45,9 +45,9 @@ function LabBuilder() {
   const publish = () => {
     if (!form.name.trim()) { setError("Lab name is required."); setStep(0); return; }
     if (!form.description.trim()) { setError("Description is required."); setStep(0); return; }
-    if (totalWeight !== 100) { setError(`Evaluation weights must total 100% (currently ${totalWeight}%).`); setStep(2); return; }
+    if (totalWeight !== 100) { setError(`Evaluation weights must total 100% (currently ${totalWeight}%).`); setStep(3); return; }
     setError(null);
-    createLab({
+    const created = createLab({
       name: form.name.trim(),
       slug: form.slug,
       icon: form.icon || "🧪",
@@ -57,7 +57,7 @@ function LabBuilder() {
       difficulty: diffToDifficulty[form.diff],
       users: 0,
       tickets: form.tickets,
-      sprints: form.sprints,
+      sprints: Math.max(form.sprints, sprints.length),
       comp: 0,
       rating: 0,
       description: form.description.trim(),
@@ -65,9 +65,21 @@ function LabBuilder() {
       skills: form.skills,
       tags: form.tags,
     });
+    if (sprints.length) saveSprints(created.id, sprints);
     setSaved(true);
     setTimeout(() => nav({ to: "/admin/labs" }), 600);
   };
+
+  const updateSprint = (id: string, patch: Partial<LabSprint>) =>
+    setSprintsState(s => s.map(sp => sp.id === id ? { ...sp, ...patch } : sp));
+  const updateTask = (sid: string, tid: string, patch: Partial<LabTask>) =>
+    setSprintsState(s => s.map(sp => sp.id === sid ? { ...sp, tasks: sp.tasks.map(t => t.id === tid ? { ...t, ...patch } : t) } : sp));
+  const removeSprint = (id: string) => setSprintsState(s => s.filter(sp => sp.id !== id));
+  const removeTask = (sid: string, tid: string) =>
+    setSprintsState(s => s.map(sp => sp.id === sid ? { ...sp, tasks: sp.tasks.filter(t => t.id !== tid) } : sp));
+
+  const editingSprint = sprints.find(s => s.id === activeSprint) ?? null;
+  const editingTask = editingSprint?.tasks.find(t => t.id === activeTask) ?? null;
 
   return (
     <AdminShell title="Lab Builder" breadcrumb={["Engineering", "Labs", "New"]} right={
