@@ -30,7 +30,10 @@ function LabBuilder() {
     skills: "",
     tags: "",
     description: "",
+    repoUrl: "",
+    repoBranch: "main",
   });
+
   const set = <K extends keyof typeof form>(k: K, v: (typeof form)[K]) => setForm(s => ({ ...s, [k]: v }));
 
   const [error, setError] = useState<string | null>(null);
