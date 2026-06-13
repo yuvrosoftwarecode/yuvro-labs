@@ -47,7 +47,10 @@ function EditLab() {
 
   return (
     <AdminShell title={`Edit · ${lab.name}`} breadcrumb={["Engineering", "Labs", "Edit"]} right={
-      <Link to="/admin/labs" className="text-xs px-3 py-1.5 rounded-md border border-border hover:bg-accent">← Back</Link>
+      <div className="flex items-center gap-2">
+        <Link to="/admin/labs/$id/sprints" params={{ id: lab.id }} className="text-xs px-3 py-1.5 rounded-md border border-border hover:bg-accent">Manage sprints →</Link>
+        <Link to="/admin/labs" className="text-xs px-3 py-1.5 rounded-md border border-border hover:bg-accent">← Back</Link>
+      </div>
     }>
       <div className="flex items-center gap-2 mb-6 overflow-x-auto">
         {STEPS.map((s, i) => (
