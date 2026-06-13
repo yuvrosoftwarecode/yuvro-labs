@@ -39,6 +39,7 @@ import { Route as AdminInfrastructureRouteImport } from './routes/admin.infrastr
 import { Route as AdminIncidentsRouteImport } from './routes/admin.incidents'
 import { Route as AdminCollaborationRouteImport } from './routes/admin.collaboration'
 import { Route as AdminAiMentorRouteImport } from './routes/admin.ai-mentor'
+import { Route as AdminLabsIndexRouteImport } from './routes/admin.labs.index'
 import { Route as CollaborationSprintIdRouteImport } from './routes/collaboration.sprint.$id'
 import { Route as AdminUsersIdRouteImport } from './routes/admin.users.$id'
 import { Route as AdminLabsNewRouteImport } from './routes/admin.labs.new'
@@ -201,6 +202,11 @@ const AdminAiMentorRoute = AdminAiMentorRouteImport.update({
   path: '/ai-mentor',
   getParentRoute: () => AdminRoute,
 } as any)
+const AdminLabsIndexRoute = AdminLabsIndexRouteImport.update({
+  id: '/',
+  path: '/',
+  getParentRoute: () => AdminLabsRoute,
+} as any)
 const CollaborationSprintIdRoute = CollaborationSprintIdRouteImport.update({
   id: '/sprint/$id',
   path: '/sprint/$id',
@@ -291,6 +297,7 @@ export interface FileRoutesByFullPath {
   '/admin/labs/new': typeof AdminLabsNewRoute
   '/admin/users/$id': typeof AdminUsersIdRoute
   '/collaboration/sprint/$id': typeof CollaborationSprintIdRouteWithChildren
+  '/admin/labs/': typeof AdminLabsIndexRoute
   '/admin/labs/$id/edit': typeof AdminLabsIdEditRoute
   '/collaboration/sprint/$id/workspace': typeof CollaborationSprintIdWorkspaceRoute
   '/lab/$slug/ticket/$ticketId': typeof LabSlugTicketTicketIdRouteWithChildren
@@ -314,7 +321,6 @@ export interface FileRoutesByTo {
   '/admin/infrastructure': typeof AdminInfrastructureRoute
   '/admin/institutions': typeof AdminInstitutionsRoute
   '/admin/intelligence': typeof AdminIntelligenceRoute
-  '/admin/labs': typeof AdminLabsRouteWithChildren
   '/admin/notifications': typeof AdminNotificationsRoute
   '/admin/questions': typeof AdminQuestionsRoute
   '/admin/recruiters': typeof AdminRecruitersRoute
@@ -331,6 +337,7 @@ export interface FileRoutesByTo {
   '/admin/labs/new': typeof AdminLabsNewRoute
   '/admin/users/$id': typeof AdminUsersIdRoute
   '/collaboration/sprint/$id': typeof CollaborationSprintIdRouteWithChildren
+  '/admin/labs': typeof AdminLabsIndexRoute
   '/admin/labs/$id/edit': typeof AdminLabsIdEditRoute
   '/collaboration/sprint/$id/workspace': typeof CollaborationSprintIdWorkspaceRoute
   '/lab/$slug/ticket/$ticketId': typeof LabSlugTicketTicketIdRouteWithChildren
@@ -374,6 +381,7 @@ export interface FileRoutesById {
   '/admin/labs/new': typeof AdminLabsNewRoute
   '/admin/users/$id': typeof AdminUsersIdRoute
   '/collaboration/sprint/$id': typeof CollaborationSprintIdRouteWithChildren
+  '/admin/labs/': typeof AdminLabsIndexRoute
   '/admin/labs/$id/edit': typeof AdminLabsIdEditRoute
   '/collaboration/sprint/$id/workspace': typeof CollaborationSprintIdWorkspaceRoute
   '/lab/$slug/ticket/$ticketId': typeof LabSlugTicketTicketIdRouteWithChildren
@@ -418,6 +426,7 @@ export interface FileRouteTypes {
     | '/admin/labs/new'
     | '/admin/users/$id'
     | '/collaboration/sprint/$id'
+    | '/admin/labs/'
     | '/admin/labs/$id/edit'
     | '/collaboration/sprint/$id/workspace'
     | '/lab/$slug/ticket/$ticketId'
@@ -441,7 +450,6 @@ export interface FileRouteTypes {
     | '/admin/infrastructure'
     | '/admin/institutions'
     | '/admin/intelligence'
-    | '/admin/labs'
     | '/admin/notifications'
     | '/admin/questions'
     | '/admin/recruiters'
@@ -458,6 +466,7 @@ export interface FileRouteTypes {
     | '/admin/labs/new'
     | '/admin/users/$id'
     | '/collaboration/sprint/$id'
+    | '/admin/labs'
     | '/admin/labs/$id/edit'
     | '/collaboration/sprint/$id/workspace'
     | '/lab/$slug/ticket/$ticketId'
@@ -500,6 +509,7 @@ export interface FileRouteTypes {
     | '/admin/labs/new'
     | '/admin/users/$id'
     | '/collaboration/sprint/$id'
+    | '/admin/labs/'
     | '/admin/labs/$id/edit'
     | '/collaboration/sprint/$id/workspace'
     | '/lab/$slug/ticket/$ticketId'
@@ -735,6 +745,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AdminAiMentorRouteImport
       parentRoute: typeof AdminRoute
     }
+    '/admin/labs/': {
+      id: '/admin/labs/'
+      path: '/'
+      fullPath: '/admin/labs/'
+      preLoaderRoute: typeof AdminLabsIndexRouteImport
+      parentRoute: typeof AdminLabsRoute
+    }
     '/collaboration/sprint/$id': {
       id: '/collaboration/sprint/$id'
       path: '/sprint/$id'
@@ -810,11 +827,13 @@ declare module '@tanstack/react-router' {
 
 interface AdminLabsRouteChildren {
   AdminLabsNewRoute: typeof AdminLabsNewRoute
+  AdminLabsIndexRoute: typeof AdminLabsIndexRoute
   AdminLabsIdEditRoute: typeof AdminLabsIdEditRoute
 }
 
 const AdminLabsRouteChildren: AdminLabsRouteChildren = {
   AdminLabsNewRoute: AdminLabsNewRoute,
+  AdminLabsIndexRoute: AdminLabsIndexRoute,
   AdminLabsIdEditRoute: AdminLabsIdEditRoute,
 }
 
