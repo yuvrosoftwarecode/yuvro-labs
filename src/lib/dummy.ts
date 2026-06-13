@@ -18,7 +18,7 @@ export interface Lab {
   slug: string;
   name: string;
   icon: string;
-  color: "java" | "python" | "ui" | "sql";
+  color: "java" | "python" | "ui" | "sql" | "mongo";
   difficulty: Difficulty;
   completed: number;
   total: number;
