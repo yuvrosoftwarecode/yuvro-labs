@@ -67,8 +67,8 @@ function EditLab() {
 
       {error && <div className="mb-4 text-xs px-3 py-2 rounded-md bg-destructive/10 text-destructive border border-destructive/30">{error}</div>}
 
-      <div className="grid lg:grid-cols-3 gap-6">
-        <div className="lg:col-span-2 space-y-4">
+      <div className="grid grid-cols-1 gap-6">
+        <div className="space-y-4">
           {step === 0 && (
             <Panel title="Basic info">
               <div className="grid md:grid-cols-2 gap-4 text-sm">
