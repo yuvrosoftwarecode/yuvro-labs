@@ -181,6 +181,8 @@ const SLUG_LANGUAGE: Record<string, Language> = {
   java: "java", python: "python", ui: "javascript", sql: "sql",
   mongo: "javascript", programming: "python", datastructures: "python",
   systemdesign: "javascript", cybersecurity: "python",
+  pydjango: "python", pyflask: "python", javaspring: "java",
+  postgres: "sql", git: "bash",
 };
 
 const STARTERS: Record<Language, string> = {
