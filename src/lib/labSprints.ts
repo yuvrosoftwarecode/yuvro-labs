@@ -22,6 +22,7 @@ export interface LabTask {
   editor: EditorKind;
   language: Language;
   starterCode: string;
+  starterPath?: string;
 }
 
 export interface LabSprint {
