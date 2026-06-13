@@ -38,6 +38,7 @@ function EditLab() {
       name: lab.name, icon: lab.icon, cat: lab.cat, diff: lab.diff,
       tickets: lab.tickets, sprints: sprints.length || lab.sprints, users: lab.users,
       comp: lab.comp, rating: lab.rating, description: lab.description,
+      repoUrl: lab.repoUrl, repoBranch: lab.repoBranch,
     });
     saveSprints(lab.id, sprints);
     setSaved(true);
@@ -46,8 +47,12 @@ function EditLab() {
 
   return (
     <AdminShell title={`Edit · ${lab.name}`} breadcrumb={["Engineering", "Labs", "Edit"]} right={
-      <Link to="/admin/labs" className="text-xs px-3 py-1.5 rounded-md border border-border hover:bg-accent">← Back</Link>
+      <div className="flex items-center gap-2">
+        <Link to="/lab/$slug" params={{ slug: lab.slug }} target="_blank" className="text-xs px-3 py-1.5 rounded-md border border-primary/40 text-primary hover:bg-primary/10">Preview as student ↗</Link>
+        <Link to="/admin/labs" className="text-xs px-3 py-1.5 rounded-md border border-border hover:bg-accent">← Back</Link>
+      </div>
     }>
+
       <div className="flex items-center gap-2 mb-6 overflow-x-auto">
         {STEPS.map((s, i) => (
           <div key={s} className="flex items-center gap-2">
