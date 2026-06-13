@@ -20,6 +20,7 @@ import { sql } from "@codemirror/lang-sql";
 import { javascript } from "@codemirror/lang-javascript";
 import { css } from "@codemirror/lang-css";
 import { json as jsonLang } from "@codemirror/lang-json";
+import { cpp } from "@codemirror/lang-cpp";
 import { vscodeDark, vscodeLight } from "@uiw/codemirror-theme-vscode";
 import {
   ContextMenu,
@@ -649,6 +650,11 @@ function TicketEditor() {
   const isMongo = kit.name === "mongo";
   const isUi = kit.name === "ui";
   const isPython = kit.name === "python";
+  const isMultiLang = slug === "programming" || slug === "datastructures";
+  type ProgLang = "python" | "c" | "cpp" | "js";
+  const PROG_EXT: Record<ProgLang, string> = { python: "py", c: "c", cpp: "cpp", js: "js" };
+  const PROG_LABEL: Record<ProgLang, string> = { python: "Python 3", c: "C (gcc)", cpp: "C++ (g++)", js: "Node.js" };
+  const [progLang, setProgLang] = useState<ProgLang>("python");
   const initialFileList: readonly string[] = kit.fileList;
   const starters: Record<string, string> = kit.files;
   const primaryFile = kit.primary;
@@ -705,8 +711,36 @@ function TicketEditor() {
     setActiveFile(initialFileList[0]);
     setTestsRan(false);
     setOutput("");
+    if (isMultiLang) setProgLang("python");
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [ticket.id]);
+
+  function progStarter(lang: ProgLang, title: string): string {
+    const banner = `${title}`;
+    switch (lang) {
+      case "python":
+        return `"""${banner}"""\n\ndef solve():\n    # TODO: implement\n    pass\n\n\nif __name__ == "__main__":\n    print("Hello from Python")\n    solve()\n`;
+      case "c":
+        return `/* ${banner} */\n#include <stdio.h>\n\nint main(void) {\n    printf("Hello from C\\n");\n    return 0;\n}\n`;
+      case "cpp":
+        return `// ${banner}\n#include <iostream>\nusing namespace std;\n\nint main() {\n    cout << "Hello from C++" << endl;\n    return 0;\n}\n`;
+      case "js":
+        return `// ${banner}\nfunction solve() {\n  // TODO: implement\n}\n\nconsole.log("Hello from JavaScript");\nsolve();\n`;
+    }
+  }
+
+  function switchProgLang(next: ProgLang) {
+    if (next === progLang) return;
+    const ext = PROG_EXT[next];
+    const fname = `main.${ext}`;
+    setProgLang(next);
+    setFiles((f) => {
+      if (f[fname] !== undefined) return f;
+      return { ...f, [fname]: progStarter(next, ticket.title) };
+    });
+    setActiveFile(fname);
+  }
+
 
   // ---- File ops (VS Code-like): create / rename / delete ----
   function createFile(path: string, contents = "") {
@@ -819,6 +853,38 @@ function TicketEditor() {
     const src = files[activeFile] ?? "";
     const file = activeFile;
 
+    if (isMultiLang) {
+      const lang: ProgLang =
+        file.endsWith(".c")   ? "c"   :
+        file.endsWith(".cpp") || file.endsWith(".cc") ? "cpp" :
+        file.endsWith(".js")  || file.endsWith(".ts") ? "js"  :
+        "python";
+      const cmd =
+        lang === "python" ? `$ python ${file}` :
+        lang === "c"      ? `$ gcc ${file} -o a.out && ./a.out` :
+        lang === "cpp"    ? `$ g++ ${file} -std=c++17 -o a.out && ./a.out` :
+                            `$ node ${file}`;
+      setOutput(`${cmd}\n…running…\n`);
+      setTimeout(() => {
+        const out: string[] = [];
+        if (lang === "python") {
+          const re = /print\(\s*(?:f?["'])([^"']*)["']\s*\)/g;
+          let m; while ((m = re.exec(src))) out.push(m[1]);
+        } else if (lang === "js") {
+          const re = /console\.log\(\s*["'`]([^"'`]*)["'`]\s*\)/g;
+          let m; while ((m = re.exec(src))) out.push(m[1]);
+        } else if (lang === "c") {
+          const re = /printf\(\s*"([^"]*)"/g;
+          let m; while ((m = re.exec(src))) out.push(m[1].replace(/\\n/g, ""));
+        } else {
+          const re = /cout\s*<<\s*"([^"]*)"/g;
+          let m; while ((m = re.exec(src))) out.push(m[1]);
+        }
+        setOutput(`${cmd}\n${out.join("\n")}\n\n✓ Process finished (0.3s) · ${PROG_LABEL[lang]}`);
+        setRunning(false);
+      }, 500);
+      return;
+    }
     if (isPython) {
       setOutput(`$ python ${file}\n…running…\n`);
       setTimeout(() => {
@@ -1135,6 +1201,21 @@ function TicketEditor() {
                   </button>
                 ))}
                 <div className="ml-auto flex items-center gap-2 pr-3 text-[11px] text-muted-foreground whitespace-nowrap">
+                  {isMultiLang && (
+                    <label className="flex items-center gap-1">
+                      <span className="opacity-70">Lang</span>
+                      <select
+                        value={progLang}
+                        onChange={(e) => switchProgLang(e.target.value as ProgLang)}
+                        className="rounded border bg-background px-1.5 py-0.5 text-[11px] text-foreground"
+                      >
+                        <option value="python">Python</option>
+                        <option value="c">C</option>
+                        <option value="cpp">C++</option>
+                        <option value="js">JavaScript</option>
+                      </select>
+                    </label>
+                  )}
                   {isJava && <CompileBadge state={compileState} />}
                   <button onClick={toggleTheme} className="rounded border px-2 py-0.5 hover:bg-accent">
                     {theme === "dark" ? "☀ Light" : "🌙 Dark"}
@@ -1272,13 +1353,15 @@ function TicketEditor() {
 
 /* ---------- Editor ---------- */
 
-type EditorLang = "java" | "py" | "html" | "md" | "txt" | "sql" | "js" | "css" | "json";
+type EditorLang = "java" | "py" | "html" | "md" | "txt" | "sql" | "js" | "css" | "json" | "cpp" | "c";
 function editorLanguage(file: string): EditorLang {
   if (file.endsWith(".py")) return "py";
   if (file.endsWith(".html")) return "html";
   if (file.endsWith(".md")) return "md";
   if (file.endsWith(".java")) return "java";
   if (file.endsWith(".sql")) return "sql";
+  if (file.endsWith(".cpp") || file.endsWith(".cc") || file.endsWith(".hpp")) return "cpp";
+  if (file.endsWith(".c") || file.endsWith(".h")) return "c";
   if (file.endsWith(".js") || file.endsWith(".ts")) return "js";
   if (file.endsWith(".css")) return "css";
   if (file.endsWith(".json")) return "json";
@@ -1299,6 +1382,8 @@ function CodeEditor({ code, onChange, language, theme }: { code: string; onChang
       case "js": return [javascript({ typescript: true })];
       case "css": return [css()];
       case "json": return [jsonLang()];
+      case "cpp":
+      case "c": return [cpp()];
       default: return [];
     }
   }, [language]);
