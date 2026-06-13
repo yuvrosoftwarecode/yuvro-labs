@@ -4,7 +4,7 @@ import { useEffect, useMemo, useState } from "react";
 import { Plus, Trash2, ChevronDown, ChevronRight, Pencil, X, Save, GripVertical } from "lucide-react";
 import { getLab, type AdminLab } from "@/lib/adminLabs";
 import {
-  loadSprints, saveSprints, newSprint, newTask,
+  loadSprintsWithSeed, saveSprints, newSprint, newTask,
   EDITORS, LANGUAGES, type LabSprint, type LabTask, type EditorKind, type Language,
 } from "@/lib/labSprints";
 
