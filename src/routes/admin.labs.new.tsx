@@ -60,7 +60,10 @@ function LabBuilder() {
       duration: form.duration,
       skills: form.skills,
       tags: form.tags,
+      repoUrl: form.repoUrl,
+      repoBranch: form.repoBranch,
     });
+
     if (sprints.length) saveSprints(created.id, sprints);
     setSaved(true);
     setTimeout(() => nav({ to: "/admin/labs" }), 600);
