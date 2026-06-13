@@ -1,15 +1,17 @@
 import { useEffect, useState } from "react";
-import { Plus, Trash2, ChevronDown, ChevronRight, FileCode, Layers } from "lucide-react";
+import { Plus, Trash2, ChevronDown, ChevronRight, FileCode, Layers, Eye, Settings2 } from "lucide-react";
 import {
   newSprint, newTask, EDITORS, LANGUAGES,
   type LabSprint, type LabTask, type EditorKind, type Language,
 } from "@/lib/labSprints";
+import { TaskPreview } from "./TaskPreview";
 
 type Selection = { sprintId: string; taskId?: string } | null;
 
-export function SprintBuilder({ sprints, setSprints }: {
+export function SprintBuilder({ sprints, setSprints, labName = "Lab" }: {
   sprints: LabSprint[];
   setSprints: (s: LabSprint[]) => void;
+  labName?: string;
   onConfigureTasks?: (sprintId: string) => void; // kept for API compat
 }) {
   const [selection, setSelection] = useState<Selection>(null);
