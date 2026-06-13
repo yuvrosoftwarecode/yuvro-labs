@@ -18,7 +18,7 @@ export interface Lab {
   slug: string;
   name: string;
   icon: string;
-  color: "java" | "python" | "ui" | "sql" | "mongo";
+  color: "java" | "python" | "ui" | "sql" | "mongo" | "prog" | "ds";
   difficulty: Difficulty;
   completed: number;
   total: number;
@@ -42,6 +42,12 @@ export const labs: Lab[] = [
   ]},
   { slug: "mongo", name: "MongoDB Lab", icon: "🍃", color: "mongo", difficulty: "Intermediate", completed: 0, total: 12, hoursLeft: 16, description: "Document modeling, CRUD, aggregation and indexes.", skills: [
     { name: "CRUD", pct: 40 }, { name: "Query Operators", pct: 25 }, { name: "Aggregation", pct: 15 }, { name: "Indexes", pct: 10 }
+  ]},
+  { slug: "programming", name: "Programming Lab", icon: "💻", color: "prog", difficulty: "Beginner", completed: 0, total: 30, hoursLeft: 20, description: "Programming fundamentals across syntax, logic, functions and OOP.", skills: [
+    { name: "Syntax", pct: 30 }, { name: "Control Flow", pct: 20 }, { name: "Functions", pct: 15 }, { name: "OOP", pct: 10 }
+  ]},
+  { slug: "datastructures", name: "Data Structures Lab", icon: "🧩", color: "ds", difficulty: "Intermediate", completed: 0, total: 30, hoursLeft: 28, description: "Core data structures: arrays, lists, trees, graphs, heaps and more.", skills: [
+    { name: "Arrays/Lists", pct: 30 }, { name: "Trees", pct: 15 }, { name: "Graphs", pct: 10 }, { name: "Hashing", pct: 20 }
   ]},
 ];
 
@@ -176,6 +182,79 @@ export const tickets: Ticket[] = [
   // ---- MongoDB Lab · Indexes ----
   { id: "MDB-401", title: "Single & compound indexes", difficulty: "Advanced", estMin: 55, xp: 260, tag: "Mongo Indexes", status: "Not Started",
     description: "Create indexes and use explain() to confirm an IXSCAN over COLLSCAN." },
+
+  // ---- Programming Lab (topic per sprint) ----
+  { id: "PROG-101", title: "Hello, World!", difficulty: "Beginner", estMin: 15, xp: 60, tag: "Prog Intro", status: "Not Started", description: "Write your first program that prints a greeting to the console." },
+  { id: "PROG-102", title: "Comments & Style", difficulty: "Beginner", estMin: 15, xp: 60, tag: "Prog Intro", status: "Not Started", description: "Add single-line and block comments. Follow consistent formatting." },
+  { id: "PROG-103", title: "Reading input", difficulty: "Beginner", estMin: 20, xp: 80, tag: "Prog Intro", status: "Not Started", description: "Read a name from stdin and greet the user." },
+
+  { id: "PROG-201", title: "Numeric types & casting", difficulty: "Beginner", estMin: 25, xp: 100, tag: "Prog Variables", status: "Not Started", description: "Use int, float, and explicit casting between numeric types." },
+  { id: "PROG-202", title: "Arithmetic operators", difficulty: "Beginner", estMin: 25, xp: 100, tag: "Prog Variables", status: "Not Started", description: "Compute area, perimeter and modulo using arithmetic operators." },
+  { id: "PROG-203", title: "Boolean & comparison", difficulty: "Beginner", estMin: 25, xp: 110, tag: "Prog Variables", status: "Not Started", description: "Combine boolean and comparison operators in expressions." },
+
+  { id: "PROG-301", title: "if / elif / else", difficulty: "Beginner", estMin: 30, xp: 120, tag: "Prog Control Flow", status: "Not Started", description: "Classify a number as positive, negative or zero using branches." },
+  { id: "PROG-302", title: "Nested conditionals", difficulty: "Beginner", estMin: 30, xp: 130, tag: "Prog Control Flow", status: "Not Started", description: "Decide ticket pricing based on age and membership status." },
+  { id: "PROG-303", title: "Switch / match", difficulty: "Intermediate", estMin: 35, xp: 150, tag: "Prog Control Flow", status: "Not Started", description: "Use match/case (or switch) to map HTTP codes to messages." },
+
+  { id: "PROG-401", title: "for & while loops", difficulty: "Beginner", estMin: 30, xp: 120, tag: "Prog Loops", status: "Not Started", description: "Iterate from 1 to N and accumulate a sum." },
+  { id: "PROG-402", title: "break, continue, else", difficulty: "Beginner", estMin: 30, xp: 130, tag: "Prog Loops", status: "Not Started", description: "Find the first prime above 1000 using break." },
+  { id: "PROG-403", title: "Nested loops & patterns", difficulty: "Intermediate", estMin: 40, xp: 160, tag: "Prog Loops", status: "Not Started", description: "Print a multiplication table and a pyramid pattern." },
+
+  { id: "PROG-501", title: "Define & call functions", difficulty: "Beginner", estMin: 30, xp: 130, tag: "Prog Functions", status: "Not Started", description: "Write `add`, `max3`, `is_even` with type hints." },
+  { id: "PROG-502", title: "Default & keyword args", difficulty: "Intermediate", estMin: 35, xp: 150, tag: "Prog Functions", status: "Not Started", description: "Use default and keyword arguments to build a greeter." },
+  { id: "PROG-503", title: "Recursion: factorial & fib", difficulty: "Intermediate", estMin: 45, xp: 180, tag: "Prog Functions", status: "Not Started", description: "Implement factorial and Fibonacci recursively." },
+
+  { id: "PROG-601", title: "String slicing & methods", difficulty: "Beginner", estMin: 30, xp: 130, tag: "Prog Strings", status: "Not Started", description: "Reverse, capitalize and count vowels in a string." },
+  { id: "PROG-602", title: "Palindrome check", difficulty: "Intermediate", estMin: 30, xp: 140, tag: "Prog Strings", status: "Not Started", description: "Check if a sentence is a palindrome ignoring case and spaces." },
+
+  { id: "PROG-701", title: "Read & write a text file", difficulty: "Intermediate", estMin: 40, xp: 160, tag: "Prog File I/O", status: "Not Started", description: "Read a file line by line and write transformed output." },
+  { id: "PROG-702", title: "Word count", difficulty: "Intermediate", estMin: 40, xp: 170, tag: "Prog File I/O", status: "Not Started", description: "Count occurrences of each word in a text file." },
+
+  { id: "PROG-801", title: "try / except basics", difficulty: "Intermediate", estMin: 35, xp: 150, tag: "Prog Errors", status: "Not Started", description: "Handle ValueError when parsing user input as int." },
+  { id: "PROG-802", title: "Custom exceptions", difficulty: "Intermediate", estMin: 40, xp: 170, tag: "Prog Errors", status: "Not Started", description: "Define and raise a custom exception class for invalid input." },
+
+  { id: "PROG-901", title: "Classes & instances", difficulty: "Intermediate", estMin: 45, xp: 190, tag: "Prog OOP", status: "Not Started", description: "Define a `Point` class with x, y and a distance method." },
+  { id: "PROG-902", title: "Inheritance", difficulty: "Intermediate", estMin: 50, xp: 200, tag: "Prog OOP", status: "Not Started", description: "Model `Animal` → `Dog`/`Cat` with overridden `speak`." },
+  { id: "PROG-903", title: "Dunder methods", difficulty: "Advanced", estMin: 55, xp: 230, tag: "Prog OOP", status: "Not Started", description: "Implement __str__, __eq__ and __lt__ on a Money class." },
+
+  // ---- Data Structures Lab (topic per sprint) ----
+  { id: "DS-101", title: "Array traversal & sum", difficulty: "Beginner", estMin: 25, xp: 110, tag: "DS Arrays", status: "Not Started", description: "Sum elements and find min/max in a single pass." },
+  { id: "DS-102", title: "Two-pointer: reverse in place", difficulty: "Intermediate", estMin: 35, xp: 150, tag: "DS Arrays", status: "Not Started", description: "Reverse an array in O(n) using two pointers." },
+  { id: "DS-103", title: "Sliding window maximum sum", difficulty: "Intermediate", estMin: 45, xp: 180, tag: "DS Arrays", status: "Not Started", description: "Find the max sum of any contiguous window of size k." },
+
+  { id: "DS-201", title: "Singly linked list", difficulty: "Intermediate", estMin: 50, xp: 200, tag: "DS Linked Lists", status: "Not Started", description: "Implement insert, delete and search on a singly linked list." },
+  { id: "DS-202", title: "Reverse a linked list", difficulty: "Intermediate", estMin: 40, xp: 180, tag: "DS Linked Lists", status: "Not Started", description: "Reverse a singly linked list iteratively and recursively." },
+  { id: "DS-203", title: "Detect cycle (Floyd's)", difficulty: "Advanced", estMin: 55, xp: 240, tag: "DS Linked Lists", status: "Not Started", description: "Detect a cycle using slow/fast pointers." },
+
+  { id: "DS-301", title: "Stack with array", difficulty: "Beginner", estMin: 30, xp: 120, tag: "DS Stacks", status: "Not Started", description: "Implement push/pop/peek with a dynamic array." },
+  { id: "DS-302", title: "Balanced parentheses", difficulty: "Intermediate", estMin: 35, xp: 160, tag: "DS Stacks", status: "Not Started", description: "Validate balanced (), [], {} using a stack." },
+  { id: "DS-303", title: "Min stack in O(1)", difficulty: "Advanced", estMin: 45, xp: 200, tag: "DS Stacks", status: "Not Started", description: "Support getMin() in O(1) using an auxiliary stack." },
+
+  { id: "DS-401", title: "Queue with two stacks", difficulty: "Intermediate", estMin: 40, xp: 170, tag: "DS Queues", status: "Not Started", description: "Implement an FIFO queue using two LIFO stacks." },
+  { id: "DS-402", title: "Circular queue", difficulty: "Intermediate", estMin: 45, xp: 190, tag: "DS Queues", status: "Not Started", description: "Fixed-capacity circular queue with O(1) enqueue/dequeue." },
+  { id: "DS-403", title: "Deque sliding window max", difficulty: "Advanced", estMin: 55, xp: 240, tag: "DS Queues", status: "Not Started", description: "Find sliding window maxima in O(n) using a deque." },
+
+  { id: "DS-501", title: "Hash map from scratch", difficulty: "Intermediate", estMin: 55, xp: 220, tag: "DS Hashing", status: "Not Started", description: "Implement put/get/remove with chaining." },
+  { id: "DS-502", title: "Two-sum with hashing", difficulty: "Beginner", estMin: 25, xp: 120, tag: "DS Hashing", status: "Not Started", description: "Find two indices that add up to a target in O(n)." },
+  { id: "DS-503", title: "Group anagrams", difficulty: "Intermediate", estMin: 40, xp: 180, tag: "DS Hashing", status: "Not Started", description: "Group strings that are anagrams using a hash map." },
+
+  { id: "DS-601", title: "Binary tree traversals", difficulty: "Intermediate", estMin: 45, xp: 190, tag: "DS Trees", status: "Not Started", description: "Implement in-order, pre-order and post-order traversals." },
+  { id: "DS-602", title: "BST insert & search", difficulty: "Intermediate", estMin: 45, xp: 200, tag: "DS Trees", status: "Not Started", description: "Insert and search in a binary search tree." },
+  { id: "DS-603", title: "Lowest common ancestor", difficulty: "Advanced", estMin: 60, xp: 260, tag: "DS Trees", status: "Not Started", description: "Find the LCA of two nodes in a binary tree." },
+
+  { id: "DS-701", title: "Heapify an array", difficulty: "Intermediate", estMin: 45, xp: 200, tag: "DS Heaps", status: "Not Started", description: "Build a min-heap from an unsorted array in O(n)." },
+  { id: "DS-702", title: "Top K frequent elements", difficulty: "Advanced", estMin: 55, xp: 240, tag: "DS Heaps", status: "Not Started", description: "Return the K most frequent elements using a heap." },
+
+  { id: "DS-801", title: "Graph BFS", difficulty: "Intermediate", estMin: 50, xp: 220, tag: "DS Graphs", status: "Not Started", description: "Implement breadth-first search on an adjacency list." },
+  { id: "DS-802", title: "Graph DFS", difficulty: "Intermediate", estMin: 50, xp: 220, tag: "DS Graphs", status: "Not Started", description: "Implement depth-first search iteratively and recursively." },
+  { id: "DS-803", title: "Dijkstra's shortest path", difficulty: "Advanced", estMin: 75, xp: 320, tag: "DS Graphs", status: "Not Started", description: "Find shortest paths from a source using a priority queue." },
+
+  { id: "DS-901", title: "Bubble & insertion sort", difficulty: "Beginner", estMin: 35, xp: 140, tag: "DS Sorting", status: "Not Started", description: "Implement two classic O(n²) sorts and compare." },
+  { id: "DS-902", title: "Merge sort", difficulty: "Intermediate", estMin: 55, xp: 230, tag: "DS Sorting", status: "Not Started", description: "Implement merge sort in O(n log n)." },
+  { id: "DS-903", title: "Quick sort with partition", difficulty: "Advanced", estMin: 60, xp: 260, tag: "DS Sorting", status: "Not Started", description: "Implement quick sort with Lomuto partition." },
+
+  { id: "DS-1001", title: "Binary search", difficulty: "Beginner", estMin: 30, xp: 130, tag: "DS Searching", status: "Not Started", description: "Implement iterative and recursive binary search." },
+  { id: "DS-1002", title: "Search in rotated array", difficulty: "Advanced", estMin: 55, xp: 240, tag: "DS Searching", status: "Not Started", description: "Search a target in a rotated sorted array in O(log n)." },
 ];
 
 export const leaderboard = [

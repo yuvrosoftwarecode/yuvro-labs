@@ -621,7 +621,8 @@ function getKit(slug: string, tag: string): Kit {
       fileList: [...DJANGO_FILES], files: { ...DJANGO_STARTERS },
     };
   }
-  if (slug === "python") return PY_KITS[tag] ?? PY_KITS["Py Fundamentals"];
+  if (slug === "python" || slug === "programming" || slug === "datastructures")
+    return PY_KITS[tag] ?? PY_KITS["Py Fundamentals"];
   if (slug === "sql") return SQL_KIT_DEFAULT;
   if (slug === "mongo") return MONGO_KIT_DEFAULT;
   if (slug === "ui") return UI_KIT_DEFAULT;
