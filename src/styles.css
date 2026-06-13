@@ -132,6 +132,8 @@
   --ui: oklch(0.72 0.20 310);
   --sql: oklch(0.74 0.17 150);
   --mongo: oklch(0.76 0.18 145);
+  --prog: oklch(0.72 0.16 270);
+  --ds: oklch(0.74 0.16 20);
 
   --editor-bg: oklch(0.14 0.015 260);
   --editor-panel: oklch(0.18 0.018 260);
