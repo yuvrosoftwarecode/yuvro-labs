@@ -711,8 +711,36 @@ function TicketEditor() {
     setActiveFile(initialFileList[0]);
     setTestsRan(false);
     setOutput("");
+    if (isMultiLang) setProgLang("python");
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [ticket.id]);
+
+  function progStarter(lang: ProgLang, title: string): string {
+    const banner = `${title}`;
+    switch (lang) {
+      case "python":
+        return `"""${banner}"""\n\ndef solve():\n    # TODO: implement\n    pass\n\n\nif __name__ == "__main__":\n    print("Hello from Python")\n    solve()\n`;
+      case "c":
+        return `/* ${banner} */\n#include <stdio.h>\n\nint main(void) {\n    printf("Hello from C\\n");\n    return 0;\n}\n`;
+      case "cpp":
+        return `// ${banner}\n#include <iostream>\nusing namespace std;\n\nint main() {\n    cout << "Hello from C++" << endl;\n    return 0;\n}\n`;
+      case "js":
+        return `// ${banner}\nfunction solve() {\n  // TODO: implement\n}\n\nconsole.log("Hello from JavaScript");\nsolve();\n`;
+    }
+  }
+
+  function switchProgLang(next: ProgLang) {
+    if (next === progLang) return;
+    const ext = PROG_EXT[next];
+    const fname = `main.${ext}`;
+    setProgLang(next);
+    setFiles((f) => {
+      if (f[fname] !== undefined) return f;
+      return { ...f, [fname]: progStarter(next, ticket.title) };
+    });
+    setActiveFile(fname);
+  }
+
 
   // ---- File ops (VS Code-like): create / rename / delete ----
   function createFile(path: string, contents = "") {
