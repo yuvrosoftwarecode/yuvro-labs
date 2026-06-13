@@ -1,5 +1,5 @@
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
-import { AdminShell, Panel, Badge } from "@/components/admin/AdminShell";
+import { AdminShell, Panel } from "@/components/admin/AdminShell";
 import { useEffect, useState } from "react";
 import { Check, ChevronRight } from "lucide-react";
 import { getLab, updateLab, CATEGORIES, DIFFS, type AdminLab } from "@/lib/adminLabs";
