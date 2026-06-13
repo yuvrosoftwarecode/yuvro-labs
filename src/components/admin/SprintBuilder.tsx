@@ -196,62 +196,79 @@ function SprintConfig({ sprint, onChange, onAddTask, onSelectTask }: {
   );
 }
 
-function TaskConfig({ task, sprintName, onChange, onDelete }: {
+function TaskConfig({ task, sprintName, labName, onChange, onDelete }: {
   task: LabTask;
   sprintName: string;
+  labName: string;
   onChange: (p: Partial<LabTask>) => void;
   onDelete: () => void;
 }) {
+  const [mode, setMode] = useState<"configure" | "preview">("configure");
   return (
     <div className="p-5 space-y-4">
-      <div className="flex items-start justify-between gap-3">
+      <div className="flex items-start justify-between gap-3 flex-wrap">
         <div>
           <div className="text-[10px] uppercase tracking-wider text-muted-foreground">{sprintName} · Task</div>
-          <h3 className="text-lg font-semibold mt-0.5">Configure task</h3>
+          <h3 className="text-lg font-semibold mt-0.5">{mode === "preview" ? "Student preview" : "Configure task"}</h3>
         </div>
-        <button onClick={onDelete} className="text-[11px] px-2 py-1 rounded-md border border-destructive/40 text-destructive hover:bg-destructive/10 inline-flex items-center gap-1"><Trash2 className="h-3 w-3" /> Delete</button>
+        <div className="flex items-center gap-2">
+          <div className="inline-flex rounded-md border border-border overflow-hidden">
+            <button onClick={() => setMode("configure")} className={`text-[11px] px-2 py-1 inline-flex items-center gap-1 ${mode === "configure" ? "bg-primary text-primary-foreground" : "hover:bg-accent"}`}>
+              <Settings2 className="h-3 w-3" /> Configure
+            </button>
+            <button onClick={() => setMode("preview")} className={`text-[11px] px-2 py-1 inline-flex items-center gap-1 ${mode === "preview" ? "bg-primary text-primary-foreground" : "hover:bg-accent"}`}>
+              <Eye className="h-3 w-3" /> Preview
+            </button>
+          </div>
+          <button onClick={onDelete} className="text-[11px] px-2 py-1 rounded-md border border-destructive/40 text-destructive hover:bg-destructive/10 inline-flex items-center gap-1"><Trash2 className="h-3 w-3" /> Delete</button>
+        </div>
       </div>
 
-      <div className="grid grid-cols-2 gap-3">
-        <Field label="Title" full>
-          <input value={task.title} onChange={e => onChange({ title: e.target.value })} className="w-full bg-transparent border border-border rounded-md px-3 py-2 text-sm" />
-        </Field>
-        <Field label="Editor">
-          <select value={task.editor} onChange={e => onChange({ editor: e.target.value as EditorKind })} className="w-full bg-transparent border border-border rounded-md px-3 py-2 text-sm">
-            {EDITORS.map(ed => <option key={ed.value} value={ed.value}>{ed.label}</option>)}
-          </select>
-        </Field>
-        <Field label="Language">
-          <select value={task.language} onChange={e => onChange({ language: e.target.value as Language })} disabled={task.editor === "none"} className="w-full bg-transparent border border-border rounded-md px-3 py-2 text-sm disabled:opacity-50">
-            {LANGUAGES.map(l => <option key={l} value={l}>{l}</option>)}
-          </select>
-        </Field>
-        <Field label="Difficulty">
-          <select value={task.difficulty} onChange={e => onChange({ difficulty: e.target.value as LabTask["difficulty"] })} className="w-full bg-transparent border border-border rounded-md px-3 py-2 text-sm">
-            <option>Beginner</option><option>Intermediate</option><option>Advanced</option>
-          </select>
-        </Field>
-        <Field label="XP">
-          <input type="number" value={task.xp} onChange={e => onChange({ xp: Number(e.target.value) })} className="w-full bg-transparent border border-border rounded-md px-3 py-2 text-sm" />
-        </Field>
-        <Field label="Est. minutes">
-          <input type="number" value={task.estMin} onChange={e => onChange({ estMin: Number(e.target.value) })} className="w-full bg-transparent border border-border rounded-md px-3 py-2 text-sm" />
-        </Field>
-        <Field label="Starter path in repo (optional)" full>
-          <input value={task.starterPath ?? ""} onChange={e => onChange({ starterPath: e.target.value })} placeholder="e.g. sprints/01-foundations/task-01" className="w-full bg-transparent border border-border rounded-md px-3 py-2 font-mono text-xs" />
-        </Field>
-        <Field label="Description / brief" full>
-          <textarea rows={3} value={task.description} onChange={e => onChange({ description: e.target.value })} className="w-full bg-transparent border border-border rounded-md px-3 py-2 text-sm" />
-        </Field>
-        {task.editor !== "none" && (
-          <Field label="Starter code" full>
-            <textarea rows={10} value={task.starterCode} onChange={e => onChange({ starterCode: e.target.value })} spellCheck={false} className="w-full bg-background border border-border rounded-md px-3 py-2 font-mono text-xs leading-5" />
+      {mode === "preview" ? (
+        <TaskPreview task={task} sprintName={sprintName} labName={labName} />
+      ) : (
+        <div className="grid grid-cols-2 gap-3">
+          <Field label="Title" full>
+            <input value={task.title} onChange={e => onChange({ title: e.target.value })} className="w-full bg-transparent border border-border rounded-md px-3 py-2 text-sm" />
           </Field>
-        )}
-      </div>
+          <Field label="Editor">
+            <select value={task.editor} onChange={e => onChange({ editor: e.target.value as EditorKind })} className="w-full bg-transparent border border-border rounded-md px-3 py-2 text-sm">
+              {EDITORS.map(ed => <option key={ed.value} value={ed.value}>{ed.label}</option>)}
+            </select>
+          </Field>
+          <Field label="Language">
+            <select value={task.language} onChange={e => onChange({ language: e.target.value as Language })} disabled={task.editor === "none"} className="w-full bg-transparent border border-border rounded-md px-3 py-2 text-sm disabled:opacity-50">
+              {LANGUAGES.map(l => <option key={l} value={l}>{l}</option>)}
+            </select>
+          </Field>
+          <Field label="Difficulty">
+            <select value={task.difficulty} onChange={e => onChange({ difficulty: e.target.value as LabTask["difficulty"] })} className="w-full bg-transparent border border-border rounded-md px-3 py-2 text-sm">
+              <option>Beginner</option><option>Intermediate</option><option>Advanced</option>
+            </select>
+          </Field>
+          <Field label="XP">
+            <input type="number" value={task.xp} onChange={e => onChange({ xp: Number(e.target.value) })} className="w-full bg-transparent border border-border rounded-md px-3 py-2 text-sm" />
+          </Field>
+          <Field label="Est. minutes">
+            <input type="number" value={task.estMin} onChange={e => onChange({ estMin: Number(e.target.value) })} className="w-full bg-transparent border border-border rounded-md px-3 py-2 text-sm" />
+          </Field>
+          <Field label="Starter path in repo (optional)" full>
+            <input value={task.starterPath ?? ""} onChange={e => onChange({ starterPath: e.target.value })} placeholder="e.g. sprints/01-foundations/task-01" className="w-full bg-transparent border border-border rounded-md px-3 py-2 font-mono text-xs" />
+          </Field>
+          <Field label="Description / brief" full>
+            <textarea rows={3} value={task.description} onChange={e => onChange({ description: e.target.value })} className="w-full bg-transparent border border-border rounded-md px-3 py-2 text-sm" />
+          </Field>
+          {task.editor !== "none" && (
+            <Field label="Starter code" full>
+              <textarea rows={10} value={task.starterCode} onChange={e => onChange({ starterCode: e.target.value })} spellCheck={false} className="w-full bg-background border border-border rounded-md px-3 py-2 font-mono text-xs leading-5" />
+            </Field>
+          )}
+        </div>
+      )}
     </div>
   );
 }
+
 
 function Field({ label, children, full }: { label: string; children: React.ReactNode; full?: boolean }) {
   return (
