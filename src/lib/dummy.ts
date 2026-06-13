@@ -37,8 +37,23 @@ export const labs: Lab[] = [
   { slug: "ui", name: "UI Lab", icon: "🎨", color: "ui", difficulty: "Intermediate", completed: 5, total: 20, hoursLeft: 18, description: "Build pixel-perfect interfaces with HTML, CSS, React.", skills: [
     { name: "HTML/CSS", pct: 80 }, { name: "Flex/Grid", pct: 70 }, { name: "React", pct: 50 }, { name: "Accessibility", pct: 35 }
   ]},
-  { slug: "sql", name: "SQL Lab", icon: "🗄️", color: "sql", difficulty: "Advanced", completed: 3, total: 18, hoursLeft: 22, description: "Queries, joins, window functions, optimization.", skills: [
+  { slug: "sql", name: "MySQL Lab", icon: "🗄️", color: "sql", difficulty: "Advanced", completed: 3, total: 18, hoursLeft: 22, description: "MySQL queries, joins, window functions and tuning.", skills: [
     { name: "SELECT", pct: 95 }, { name: "JOINs", pct: 60 }, { name: "Windows", pct: 30 }, { name: "Tuning", pct: 15 }
+  ]},
+  { slug: "postgres", name: "PostgreSQL Lab", icon: "🐘", color: "sql", difficulty: "Advanced", completed: 0, total: 14, hoursLeft: 20, description: "Postgres-specific features: CTEs, JSONB, window funcs, EXPLAIN ANALYZE.", skills: [
+    { name: "Queries", pct: 0 }, { name: "JSONB", pct: 0 }, { name: "CTEs", pct: 0 }, { name: "Tuning", pct: 0 }
+  ]},
+  { slug: "pydjango", name: "Python Django Lab", icon: "🌿", color: "python", difficulty: "Intermediate", completed: 0, total: 12, hoursLeft: 18, description: "Build full Django apps: models, views, templates, forms and admin.", skills: [
+    { name: "Models", pct: 0 }, { name: "Views", pct: 0 }, { name: "Templates", pct: 0 }, { name: "Admin", pct: 0 }
+  ]},
+  { slug: "pyflask", name: "Python Flask Lab", icon: "🧪", color: "python", difficulty: "Intermediate", completed: 0, total: 10, hoursLeft: 14, description: "Build REST APIs with Flask: routing, blueprints, SQLAlchemy, auth.", skills: [
+    { name: "Routing", pct: 0 }, { name: "SQLAlchemy", pct: 0 }, { name: "Blueprints", pct: 0 }, { name: "Auth", pct: 0 }
+  ]},
+  { slug: "javaspring", name: "Java Spring Lab", icon: "🌱", color: "java", difficulty: "Advanced", completed: 0, total: 14, hoursLeft: 24, description: "Spring Boot: DI, REST controllers, JPA, security and testing.", skills: [
+    { name: "Spring Boot", pct: 0 }, { name: "JPA", pct: 0 }, { name: "REST", pct: 0 }, { name: "Security", pct: 0 }
+  ]},
+  { slug: "git", name: "Git Lab", icon: "🔀", color: "prog", difficulty: "Beginner", completed: 0, total: 14, hoursLeft: 12, description: "Master git: SSH, clone, push/pull, branches, rebase, merge and pull requests.", skills: [
+    { name: "Branching", pct: 0 }, { name: "Rebase/Merge", pct: 0 }, { name: "Remotes/PRs", pct: 0 }, { name: "Conflicts", pct: 0 }
   ]},
   { slug: "mongo", name: "MongoDB Lab", icon: "🍃", color: "mongo", difficulty: "Intermediate", completed: 0, total: 12, hoursLeft: 16, description: "Document modeling, CRUD, aggregation and indexes.", skills: [
     { name: "CRUD", pct: 40 }, { name: "Query Operators", pct: 25 }, { name: "Aggregation", pct: 15 }, { name: "Indexes", pct: 10 }
