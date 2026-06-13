@@ -853,6 +853,38 @@ function TicketEditor() {
     const src = files[activeFile] ?? "";
     const file = activeFile;
 
+    if (isMultiLang) {
+      const lang: ProgLang =
+        file.endsWith(".c")   ? "c"   :
+        file.endsWith(".cpp") || file.endsWith(".cc") ? "cpp" :
+        file.endsWith(".js")  || file.endsWith(".ts") ? "js"  :
+        "python";
+      const cmd =
+        lang === "python" ? `$ python ${file}` :
+        lang === "c"      ? `$ gcc ${file} -o a.out && ./a.out` :
+        lang === "cpp"    ? `$ g++ ${file} -std=c++17 -o a.out && ./a.out` :
+                            `$ node ${file}`;
+      setOutput(`${cmd}\n…running…\n`);
+      setTimeout(() => {
+        const out: string[] = [];
+        if (lang === "python") {
+          const re = /print\(\s*(?:f?["'])([^"']*)["']\s*\)/g;
+          let m; while ((m = re.exec(src))) out.push(m[1]);
+        } else if (lang === "js") {
+          const re = /console\.log\(\s*["'`]([^"'`]*)["'`]\s*\)/g;
+          let m; while ((m = re.exec(src))) out.push(m[1]);
+        } else if (lang === "c") {
+          const re = /printf\(\s*"([^"]*)"/g;
+          let m; while ((m = re.exec(src))) out.push(m[1].replace(/\\n/g, ""));
+        } else {
+          const re = /cout\s*<<\s*"([^"]*)"/g;
+          let m; while ((m = re.exec(src))) out.push(m[1]);
+        }
+        setOutput(`${cmd}\n${out.join("\n")}\n\n✓ Process finished (0.3s) · ${PROG_LABEL[lang]}`);
+        setRunning(false);
+      }, 500);
+      return;
+    }
     if (isPython) {
       setOutput(`$ python ${file}\n…running…\n`);
       setTimeout(() => {
