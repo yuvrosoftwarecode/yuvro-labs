@@ -1273,13 +1273,15 @@ function TicketEditor() {
 
 /* ---------- Editor ---------- */
 
-type EditorLang = "java" | "py" | "html" | "md" | "txt" | "sql" | "js" | "css" | "json";
+type EditorLang = "java" | "py" | "html" | "md" | "txt" | "sql" | "js" | "css" | "json" | "cpp" | "c";
 function editorLanguage(file: string): EditorLang {
   if (file.endsWith(".py")) return "py";
   if (file.endsWith(".html")) return "html";
   if (file.endsWith(".md")) return "md";
   if (file.endsWith(".java")) return "java";
   if (file.endsWith(".sql")) return "sql";
+  if (file.endsWith(".cpp") || file.endsWith(".cc") || file.endsWith(".hpp")) return "cpp";
+  if (file.endsWith(".c") || file.endsWith(".h")) return "c";
   if (file.endsWith(".js") || file.endsWith(".ts")) return "js";
   if (file.endsWith(".css")) return "css";
   if (file.endsWith(".json")) return "json";
@@ -1300,6 +1302,8 @@ function CodeEditor({ code, onChange, language, theme }: { code: string; onChang
       case "js": return [javascript({ typescript: true })];
       case "css": return [css()];
       case "json": return [jsonLang()];
+      case "cpp":
+      case "c": return [cpp()];
       default: return [];
     }
   }, [language]);
