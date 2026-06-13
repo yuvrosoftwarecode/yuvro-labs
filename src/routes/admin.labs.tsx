@@ -1,49 +1,46 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { AdminShell, Badge, KpiCard } from "@/components/admin/AdminShell";
-import { Plus, FlaskConical, Trash2 } from "lucide-react";
-import { useEffect, useState } from "react";
-import { loadAdminLabs, deleteAdminLab, type AdminLab } from "@/lib/adminLabs";
+import { Plus, FlaskConical, Trash2, Pencil, ExternalLink } from "lucide-react";
+import { useEffect, useMemo, useState } from "react";
+import { loadLabs, deleteLab, CATEGORIES, type AdminLab } from "@/lib/adminLabs";
 
 export const Route = createFileRoute("/admin/labs")({ component: LabsPage });
 
-const CATEGORIES = ["Java Backend","Python","Frontend/UI","SQL","DevOps","Security","System Design","Collaboration"];
-
-const SEED_LABS = [
-  { id: "java-backend-001", name: "Java Spring Boot Microservices", cat: "Java Backend", users: 4280, tickets: 92, sprints: 18, diff: "Hard", comp: 64, rating: 4.7 },
-  { id: "frontend-002", name: "React E-Commerce UI", cat: "Frontend/UI", users: 3920, tickets: 74, sprints: 14, diff: "Medium", comp: 71, rating: 4.6 },
-  { id: "sql-003", name: "SQL Query Optimization", cat: "SQL", users: 3110, tickets: 58, sprints: 9, diff: "Medium", comp: 52, rating: 4.5 },
-  { id: "devops-004", name: "CI/CD with GitHub Actions", cat: "DevOps", users: 2540, tickets: 41, sprints: 7, diff: "Medium", comp: 58, rating: 4.4 },
-  { id: "security-005", name: "OWASP Top 10 Hardening", cat: "Security", users: 1880, tickets: 36, sprints: 6, diff: "Hard", comp: 42, rating: 4.6 },
-  { id: "sysd-006", name: "System Design: Scalable Chat", cat: "System Design", users: 1620, tickets: 28, sprints: 5, diff: "Hard", comp: 38, rating: 4.8 },
-  { id: "py-007", name: "Python Data Pipelines", cat: "Python", users: 2210, tickets: 48, sprints: 8, diff: "Medium", comp: 61, rating: 4.5 },
-  { id: "collab-008", name: "Cross-Team API Integration", cat: "Collaboration", users: 980, tickets: 22, sprints: 4, diff: "Medium", comp: 55, rating: 4.7 },
-];
-
 function LabsPage() {
-  const [custom, setCustom] = useState<AdminLab[]>([]);
-  useEffect(() => { setCustom(loadAdminLabs()); }, []);
+  const [labs, setLabs] = useState<AdminLab[]>([]);
+  const [cat, setCat] = useState<string | null>(null);
+  const [q, setQ] = useState("");
+  const [confirmId, setConfirmId] = useState<string | null>(null);
 
-  const labs = [...custom, ...SEED_LABS];
+  useEffect(() => { setLabs(loadLabs()); }, []);
 
-  const remove = (id: string) => {
-    deleteAdminLab(id);
-    setCustom(loadAdminLabs());
-  };
+  const refresh = () => setLabs(loadLabs());
+
+  const filtered = useMemo(() => {
+    return labs.filter(l =>
+      (!cat || l.cat === cat) &&
+      (!q || l.name.toLowerCase().includes(q.toLowerCase()) || l.description.toLowerCase().includes(q.toLowerCase()))
+    );
+  }, [labs, cat, q]);
+
+  const remove = (id: string) => { deleteLab(id); setConfirmId(null); refresh(); };
 
   return (
     <AdminShell title="Labs" breadcrumb={["Engineering", "Labs"]} right={
       <Link to="/admin/labs/new" className="text-xs px-3 py-1.5 rounded-md bg-primary text-primary-foreground inline-flex items-center gap-1.5"><Plus className="h-3.5 w-3.5" /> Create new lab</Link>
     }>
       <div className="grid grid-cols-2 md:grid-cols-4 gap-3 mb-6">
-        <KpiCard label="Total labs" value={(1284 + custom.length).toLocaleString()} color="primary" icon={FlaskConical} />
-        <KpiCard label="Active learners" value="48,127" delta="+12.4%" color="success" />
-        <KpiCard label="Avg completion" value="58%" color="ui" />
-        <KpiCard label="Avg rating" value="4.6 / 5" color="warning" />
+        <KpiCard label="Total labs" value={labs.length} color="primary" icon={FlaskConical} />
+        <KpiCard label="Active learners" value={labs.reduce((a, l) => a + l.users, 0).toLocaleString()} color="success" />
+        <KpiCard label="Total tickets" value={labs.reduce((a, l) => a + l.tickets, 0)} color="ui" />
+        <KpiCard label="Avg completion" value={`${Math.round(labs.reduce((a,l)=>a+l.comp,0) / Math.max(labs.length,1))}%`} color="warning" />
       </div>
 
-      <div className="mb-4 flex flex-wrap gap-2">
+      <div className="mb-4 flex flex-wrap items-center gap-2">
+        <input value={q} onChange={e => setQ(e.target.value)} placeholder="Search labs…" className="text-xs px-3 py-1.5 rounded-md border border-border bg-transparent w-56" />
+        <button onClick={() => setCat(null)} className={`text-xs px-3 py-1.5 rounded-full border ${!cat ? "bg-primary text-primary-foreground border-primary" : "border-border hover:bg-accent"}`}>All</button>
         {CATEGORIES.map(c => (
-          <button key={c} className="text-xs px-3 py-1.5 rounded-full border border-border hover:bg-accent">{c}</button>
+          <button key={c} onClick={() => setCat(c)} className={`text-xs px-3 py-1.5 rounded-full border ${cat === c ? "bg-primary text-primary-foreground border-primary" : "border-border hover:bg-accent"}`}>{c}</button>
         ))}
       </div>
 
@@ -54,42 +51,56 @@ function LabsPage() {
               <tr>{["Lab","Category","Active","Tickets","Sprints","Difficulty","Completion","Rating","Actions"].map(h => <th key={h} className="text-left font-medium px-4 py-2">{h}</th>)}</tr>
             </thead>
             <tbody>
-              {labs.map(l => {
-                const isCustom = custom.some(c => c.id === l.id);
-                return (
-                  <tr key={l.id} className="border-t border-border/40 hover:bg-accent/30">
-                    <td className="px-4 py-2.5 font-medium">
-                      {l.name} {isCustom && <Badge tone="success">new</Badge>}
-                    </td>
-                    <td className="px-4 py-2.5"><Badge tone="primary">{l.cat}</Badge></td>
-                    <td className="px-4 py-2.5 font-mono">{l.users.toLocaleString()}</td>
-                    <td className="px-4 py-2.5 font-mono">{l.tickets}</td>
-                    <td className="px-4 py-2.5 font-mono">{l.sprints}</td>
-                    <td className="px-4 py-2.5"><Badge tone={l.diff === "Hard" ? "destructive" : l.diff === "Medium" ? "warning" : "success"}>{l.diff}</Badge></td>
-                    <td className="px-4 py-2.5">
-                      <div className="flex items-center gap-2">
-                        <div className="h-1.5 w-24 rounded-full bg-muted/40 overflow-hidden"><div className="h-full bg-primary rounded-full" style={{ width: `${l.comp}%` }} /></div>
-                        <span className="text-xs">{l.comp}%</span>
-                      </div>
-                    </td>
-                    <td className="px-4 py-2.5 font-mono">{l.rating}</td>
-                    <td className="px-4 py-2.5 text-xs space-x-2">
-                      <button className="text-primary hover:underline">Edit</button>
-                      <button className="text-muted-foreground hover:underline">Duplicate</button>
-                      <button className="text-muted-foreground hover:underline">Analytics</button>
-                      {isCustom ? (
-                        <button onClick={() => remove(l.id)} className="text-destructive hover:underline inline-flex items-center gap-1"><Trash2 className="h-3 w-3" /> Delete</button>
-                      ) : (
-                        <button className="text-warning hover:underline">Archive</button>
-                      )}
-                    </td>
-                  </tr>
-                );
-              })}
+              {filtered.length === 0 && (
+                <tr><td colSpan={9} className="px-4 py-10 text-center text-muted-foreground text-xs">No labs match your filters. <Link to="/admin/labs/new" className="text-primary hover:underline">Create one →</Link></td></tr>
+              )}
+              {filtered.map(l => (
+                <tr key={l.id} className="border-t border-border/40 hover:bg-accent/30">
+                  <td className="px-4 py-2.5 font-medium">
+                    <div className="flex items-center gap-2">
+                      <span className="text-base">{l.icon}</span>
+                      <span>{l.name}</span>
+                      {l.custom && <Badge tone="success">new</Badge>}
+                    </div>
+                  </td>
+                  <td className="px-4 py-2.5"><Badge tone="primary">{l.cat}</Badge></td>
+                  <td className="px-4 py-2.5 font-mono">{l.users.toLocaleString()}</td>
+                  <td className="px-4 py-2.5 font-mono">{l.tickets}</td>
+                  <td className="px-4 py-2.5 font-mono">{l.sprints}</td>
+                  <td className="px-4 py-2.5"><Badge tone={l.diff === "Hard" ? "destructive" : l.diff === "Medium" ? "warning" : "success"}>{l.diff}</Badge></td>
+                  <td className="px-4 py-2.5">
+                    <div className="flex items-center gap-2">
+                      <div className="h-1.5 w-24 rounded-full bg-muted/40 overflow-hidden"><div className="h-full bg-primary rounded-full" style={{ width: `${l.comp}%` }} /></div>
+                      <span className="text-xs">{l.comp}%</span>
+                    </div>
+                  </td>
+                  <td className="px-4 py-2.5 font-mono">{l.rating}</td>
+                  <td className="px-4 py-2.5 text-xs">
+                    <div className="flex items-center gap-3">
+                      <Link to="/admin/labs/$id/edit" params={{ id: l.id }} className="text-primary hover:underline inline-flex items-center gap-1"><Pencil className="h-3 w-3" /> Edit</Link>
+                      <Link to="/lab/$slug" params={{ slug: l.slug }} target="_blank" className="text-muted-foreground hover:underline inline-flex items-center gap-1"><ExternalLink className="h-3 w-3" /> View</Link>
+                      <button onClick={() => setConfirmId(l.id)} className="text-destructive hover:underline inline-flex items-center gap-1"><Trash2 className="h-3 w-3" /> Delete</button>
+                    </div>
+                  </td>
+                </tr>
+              ))}
             </tbody>
           </table>
         </div>
       </div>
+
+      {confirmId && (
+        <div className="fixed inset-0 z-50 grid place-items-center bg-background/70 backdrop-blur-sm p-4" onClick={() => setConfirmId(null)}>
+          <div onClick={e => e.stopPropagation()} className="w-full max-w-sm rounded-xl border border-border bg-card p-5">
+            <h3 className="font-semibold text-sm">Delete this lab?</h3>
+            <p className="mt-1 text-xs text-muted-foreground">This removes it from the student catalog. You can re-create it later.</p>
+            <div className="mt-4 flex justify-end gap-2">
+              <button onClick={() => setConfirmId(null)} className="text-xs px-3 py-1.5 rounded-md border border-border hover:bg-accent">Cancel</button>
+              <button onClick={() => remove(confirmId)} className="text-xs px-3 py-1.5 rounded-md bg-destructive text-destructive-foreground">Delete</button>
+            </div>
+          </div>
+        </div>
+      )}
     </AdminShell>
   );
 }
