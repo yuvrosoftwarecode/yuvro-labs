@@ -42,6 +42,8 @@ const catMap: Record<string, string> = {
   mongo: "MongoDB",
   prog: "Programming",
   ds: "Data Structures",
+  sysd: "System Design",
+  sec: "Security",
 };
 
 function seedFromStudent(l: Lab): AdminLab {
