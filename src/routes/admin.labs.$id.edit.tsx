@@ -113,19 +113,6 @@ function EditLab() {
             </div>
           </div>
         </div>
-
-        <Panel title="Live preview">
-          <div className="rounded-lg border border-border/60 p-4">
-            <div className="flex items-center gap-2"><span className="text-2xl">{lab.icon}</span><div><div className="font-semibold text-sm">{lab.name}</div><div className="text-[10px] text-muted-foreground">{lab.cat} · {lab.diff}</div></div></div>
-            <p className="mt-3 text-xs text-muted-foreground">{lab.description}</p>
-            <div className="mt-3 grid grid-cols-3 gap-2 text-center text-[10px]">
-              <div className="rounded-md border border-border/60 p-2"><div className="font-mono text-sm">{lab.tickets}</div><div className="text-muted-foreground">tickets</div></div>
-              <div className="rounded-md border border-border/60 p-2"><div className="font-mono text-sm">{sprints.length || lab.sprints}</div><div className="text-muted-foreground">sprints</div></div>
-              <div className="rounded-md border border-border/60 p-2"><div className="font-mono text-sm">{lab.comp}%</div><div className="text-muted-foreground">complete</div></div>
-            </div>
-            <div className="mt-2 flex items-center gap-2"><Badge tone="success">{sprints.reduce((a, s) => a + s.tasks.length, 0)} tasks</Badge></div>
-          </div>
-        </Panel>
       </div>
     </AdminShell>
   );
