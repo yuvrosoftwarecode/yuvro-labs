@@ -815,14 +815,54 @@ function TicketEditor() {
   function handleRun() {
     setRunning(true);
     setBottomTab("output");
+    const src = files[activeFile] ?? "";
+    const file = activeFile;
+
+    if (isPython) {
+      setOutput(`$ python ${file}\n…running…\n`);
+      setTimeout(() => {
+        const out: string[] = [];
+        const re = /print\(\s*(?:f?["'])([^"']*)["']\s*\)/g;
+        let m; while ((m = re.exec(src))) out.push(m[1]);
+        setOutput(`$ python ${file}\n${out.join("\n")}\n\n✓ Process finished (0.3s)`);
+        setRunning(false);
+      }, 500);
+      return;
+    }
+    if (isSql) {
+      setOutput(`-- Executing ${file} on PostgreSQL 16\n…running…`);
+      setTimeout(() => {
+        setOutput(`-- Executed ${file}\n✓ Query ran successfully. See Results tab in the preview panel.`);
+        setRunning(false);
+      }, 500);
+      return;
+    }
+    if (isMongo) {
+      setOutput(`> load("${file}")\n…running…`);
+      setTimeout(() => {
+        setOutput(`> load("${file}")\n✓ mongosh executed. See Results tab in the preview panel.`);
+        setRunning(false);
+      }, 500);
+      return;
+    }
+    if (isUi) {
+      setOutput(`▶ Served ${file} in preview iframe.\n✓ Hot reload OK.`);
+      setRunning(false);
+      return;
+    }
+    if (isDjango) {
+      setOutput(`$ python manage.py runserver\n…starting Django dev server…\n✓ Running on http://127.0.0.1:8000/`);
+      setRunning(false);
+      return;
+    }
+    // Java fallback
     setOutput("$ javac Main.java\n$ java Main\n…running…\n");
     setTimeout(() => {
-      const m = files["Main.java"];
+      const m = files["Main.java"] ?? "";
       if (compileState === "err") {
         setOutput("$ javac Main.java\n❌ Main.java:1: error: class or main method missing\n1 error");
         setBottomTab("errors");
       } else {
-        // crude simulation of expected printlns
         const out: string[] = [];
         const re = /System\.out\.println\("([^"]*)"\s*\+\s*([^)]+)\)/g;
         let match;
@@ -842,6 +882,7 @@ function TicketEditor() {
       setRunning(false);
     }, 700);
   }
+
 
   function handleRunTests() {
     setBottomTab("tests");
