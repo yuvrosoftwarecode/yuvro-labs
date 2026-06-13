@@ -1,12 +1,13 @@
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { AdminShell, Panel, Badge } from "@/components/admin/AdminShell";
 import { useState } from "react";
-import { Check, ChevronRight } from "lucide-react";
+import { Check, ChevronRight, Plus, Trash2 } from "lucide-react";
 import { createLab, CATEGORIES, DIFFS, type AdminLab } from "@/lib/adminLabs";
+import { EDITORS, LANGUAGES, newSprint, newTask, saveSprints, type LabSprint, type LabTask, type EditorKind, type Language } from "@/lib/labSprints";
 
 export const Route = createFileRoute("/admin/labs/new")({ component: LabBuilder });
 
-const STEPS = ["Basic info", "Environment", "Evaluation", "AI Mentor", "Publish"];
+const STEPS = ["Basic info", "Sprints", "Environment", "Evaluation", "AI Mentor", "Publish"];
 
 const diffToDifficulty: Record<"Easy" | "Medium" | "Hard", AdminLab["difficulty"]> = {
   Easy: "Beginner", Medium: "Intermediate", Hard: "Advanced",
