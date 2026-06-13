@@ -1129,7 +1129,7 @@ function TicketEditor() {
                   {[
                     { k: "output", label: "Console", icon: TerminalIcon },
                     { k: "errors", label: "Errors", icon: AlertTriangle },
-                    { k: "preview", label: "Preview", icon: Globe },
+                    { k: "preview", label: isSql || isMongo ? "Results" : "Preview", icon: Globe },
                     { k: "terminal", label: "Terminal", icon: TerminalIcon },
                   ].map((t) => (
                     <button key={t.k} onClick={() => setBottomTab(t.k as BottomTab)}
@@ -1141,7 +1141,14 @@ function TicketEditor() {
                 <div className="h-52 overflow-auto scrollbar-thin p-3 text-xs">
                   {bottomTab === "output" && <OutputView output={output} />}
                   {bottomTab === "errors" && <ErrorsView state={compileState} />}
-                  {bottomTab === "preview" && (isDjango ? <DjangoTodoPreview /> : <PreviewView />)}
+                  {bottomTab === "preview" && (
+                    isDjango ? <DjangoTodoPreview /> :
+                    isSql    ? <SqlResultsView query={files[activeFile] ?? ""} /> :
+                    isMongo  ? <MongoResultsView query={files[activeFile] ?? ""} /> :
+                    isUi     ? <UiPreview files={files} /> :
+                    isPython ? <PythonOutputView code={files[activeFile] ?? ""} /> :
+                               <PreviewView />
+                  )}
                   {bottomTab === "terminal" && <TerminalView />}
                 </div>
               </div>
