@@ -1,12 +1,13 @@
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { AdminShell, Panel, Badge } from "@/components/admin/AdminShell";
 import { useState } from "react";
-import { Check, ChevronRight } from "lucide-react";
+import { Check, ChevronRight, Plus, Trash2 } from "lucide-react";
 import { createLab, CATEGORIES, DIFFS, type AdminLab } from "@/lib/adminLabs";
+import { EDITORS, LANGUAGES, newSprint, newTask, saveSprints, type LabSprint, type LabTask, type EditorKind, type Language } from "@/lib/labSprints";
 
 export const Route = createFileRoute("/admin/labs/new")({ component: LabBuilder });
 
-const STEPS = ["Basic info", "Environment", "Evaluation", "AI Mentor", "Publish"];
+const STEPS = ["Basic info", "Sprints", "Environment", "Evaluation", "AI Mentor", "Publish"];
 
 const diffToDifficulty: Record<"Easy" | "Medium" | "Hard", AdminLab["difficulty"]> = {
   Easy: "Beginner", Medium: "Intermediate", Hard: "Advanced",
@@ -17,6 +18,9 @@ function LabBuilder() {
   const [step, setStep] = useState(0);
   const [env, setEnv] = useState<Record<string, boolean>>({ "VS Code": true, "Terminal": true, "Browser": false, "Database": true, "API Simulator": false, "Docker Environment": false, "Microservices": false, "CI/CD": false });
   const [evalConf, setEvalConf] = useState<Record<string, number>>({ Functional: 30, "Code Quality": 20, Security: 15, Performance: 15, Architecture: 10, Testing: 10 });
+  const [sprints, setSprintsState] = useState<LabSprint[]>([]);
+  const [activeSprint, setActiveSprint] = useState<string | null>(null);
+  const [activeTask, setActiveTask] = useState<string | null>(null);
 
   const [form, setForm] = useState({
     name: "",
@@ -41,9 +45,9 @@ function LabBuilder() {
   const publish = () => {
     if (!form.name.trim()) { setError("Lab name is required."); setStep(0); return; }
     if (!form.description.trim()) { setError("Description is required."); setStep(0); return; }
-    if (totalWeight !== 100) { setError(`Evaluation weights must total 100% (currently ${totalWeight}%).`); setStep(2); return; }
+    if (totalWeight !== 100) { setError(`Evaluation weights must total 100% (currently ${totalWeight}%).`); setStep(3); return; }
     setError(null);
-    createLab({
+    const created = createLab({
       name: form.name.trim(),
       slug: form.slug,
       icon: form.icon || "🧪",
@@ -53,7 +57,7 @@ function LabBuilder() {
       difficulty: diffToDifficulty[form.diff],
       users: 0,
       tickets: form.tickets,
-      sprints: form.sprints,
+      sprints: Math.max(form.sprints, sprints.length),
       comp: 0,
       rating: 0,
       description: form.description.trim(),
@@ -61,9 +65,21 @@ function LabBuilder() {
       skills: form.skills,
       tags: form.tags,
     });
+    if (sprints.length) saveSprints(created.id, sprints);
     setSaved(true);
     setTimeout(() => nav({ to: "/admin/labs" }), 600);
   };
+
+  const updateSprint = (id: string, patch: Partial<LabSprint>) =>
+    setSprintsState(s => s.map(sp => sp.id === id ? { ...sp, ...patch } : sp));
+  const updateTask = (sid: string, tid: string, patch: Partial<LabTask>) =>
+    setSprintsState(s => s.map(sp => sp.id === sid ? { ...sp, tasks: sp.tasks.map(t => t.id === tid ? { ...t, ...patch } : t) } : sp));
+  const removeSprint = (id: string) => setSprintsState(s => s.filter(sp => sp.id !== id));
+  const removeTask = (sid: string, tid: string) =>
+    setSprintsState(s => s.map(sp => sp.id === sid ? { ...sp, tasks: sp.tasks.filter(t => t.id !== tid) } : sp));
+
+  const editingSprint = sprints.find(s => s.id === activeSprint) ?? null;
+  const editingTask = editingSprint?.tasks.find(t => t.id === activeTask) ?? null;
 
   return (
     <AdminShell title="Lab Builder" breadcrumb={["Engineering", "Labs", "New"]} right={
@@ -111,6 +127,80 @@ function LabBuilder() {
             </Panel>
           )}
           {step === 1 && (
+            <Panel title="Sprints & tasks" action={
+              <button onClick={() => setSprintsState(s => [...s, newSprint()])} className="text-xs px-2 py-1 rounded-md border border-border hover:bg-accent inline-flex items-center gap-1"><Plus className="h-3 w-3" /> Add sprint</button>
+            }>
+              {sprints.length === 0 ? (
+                <div className="text-xs text-muted-foreground py-6 text-center border border-dashed border-border rounded-md">
+                  No sprints yet. Add sprints and configure tasks (editor, language, starter code).
+                </div>
+              ) : (
+                <div className="space-y-4">
+                  {sprints.map((sp, i) => (
+                    <div key={sp.id} className="rounded-md border border-border">
+                      <div className="flex items-center gap-2 p-3 border-b border-border">
+                        <span className="text-xs text-muted-foreground font-mono">#{i + 1}</span>
+                        <input value={sp.name} onChange={e => updateSprint(sp.id, { name: e.target.value })} className="flex-1 bg-transparent border border-border rounded-md px-2 py-1 text-sm" />
+                        <button onClick={() => removeSprint(sp.id)} className="text-xs p-1 text-destructive hover:bg-destructive/10 rounded"><Trash2 className="h-3 w-3" /></button>
+                      </div>
+                      <div className="p-3 space-y-2">
+                        <textarea rows={2} value={sp.description} onChange={e => updateSprint(sp.id, { description: e.target.value })} placeholder="Sprint goal / description…" className="w-full bg-transparent border border-border rounded-md px-2 py-1 text-xs" />
+                        <div className="space-y-1">
+                          {sp.tasks.map(t => {
+                            const isActive = activeSprint === sp.id && activeTask === t.id;
+                            return (
+                              <div key={t.id} className={`flex items-center gap-2 px-2 py-1.5 rounded-md border ${isActive ? "border-primary bg-primary/5" : "border-border"}`}>
+                                <button onClick={() => { setActiveSprint(sp.id); setActiveTask(t.id); }} className="flex-1 text-left text-xs">
+                                  <span className="font-medium">{t.title}</span>
+                                  <span className="text-muted-foreground"> · {t.editor === "none" ? "no editor" : `${t.editor}/${t.language}`} · {t.xp} XP</span>
+                                </button>
+                                <button onClick={() => removeTask(sp.id, t.id)} className="text-xs p-1 text-destructive hover:bg-destructive/10 rounded"><Trash2 className="h-3 w-3" /></button>
+                              </div>
+                            );
+                          })}
+                          <button onClick={() => { const t = newTask(); updateSprint(sp.id, { tasks: [...sp.tasks, t] }); setActiveSprint(sp.id); setActiveTask(t.id); }} className="text-xs px-2 py-1 rounded-md border border-dashed border-border hover:bg-accent inline-flex items-center gap-1"><Plus className="h-3 w-3" /> Add task</button>
+                        </div>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              )}
+
+              {editingTask && editingSprint && (
+                <div className="mt-4 rounded-md border border-primary/40 bg-primary/5 p-3 space-y-3">
+                  <div className="flex items-center justify-between">
+                    <div className="text-xs font-medium">Editing task — <span className="text-muted-foreground">{editingSprint.name}</span></div>
+                    <button onClick={() => { setActiveSprint(null); setActiveTask(null); }} className="text-xs text-muted-foreground hover:text-foreground">Close</button>
+                  </div>
+                  <div className="grid md:grid-cols-2 gap-3 text-sm">
+                    <Field label="Title"><input value={editingTask.title} onChange={e => updateTask(editingSprint.id, editingTask.id, { title: e.target.value })} className="w-full bg-transparent border border-border rounded-md px-2 py-1.5" /></Field>
+                    <Field label="Difficulty">
+                      <select value={editingTask.difficulty} onChange={e => updateTask(editingSprint.id, editingTask.id, { difficulty: e.target.value as LabTask["difficulty"] })} className="w-full bg-transparent border border-border rounded-md px-2 py-1.5">
+                        {["Beginner", "Intermediate", "Advanced"].map(d => <option key={d}>{d}</option>)}
+                      </select>
+                    </Field>
+                    <Field label="Editor">
+                      <select value={editingTask.editor} onChange={e => updateTask(editingSprint.id, editingTask.id, { editor: e.target.value as EditorKind })} className="w-full bg-transparent border border-border rounded-md px-2 py-1.5">
+                        {EDITORS.map(ed => <option key={ed.value} value={ed.value}>{ed.label}</option>)}
+                      </select>
+                    </Field>
+                    <Field label="Language">
+                      <select value={editingTask.language} onChange={e => updateTask(editingSprint.id, editingTask.id, { language: e.target.value as Language })} className="w-full bg-transparent border border-border rounded-md px-2 py-1.5">
+                        {LANGUAGES.map(l => <option key={l} value={l}>{l}</option>)}
+                      </select>
+                    </Field>
+                    <Field label="XP"><input type="number" value={editingTask.xp} onChange={e => updateTask(editingSprint.id, editingTask.id, { xp: Number(e.target.value) })} className="w-full bg-transparent border border-border rounded-md px-2 py-1.5" /></Field>
+                    <Field label="Est. minutes"><input type="number" value={editingTask.estMin} onChange={e => updateTask(editingSprint.id, editingTask.id, { estMin: Number(e.target.value) })} className="w-full bg-transparent border border-border rounded-md px-2 py-1.5" /></Field>
+                    <Field label="Description" full><textarea rows={2} value={editingTask.description} onChange={e => updateTask(editingSprint.id, editingTask.id, { description: e.target.value })} className="w-full bg-transparent border border-border rounded-md px-2 py-1.5 text-xs" /></Field>
+                    {editingTask.editor !== "none" && (
+                      <Field label="Starter code" full><textarea rows={6} value={editingTask.starterCode} onChange={e => updateTask(editingSprint.id, editingTask.id, { starterCode: e.target.value })} className="w-full bg-transparent border border-border rounded-md px-2 py-1.5 font-mono text-xs" /></Field>
+                    )}
+                  </div>
+                </div>
+              )}
+            </Panel>
+          )}
+          {step === 2 && (
             <Panel title="Environment configuration">
               <div className="grid sm:grid-cols-2 gap-2">
                 {Object.entries(env).map(([k, v]) => (
@@ -122,7 +212,7 @@ function LabBuilder() {
               </div>
             </Panel>
           )}
-          {step === 2 && (
+          {step === 3 && (
             <Panel title="Evaluation weights (must total 100)">
               <div className="space-y-3">
                 {Object.entries(evalConf).map(([k, v]) => (
@@ -135,7 +225,7 @@ function LabBuilder() {
               </div>
             </Panel>
           )}
-          {step === 3 && (
+          {step === 4 && (
             <Panel title="AI Mentor configuration">
               <div className="space-y-3 text-sm">
                 {["Hint rules", "Debug rules", "Code review rules", "Learning suggestions"].map(k => (
@@ -144,10 +234,11 @@ function LabBuilder() {
               </div>
             </Panel>
           )}
-          {step === 4 && (
+          {step === 5 && (
             <Panel title="Review & publish">
               <div className="text-sm space-y-2">
                 <div className="flex items-center gap-2"><Badge tone={form.name ? "success" : "destructive"}>{form.name ? "ready" : "missing"}</Badge> {form.name || "Name required"} · {form.cat} · {form.diff}</div>
+                <div className="flex items-center gap-2"><Badge tone={sprints.length ? "success" : "warning"}>{sprints.length} sprints</Badge> {sprints.reduce((a, s) => a + s.tasks.length, 0)} tasks configured</div>
                 <div className="flex items-center gap-2"><Badge tone="success">ready</Badge> Environment ({Object.values(env).filter(Boolean).length} tools)</div>
                 <div className="flex items-center gap-2"><Badge tone={totalWeight === 100 ? "success" : "warning"}>{totalWeight}%</Badge> Evaluation weights</div>
                 <div className="flex items-center gap-2"><Badge tone={form.description ? "success" : "destructive"}>{form.description ? "ready" : "missing"}</Badge> Description</div>
