@@ -37,8 +37,23 @@ export const labs: Lab[] = [
   { slug: "ui", name: "UI Lab", icon: "🎨", color: "ui", difficulty: "Intermediate", completed: 5, total: 20, hoursLeft: 18, description: "Build pixel-perfect interfaces with HTML, CSS, React.", skills: [
     { name: "HTML/CSS", pct: 80 }, { name: "Flex/Grid", pct: 70 }, { name: "React", pct: 50 }, { name: "Accessibility", pct: 35 }
   ]},
-  { slug: "sql", name: "SQL Lab", icon: "🗄️", color: "sql", difficulty: "Advanced", completed: 3, total: 18, hoursLeft: 22, description: "Queries, joins, window functions, optimization.", skills: [
+  { slug: "sql", name: "MySQL Lab", icon: "🗄️", color: "sql", difficulty: "Advanced", completed: 3, total: 18, hoursLeft: 22, description: "MySQL queries, joins, window functions and tuning.", skills: [
     { name: "SELECT", pct: 95 }, { name: "JOINs", pct: 60 }, { name: "Windows", pct: 30 }, { name: "Tuning", pct: 15 }
+  ]},
+  { slug: "postgres", name: "PostgreSQL Lab", icon: "🐘", color: "sql", difficulty: "Advanced", completed: 0, total: 14, hoursLeft: 20, description: "Postgres-specific features: CTEs, JSONB, window funcs, EXPLAIN ANALYZE.", skills: [
+    { name: "Queries", pct: 0 }, { name: "JSONB", pct: 0 }, { name: "CTEs", pct: 0 }, { name: "Tuning", pct: 0 }
+  ]},
+  { slug: "pydjango", name: "Python Django Lab", icon: "🌿", color: "python", difficulty: "Intermediate", completed: 0, total: 12, hoursLeft: 18, description: "Build full Django apps: models, views, templates, forms and admin.", skills: [
+    { name: "Models", pct: 0 }, { name: "Views", pct: 0 }, { name: "Templates", pct: 0 }, { name: "Admin", pct: 0 }
+  ]},
+  { slug: "pyflask", name: "Python Flask Lab", icon: "🧪", color: "python", difficulty: "Intermediate", completed: 0, total: 10, hoursLeft: 14, description: "Build REST APIs with Flask: routing, blueprints, SQLAlchemy, auth.", skills: [
+    { name: "Routing", pct: 0 }, { name: "SQLAlchemy", pct: 0 }, { name: "Blueprints", pct: 0 }, { name: "Auth", pct: 0 }
+  ]},
+  { slug: "javaspring", name: "Java Spring Lab", icon: "🌱", color: "java", difficulty: "Advanced", completed: 0, total: 14, hoursLeft: 24, description: "Spring Boot: DI, REST controllers, JPA, security and testing.", skills: [
+    { name: "Spring Boot", pct: 0 }, { name: "JPA", pct: 0 }, { name: "REST", pct: 0 }, { name: "Security", pct: 0 }
+  ]},
+  { slug: "git", name: "Git Lab", icon: "🔀", color: "prog", difficulty: "Beginner", completed: 0, total: 14, hoursLeft: 12, description: "Master git: SSH, clone, push/pull, branches, rebase, merge and pull requests.", skills: [
+    { name: "Branching", pct: 0 }, { name: "Rebase/Merge", pct: 0 }, { name: "Remotes/PRs", pct: 0 }, { name: "Conflicts", pct: 0 }
   ]},
   { slug: "mongo", name: "MongoDB Lab", icon: "🍃", color: "mongo", difficulty: "Intermediate", completed: 0, total: 12, hoursLeft: 16, description: "Document modeling, CRUD, aggregation and indexes.", skills: [
     { name: "CRUD", pct: 40 }, { name: "Query Operators", pct: 25 }, { name: "Aggregation", pct: 15 }, { name: "Indexes", pct: 10 }
@@ -83,17 +98,97 @@ export const tickets: Ticket[] = [
   mk(18, "JDBC Basics", "Advanced", "Not Started", "DB", 80, 320),
   mk(19, "JUnit Testing", "Intermediate", "Not Started", "Testing", 60, 220),
   mk(20, "Design Patterns I", "Advanced", "Not Started", "Patterns", 100, 400),
-  // ---- Python · Django Todo App sprint ----
-  { id: "PYDJ-201", title: "Bootstrap Django project & app", difficulty: "Beginner", estMin: 40, xp: 150, tag: "Django Todo", status: "Completed", score: 90,
+  // ---- Python Django Lab ----
+  { id: "PYDJ-201", title: "Bootstrap Django project & app", difficulty: "Beginner", estMin: 40, xp: 150, tag: "Django Bootstrap", status: "Not Started",
     description: "Create a Django project `todoproject` and a `todos` app. Register the app in INSTALLED_APPS and wire urls.py." },
-  { id: "PYDJ-202", title: "Todo model & migrations", difficulty: "Beginner", estMin: 45, xp: 180, tag: "Django Todo", status: "In Progress", progress: 55,
+  { id: "PYDJ-202", title: "Models & migrations", difficulty: "Beginner", estMin: 45, xp: 180, tag: "Django Models", status: "Not Started",
     description: "Define a `Todo` model with title, description, completed and created_at. Generate and apply migrations." },
-  { id: "PYDJ-203", title: "List & create todos (views + templates)", difficulty: "Intermediate", estMin: 60, xp: 240, tag: "Django Todo", status: "In Progress", progress: 20,
-    description: "Implement list and create views using class-based or function views. Render with Django HTML templates." },
-  { id: "PYDJ-204", title: "Toggle complete & delete", difficulty: "Intermediate", estMin: 50, xp: 220, tag: "Django Todo", status: "Not Started",
-    description: "Add POST endpoints to mark a todo complete and delete it. Use Django forms and CSRF tokens." },
-  { id: "PYDJ-205", title: "Style with template inheritance", difficulty: "Intermediate", estMin: 55, xp: 220, tag: "Django Todo", status: "Not Started",
-    description: "Create base.html with blocks and extend it from todos templates. Add minimal CSS for a clean look." },
+  { id: "PYDJ-203", title: "Views & URL routing", difficulty: "Intermediate", estMin: 60, xp: 240, tag: "Django Views", status: "Not Started",
+    description: "Implement list and create views using class-based or function views. Wire URL patterns." },
+  { id: "PYDJ-204", title: "Templates & template inheritance", difficulty: "Intermediate", estMin: 50, xp: 220, tag: "Django Templates", status: "Not Started",
+    description: "Build base.html with blocks, extend it from todos templates and use template tags." },
+  { id: "PYDJ-205", title: "Forms & ModelForm", difficulty: "Intermediate", estMin: 55, xp: 230, tag: "Django Forms", status: "Not Started",
+    description: "Create a Django ModelForm, render it in a template and validate input on submit." },
+  { id: "PYDJ-206", title: "Django Admin customization", difficulty: "Intermediate", estMin: 45, xp: 200, tag: "Django Admin", status: "Not Started",
+    description: "Register models in admin.py with list_display, list_filter and search_fields." },
+  { id: "PYDJ-207", title: "Django REST Framework basics", difficulty: "Advanced", estMin: 70, xp: 300, tag: "Django REST", status: "Not Started",
+    description: "Add DRF, build serializers and a ViewSet exposing CRUD endpoints for Todo." },
+
+  // ---- Python Flask Lab ----
+  { id: "PYFL-101", title: "Hello Flask & routing", difficulty: "Beginner", estMin: 30, xp: 120, tag: "Flask Intro", status: "Not Started",
+    description: "Create a Flask app with a few routes returning JSON and HTML." },
+  { id: "PYFL-102", title: "Templates with Jinja2", difficulty: "Beginner", estMin: 40, xp: 150, tag: "Flask Templates", status: "Not Started",
+    description: "Render HTML templates with Jinja2, pass context and use template inheritance." },
+  { id: "PYFL-103", title: "Blueprints & app factory", difficulty: "Intermediate", estMin: 55, xp: 220, tag: "Flask Blueprints", status: "Not Started",
+    description: "Split a Flask app into blueprints and use the application factory pattern." },
+  { id: "PYFL-104", title: "Flask-SQLAlchemy models", difficulty: "Intermediate", estMin: 60, xp: 240, tag: "Flask DB", status: "Not Started",
+    description: "Define models with Flask-SQLAlchemy, run migrations with Flask-Migrate." },
+  { id: "PYFL-105", title: "REST API: CRUD endpoints", difficulty: "Intermediate", estMin: 65, xp: 260, tag: "Flask REST", status: "Not Started",
+    description: "Build JSON CRUD endpoints with request validation and proper status codes." },
+  { id: "PYFL-106", title: "JWT authentication", difficulty: "Advanced", estMin: 70, xp: 300, tag: "Flask Auth", status: "Not Started",
+    description: "Add JWT-based auth with Flask-JWT-Extended and protect routes." },
+
+  // ---- Java Spring Lab ----
+  { id: "SPR-101", title: "Spring Boot project setup", difficulty: "Beginner", estMin: 35, xp: 140, tag: "Spring Intro", status: "Not Started",
+    description: "Bootstrap a Spring Boot app with start.spring.io and run the first endpoint." },
+  { id: "SPR-102", title: "Dependency Injection & Beans", difficulty: "Intermediate", estMin: 50, xp: 200, tag: "Spring DI", status: "Not Started",
+    description: "Use @Component, @Service and constructor injection. Understand bean scopes." },
+  { id: "SPR-103", title: "REST Controllers", difficulty: "Intermediate", estMin: 55, xp: 220, tag: "Spring REST", status: "Not Started",
+    description: "Build @RestController with @GetMapping/@PostMapping and request/response DTOs." },
+  { id: "SPR-104", title: "Validation & error handling", difficulty: "Intermediate", estMin: 50, xp: 220, tag: "Spring REST", status: "Not Started",
+    description: "Validate request bodies with @Valid and centralize errors via @ControllerAdvice." },
+  { id: "SPR-105", title: "Spring Data JPA", difficulty: "Intermediate", estMin: 65, xp: 260, tag: "Spring JPA", status: "Not Started",
+    description: "Define entities, repositories and derived queries with Spring Data JPA." },
+  { id: "SPR-106", title: "Spring Security basics", difficulty: "Advanced", estMin: 80, xp: 320, tag: "Spring Security", status: "Not Started",
+    description: "Secure REST endpoints with Spring Security and HTTP basic / JWT." },
+  { id: "SPR-107", title: "Testing with @SpringBootTest", difficulty: "Advanced", estMin: 60, xp: 260, tag: "Spring Testing", status: "Not Started",
+    description: "Write integration tests with @SpringBootTest and slice tests with @WebMvcTest." },
+
+  // ---- PostgreSQL Lab ----
+  { id: "PG-101", title: "Postgres basics: SELECT & WHERE", difficulty: "Beginner", estMin: 30, xp: 120, tag: "PG Querying", status: "Not Started",
+    description: "Query a customers table with filters, ordering and LIMIT/OFFSET." },
+  { id: "PG-102", title: "Aggregates & GROUP BY", difficulty: "Beginner", estMin: 35, xp: 140, tag: "PG Querying", status: "Not Started",
+    description: "Compute totals per group with SUM/COUNT/AVG and HAVING." },
+  { id: "PG-103", title: "JOINs in Postgres", difficulty: "Intermediate", estMin: 50, xp: 200, tag: "PG Joins", status: "Not Started",
+    description: "INNER, LEFT and FULL joins across orders/customers tables." },
+  { id: "PG-104", title: "Common Table Expressions (CTEs)", difficulty: "Intermediate", estMin: 55, xp: 220, tag: "PG Advanced", status: "Not Started",
+    description: "Refactor nested subqueries into readable WITH expressions; use recursive CTEs." },
+  { id: "PG-105", title: "JSONB queries", difficulty: "Intermediate", estMin: 55, xp: 230, tag: "PG JSONB", status: "Not Started",
+    description: "Query and index JSONB columns with ->>, @>, and jsonb_path_ops." },
+  { id: "PG-106", title: "Window functions", difficulty: "Advanced", estMin: 65, xp: 280, tag: "PG Windows", status: "Not Started",
+    description: "ROW_NUMBER, RANK, LAG/LEAD and running totals with PARTITION BY." },
+  { id: "PG-107", title: "EXPLAIN ANALYZE & indexes", difficulty: "Advanced", estMin: 70, xp: 320, tag: "PG Tuning", status: "Not Started",
+    description: "Read EXPLAIN ANALYZE output and add B-tree / GIN indexes to remove sequential scans." },
+
+  // ---- Git Lab ----
+  { id: "GIT-101", title: "Install Git & set up SSH keys", difficulty: "Beginner", estMin: 25, xp: 100, tag: "Git Setup", status: "Not Started",
+    description: "Install git, configure user.name/email and generate an ed25519 SSH key for GitHub." },
+  { id: "GIT-102", title: "git init, add, commit", difficulty: "Beginner", estMin: 30, xp: 120, tag: "Git Basics", status: "Not Started",
+    description: "Create a repo, stage changes and commit with meaningful messages." },
+  { id: "GIT-103", title: "Clone a remote repository", difficulty: "Beginner", estMin: 20, xp: 90, tag: "Git Remotes", status: "Not Started",
+    description: "Clone a repo via HTTPS and SSH and inspect remotes with `git remote -v`." },
+  { id: "GIT-104", title: "Branching & switching", difficulty: "Beginner", estMin: 30, xp: 130, tag: "Git Branching", status: "Not Started",
+    description: "Create branches with `git switch -c`, list with `git branch` and delete merged branches." },
+  { id: "GIT-105", title: "Push & pull", difficulty: "Beginner", estMin: 30, xp: 130, tag: "Git Remotes", status: "Not Started",
+    description: "Push a branch with `-u origin`, fetch and pull updates from upstream." },
+  { id: "GIT-106", title: "Merging branches", difficulty: "Intermediate", estMin: 40, xp: 170, tag: "Git Merging", status: "Not Started",
+    description: "Fast-forward and 3-way merges. Resolve a basic merge commit." },
+  { id: "GIT-107", title: "Rebase a feature branch", difficulty: "Intermediate", estMin: 45, xp: 190, tag: "Git Rebase", status: "Not Started",
+    description: "Rebase a feature branch onto main, understand the difference vs merge." },
+  { id: "GIT-108", title: "Interactive rebase: squash & reword", difficulty: "Advanced", estMin: 55, xp: 230, tag: "Git Rebase", status: "Not Started",
+    description: "Use `git rebase -i` to squash, reorder and reword commits before pushing." },
+  { id: "GIT-109", title: "Resolve merge conflicts", difficulty: "Intermediate", estMin: 50, xp: 210, tag: "Git Conflicts", status: "Not Started",
+    description: "Trigger a conflict, resolve manually and finish the merge/rebase." },
+  { id: "GIT-110", title: "Stash work in progress", difficulty: "Beginner", estMin: 25, xp: 110, tag: "Git Basics", status: "Not Started",
+    description: "Use `git stash push/pop/list` to shelve uncommitted changes." },
+  { id: "GIT-111", title: "Tags & releases", difficulty: "Intermediate", estMin: 30, xp: 140, tag: "Git Tags", status: "Not Started",
+    description: "Create annotated tags and push them to the remote." },
+  { id: "GIT-112", title: "Pull requests workflow", difficulty: "Intermediate", estMin: 45, xp: 200, tag: "Git PRs", status: "Not Started",
+    description: "Fork, branch, push and open a pull request. Review and address feedback." },
+  { id: "GIT-113", title: "Reset, revert & reflog", difficulty: "Advanced", estMin: 55, xp: 240, tag: "Git Recovery", status: "Not Started",
+    description: "Recover from mistakes with `git reset`, `git revert` and the reflog." },
+  { id: "GIT-114", title: "Cherry-pick a commit", difficulty: "Intermediate", estMin: 35, xp: 160, tag: "Git Advanced", status: "Not Started",
+    description: "Apply a single commit from one branch onto another with `git cherry-pick`." },
 
   // ---- Python · Core Foundations ----
   { id: "PY-101", title: "Variables, Types & f-strings", difficulty: "Beginner", estMin: 25, xp: 100, tag: "Py Fundamentals", status: "Completed", score: 95,
