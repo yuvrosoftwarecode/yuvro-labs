@@ -48,7 +48,6 @@ function EditLab() {
   return (
     <AdminShell title={`Edit · ${lab.name}`} breadcrumb={["Engineering", "Labs", "Edit"]} right={
       <div className="flex items-center gap-2">
-        <Link to="/lab/$slug" params={{ slug: lab.slug }} target="_blank" className="text-xs px-3 py-1.5 rounded-md border border-primary/40 text-primary hover:bg-primary/10">Preview as student ↗</Link>
         <Link to="/admin/labs" className="text-xs px-3 py-1.5 rounded-md border border-border hover:bg-accent">← Back</Link>
       </div>
     }>
