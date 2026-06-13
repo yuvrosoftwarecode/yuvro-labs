@@ -16,6 +16,10 @@ import { python } from "@codemirror/lang-python";
 import { java } from "@codemirror/lang-java";
 import { html as cmHtml } from "@codemirror/lang-html";
 import { markdown as cmMarkdown } from "@codemirror/lang-markdown";
+import { sql } from "@codemirror/lang-sql";
+import { javascript } from "@codemirror/lang-javascript";
+import { css } from "@codemirror/lang-css";
+import { json as jsonLang } from "@codemirror/lang-json";
 import { vscodeDark, vscodeLight } from "@uiw/codemirror-theme-vscode";
 import {
   ContextMenu,
