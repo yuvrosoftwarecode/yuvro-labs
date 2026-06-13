@@ -128,6 +128,7 @@ export function SprintBuilder({ sprints, setSprints, labName = "Lab" }: {
           <TaskConfig
             task={activeTask}
             sprintName={activeSprint.name}
+            labName={labName}
             onChange={(patch) => updateTask(activeSprint.id, activeTask.id, patch)}
             onDelete={() => removeTask(activeSprint.id, activeTask.id)}
           />
