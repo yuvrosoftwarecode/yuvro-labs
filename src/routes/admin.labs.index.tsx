@@ -4,7 +4,7 @@ import { Plus, FlaskConical, Trash2, Pencil, ExternalLink } from "lucide-react";
 import { useEffect, useMemo, useState } from "react";
 import { loadLabs, deleteLab, CATEGORIES, type AdminLab } from "@/lib/adminLabs";
 
-export const Route = createFileRoute("/admin/labs")({ component: LabsPage });
+export const Route = createFileRoute("/admin/labs/")({ component: LabsPage });
 
 function LabsPage() {
   const [labs, setLabs] = useState<AdminLab[]>([]);
