@@ -20,6 +20,7 @@ import { sql } from "@codemirror/lang-sql";
 import { javascript } from "@codemirror/lang-javascript";
 import { css } from "@codemirror/lang-css";
 import { json as jsonLang } from "@codemirror/lang-json";
+import { cpp } from "@codemirror/lang-cpp";
 import { vscodeDark, vscodeLight } from "@uiw/codemirror-theme-vscode";
 import {
   ContextMenu,
