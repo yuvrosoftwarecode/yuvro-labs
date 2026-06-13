@@ -1,5 +1,5 @@
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
-import { AdminShell, Panel, Badge } from "@/components/admin/AdminShell";
+import { AdminShell, Panel } from "@/components/admin/AdminShell";
 import { useEffect, useState } from "react";
 import { Check, ChevronRight } from "lucide-react";
 import { getLab, updateLab, CATEGORIES, DIFFS, type AdminLab } from "@/lib/adminLabs";
@@ -67,8 +67,8 @@ function EditLab() {
 
       {error && <div className="mb-4 text-xs px-3 py-2 rounded-md bg-destructive/10 text-destructive border border-destructive/30">{error}</div>}
 
-      <div className="grid lg:grid-cols-3 gap-6">
-        <div className="lg:col-span-2 space-y-4">
+      <div className="grid grid-cols-1 gap-6">
+        <div className="space-y-4">
           {step === 0 && (
             <Panel title="Basic info">
               <div className="grid md:grid-cols-2 gap-4 text-sm">
@@ -96,7 +96,7 @@ function EditLab() {
           )}
           {step === 1 && (
             <Panel title="Sprints & tasks">
-              <SprintBuilder sprints={sprints} setSprints={setSprints} />
+              <SprintBuilder sprints={sprints} setSprints={setSprints} labName={lab.name} />
             </Panel>
           )}
 
@@ -113,19 +113,6 @@ function EditLab() {
             </div>
           </div>
         </div>
-
-        <Panel title="Live preview">
-          <div className="rounded-lg border border-border/60 p-4">
-            <div className="flex items-center gap-2"><span className="text-2xl">{lab.icon}</span><div><div className="font-semibold text-sm">{lab.name}</div><div className="text-[10px] text-muted-foreground">{lab.cat} · {lab.diff}</div></div></div>
-            <p className="mt-3 text-xs text-muted-foreground">{lab.description}</p>
-            <div className="mt-3 grid grid-cols-3 gap-2 text-center text-[10px]">
-              <div className="rounded-md border border-border/60 p-2"><div className="font-mono text-sm">{lab.tickets}</div><div className="text-muted-foreground">tickets</div></div>
-              <div className="rounded-md border border-border/60 p-2"><div className="font-mono text-sm">{sprints.length || lab.sprints}</div><div className="text-muted-foreground">sprints</div></div>
-              <div className="rounded-md border border-border/60 p-2"><div className="font-mono text-sm">{lab.comp}%</div><div className="text-muted-foreground">complete</div></div>
-            </div>
-            <div className="mt-2 flex items-center gap-2"><Badge tone="success">{sprints.reduce((a, s) => a + s.tasks.length, 0)} tasks</Badge></div>
-          </div>
-        </Panel>
       </div>
     </AdminShell>
   );
