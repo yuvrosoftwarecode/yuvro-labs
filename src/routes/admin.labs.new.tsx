@@ -2,12 +2,15 @@ import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { AdminShell, Panel, Badge } from "@/components/admin/AdminShell";
 import { useState } from "react";
 import { Check, ChevronRight } from "lucide-react";
-import { saveAdminLab } from "@/lib/adminLabs";
+import { createLab, CATEGORIES, DIFFS, type AdminLab } from "@/lib/adminLabs";
 
 export const Route = createFileRoute("/admin/labs/new")({ component: LabBuilder });
 
 const STEPS = ["Basic info", "Environment", "Evaluation", "AI Mentor", "Publish"];
-const CATEGORIES = ["Java Backend", "Python", "Frontend/UI", "SQL", "DevOps", "Security", "System Design", "Collaboration"];
+
+const diffToDifficulty: Record<"Easy" | "Medium" | "Hard", AdminLab["difficulty"]> = {
+  Easy: "Beginner", Medium: "Intermediate", Hard: "Advanced",
+};
 
 function LabBuilder() {
   const nav = useNavigate();
@@ -16,29 +19,44 @@ function LabBuilder() {
   const [evalConf, setEvalConf] = useState<Record<string, number>>({ Functional: 30, "Code Quality": 20, Security: 15, Performance: 15, Architecture: 10, Testing: 10 });
 
   const [form, setForm] = useState({
-    name: "Payment Service Resilience",
+    name: "",
+    slug: "",
+    icon: "🧪",
     cat: "Java Backend",
     diff: "Medium" as "Easy" | "Medium" | "Hard",
+    tickets: 12,
+    sprints: 4,
     duration: 6,
     skills: "",
     tags: "",
-    description: "Build a resilient payment retry layer with idempotency, exponential backoff and observability.",
+    description: "",
   });
   const set = <K extends keyof typeof form>(k: K, v: (typeof form)[K]) => setForm(s => ({ ...s, [k]: v }));
 
+  const [error, setError] = useState<string | null>(null);
   const [saved, setSaved] = useState(false);
+
+  const totalWeight = Object.values(evalConf).reduce((a, b) => a + b, 0);
+
   const publish = () => {
-    if (!form.name.trim()) return;
-    saveAdminLab({
+    if (!form.name.trim()) { setError("Lab name is required."); setStep(0); return; }
+    if (!form.description.trim()) { setError("Description is required."); setStep(0); return; }
+    if (totalWeight !== 100) { setError(`Evaluation weights must total 100% (currently ${totalWeight}%).`); setStep(2); return; }
+    setError(null);
+    createLab({
       name: form.name.trim(),
+      slug: form.slug,
+      icon: form.icon || "🧪",
       cat: form.cat,
+      color: "custom",
       diff: form.diff,
+      difficulty: diffToDifficulty[form.diff],
       users: 0,
-      tickets: 0,
-      sprints: 0,
+      tickets: form.tickets,
+      sprints: form.sprints,
       comp: 0,
       rating: 0,
-      description: form.description,
+      description: form.description.trim(),
       duration: form.duration,
       skills: form.skills,
       tags: form.tags,
@@ -63,12 +81,16 @@ function LabBuilder() {
         ))}
       </div>
 
+      {error && <div className="mb-4 text-xs px-3 py-2 rounded-md bg-destructive/10 text-destructive border border-destructive/30">{error}</div>}
+
       <div className="grid lg:grid-cols-3 gap-6">
         <div className="lg:col-span-2 space-y-4">
           {step === 0 && (
             <Panel title="Basic info">
               <div className="grid md:grid-cols-2 gap-4 text-sm">
-                <Field label="Lab name"><input value={form.name} onChange={e => set("name", e.target.value)} className="w-full bg-transparent border border-border rounded-md px-3 py-2" /></Field>
+                <Field label="Lab name *"><input value={form.name} onChange={e => set("name", e.target.value)} placeholder="e.g. Kotlin Coroutines Bootcamp" className="w-full bg-transparent border border-border rounded-md px-3 py-2" /></Field>
+                <Field label="Slug (URL)"><input value={form.slug} onChange={e => set("slug", e.target.value)} placeholder="auto-generated from name" className="w-full bg-transparent border border-border rounded-md px-3 py-2" /></Field>
+                <Field label="Icon (emoji)"><input value={form.icon} onChange={e => set("icon", e.target.value)} maxLength={2} className="w-full bg-transparent border border-border rounded-md px-3 py-2" /></Field>
                 <Field label="Category">
                   <select value={form.cat} onChange={e => set("cat", e.target.value)} className="w-full bg-transparent border border-border rounded-md px-3 py-2">
                     {CATEGORIES.map(c => <option key={c}>{c}</option>)}
@@ -76,13 +98,15 @@ function LabBuilder() {
                 </Field>
                 <Field label="Difficulty">
                   <select value={form.diff} onChange={e => set("diff", e.target.value as any)} className="w-full bg-transparent border border-border rounded-md px-3 py-2">
-                    <option>Easy</option><option>Medium</option><option>Hard</option>
+                    {DIFFS.map(d => <option key={d}>{d}</option>)}
                   </select>
                 </Field>
                 <Field label="Estimated duration (hrs)"><input type="number" value={form.duration} onChange={e => set("duration", Number(e.target.value))} className="w-full bg-transparent border border-border rounded-md px-3 py-2" /></Field>
-                <Field label="Skills covered" full><input value={form.skills} onChange={e => set("skills", e.target.value)} placeholder="Exception handling, Retry logic, Idempotency…" className="w-full bg-transparent border border-border rounded-md px-3 py-2" /></Field>
-                <Field label="Industry tags" full><input value={form.tags} onChange={e => set("tags", e.target.value)} placeholder="Fintech, Payments, Banking" className="w-full bg-transparent border border-border rounded-md px-3 py-2" /></Field>
-                <Field label="Description" full><textarea rows={4} value={form.description} onChange={e => set("description", e.target.value)} className="w-full bg-transparent border border-border rounded-md px-3 py-2" /></Field>
+                <Field label="Tickets"><input type="number" value={form.tickets} onChange={e => set("tickets", Number(e.target.value))} className="w-full bg-transparent border border-border rounded-md px-3 py-2" /></Field>
+                <Field label="Sprints"><input type="number" value={form.sprints} onChange={e => set("sprints", Number(e.target.value))} className="w-full bg-transparent border border-border rounded-md px-3 py-2" /></Field>
+                <Field label="Skills covered" full><input value={form.skills} onChange={e => set("skills", e.target.value)} placeholder="Coroutines, Flow, Channels…" className="w-full bg-transparent border border-border rounded-md px-3 py-2" /></Field>
+                <Field label="Industry tags" full><input value={form.tags} onChange={e => set("tags", e.target.value)} placeholder="Fintech, Mobile, Backend" className="w-full bg-transparent border border-border rounded-md px-3 py-2" /></Field>
+                <Field label="Description *" full><textarea rows={4} value={form.description} onChange={e => set("description", e.target.value)} placeholder="What learners will build and master in this lab." className="w-full bg-transparent border border-border rounded-md px-3 py-2" /></Field>
               </div>
             </Panel>
           )}
@@ -107,7 +131,7 @@ function LabBuilder() {
                     <input type="range" min={0} max={50} value={v} onChange={(e) => setEvalConf(s => ({ ...s, [k]: Number(e.target.value) }))} className="w-full" />
                   </div>
                 ))}
-                <div className="text-xs text-muted-foreground">Total: <span className="font-mono">{Object.values(evalConf).reduce((a,b)=>a+b,0)}%</span></div>
+                <div className={`text-xs ${totalWeight === 100 ? "text-success" : "text-warning"}`}>Total: <span className="font-mono">{totalWeight}%</span></div>
               </div>
             </Panel>
           )}
@@ -123,10 +147,10 @@ function LabBuilder() {
           {step === 4 && (
             <Panel title="Review & publish">
               <div className="text-sm space-y-2">
-                <div className="flex items-center gap-2"><Badge tone="success">ready</Badge> {form.name} · {form.cat} · {form.diff}</div>
-                <div className="flex items-center gap-2"><Badge tone="success">ready</Badge> Environment configured ({Object.values(env).filter(Boolean).length} tools)</div>
-                <div className="flex items-center gap-2"><Badge tone={Object.values(evalConf).reduce((a,b)=>a+b,0) === 100 ? "success" : "warning"}>{Object.values(evalConf).reduce((a,b)=>a+b,0)}%</Badge> Evaluation weights</div>
-                <div className="flex items-center gap-2"><Badge tone="success">ready</Badge> AI Mentor rules saved</div>
+                <div className="flex items-center gap-2"><Badge tone={form.name ? "success" : "destructive"}>{form.name ? "ready" : "missing"}</Badge> {form.name || "Name required"} · {form.cat} · {form.diff}</div>
+                <div className="flex items-center gap-2"><Badge tone="success">ready</Badge> Environment ({Object.values(env).filter(Boolean).length} tools)</div>
+                <div className="flex items-center gap-2"><Badge tone={totalWeight === 100 ? "success" : "warning"}>{totalWeight}%</Badge> Evaluation weights</div>
+                <div className="flex items-center gap-2"><Badge tone={form.description ? "success" : "destructive"}>{form.description ? "ready" : "missing"}</Badge> Description</div>
                 <button onClick={publish} disabled={saved} className="mt-4 px-4 py-2 rounded-md bg-primary text-primary-foreground text-sm disabled:opacity-60">
                   {saved ? "Published — redirecting…" : "Publish lab"}
                 </button>
