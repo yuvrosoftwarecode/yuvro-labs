@@ -56,6 +56,15 @@ export function AdminShell({ title, breadcrumb, right, children }: {
   const nav = useNavigate();
   const pathname = useRouterState({ select: (s) => s.location.pathname });
   const [q, setQ] = useState("");
+  const [collapsed, setCollapsed] = useState<boolean>(() => {
+    if (typeof window === "undefined") return false;
+    return localStorage.getItem("yuvro-admin-sidebar-collapsed") === "1";
+  });
+  const toggleCollapsed = () => setCollapsed(c => {
+    const next = !c;
+    try { localStorage.setItem("yuvro-admin-sidebar-collapsed", next ? "1" : "0"); } catch {}
+    return next;
+  });
 
   useEffect(() => {
     if (user && user.role !== "admin") nav({ to: "/dashboard" });
@@ -66,24 +75,29 @@ export function AdminShell({ title, breadcrumb, right, children }: {
 
   return (
     <div className="min-h-screen bg-background text-foreground flex">
-      <aside className="hidden md:flex w-60 shrink-0 flex-col border-r border-border bg-card/30 backdrop-blur">
-        <div className="h-14 flex items-center gap-2 px-4 border-b border-border">
-          <div className="grid h-7 w-7 place-items-center rounded-md bg-gradient-to-br from-primary to-ui text-primary-foreground font-mono text-xs">Y</div>
-          <div>
-            <div className="text-sm font-semibold leading-tight">Yuvro Labs</div>
-            <div className="text-[10px] text-muted-foreground">Operations Console</div>
-          </div>
+      <aside className={`hidden md:flex shrink-0 flex-col border-r border-border bg-card/30 backdrop-blur transition-[width] duration-200 ${collapsed ? "w-14" : "w-60"}`}>
+        <div className="h-14 flex items-center gap-2 px-3 border-b border-border">
+          <div className="grid h-7 w-7 shrink-0 place-items-center rounded-md bg-gradient-to-br from-primary to-ui text-primary-foreground font-mono text-xs">Y</div>
+          {!collapsed && (
+            <div className="min-w-0">
+              <div className="text-sm font-semibold leading-tight truncate">Yuvro Labs</div>
+              <div className="text-[10px] text-muted-foreground truncate">Operations Console</div>
+            </div>
+          )}
+          <button onClick={toggleCollapsed} title={collapsed ? "Expand sidebar" : "Collapse sidebar"} className="ml-auto grid h-7 w-7 place-items-center rounded-md text-muted-foreground hover:bg-accent hover:text-foreground">
+            {collapsed ? <PanelLeftOpen className="h-4 w-4" /> : <PanelLeftClose className="h-4 w-4" />}
+          </button>
         </div>
-        <nav className="flex-1 overflow-y-auto p-3 space-y-4 text-sm">
+        <nav className="flex-1 overflow-y-auto p-2 space-y-4 text-sm">
           {NAV.map((g) => (
             <div key={g.group}>
-              <div className="px-2 mb-1 text-[10px] uppercase tracking-wider text-muted-foreground/70 font-semibold">{g.group}</div>
+              {!collapsed && <div className="px-2 mb-1 text-[10px] uppercase tracking-wider text-muted-foreground/70 font-semibold">{g.group}</div>}
               <div className="space-y-0.5">
                 {g.items.map((n) => {
                   const active = isActive(n.to);
                   return (
-                    <Link key={n.to} to={n.to} className={`w-full flex items-center gap-2.5 rounded-md px-3 py-1.5 transition ${active ? "bg-primary/10 text-primary" : "text-muted-foreground hover:bg-accent hover:text-foreground"}`}>
-                      <n.icon className="h-4 w-4" /> {n.label}
+                    <Link key={n.to} to={n.to} title={collapsed ? n.label : undefined} className={`w-full flex items-center gap-2.5 rounded-md ${collapsed ? "justify-center px-0 py-2" : "px-3 py-1.5"} transition ${active ? "bg-primary/10 text-primary" : "text-muted-foreground hover:bg-accent hover:text-foreground"}`}>
+                      <n.icon className="h-4 w-4 shrink-0" /> {!collapsed && n.label}
                     </Link>
                   );
                 })}
@@ -91,18 +105,23 @@ export function AdminShell({ title, breadcrumb, right, children }: {
             </div>
           ))}
         </nav>
-        <div className="p-3 border-t border-border">
-          <div className="flex items-center gap-2 px-2 py-2 mb-1 text-xs text-muted-foreground">
-            <Activity className="h-3.5 w-3.5 text-success" /> All systems operational
-          </div>
-          <button onClick={() => { logout(); nav({ to: "/" }); }} className="w-full flex items-center gap-2.5 rounded-md px-3 py-2 text-sm text-muted-foreground hover:bg-accent hover:text-foreground">
-            <LogOut className="h-4 w-4" /> Sign out
+        <div className="p-2 border-t border-border">
+          {!collapsed && (
+            <div className="flex items-center gap-2 px-2 py-2 mb-1 text-xs text-muted-foreground">
+              <Activity className="h-3.5 w-3.5 text-success" /> All systems operational
+            </div>
+          )}
+          <button onClick={() => { logout(); nav({ to: "/" }); }} title="Sign out" className={`w-full flex items-center gap-2.5 rounded-md ${collapsed ? "justify-center px-0 py-2" : "px-3 py-2"} text-sm text-muted-foreground hover:bg-accent hover:text-foreground`}>
+            <LogOut className="h-4 w-4 shrink-0" /> {!collapsed && "Sign out"}
           </button>
         </div>
       </aside>
 
       <div className="flex-1 flex flex-col min-w-0">
         <header className="h-14 border-b border-border bg-background/60 backdrop-blur sticky top-0 z-30 flex items-center gap-4 px-6">
+          <button onClick={toggleCollapsed} className="md:hidden grid h-8 w-8 place-items-center rounded-md border text-muted-foreground hover:bg-accent" title="Toggle sidebar">
+            {collapsed ? <PanelLeftOpen className="h-4 w-4" /> : <PanelLeftClose className="h-4 w-4" />}
+          </button>
           <div className="flex items-center gap-1.5 text-xs text-muted-foreground">
             <span>Admin</span>
             {(breadcrumb ?? [title]).map((b, i) => (
