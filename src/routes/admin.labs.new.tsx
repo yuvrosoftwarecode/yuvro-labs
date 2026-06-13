@@ -127,7 +127,7 @@ function LabBuilder() {
             </Panel>
           )}
           {step === 1 && (
-            <Panel title="Sprints & tasks" right={
+            <Panel title="Sprints & tasks" action={
               <button onClick={() => setSprintsState(s => [...s, newSprint()])} className="text-xs px-2 py-1 rounded-md border border-border hover:bg-accent inline-flex items-center gap-1"><Plus className="h-3 w-3" /> Add sprint</button>
             }>
               {sprints.length === 0 ? (
