@@ -68,7 +68,7 @@ export function newSprint(): LabSprint {
 export function newTask(): LabTask {
   return {
     id: newId("tk"),
-    title: "New Task",
+    title: "New Ticket",
     description: "",
     difficulty: "Beginner",
     xp: 100,
@@ -76,6 +76,8 @@ export function newTask(): LabTask {
     editor: "code",
     language: "python",
     starterCode: "# Write your solution here\n",
+    hints: "",
+    solution: "",
   };
 }
 
