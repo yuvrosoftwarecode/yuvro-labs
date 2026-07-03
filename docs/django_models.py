@@ -92,7 +92,9 @@ class UserSkillRole(TimeStamped):
 # 3. ADMIN LABS (Authoring side)
 # ============================================================
 
-class Language(models.TextChoices):
+class ProgrammingLanguage(models.TextChoices):
+    C = "c", "C"
+    CPP = "cpp", "C++"
     PYTHON = "python", "Python"
     JAVA = "java", "Java"
     SQL = "sql", "SQL"
@@ -101,21 +103,52 @@ class Language(models.TextChoices):
     TYPESCRIPT = "typescript", "TypeScript"
 
 
+class Difficulty(models.TextChoices):
+    EASY = "easy", "Easy"
+    MEDIUM = "medium", "Medium"
+    HARD = "hard", "Hard"
+
+
+class LabType(models.TextChoices):
+    DATABASE = "database", "Database"
+    BACKEND = "backend", "Backend"
+    FRONTEND = "frontend", "Frontend"
+    FULL_STACK = "full_stack", "Full Stack"
+    QA = "qa", "Quality Assurance"
+    DEVOPS = "devops", "DevOps"
+    AI = "ai", "AI"
+
+
+class TaskProgressStatus(models.TextChoices):
+    BACKLOG = "backlog", "Backlog"
+    IN_PROGRESS = "in_progress", "In Progress"
+    IN_REVIEW = "in_review", "In Review"
+    DONE = "done", "Done"
+
+
 class Lab(TimeStamped):
-    slug = models.SlugField(unique=True)
-    name = models.CharField(max_length=120)
+    title = models.CharField(max_length=200)
+    type = models.CharField(max_length=16, choices=LabType.choices)
     description = models.TextField(blank=True)
-    language = models.CharField(max_length=16, choices=Language.choices)
-    github_repo_url = models.URLField(blank=True)
-    starter_branch = models.CharField(max_length=120, default="main")
-    color_theme = models.CharField(max_length=32, default="python")
-    published = models.BooleanField(default=False)
-    owner = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.SET_NULL, null=True, related_name="owned_labs")
+    prerequisites = models.JSONField(default=list, help_text="List of prerequisite skills/labs")
+    skills = models.JSONField(default=list, help_text="List of skills taught")
+    git_repo_starter_url = models.URLField(blank=True)
+    difficulty = models.CharField(max_length=8, choices=Difficulty.choices, default=Difficulty.EASY)
+    is_active = models.BooleanField(default=True)
+    icon = models.CharField(max_length=64, blank=True)
+
+
+class UserLabEnrollment(TimeStamped):
+    user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name="lab_enrollments")
+    lab = models.ForeignKey(Lab, on_delete=models.CASCADE, related_name="enrollments")
+
+    class Meta:
+        unique_together = ("user", "lab")
 
 
 class LabSprint(TimeStamped):
     lab = models.ForeignKey(Lab, on_delete=models.CASCADE, related_name="sprints")
-    title = models.CharField(max_length=200)
+    title = models.CharField(max_length=255)
     description = models.TextField(blank=True)
     order_index = models.PositiveIntegerField(default=0)
 
@@ -123,77 +156,48 @@ class LabSprint(TimeStamped):
         ordering = ["order_index"]
 
 
-class TaskDifficulty(models.TextChoices):
-    EASY = "Easy", "Easy"
-    MEDIUM = "Medium", "Medium"
-    HARD = "Hard", "Hard"
-
-
-class EditorType(models.TextChoices):
-    CODE = "code", "Code editor"
-    SQL = "sql", "SQL editor"
-    TERMINAL = "terminal", "Terminal"
-    MARKDOWN = "markdown", "Markdown"
-
-
-class LabTask(TimeStamped):
-    sprint = models.ForeignKey(LabSprint, on_delete=models.CASCADE, related_name="tasks")
+class LabTicket(TimeStamped):
+    sprint = models.ForeignKey(LabSprint, on_delete=models.CASCADE, related_name="tickets")
     code = models.CharField(max_length=32, help_text="e.g. PY-101")
     title = models.CharField(max_length=200)
     description = models.TextField(blank=True)
-    difficulty = models.CharField(max_length=8, choices=TaskDifficulty.choices, default=TaskDifficulty.EASY)
-    xp = models.PositiveIntegerField(default=10)
+    learning_objectives = models.JSONField(default=list)
+    tasks = models.JSONField(default=list)
+    common_mistakes = models.TextField(blank=True)
+    hints = models.JSONField(default=list)
+    solution = models.TextField(blank=True)
+    difficulty = models.CharField(max_length=8, choices=Difficulty.choices, default=Difficulty.EASY)
+    yuvro_points = models.PositiveIntegerField(default=10)
     estimated_minutes = models.PositiveIntegerField(default=15)
-    editor_type = models.CharField(max_length=16, choices=EditorType.choices, default=EditorType.CODE)
-    language = models.CharField(max_length=16, choices=Language.choices)
-    starter_code = models.TextField(blank=True)
-    solution_code = models.TextField(blank=True)
-    instructions_md = models.TextField(blank=True)
-    tags = models.JSONField(default=list)  # ["Git Rebase", "SSH", ...]
+    programming_language = models.CharField(max_length=16, choices=ProgrammingLanguage.choices)
     order_index = models.PositiveIntegerField(default=0)
 
     class Meta:
         ordering = ["order_index"]
-
-
-class LabTaskTest(TimeStamped):
-    task = models.ForeignKey(LabTask, on_delete=models.CASCADE, related_name="tests")
-    name = models.CharField(max_length=120)
-    input = models.TextField(blank=True)
-    expected = models.TextField(blank=True)
-    hidden = models.BooleanField(default=False)
-
-
-class LabTaskFile(TimeStamped):
-    """Files shown in the IDE file explorer (README, main.py, query.sql ...)."""
-    task = models.ForeignKey(LabTask, on_delete=models.CASCADE, related_name="files")
-    path = models.CharField(max_length=255)
-    contents = models.TextField(blank=True)
-    readonly = models.BooleanField(default=False)
 
 
 # ============================================================
 # 4. STUDENT PROGRESS (per user against authored labs)
 # ============================================================
 
-class TaskProgressStatus(models.TextChoices):
-    LOCKED = "locked", "Locked"
-    NOT_STARTED = "not_started", "Not Started"
-    IN_PROGRESS = "in_progress", "In Progress"
-    PASSED = "passed", "Passed"
-
-
-class LabTaskAttempt(TimeStamped):
-    user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name="task_attempts")
-    task = models.ForeignKey(LabTask, on_delete=models.CASCADE, related_name="attempts")
-    status = models.CharField(max_length=16, choices=TaskProgressStatus.choices, default=TaskProgressStatus.NOT_STARTED)
-    code = models.TextField(blank=True)
-    xp_awarded = models.PositiveIntegerField(default=0)
-    last_run_at = models.DateTimeField(null=True, blank=True)
-    completed_at = models.DateTimeField(null=True, blank=True)
+class UserLabTicketSubmission(TimeStamped):
+    user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name="ticket_submissions")
+    lab_ticket = models.ForeignKey(LabTicket, on_delete=models.CASCADE, related_name="submissions")
+    status = models.CharField(max_length=16, choices=TaskProgressStatus.choices, default=TaskProgressStatus.BACKLOG)
+    solution = models.TextField(blank=True)
+    solution_output = models.TextField(
+        blank=True,
+        help_text="Output from the last validation run (stdout/stderr, test results)",
+    )
+    feedback = models.TextField(
+        blank=True,
+        help_text="Manual feedback from an instructor or system hints",
+    )
+    yuvro_points = models.PositiveIntegerField(default=0)
 
     class Meta:
-        unique_together = ("user", "task")
+        unique_together = ("user", "lab_ticket")
+
 
 
 # ============================================================
@@ -266,7 +270,7 @@ class CollabTicket(TimeStamped):
     code = models.CharField(max_length=32)  # e.g. S01, B01
     title = models.CharField(max_length=200)
     role = models.CharField(max_length=16, choices=RoleKey.choices)
-    difficulty = models.CharField(max_length=8, choices=TaskDifficulty.choices)
+    difficulty = models.CharField(max_length=8, choices=Difficulty.choices)
     points = models.PositiveIntegerField(default=10)
     status = models.CharField(max_length=16, choices=TicketStatus.choices, default=TicketStatus.NOT_STARTED)
     depends_on = models.ForeignKey("self", on_delete=models.SET_NULL, null=True, blank=True, related_name="dependents")
@@ -274,7 +278,8 @@ class CollabTicket(TimeStamped):
     acceptance = models.JSONField(default=list)
     refs = models.JSONField(default=list)       # [{label, url}]
     starter = models.TextField(blank=True)
-    language = models.CharField(max_length=16, choices=Language.choices)
+    language = models.CharField(max_length=16, choices=ProgrammingLanguage.choices)
+
     assignee = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.SET_NULL, null=True, blank=True, related_name="tickets")
 
 
