@@ -101,14 +101,14 @@ export function SprintBuilder({ sprints, setSprints, labName = "Lab" }: {
                             <li key={t.id} className={`group flex items-center gap-1 px-1.5 py-1 rounded-md ${taskActive ? "bg-primary/10 border border-primary/40" : "hover:bg-accent border border-transparent"}`}>
                               <FileCode className="h-3 w-3 text-muted-foreground" />
                               <button onClick={() => setSelection({ sprintId: sp.id, taskId: t.id })} className="flex-1 text-left text-[11px] truncate">
-                                {t.title || "Untitled task"}
+                                {t.title || "Untitled ticket"}
                               </button>
-                              <button onClick={() => removeTask(sp.id, t.id)} className="opacity-0 group-hover:opacity-100 p-0.5 text-destructive hover:bg-destructive/10 rounded" title="Delete task"><Trash2 className="h-3 w-3" /></button>
+                              <button onClick={() => removeTask(sp.id, t.id)} className="opacity-0 group-hover:opacity-100 p-0.5 text-destructive hover:bg-destructive/10 rounded" title="Delete ticket"><Trash2 className="h-3 w-3" /></button>
                             </li>
                           );
                         })}
                         <li>
-                          <button onClick={() => addTask(sp.id)} className="text-[11px] text-primary hover:underline inline-flex items-center gap-1 px-1.5 py-1"><Plus className="h-3 w-3" /> Add task</button>
+                          <button onClick={() => addTask(sp.id)} className="text-[11px] text-primary hover:underline inline-flex items-center gap-1 px-1.5 py-1"><Plus className="h-3 w-3" /> Add ticket</button>
                         </li>
                       </ul>
                     )}
