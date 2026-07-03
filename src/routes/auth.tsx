@@ -186,7 +186,7 @@ function SignUpForm() {
       </div>
       <Field label="Role">
         <div className="grid grid-cols-2 gap-2">
-          {(["student", "job_seeker", "developer", "recruiter"] as Role[]).map((r) => (
+          {(["student", "job_seeker", "recruiter"] as Role[]).map((r) => (
             <button type="button" key={r} onClick={() => setRole(r)}
               className={`rounded-md border px-3 py-2 text-xs capitalize transition ${role === r ? "border-primary bg-primary/10 text-primary" : "border-border bg-card/40 text-muted-foreground hover:text-foreground"}`}>
               {r.replace("_", " ")}
