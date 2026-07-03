@@ -664,26 +664,20 @@ function getKit(slug: string, tag: string): Kit {
 type TestResult = { name: string; pass: boolean; time: string; expected?: string; got?: string };
 type BottomTab = "output" | "errors" | "tests" | "quality" | "preview" | "terminal";
 
-function TicketEditor() {
-  const { slug, ticketId } = useParams({ from: "/lab/$slug/ticket/$ticketId" });
-  const navigate = useNavigate({ from: "/lab/$slug/ticket/$ticketId" });
+export function StudentTicketView({
+  slug,
+  ticketId,
+  previewOverride,
+}: {
+  slug: string;
+  ticketId: string;
+  previewOverride?: StudentPreviewOverride | null;
+}) {
+  const navigate = useNavigate();
   const reviewMatch = useMatch({ from: "/lab/$slug/ticket/$ticketId/review", shouldThrow: false });
   const lab = labs.find((l) => l.slug === slug) ?? labs[0];
   const baseTicket = tickets.find((t) => t.id === ticketId) ?? tickets[0];
 
-  // Admin preview override: when ?preview=1 is present, merge the admin-authored
-  // ticket payload (stashed in sessionStorage) on top of the base ticket so the
-  // student IDE renders with the admin's title/description/starter code.
-  const [previewOverride, setPreviewOverride] = useState<Partial<typeof baseTicket> & { starterCode?: string; hints?: string; solution?: string } | null>(null);
-  useEffect(() => {
-    if (typeof window === "undefined") return;
-    const params = new URLSearchParams(window.location.search);
-    if (params.get("preview") !== "1") return;
-    try {
-      const raw = sessionStorage.getItem("__adminPreviewTicket");
-      if (raw) setPreviewOverride(JSON.parse(raw));
-    } catch { /* ignore */ }
-  }, [ticketId]);
 
   const ticket = useMemo(() => {
     if (!previewOverride) return baseTicket;
