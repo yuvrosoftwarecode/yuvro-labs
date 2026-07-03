@@ -123,7 +123,7 @@ export function SprintBuilder({ sprints, setSprints, labName = "Lab" }: {
       {/* RIGHT — config panel */}
       <div className="rounded-lg border border-border bg-card/40 min-h-[420px]">
         {!activeSprint ? (
-          <EmptyState message="Select a sprint or task on the left, or add a new one to configure it here." />
+          <EmptyState message="Select a sprint or ticket on the left, or add a new one to configure it here." />
         ) : activeTask ? (
           <TaskConfig
             task={activeTask}
@@ -136,8 +136,6 @@ export function SprintBuilder({ sprints, setSprints, labName = "Lab" }: {
           <SprintConfig
             sprint={activeSprint}
             onChange={(patch) => updateSprint(activeSprint.id, patch)}
-            onAddTask={() => addTask(activeSprint.id)}
-            onSelectTask={(tid) => setSelection({ sprintId: activeSprint.id, taskId: tid })}
           />
         )}
       </div>
