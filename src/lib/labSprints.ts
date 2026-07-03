@@ -203,12 +203,18 @@ const STARTERS: Record<Language, string> = {
   sql: "-- Write your query here\n", bash: "#!/usr/bin/env bash\n",
 };
 
-function ticketToTask(t: Ticket, lang: Language): LabTask {
+const MULTI_LANG_SLUGS: Record<string, Language[]> = {
+  datastructures: ["python", "javascript", "typescript", "java", "cpp", "c"],
+  programming: ["python", "javascript", "typescript", "java"],
+};
+
+function ticketToTask(t: Ticket, lang: Language, allowed?: Language[]): LabTask {
   const editor: EditorKind = lang === "sql" ? "sql" : "code";
   return {
     id: t.id, title: t.title, description: t.description,
     difficulty: t.difficulty, xp: t.xp, estMin: t.estMin,
     editor, language: lang, starterCode: STARTERS[lang] ?? "",
+    allowedLanguages: allowed,
   };
 }
 
@@ -216,9 +222,10 @@ export function seedSprintsFromCatalog(slug: string): LabSprint[] {
   const groups = SPRINT_GROUPS[slug];
   if (!groups) return [];
   const lang = SLUG_LANGUAGE[slug] ?? "python";
+  const allowed = MULTI_LANG_SLUGS[slug];
   return groups.map(g => ({
     id: g.id, name: g.name, description: g.goal,
-    tasks: catalogTickets.filter(t => g.tags.includes(t.tag)).map(t => ticketToTask(t, lang)),
+    tasks: catalogTickets.filter(t => g.tags.includes(t.tag)).map(t => ticketToTask(t, lang, allowed)),
   }));
 }
 
