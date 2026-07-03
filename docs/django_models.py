@@ -270,7 +270,7 @@ class CollabTicket(TimeStamped):
     code = models.CharField(max_length=32)  # e.g. S01, B01
     title = models.CharField(max_length=200)
     role = models.CharField(max_length=16, choices=RoleKey.choices)
-    difficulty = models.CharField(max_length=8, choices=TaskDifficulty.choices)
+    difficulty = models.CharField(max_length=8, choices=Difficulty.choices)
     points = models.PositiveIntegerField(default=10)
     status = models.CharField(max_length=16, choices=TicketStatus.choices, default=TicketStatus.NOT_STARTED)
     depends_on = models.ForeignKey("self", on_delete=models.SET_NULL, null=True, blank=True, related_name="dependents")
@@ -278,7 +278,8 @@ class CollabTicket(TimeStamped):
     acceptance = models.JSONField(default=list)
     refs = models.JSONField(default=list)       # [{label, url}]
     starter = models.TextField(blank=True)
-    language = models.CharField(max_length=16, choices=Language.choices)
+    language = models.CharField(max_length=16, choices=ProgrammingLanguage.choices)
+
     assignee = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.SET_NULL, null=True, blank=True, related_name="tickets")
 
 
