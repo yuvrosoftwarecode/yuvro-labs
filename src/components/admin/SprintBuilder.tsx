@@ -130,6 +130,7 @@ export function SprintBuilder({ sprints, setSprints, labName = "Lab", labSlug }:
             task={activeTask}
             sprintName={activeSprint.name}
             labName={labName}
+            labSlug={labSlug}
             onChange={(patch) => updateTask(activeSprint.id, activeTask.id, patch)}
             onDelete={() => removeTask(activeSprint.id, activeTask.id)}
           />
@@ -175,10 +176,11 @@ function SprintConfig({ sprint, onChange }: {
   );
 }
 
-function TaskConfig({ task, sprintName, labName, onChange, onDelete }: {
+function TaskConfig({ task, sprintName, labName, labSlug, onChange, onDelete }: {
   task: LabTask;
   sprintName: string;
   labName: string;
+  labSlug?: string;
   onChange: (p: Partial<LabTask>) => void;
   onDelete: () => void;
 }) {
