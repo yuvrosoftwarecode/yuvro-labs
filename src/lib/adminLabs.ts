@@ -75,6 +75,8 @@ const slugTypeMap: Record<string, LabType> = {
   pyflask: "backend",
   programming: "backend",
   datastructures: "backend",
+  linux: "devops",
+  qa: "qa",
 };
 
 function seedFromStudent(l: Lab): AdminLab {
