@@ -234,7 +234,7 @@ function DemoCreds() {
   };
   const demos = [
     { label: "Student", email: "student@yuvrolabs.com", pwd: "student123", c: "primary" },
-    { label: "Developer", email: "developer@yuvrolabs.com", pwd: "developer123", c: "ui" },
+    
     { label: "Admin", email: "admin@yuvrolabs.com", pwd: "admin123", c: "warning" },
   ];
   return (
