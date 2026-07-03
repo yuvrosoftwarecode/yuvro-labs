@@ -86,7 +86,7 @@ function seedFromStudent(l: Lab): AdminLab {
     type: slugTypeMap[l.slug] ?? "backend",
     description: l.description,
     prerequisites: [],
-    skills: l.skills ?? [],
+    skills: (l.skills ?? []).map(s => s.name),
     gitRepoStarterUrl: "",
     difficulty: diffMap[l.difficulty],
     isActive: true,
