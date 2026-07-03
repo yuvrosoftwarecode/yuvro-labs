@@ -187,8 +187,8 @@ function TaskConfig({ task, sprintName, labName, onChange, onDelete }: {
       <div className="p-5 space-y-4">
         <div className="flex items-start justify-between gap-3 flex-wrap">
           <div>
-            <div className="text-[10px] uppercase tracking-wider text-muted-foreground">{sprintName} · Task</div>
-            <h3 className="text-lg font-semibold mt-0.5">Configure task</h3>
+            <div className="text-[10px] uppercase tracking-wider text-muted-foreground">{sprintName} · Ticket</div>
+            <h3 className="text-lg font-semibold mt-0.5">Configure ticket</h3>
           </div>
           <div className="flex items-center gap-2">
             <button onClick={() => setPreviewOpen(true)} className="text-[11px] px-2 py-1 rounded-md border border-primary/40 text-primary hover:bg-primary/10 inline-flex items-center gap-1">
@@ -207,7 +207,7 @@ function TaskConfig({ task, sprintName, labName, onChange, onDelete }: {
               {EDITORS.map(ed => <option key={ed.value} value={ed.value}>{ed.label}</option>)}
             </select>
           </Field>
-          <Field label="Language">
+          <Field label="Default language">
             <select value={task.language} onChange={e => onChange({ language: e.target.value as Language })} disabled={task.editor === "none"} className="w-full bg-transparent border border-border rounded-md px-3 py-2 text-sm disabled:opacity-50">
               {LANGUAGES.map(l => <option key={l} value={l}>{l}</option>)}
             </select>
@@ -223,15 +223,47 @@ function TaskConfig({ task, sprintName, labName, onChange, onDelete }: {
           <Field label="Est. minutes">
             <input type="number" value={task.estMin} onChange={e => onChange({ estMin: Number(e.target.value) })} className="w-full bg-transparent border border-border rounded-md px-3 py-2 text-sm" />
           </Field>
+          {task.editor !== "none" && (
+            <Field label="Allowed languages (learners can switch)" full>
+              <div className="flex flex-wrap gap-1.5 rounded-md border border-border p-2">
+                {LANGUAGES.map(l => {
+                  const selected = (task.allowedLanguages ?? []).includes(l);
+                  return (
+                    <button
+                      type="button"
+                      key={l}
+                      onClick={() => {
+                        const cur = new Set(task.allowedLanguages ?? []);
+                        selected ? cur.delete(l) : cur.add(l);
+                        onChange({ allowedLanguages: Array.from(cur) });
+                      }}
+                      className={`text-[10px] px-2 py-0.5 rounded border ${selected ? "border-primary bg-primary/10 text-primary" : "border-border text-muted-foreground hover:bg-accent"}`}
+                    >
+                      {l}
+                    </button>
+                  );
+                })}
+              </div>
+              <p className="text-[10px] text-muted-foreground mt-1">Leave empty to lock to the default language.</p>
+            </Field>
+          )}
           <Field label="Starter path in repo (optional)" full>
-            <input value={task.starterPath ?? ""} onChange={e => onChange({ starterPath: e.target.value })} placeholder="e.g. sprints/01-foundations/task-01" className="w-full bg-transparent border border-border rounded-md px-3 py-2 font-mono text-xs" />
+            <input value={task.starterPath ?? ""} onChange={e => onChange({ starterPath: e.target.value })} placeholder="e.g. sprints/01-foundations/ticket-01" className="w-full bg-transparent border border-border rounded-md px-3 py-2 font-mono text-xs" />
           </Field>
-          <Field label="Description / brief" full>
+          <Field label="Problem description / brief" full>
             <textarea rows={3} value={task.description} onChange={e => onChange({ description: e.target.value })} className="w-full bg-transparent border border-border rounded-md px-3 py-2 text-sm" />
+          </Field>
+          <Field label="Hints (shown in preview under the Hints tab)" full>
+            <textarea rows={3} value={task.hints ?? ""} onChange={e => onChange({ hints: e.target.value })} placeholder="Nudges that unblock learners without spoiling the answer." className="w-full bg-transparent border border-border rounded-md px-3 py-2 text-sm" />
           </Field>
           {task.editor !== "none" && (
             <Field label="Starter code" full>
               <textarea rows={10} value={task.starterCode} onChange={e => onChange({ starterCode: e.target.value })} spellCheck={false} className="w-full bg-background border border-border rounded-md px-3 py-2 font-mono text-xs leading-5" />
+            </Field>
+          )}
+          {task.editor !== "none" && (
+            <Field label="Reference solution" full>
+              <textarea rows={8} value={task.solution ?? ""} onChange={e => onChange({ solution: e.target.value })} spellCheck={false} placeholder="Model solution shown in the preview's Solution tab." className="w-full bg-background border border-border rounded-md px-3 py-2 font-mono text-xs leading-5" />
             </Field>
           )}
         </div>
