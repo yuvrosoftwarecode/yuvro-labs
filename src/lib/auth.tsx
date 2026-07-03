@@ -35,6 +35,6 @@ export const useAuth = () => useContext(Ctx);
 
 export const DEMO_ACCOUNTS: Record<string, { password: string; user: AuthUser }> = {
   "student@yuvrolabs.com": { password: "student123", user: { email: "student@yuvrolabs.com", name: "Alex Student", role: "student" } },
-  "developer@yuvrolabs.com": { password: "developer123", user: { email: "developer@yuvrolabs.com", name: "Dev Patel", role: "developer" } },
+  
   "admin@yuvrolabs.com": { password: "admin123", user: { email: "admin@yuvrolabs.com", name: "Admin Yuvro", role: "admin" } },
 };
