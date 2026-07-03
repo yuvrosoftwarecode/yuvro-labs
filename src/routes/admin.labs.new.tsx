@@ -107,7 +107,7 @@ function LabBuilder() {
             </Panel>
           )}
           {step === 1 && (
-            <Panel title="Sprints & tasks">
+            <Panel title="Sprints & tickets">
               <SprintBuilder sprints={sprints} setSprints={setSprints} labName={form.title || "New lab"} />
             </Panel>
           )}
@@ -129,7 +129,7 @@ function LabBuilder() {
           <div className="space-y-2 text-xs">
             <div className="flex items-center gap-2"><Badge tone={form.title ? "success" : "destructive"}>{form.title ? "ready" : "missing"}</Badge> {form.title || "Title required"}</div>
             <div className="flex items-center gap-2"><Badge tone={form.description ? "success" : "destructive"}>{form.description ? "ready" : "missing"}</Badge> Description</div>
-            <div className="flex items-center gap-2"><Badge tone={sprints.length ? "success" : "warning"}>{sprints.length} sprints</Badge> {sprints.reduce((a, s) => a + s.tasks.length, 0)} tasks</div>
+            <div className="flex items-center gap-2"><Badge tone={sprints.length ? "success" : "warning"}>{sprints.length} sprints</Badge> {sprints.reduce((a, s) => a + s.tasks.length, 0)} tickets</div>
             <div className="text-muted-foreground pt-2 border-t border-border/60">{LAB_TYPES.find(t => t.value === form.type)?.label} · {DIFFICULTIES.find(d => d.value === form.difficulty)?.label} · {form.isActive ? "Active" : "Inactive"}</div>
           </div>
         </Panel>

@@ -1,4 +1,4 @@
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import CodeMirror from "@uiw/react-codemirror";
 import { python } from "@codemirror/lang-python";
 import { java } from "@codemirror/lang-java";
@@ -11,7 +11,8 @@ import { vscodeDark } from "@uiw/codemirror-theme-vscode";
 import {
   Play, Save, Send, FileCode2, Database, BookOpen, X,
   Folder, FolderOpen, ChevronRight, ChevronDown, GitBranch,
-  Search, Bug, Package, Settings, Terminal as TerminalIcon, CheckCircle2,
+  Lightbulb, CheckCircle, Files,
+  Settings, Terminal as TerminalIcon, CheckCircle2,
 } from "lucide-react";
 import type { LabTask, Language } from "@/lib/labSprints";
 
@@ -40,7 +41,16 @@ function extLabel(l: Language): string {
   return map[l] ?? "txt";
 }
 
-function defaultFiles(task: LabTask): { name: string; content: string }[] {
+function mainFileFor(lang: Language, starter: string) {
+  const ext = extLabel(lang);
+  const name =
+    lang === "java" ? "Main.java" :
+    lang === "python" ? "main.py" :
+    `main.${ext}`;
+  return { name, content: starter || "" };
+}
+
+function defaultFiles(task: LabTask, lang: Language): { name: string; content: string }[] {
   if (task.editor === "sql") {
     return [
       { name: "query.sql", content: task.starterCode || "-- Write your query here\n" },
@@ -49,16 +59,20 @@ function defaultFiles(task: LabTask): { name: string; content: string }[] {
       { name: "README.md", content: `# ${task.title}\n\n${task.description}` },
     ];
   }
-  const ext = extLabel(task.language);
-  const main =
-    task.language === "java" ? "Main.java" :
-    task.language === "python" ? "main.py" :
-    `main.${ext}`;
   return [
-    { name: main, content: task.starterCode || "" },
+    mainFileFor(lang, task.starterCode),
     { name: "README.md", content: `# ${task.title}\n\n${task.description}` },
   ];
 }
+
+type SideTab = "explorer" | "problem" | "hints" | "solution";
+
+const SIDE_TABS: { id: SideTab; label: string; Icon: typeof Files }[] = [
+  { id: "explorer", label: "Explorer", Icon: Files },
+  { id: "problem", label: "Problem", Icon: BookOpen },
+  { id: "hints", label: "Hints", Icon: Lightbulb },
+  { id: "solution", label: "Solution", Icon: CheckCircle },
+];
 
 export function TaskPreview({
   task, sprintName, labName, onClose,
@@ -68,26 +82,40 @@ export function TaskPreview({
   labName: string;
   onClose?: () => void;
 }) {
-  const files = useMemo(() => defaultFiles(task), [task]);
+  const allowed = task.allowedLanguages && task.allowedLanguages.length > 1
+    ? task.allowedLanguages
+    : null;
+  const [lang, setLang] = useState<Language>(task.language);
+
+  useEffect(() => { setLang(task.language); }, [task.id, task.language]);
+
+  const files = useMemo(() => defaultFiles(task, lang), [task, lang]);
   const [activeFile, setActiveFile] = useState(files[0]?.name);
   const [contents, setContents] = useState<Record<string, string>>(
     () => Object.fromEntries(files.map(f => [f.name, f.content]))
   );
+
+  // Reset editor contents when the language or ticket changes.
+  useEffect(() => {
+    setContents(Object.fromEntries(files.map(f => [f.name, f.content])));
+    setActiveFile(files[0]?.name);
+  }, [task.id, lang]); // eslint-disable-line react-hooks/exhaustive-deps
+
   const [folderOpen, setFolderOpen] = useState(true);
-  const [showBrief, setShowBrief] = useState(true);
+  const [sideTab, setSideTab] = useState<SideTab>("explorer");
 
   const exts = useMemo(() => {
     if (activeFile?.endsWith(".md")) return [];
     if (activeFile?.endsWith(".sql")) return [cmSql()];
     if (activeFile?.endsWith(".html")) return [cmHtml()];
     if (activeFile?.endsWith(".css")) return [cmCss()];
-    return extFor(task.language);
-  }, [activeFile, task.language]);
+    return extFor(lang);
+  }, [activeFile, lang]);
 
   const isNone = task.editor === "none";
   const rootLabel = `${labName.toLowerCase().replace(/\s+/g, "-")}-lab`;
 
-  const content = (
+  return (
     <div className="fixed inset-0 z-50 bg-background flex flex-col">
       {/* Top bar */}
       <div className="flex items-center justify-between px-4 py-2 border-b border-border bg-card/60">
@@ -104,9 +132,6 @@ export function TaskPreview({
           <span className="text-[10px] px-1.5 py-0.5 rounded border border-border">{task.estMin}m</span>
         </div>
         <div className="flex items-center gap-1">
-          <button onClick={() => setShowBrief(s => !s)} className="text-[11px] px-2 py-1 rounded border border-border hover:bg-accent inline-flex items-center gap-1">
-            <BookOpen className="h-3 w-3" /> {showBrief ? "Hide" : "Show"} brief
-          </button>
           <button onClick={onClose} className="text-[11px] px-2 py-1 rounded border border-border hover:bg-accent inline-flex items-center gap-1">
             <X className="h-3 w-3" /> Close preview
           </button>
@@ -114,52 +139,108 @@ export function TaskPreview({
       </div>
 
       {/* IDE layout */}
-      <div className="flex-1 grid grid-cols-[44px_240px_1fr] min-h-0">
-        {/* Activity bar */}
-        <div className="border-r border-border bg-card/40 flex flex-col items-center py-2 gap-3 text-muted-foreground">
-          <FileCode2 className="h-4 w-4 text-primary" />
-          <Search className="h-4 w-4" />
-          <GitBranch className="h-4 w-4" />
-          <Bug className="h-4 w-4" />
-          <Package className="h-4 w-4" />
+      <div className="flex-1 grid grid-cols-[56px_280px_1fr] min-h-0">
+        {/* Activity bar — tabs */}
+        <div className="border-r border-border bg-card/40 flex flex-col items-center py-2 gap-1 text-muted-foreground">
+          {SIDE_TABS.map(({ id, label, Icon }) => {
+            const active = sideTab === id;
+            return (
+              <button
+                key={id}
+                onClick={() => setSideTab(id)}
+                title={label}
+                className={`w-full flex flex-col items-center gap-0.5 py-2 border-l-2 ${active ? "border-primary text-primary bg-primary/5" : "border-transparent hover:text-foreground hover:bg-accent/40"}`}
+              >
+                <Icon className="h-4 w-4" />
+                <span className="text-[9px] font-medium">{label}</span>
+              </button>
+            );
+          })}
           <div className="flex-1" />
-          <Settings className="h-4 w-4" />
+          <Settings className="h-4 w-4 mb-2" />
         </div>
 
-        {/* File explorer */}
+        {/* Side panel — content depends on active tab */}
         <div className="border-r border-border bg-card/30 overflow-auto">
-          <div className="px-3 py-2 text-[10px] uppercase tracking-wider text-muted-foreground border-b border-border">Explorer</div>
-          <div className="p-2 text-xs">
-            <button onClick={() => setFolderOpen(o => !o)} className="flex items-center gap-1 w-full text-left hover:bg-accent rounded px-1 py-0.5">
-              {folderOpen ? <ChevronDown className="h-3 w-3" /> : <ChevronRight className="h-3 w-3" />}
-              {folderOpen ? <FolderOpen className="h-3 w-3 text-primary" /> : <Folder className="h-3 w-3 text-primary" />}
-              <span className="font-mono text-[11px] truncate">{rootLabel}</span>
-            </button>
-            {folderOpen && (
-              <ul className="ml-4 mt-1 space-y-0.5 border-l border-border/60 pl-2">
-                {files.map(f => {
-                  const active = activeFile === f.name;
-                  return (
-                    <li key={f.name}>
-                      <button
-                        onClick={() => setActiveFile(f.name)}
-                        className={`w-full flex items-center gap-1 px-1.5 py-1 rounded text-[11px] font-mono ${active ? "bg-primary/15 text-primary" : "hover:bg-accent"}`}
-                      >
-                        {f.name.endsWith(".sql") ? <Database className="h-3 w-3" /> : <FileCode2 className="h-3 w-3" />}
-                        <span className="truncate">{f.name}</span>
-                      </button>
-                    </li>
-                  );
-                })}
-              </ul>
-            )}
+          <div className="px-3 py-2 text-[10px] uppercase tracking-wider text-muted-foreground border-b border-border">
+            {SIDE_TABS.find(t => t.id === sideTab)?.label}
           </div>
+
+          {sideTab === "explorer" && (
+            <div className="p-2 text-xs">
+              <button onClick={() => setFolderOpen(o => !o)} className="flex items-center gap-1 w-full text-left hover:bg-accent rounded px-1 py-0.5">
+                {folderOpen ? <ChevronDown className="h-3 w-3" /> : <ChevronRight className="h-3 w-3" />}
+                {folderOpen ? <FolderOpen className="h-3 w-3 text-primary" /> : <Folder className="h-3 w-3 text-primary" />}
+                <span className="font-mono text-[11px] truncate">{rootLabel}</span>
+              </button>
+              {folderOpen && (
+                <ul className="ml-4 mt-1 space-y-0.5 border-l border-border/60 pl-2">
+                  {files.map(f => {
+                    const active = activeFile === f.name;
+                    return (
+                      <li key={f.name}>
+                        <button
+                          onClick={() => setActiveFile(f.name)}
+                          className={`w-full flex items-center gap-1 px-1.5 py-1 rounded text-[11px] font-mono ${active ? "bg-primary/15 text-primary" : "hover:bg-accent"}`}
+                        >
+                          {f.name.endsWith(".sql") ? <Database className="h-3 w-3" /> : <FileCode2 className="h-3 w-3" />}
+                          <span className="truncate">{f.name}</span>
+                        </button>
+                      </li>
+                    );
+                  })}
+                </ul>
+              )}
+            </div>
+          )}
+
+          {sideTab === "problem" && (
+            <div className="p-4">
+              <h3 className="text-base font-semibold mb-2">{task.title}</h3>
+              <p className="text-xs text-muted-foreground whitespace-pre-wrap leading-relaxed">
+                {task.description || "No description yet. Add one in the ticket config to see it here."}
+              </p>
+              <div className="mt-4 grid grid-cols-3 gap-2 text-center text-[10px]">
+                <div className="rounded border border-border p-2"><div className="font-mono text-sm">{task.estMin}m</div><div className="text-muted-foreground">est.</div></div>
+                <div className="rounded border border-border p-2"><div className="font-mono text-sm">{task.xp}</div><div className="text-muted-foreground">XP</div></div>
+                <div className="rounded border border-border p-2"><div className="font-mono text-sm capitalize">{task.editor}</div><div className="text-muted-foreground">{isNone ? "—" : lang}</div></div>
+              </div>
+              {task.starterPath && (
+                <div className="mt-4 text-[10px] text-muted-foreground">
+                  <div className="uppercase tracking-wider mb-1">Starter path</div>
+                  <code className="font-mono text-[11px] bg-background px-2 py-1 rounded border border-border block break-all">{task.starterPath}</code>
+                </div>
+              )}
+            </div>
+          )}
+
+          {sideTab === "hints" && (
+            <div className="p-4 text-xs whitespace-pre-wrap leading-relaxed text-muted-foreground">
+              {task.hints?.trim()
+                ? task.hints
+                : "No hints yet. Add hints in the ticket config to guide learners without spoilers."}
+            </div>
+          )}
+
+          {sideTab === "solution" && (
+            <div className="p-3">
+              {task.solution?.trim() ? (
+                <pre className="font-mono text-[11px] bg-background border border-border rounded p-3 overflow-auto whitespace-pre-wrap leading-5">
+{task.solution}
+                </pre>
+              ) : (
+                <div className="text-xs text-muted-foreground p-2">
+                  No reference solution yet. Add one in the ticket config.
+                </div>
+              )}
+            </div>
+          )}
         </div>
 
-        {/* Editor + brief */}
+        {/* Editor column */}
         <div className="flex min-h-0">
           <div className="flex-1 flex flex-col min-w-0">
-            {/* Tabs */}
+            {/* Tabs / toolbar */}
             <div className="flex items-center justify-between border-b border-border bg-background/40 px-2">
               <div className="flex">
                 {activeFile && (
@@ -170,6 +251,18 @@ export function TaskPreview({
                 )}
               </div>
               <div className="flex items-center gap-1 py-1">
+                {allowed && !isNone && (
+                  <label className="text-[10px] inline-flex items-center gap-1 mr-1 text-muted-foreground">
+                    Language
+                    <select
+                      value={lang}
+                      onChange={e => setLang(e.target.value as Language)}
+                      className="text-[10px] bg-background border border-border rounded px-1.5 py-0.5"
+                    >
+                      {allowed.map(l => <option key={l} value={l}>{l}</option>)}
+                    </select>
+                  </label>
+                )}
                 <button className="text-[10px] px-2 py-1 rounded border border-border inline-flex items-center gap-1"><Save className="h-3 w-3" /> Save</button>
                 <button className="text-[10px] px-2 py-1 rounded bg-primary text-primary-foreground inline-flex items-center gap-1"><Play className="h-3 w-3" /> Run</button>
                 <button className="text-[10px] px-2 py-1 rounded border border-border inline-flex items-center gap-1"><Send className="h-3 w-3" /> Submit</button>
@@ -180,7 +273,7 @@ export function TaskPreview({
             <div className="flex-1 min-h-0 overflow-hidden">
               {isNone ? (
                 <div className="h-full grid place-items-center p-8 text-xs text-muted-foreground text-center">
-                  Theory / quiz task — no editor will be shown to the student.
+                  Theory / quiz ticket — no editor will be shown to the student.
                 </div>
               ) : activeFile ? (
                 <CodeMirror
@@ -203,42 +296,14 @@ export function TaskPreview({
                 <span className="inline-flex items-center gap-1"><TerminalIcon className="h-3 w-3" /> ready</span>
               </div>
               <div className="flex items-center gap-3">
-                <span>{task.editor === "sql" ? "PostgreSQL 16" : `${task.language}`}</span>
+                <span>{task.editor === "sql" ? "PostgreSQL 16" : `${lang}`}</span>
                 <span>UTF-8</span>
                 <span>Ln 1, Col 1</span>
               </div>
             </div>
           </div>
-
-          {/* Brief side panel */}
-          {showBrief && (
-            <div className="w-[340px] border-l border-border bg-card/30 overflow-auto">
-              <div className="px-3 py-2 text-[10px] uppercase tracking-wider text-muted-foreground border-b border-border flex items-center gap-1">
-                <BookOpen className="h-3 w-3" /> Problem
-              </div>
-              <div className="p-4">
-                <h3 className="text-base font-semibold mb-2">{task.title}</h3>
-                <p className="text-xs text-muted-foreground whitespace-pre-wrap leading-relaxed">
-                  {task.description || "No description yet. Add a description in the Task config to see it here."}
-                </p>
-                <div className="mt-4 grid grid-cols-3 gap-2 text-center text-[10px]">
-                  <div className="rounded border border-border p-2"><div className="font-mono text-sm">{task.estMin}m</div><div className="text-muted-foreground">est.</div></div>
-                  <div className="rounded border border-border p-2"><div className="font-mono text-sm">{task.xp}</div><div className="text-muted-foreground">XP</div></div>
-                  <div className="rounded border border-border p-2"><div className="font-mono text-sm capitalize">{task.editor}</div><div className="text-muted-foreground">{isNone ? "—" : task.language}</div></div>
-                </div>
-                {task.starterPath && (
-                  <div className="mt-4 text-[10px] text-muted-foreground">
-                    <div className="uppercase tracking-wider mb-1">Starter path</div>
-                    <code className="font-mono text-[11px] bg-background px-2 py-1 rounded border border-border block break-all">{task.starterPath}</code>
-                  </div>
-                )}
-              </div>
-            </div>
-          )}
         </div>
       </div>
     </div>
   );
-
-  return content;
 }
