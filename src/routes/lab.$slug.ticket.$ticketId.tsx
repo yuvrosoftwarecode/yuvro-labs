@@ -30,7 +30,34 @@ import {
   ContextMenuTrigger,
 } from "@/components/ui/context-menu";
 
-export const Route = createFileRoute("/lab/$slug/ticket/$ticketId")({ component: TicketEditor });
+export const Route = createFileRoute("/lab/$slug/ticket/$ticketId")({ component: TicketEditorRoute });
+
+export type StudentPreviewOverride = {
+  title?: string;
+  description?: string;
+  difficulty?: "Beginner" | "Intermediate" | "Advanced";
+  xp?: number;
+  estMin?: number;
+  tag?: string;
+  starterCode?: string;
+  hints?: string;
+  solution?: string;
+};
+
+function TicketEditorRoute() {
+  const { slug, ticketId } = useParams({ from: "/lab/$slug/ticket/$ticketId" });
+  const [previewOverride, setPreviewOverride] = useState<StudentPreviewOverride | null>(null);
+  useEffect(() => {
+    if (typeof window === "undefined") return;
+    const params = new URLSearchParams(window.location.search);
+    if (params.get("preview") !== "1") return;
+    try {
+      const raw = sessionStorage.getItem("__adminPreviewTicket");
+      if (raw) setPreviewOverride(JSON.parse(raw));
+    } catch { /* ignore */ }
+  }, [ticketId]);
+  return <StudentTicketView slug={slug} ticketId={ticketId} previewOverride={previewOverride} />;
+}
 
 const STARTER_MAIN = `public class Main {
     public static void main(String[] args) {
