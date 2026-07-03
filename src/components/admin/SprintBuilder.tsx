@@ -8,10 +8,11 @@ import { TaskPreview } from "./TaskPreview";
 
 type Selection = { sprintId: string; taskId?: string } | null;
 
-export function SprintBuilder({ sprints, setSprints, labName = "Lab" }: {
+export function SprintBuilder({ sprints, setSprints, labName = "Lab", labSlug }: {
   sprints: LabSprint[];
   setSprints: (s: LabSprint[]) => void;
   labName?: string;
+  labSlug?: string;
   onConfigureTasks?: (sprintId: string) => void; // kept for API compat
 }) {
   const [selection, setSelection] = useState<Selection>(null);
@@ -129,6 +130,7 @@ export function SprintBuilder({ sprints, setSprints, labName = "Lab" }: {
             task={activeTask}
             sprintName={activeSprint.name}
             labName={labName}
+            labSlug={labSlug}
             onChange={(patch) => updateTask(activeSprint.id, activeTask.id, patch)}
             onDelete={() => removeTask(activeSprint.id, activeTask.id)}
           />
@@ -174,10 +176,11 @@ function SprintConfig({ sprint, onChange }: {
   );
 }
 
-function TaskConfig({ task, sprintName, labName, onChange, onDelete }: {
+function TaskConfig({ task, sprintName, labName, labSlug, onChange, onDelete }: {
   task: LabTask;
   sprintName: string;
   labName: string;
+  labSlug?: string;
   onChange: (p: Partial<LabTask>) => void;
   onDelete: () => void;
 }) {
@@ -270,7 +273,7 @@ function TaskConfig({ task, sprintName, labName, onChange, onDelete }: {
       </div>
 
       {previewOpen && (
-        <TaskPreview task={task} sprintName={sprintName} labName={labName} onClose={() => setPreviewOpen(false)} />
+        <TaskPreview task={task} sprintName={sprintName} labName={labName} labSlug={labSlug} onClose={() => setPreviewOpen(false)} />
       )}
     </>
   );

@@ -108,7 +108,7 @@ function LabBuilder() {
           )}
           {step === 1 && (
             <Panel title="Sprints & tickets">
-              <SprintBuilder sprints={sprints} setSprints={setSprints} labName={form.title || "New lab"} />
+              <SprintBuilder sprints={sprints} setSprints={setSprints} labName={form.title || "New lab"} labSlug={form.slug || form.title} />
             </Panel>
           )}
 
