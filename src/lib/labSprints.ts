@@ -23,6 +23,10 @@ export interface LabTask {
   language: Language;
   starterCode: string;
   starterPath?: string;
+  hints?: string;
+  solution?: string;
+  /** When set with 2+ entries, the ticket editor lets learners switch language. */
+  allowedLanguages?: Language[];
 }
 
 export interface LabSprint {
