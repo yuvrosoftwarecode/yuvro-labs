@@ -1,6 +1,6 @@
 import { createContext, useContext, useEffect, useState, ReactNode } from "react";
 
-export type Role = "student" | "developer" | "admin" | "job_seeker" | "recruiter";
+export type Role = "student" | "admin" | "job_seeker" | "recruiter";
 export interface AuthUser { email: string; name: string; role: Role; }
 
 const KEY = "yuvro-auth";
