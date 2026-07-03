@@ -222,6 +222,11 @@ const SLUG_LANGUAGE: Record<string, Language> = {
   systemdesign: "javascript", cybersecurity: "python",
   pydjango: "python", pyflask: "python", javaspring: "java",
   postgres: "sql", git: "bash",
+  linux: "bash", qa: "javascript",
+};
+
+const SLUG_EDITOR: Record<string, EditorKind> = {
+  systemdesign: "none",
 };
 
 const STARTERS: Record<Language, string> = {
@@ -241,12 +246,11 @@ const MULTI_LANG_SLUGS: Record<string, Language[]> = {
   programming: ["python", "javascript", "typescript", "java"],
 };
 
-function ticketToTask(t: Ticket, lang: Language, allowed?: Language[]): LabTask {
-  const editor: EditorKind = lang === "sql" ? "sql" : "code";
+function ticketToTask(t: Ticket, lang: Language, editor: EditorKind, allowed?: Language[]): LabTask {
   return {
     id: t.id, title: t.title, description: t.description,
     difficulty: t.difficulty, xp: t.xp, estMin: t.estMin,
-    editor, language: lang, starterCode: STARTERS[lang] ?? "",
+    editor, language: lang, starterCode: editor === "none" ? "" : (STARTERS[lang] ?? ""),
     allowedLanguages: allowed,
   };
 }
@@ -255,10 +259,11 @@ export function seedSprintsFromCatalog(slug: string): LabSprint[] {
   const groups = SPRINT_GROUPS[slug];
   if (!groups) return [];
   const lang = SLUG_LANGUAGE[slug] ?? "python";
+  const editor: EditorKind = SLUG_EDITOR[slug] ?? (lang === "sql" ? "sql" : "code");
   const allowed = MULTI_LANG_SLUGS[slug];
   return groups.map(g => ({
     id: g.id, name: g.name, description: g.goal,
-    tasks: catalogTickets.filter(t => g.tags.includes(t.tag)).map(t => ticketToTask(t, lang, allowed)),
+    tasks: catalogTickets.filter(t => g.tags.includes(t.tag)).map(t => ticketToTask(t, lang, editor, allowed)),
   }));
 }
 
