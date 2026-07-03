@@ -70,6 +70,12 @@ export const labs: Lab[] = [
   { slug: "cybersecurity", name: "Cyber Security Lab", icon: "🛡️", color: "sec", difficulty: "Advanced", completed: 0, total: 18, hoursLeft: 30, description: "Hands-on offensive and defensive security: OWASP, auth, crypto, network and cloud hardening.", skills: [
     { name: "OWASP Top 10", pct: 20 }, { name: "AuthN/AuthZ", pct: 15 }, { name: "Cryptography", pct: 10 }, { name: "Network Sec", pct: 10 }
   ]},
+  { slug: "linux", name: "Linux Lab", icon: "🐧", color: "prog", difficulty: "Beginner", completed: 0, total: 16, hoursLeft: 20, description: "Master the Linux command line: files, permissions, processes, networking and shell scripting.", skills: [
+    { name: "CLI", pct: 0 }, { name: "Permissions", pct: 0 }, { name: "Shell", pct: 0 }, { name: "Networking", pct: 0 }
+  ]},
+  { slug: "qa", name: "QA Lab", icon: "🧪", color: "ui", difficulty: "Intermediate", completed: 0, total: 15, hoursLeft: 22, description: "Manual and automated testing: test cases, API tests, Playwright/Selenium and CI integration.", skills: [
+    { name: "Test Cases", pct: 0 }, { name: "API Testing", pct: 0 }, { name: "Automation", pct: 0 }, { name: "CI/CD", pct: 0 }
+  ]},
 ];
 
 const mk = (i: number, title: string, diff: Difficulty, st: Status, tag: string, mins = 45, xp = 150, progress?: number, score?: number): Ticket => ({
