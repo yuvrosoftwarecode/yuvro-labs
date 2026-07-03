@@ -151,17 +151,18 @@ function EmptyState({ message }: { message: string }) {
   );
 }
 
-function SprintConfig({ sprint, onChange, onAddTask, onSelectTask }: {
+function SprintConfig({ sprint, onChange }: {
   sprint: LabSprint;
   onChange: (p: Partial<LabSprint>) => void;
-  onAddTask: () => void;
-  onSelectTask: (tid: string) => void;
 }) {
   return (
     <div className="p-5 space-y-4">
       <div>
         <div className="text-[10px] uppercase tracking-wider text-muted-foreground">Sprint</div>
         <h3 className="text-lg font-semibold mt-0.5">Configure sprint</h3>
+        <p className="text-[11px] text-muted-foreground mt-1">
+          Manage tickets from the sprint tree on the left.
+        </p>
       </div>
       <Field label="Sprint title">
         <input value={sprint.name} onChange={e => onChange({ name: e.target.value })} className="w-full bg-transparent border border-border rounded-md px-3 py-2 text-sm" />
@@ -169,27 +170,6 @@ function SprintConfig({ sprint, onChange, onAddTask, onSelectTask }: {
       <Field label="Description / goal">
         <textarea rows={4} value={sprint.description} onChange={e => onChange({ description: e.target.value })} className="w-full bg-transparent border border-border rounded-md px-3 py-2 text-sm" />
       </Field>
-      <div className="pt-2 border-t border-border/60">
-        <div className="flex items-center justify-between mb-2">
-          <div className="text-xs font-semibold">Tasks in this sprint ({sprint.tasks.length})</div>
-          <button onClick={onAddTask} className="text-[11px] px-2 py-1 rounded-md bg-primary text-primary-foreground inline-flex items-center gap-1"><Plus className="h-3 w-3" /> Add task</button>
-        </div>
-        {sprint.tasks.length === 0 ? (
-          <div className="text-[11px] text-muted-foreground py-4 text-center border border-dashed border-border rounded-md">No tasks yet.</div>
-        ) : (
-          <ul className="space-y-1">
-            {sprint.tasks.map(t => (
-              <li key={t.id}>
-                <button onClick={() => onSelectTask(t.id)} className="w-full flex items-center gap-2 text-left px-2 py-1.5 rounded-md border border-border hover:bg-accent text-xs">
-                  <FileCode className="h-3 w-3 text-muted-foreground" />
-                  <span className="flex-1 truncate">{t.title}</span>
-                  <span className="text-[10px] text-muted-foreground">{t.editor === "none" ? "no editor" : `${t.editor} · ${t.language}`} · {t.xp} XP</span>
-                </button>
-              </li>
-            ))}
-          </ul>
-        )}
-      </div>
     </div>
   );
 }
