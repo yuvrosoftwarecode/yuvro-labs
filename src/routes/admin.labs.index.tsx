@@ -1,6 +1,6 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { AdminShell, Badge, KpiCard } from "@/components/admin/AdminShell";
-import { Plus, FlaskConical, Trash2, Pencil, ExternalLink, ListChecks, Github, CheckCircle2 } from "lucide-react";
+import { Plus, FlaskConical, Trash2, Pencil, CheckCircle2 } from "lucide-react";
 import { useEffect, useMemo, useState } from "react";
 import { loadLabs, deleteLab, LAB_TYPES, labTypeLabel, difficultyLabel, type AdminLab, type LabType } from "@/lib/adminLabs";
 
