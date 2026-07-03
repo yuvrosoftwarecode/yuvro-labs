@@ -31,7 +31,7 @@ function SprintTasksPage() {
   const sprint = sprints.find(s => s.id === sprintId);
   if (!sprint) {
     return (
-      <AdminShell title="Sprint not found" breadcrumb={["Engineering", "Labs", lab.name, "Sprints"]}>
+      <AdminShell title="Sprint not found" breadcrumb={["Engineering", "Labs", lab.title, "Sprints"]}>
         <Panel title="Missing sprint">
           <div className="text-sm">This sprint no longer exists.</div>
           <Link to="/admin/labs/$id/edit" params={{ id: lab.id }} className="mt-3 inline-block text-xs px-3 py-1.5 rounded-md border border-border hover:bg-accent">← Back to lab</Link>
@@ -63,7 +63,7 @@ function SprintTasksPage() {
   return (
     <AdminShell
       title={`Sprint · ${sprint.name}`}
-      breadcrumb={["Engineering", "Labs", lab.name, "Sprints", sprint.name]}
+      breadcrumb={["Engineering", "Labs", lab.title, "Sprints", sprint.name]}
       right={
         <div className="flex items-center gap-2">
           <Link to="/admin/labs/$id/edit" params={{ id: lab.id }} className="text-xs px-3 py-1.5 rounded-md border border-border hover:bg-accent inline-flex items-center gap-1">
@@ -145,7 +145,7 @@ function SprintTasksPage() {
               <Badge tone="primary">{sprint.tasks.length} tasks</Badge>
               <Badge tone="success">{sprint.tasks.reduce((a, t) => a + t.xp, 0)} XP</Badge>
             </div>
-            <div className="text-muted-foreground">Lab: <Link to="/admin/labs/$id/edit" params={{ id: lab.id }} className="text-primary hover:underline">{lab.name}</Link></div>
+            <div className="text-muted-foreground">Lab: <Link to="/admin/labs/$id/edit" params={{ id: lab.id }} className="text-primary hover:underline">{lab.title}</Link></div>
           </div>
         </Panel>
       </div>

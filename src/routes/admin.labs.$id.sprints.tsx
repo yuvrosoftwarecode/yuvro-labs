@@ -86,8 +86,8 @@ function SprintsPage() {
 
   return (
     <AdminShell
-      title={`${lab.icon} ${lab.name} · Sprints`}
-      breadcrumb={["Engineering", "Labs", lab.name, "Sprints"]}
+      title={`${lab.icon} ${lab.title} · Sprints`}
+      breadcrumb={["Engineering", "Labs", lab.title, "Sprints"]}
       right={
         <div className="flex items-center gap-2">
           <Link to="/admin/labs/$id/edit" params={{ id: lab.id }} className="text-xs px-3 py-1.5 rounded-md border border-border hover:bg-accent">Edit lab</Link>
