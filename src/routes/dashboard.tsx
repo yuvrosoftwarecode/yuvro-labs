@@ -121,9 +121,6 @@ function Hub() {
             </div>
           </section>
         </div>
-
-          </aside>
-        </div>
       </main>
     </div>
   );
