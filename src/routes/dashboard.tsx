@@ -3,7 +3,7 @@ import { TopNav } from "@/components/TopNav";
 import { ProgressRing } from "@/components/ProgressRing";
 import { DiffBadge } from "@/components/Badges";
 import { labs, me } from "@/lib/dummy";
-import { ArrowRight, Sparkles, Flame, Zap, Trophy } from "lucide-react";
+import { ArrowRight, Sparkles, Flame, Zap, Trophy, Rocket } from "lucide-react";
 
 export const Route = createFileRoute("/dashboard")({ component: Hub });
 
@@ -28,6 +28,9 @@ function Hub() {
             <div className="mt-6 flex flex-wrap gap-3">
               <Link to="/lab/$slug" params={{ slug: "java" }} className="inline-flex items-center gap-2 rounded-md bg-primary px-4 py-2 text-sm font-medium text-primary-foreground hover:opacity-90">
                 Continue Java Lab <ArrowRight className="h-4 w-4" />
+              </Link>
+              <Link to="/hackathons" className="inline-flex items-center gap-2 rounded-md border border-warning/40 bg-warning/10 px-4 py-2 text-sm font-medium text-warning hover:bg-warning/15">
+                <Rocket className="h-4 w-4" /> Explore Hackathons
               </Link>
               <Link to="/analytics" className="inline-flex items-center gap-2 rounded-md border px-4 py-2 text-sm hover:bg-accent">
                 View analytics

@@ -1,5 +1,5 @@
 import { Link, useRouterState, useNavigate } from "@tanstack/react-router";
-import { Flame, Zap, Trophy, User, Users, LayoutDashboard, MessagesSquare, Award, BarChart3, Sun, Moon, LogOut } from "lucide-react";
+import { Flame, Zap, Trophy, User, Users, LayoutDashboard, MessagesSquare, Award, BarChart3, Sun, Moon, LogOut, Rocket } from "lucide-react";
 import { useTheme } from "@/hooks/use-theme";
 import { me } from "@/lib/dummy";
 import { useAuth } from "@/lib/auth";
@@ -7,6 +7,7 @@ import { useAuth } from "@/lib/auth";
 const links = [
   { to: "/dashboard", label: "Individual Hub", icon: LayoutDashboard },
   { to: "/collaboration", label: "Collaboration Hub", icon: Users },
+  { to: "/hackathons", label: "Hackathons", icon: Rocket },
   { to: "/analytics", label: "Analytics", icon: BarChart3 },
   { to: "/leaderboard", label: "Leaderboard", icon: Trophy },
   { to: "/forum", label: "Forum", icon: MessagesSquare },
