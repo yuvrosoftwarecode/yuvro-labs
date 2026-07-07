@@ -1,6 +1,6 @@
 import { createFileRoute, Link, notFound } from "@tanstack/react-router";
 import { TopNav } from "@/components/TopNav";
-import { getHackathon, availableLabs } from "@/lib/hackathons";
+import { getHackathon, availableLabs, type HackathonGoal } from "@/lib/hackathons";
 import { Trophy, Calendar, Target, ArrowLeft, Zap, Clock } from "lucide-react";
 
 export const Route = createFileRoute("/hackathons/$id")({
@@ -72,7 +72,7 @@ function HackathonDetail() {
             {hackathon.goals.length === 0 && (
               <div className="rounded-xl border bg-card p-6 text-center text-sm text-muted-foreground">No goals defined yet.</div>
             )}
-            {hackathon.goals.map((g, i) => {
+            {hackathon.goals.map((g: HackathonGoal, i: number) => {
               const lab = labMap.get(g.labSlug);
               const tone = g.difficulty === "Advanced" ? "bg-destructive/15 text-destructive" : g.difficulty === "Intermediate" ? "bg-warning/15 text-warning" : "bg-success/15 text-success";
               return (

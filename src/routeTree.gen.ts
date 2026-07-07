@@ -11,6 +11,7 @@
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as ProfileRouteImport } from './routes/profile'
 import { Route as LeaderboardRouteImport } from './routes/leaderboard'
+import { Route as HackathonsRouteImport } from './routes/hackathons'
 import { Route as ForumRouteImport } from './routes/forum'
 import { Route as DashboardRouteImport } from './routes/dashboard'
 import { Route as CollaborationRouteImport } from './routes/collaboration'
@@ -22,6 +23,7 @@ import { Route as IndexRouteImport } from './routes/index'
 import { Route as CollaborationIndexRouteImport } from './routes/collaboration.index'
 import { Route as AdminIndexRouteImport } from './routes/admin.index'
 import { Route as LabSlugRouteImport } from './routes/lab.$slug'
+import { Route as HackathonsIdRouteImport } from './routes/hackathons.$id'
 import { Route as CollaborationSquadsRouteImport } from './routes/collaboration.squads'
 import { Route as CollaborationConnectionsRouteImport } from './routes/collaboration.connections'
 import { Route as CollaborationBrowseRouteImport } from './routes/collaboration.browse'
@@ -37,12 +39,15 @@ import { Route as AdminIntelligenceRouteImport } from './routes/admin.intelligen
 import { Route as AdminInstitutionsRouteImport } from './routes/admin.institutions'
 import { Route as AdminInfrastructureRouteImport } from './routes/admin.infrastructure'
 import { Route as AdminIncidentsRouteImport } from './routes/admin.incidents'
+import { Route as AdminHackathonsRouteImport } from './routes/admin.hackathons'
 import { Route as AdminCollaborationRouteImport } from './routes/admin.collaboration'
 import { Route as AdminAiMentorRouteImport } from './routes/admin.ai-mentor'
 import { Route as AdminLabsIndexRouteImport } from './routes/admin.labs.index'
+import { Route as AdminHackathonsIndexRouteImport } from './routes/admin.hackathons.index'
 import { Route as CollaborationSprintIdRouteImport } from './routes/collaboration.sprint.$id'
 import { Route as AdminUsersIdRouteImport } from './routes/admin.users.$id'
 import { Route as AdminLabsNewRouteImport } from './routes/admin.labs.new'
+import { Route as AdminHackathonsIdRouteImport } from './routes/admin.hackathons.$id'
 import { Route as LabSlugTicketTicketIdRouteImport } from './routes/lab.$slug.ticket.$ticketId'
 import { Route as CollaborationSprintIdWorkspaceRouteImport } from './routes/collaboration.sprint.$id.workspace'
 import { Route as AdminLabsIdSprintsRouteImport } from './routes/admin.labs.$id.sprints'
@@ -61,6 +66,11 @@ const ProfileRoute = ProfileRouteImport.update({
 const LeaderboardRoute = LeaderboardRouteImport.update({
   id: '/leaderboard',
   path: '/leaderboard',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const HackathonsRoute = HackathonsRouteImport.update({
+  id: '/hackathons',
+  path: '/hackathons',
   getParentRoute: () => rootRouteImport,
 } as any)
 const ForumRoute = ForumRouteImport.update({
@@ -117,6 +127,11 @@ const LabSlugRoute = LabSlugRouteImport.update({
   id: '/lab/$slug',
   path: '/lab/$slug',
   getParentRoute: () => rootRouteImport,
+} as any)
+const HackathonsIdRoute = HackathonsIdRouteImport.update({
+  id: '/$id',
+  path: '/$id',
+  getParentRoute: () => HackathonsRoute,
 } as any)
 const CollaborationSquadsRoute = CollaborationSquadsRouteImport.update({
   id: '/squads',
@@ -194,6 +209,11 @@ const AdminIncidentsRoute = AdminIncidentsRouteImport.update({
   path: '/incidents',
   getParentRoute: () => AdminRoute,
 } as any)
+const AdminHackathonsRoute = AdminHackathonsRouteImport.update({
+  id: '/hackathons',
+  path: '/hackathons',
+  getParentRoute: () => AdminRoute,
+} as any)
 const AdminCollaborationRoute = AdminCollaborationRouteImport.update({
   id: '/collaboration',
   path: '/collaboration',
@@ -209,6 +229,11 @@ const AdminLabsIndexRoute = AdminLabsIndexRouteImport.update({
   path: '/',
   getParentRoute: () => AdminLabsRoute,
 } as any)
+const AdminHackathonsIndexRoute = AdminHackathonsIndexRouteImport.update({
+  id: '/',
+  path: '/',
+  getParentRoute: () => AdminHackathonsRoute,
+} as any)
 const CollaborationSprintIdRoute = CollaborationSprintIdRouteImport.update({
   id: '/sprint/$id',
   path: '/sprint/$id',
@@ -223,6 +248,11 @@ const AdminLabsNewRoute = AdminLabsNewRouteImport.update({
   id: '/new',
   path: '/new',
   getParentRoute: () => AdminLabsRoute,
+} as any)
+const AdminHackathonsIdRoute = AdminHackathonsIdRouteImport.update({
+  id: '/$id',
+  path: '/$id',
+  getParentRoute: () => AdminHackathonsRoute,
 } as any)
 const LabSlugTicketTicketIdRoute = LabSlugTicketTicketIdRouteImport.update({
   id: '/ticket/$ticketId',
@@ -285,10 +315,12 @@ export interface FileRoutesByFullPath {
   '/collaboration': typeof CollaborationRouteWithChildren
   '/dashboard': typeof DashboardRoute
   '/forum': typeof ForumRoute
+  '/hackathons': typeof HackathonsRouteWithChildren
   '/leaderboard': typeof LeaderboardRoute
   '/profile': typeof ProfileRoute
   '/admin/ai-mentor': typeof AdminAiMentorRoute
   '/admin/collaboration': typeof AdminCollaborationRoute
+  '/admin/hackathons': typeof AdminHackathonsRouteWithChildren
   '/admin/incidents': typeof AdminIncidentsRoute
   '/admin/infrastructure': typeof AdminInfrastructureRoute
   '/admin/institutions': typeof AdminInstitutionsRoute
@@ -304,12 +336,15 @@ export interface FileRoutesByFullPath {
   '/collaboration/browse': typeof CollaborationBrowseRoute
   '/collaboration/connections': typeof CollaborationConnectionsRoute
   '/collaboration/squads': typeof CollaborationSquadsRoute
+  '/hackathons/$id': typeof HackathonsIdRoute
   '/lab/$slug': typeof LabSlugRouteWithChildren
   '/admin/': typeof AdminIndexRoute
   '/collaboration/': typeof CollaborationIndexRoute
+  '/admin/hackathons/$id': typeof AdminHackathonsIdRoute
   '/admin/labs/new': typeof AdminLabsNewRoute
   '/admin/users/$id': typeof AdminUsersIdRoute
   '/collaboration/sprint/$id': typeof CollaborationSprintIdRouteWithChildren
+  '/admin/hackathons/': typeof AdminHackathonsIndexRoute
   '/admin/labs/': typeof AdminLabsIndexRoute
   '/admin/labs/$id/edit': typeof AdminLabsIdEditRoute
   '/admin/labs/$id/sprints': typeof AdminLabsIdSprintsRouteWithChildren
@@ -328,6 +363,7 @@ export interface FileRoutesByTo {
   '/certificates': typeof CertificatesRoute
   '/dashboard': typeof DashboardRoute
   '/forum': typeof ForumRoute
+  '/hackathons': typeof HackathonsRouteWithChildren
   '/leaderboard': typeof LeaderboardRoute
   '/profile': typeof ProfileRoute
   '/admin/ai-mentor': typeof AdminAiMentorRoute
@@ -346,12 +382,15 @@ export interface FileRoutesByTo {
   '/collaboration/browse': typeof CollaborationBrowseRoute
   '/collaboration/connections': typeof CollaborationConnectionsRoute
   '/collaboration/squads': typeof CollaborationSquadsRoute
+  '/hackathons/$id': typeof HackathonsIdRoute
   '/lab/$slug': typeof LabSlugRouteWithChildren
   '/admin': typeof AdminIndexRoute
   '/collaboration': typeof CollaborationIndexRoute
+  '/admin/hackathons/$id': typeof AdminHackathonsIdRoute
   '/admin/labs/new': typeof AdminLabsNewRoute
   '/admin/users/$id': typeof AdminUsersIdRoute
   '/collaboration/sprint/$id': typeof CollaborationSprintIdRouteWithChildren
+  '/admin/hackathons': typeof AdminHackathonsIndexRoute
   '/admin/labs': typeof AdminLabsIndexRoute
   '/admin/labs/$id/edit': typeof AdminLabsIdEditRoute
   '/admin/labs/$id/sprints': typeof AdminLabsIdSprintsRouteWithChildren
@@ -373,10 +412,12 @@ export interface FileRoutesById {
   '/collaboration': typeof CollaborationRouteWithChildren
   '/dashboard': typeof DashboardRoute
   '/forum': typeof ForumRoute
+  '/hackathons': typeof HackathonsRouteWithChildren
   '/leaderboard': typeof LeaderboardRoute
   '/profile': typeof ProfileRoute
   '/admin/ai-mentor': typeof AdminAiMentorRoute
   '/admin/collaboration': typeof AdminCollaborationRoute
+  '/admin/hackathons': typeof AdminHackathonsRouteWithChildren
   '/admin/incidents': typeof AdminIncidentsRoute
   '/admin/infrastructure': typeof AdminInfrastructureRoute
   '/admin/institutions': typeof AdminInstitutionsRoute
@@ -392,12 +433,15 @@ export interface FileRoutesById {
   '/collaboration/browse': typeof CollaborationBrowseRoute
   '/collaboration/connections': typeof CollaborationConnectionsRoute
   '/collaboration/squads': typeof CollaborationSquadsRoute
+  '/hackathons/$id': typeof HackathonsIdRoute
   '/lab/$slug': typeof LabSlugRouteWithChildren
   '/admin/': typeof AdminIndexRoute
   '/collaboration/': typeof CollaborationIndexRoute
+  '/admin/hackathons/$id': typeof AdminHackathonsIdRoute
   '/admin/labs/new': typeof AdminLabsNewRoute
   '/admin/users/$id': typeof AdminUsersIdRoute
   '/collaboration/sprint/$id': typeof CollaborationSprintIdRouteWithChildren
+  '/admin/hackathons/': typeof AdminHackathonsIndexRoute
   '/admin/labs/': typeof AdminLabsIndexRoute
   '/admin/labs/$id/edit': typeof AdminLabsIdEditRoute
   '/admin/labs/$id/sprints': typeof AdminLabsIdSprintsRouteWithChildren
@@ -420,10 +464,12 @@ export interface FileRouteTypes {
     | '/collaboration'
     | '/dashboard'
     | '/forum'
+    | '/hackathons'
     | '/leaderboard'
     | '/profile'
     | '/admin/ai-mentor'
     | '/admin/collaboration'
+    | '/admin/hackathons'
     | '/admin/incidents'
     | '/admin/infrastructure'
     | '/admin/institutions'
@@ -439,12 +485,15 @@ export interface FileRouteTypes {
     | '/collaboration/browse'
     | '/collaboration/connections'
     | '/collaboration/squads'
+    | '/hackathons/$id'
     | '/lab/$slug'
     | '/admin/'
     | '/collaboration/'
+    | '/admin/hackathons/$id'
     | '/admin/labs/new'
     | '/admin/users/$id'
     | '/collaboration/sprint/$id'
+    | '/admin/hackathons/'
     | '/admin/labs/'
     | '/admin/labs/$id/edit'
     | '/admin/labs/$id/sprints'
@@ -463,6 +512,7 @@ export interface FileRouteTypes {
     | '/certificates'
     | '/dashboard'
     | '/forum'
+    | '/hackathons'
     | '/leaderboard'
     | '/profile'
     | '/admin/ai-mentor'
@@ -481,12 +531,15 @@ export interface FileRouteTypes {
     | '/collaboration/browse'
     | '/collaboration/connections'
     | '/collaboration/squads'
+    | '/hackathons/$id'
     | '/lab/$slug'
     | '/admin'
     | '/collaboration'
+    | '/admin/hackathons/$id'
     | '/admin/labs/new'
     | '/admin/users/$id'
     | '/collaboration/sprint/$id'
+    | '/admin/hackathons'
     | '/admin/labs'
     | '/admin/labs/$id/edit'
     | '/admin/labs/$id/sprints'
@@ -507,10 +560,12 @@ export interface FileRouteTypes {
     | '/collaboration'
     | '/dashboard'
     | '/forum'
+    | '/hackathons'
     | '/leaderboard'
     | '/profile'
     | '/admin/ai-mentor'
     | '/admin/collaboration'
+    | '/admin/hackathons'
     | '/admin/incidents'
     | '/admin/infrastructure'
     | '/admin/institutions'
@@ -526,12 +581,15 @@ export interface FileRouteTypes {
     | '/collaboration/browse'
     | '/collaboration/connections'
     | '/collaboration/squads'
+    | '/hackathons/$id'
     | '/lab/$slug'
     | '/admin/'
     | '/collaboration/'
+    | '/admin/hackathons/$id'
     | '/admin/labs/new'
     | '/admin/users/$id'
     | '/collaboration/sprint/$id'
+    | '/admin/hackathons/'
     | '/admin/labs/'
     | '/admin/labs/$id/edit'
     | '/admin/labs/$id/sprints'
@@ -553,6 +611,7 @@ export interface RootRouteChildren {
   CollaborationRoute: typeof CollaborationRouteWithChildren
   DashboardRoute: typeof DashboardRoute
   ForumRoute: typeof ForumRoute
+  HackathonsRoute: typeof HackathonsRouteWithChildren
   LeaderboardRoute: typeof LeaderboardRoute
   ProfileRoute: typeof ProfileRoute
   LabSlugRoute: typeof LabSlugRouteWithChildren
@@ -572,6 +631,13 @@ declare module '@tanstack/react-router' {
       path: '/leaderboard'
       fullPath: '/leaderboard'
       preLoaderRoute: typeof LeaderboardRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/hackathons': {
+      id: '/hackathons'
+      path: '/hackathons'
+      fullPath: '/hackathons'
+      preLoaderRoute: typeof HackathonsRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/forum': {
@@ -650,6 +716,13 @@ declare module '@tanstack/react-router' {
       fullPath: '/lab/$slug'
       preLoaderRoute: typeof LabSlugRouteImport
       parentRoute: typeof rootRouteImport
+    }
+    '/hackathons/$id': {
+      id: '/hackathons/$id'
+      path: '/$id'
+      fullPath: '/hackathons/$id'
+      preLoaderRoute: typeof HackathonsIdRouteImport
+      parentRoute: typeof HackathonsRoute
     }
     '/collaboration/squads': {
       id: '/collaboration/squads'
@@ -756,6 +829,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AdminIncidentsRouteImport
       parentRoute: typeof AdminRoute
     }
+    '/admin/hackathons': {
+      id: '/admin/hackathons'
+      path: '/hackathons'
+      fullPath: '/admin/hackathons'
+      preLoaderRoute: typeof AdminHackathonsRouteImport
+      parentRoute: typeof AdminRoute
+    }
     '/admin/collaboration': {
       id: '/admin/collaboration'
       path: '/collaboration'
@@ -777,6 +857,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AdminLabsIndexRouteImport
       parentRoute: typeof AdminLabsRoute
     }
+    '/admin/hackathons/': {
+      id: '/admin/hackathons/'
+      path: '/'
+      fullPath: '/admin/hackathons/'
+      preLoaderRoute: typeof AdminHackathonsIndexRouteImport
+      parentRoute: typeof AdminHackathonsRoute
+    }
     '/collaboration/sprint/$id': {
       id: '/collaboration/sprint/$id'
       path: '/sprint/$id'
@@ -797,6 +884,13 @@ declare module '@tanstack/react-router' {
       fullPath: '/admin/labs/new'
       preLoaderRoute: typeof AdminLabsNewRouteImport
       parentRoute: typeof AdminLabsRoute
+    }
+    '/admin/hackathons/$id': {
+      id: '/admin/hackathons/$id'
+      path: '/$id'
+      fullPath: '/admin/hackathons/$id'
+      preLoaderRoute: typeof AdminHackathonsIdRouteImport
+      parentRoute: typeof AdminHackathonsRoute
     }
     '/lab/$slug/ticket/$ticketId': {
       id: '/lab/$slug/ticket/$ticketId'
@@ -864,6 +958,20 @@ declare module '@tanstack/react-router' {
   }
 }
 
+interface AdminHackathonsRouteChildren {
+  AdminHackathonsIdRoute: typeof AdminHackathonsIdRoute
+  AdminHackathonsIndexRoute: typeof AdminHackathonsIndexRoute
+}
+
+const AdminHackathonsRouteChildren: AdminHackathonsRouteChildren = {
+  AdminHackathonsIdRoute: AdminHackathonsIdRoute,
+  AdminHackathonsIndexRoute: AdminHackathonsIndexRoute,
+}
+
+const AdminHackathonsRouteWithChildren = AdminHackathonsRoute._addFileChildren(
+  AdminHackathonsRouteChildren,
+)
+
 interface AdminLabsIdSprintsRouteChildren {
   AdminLabsIdSprintsSprintIdRoute: typeof AdminLabsIdSprintsSprintIdRoute
 }
@@ -908,6 +1016,7 @@ const AdminUsersRouteWithChildren = AdminUsersRoute._addFileChildren(
 interface AdminRouteChildren {
   AdminAiMentorRoute: typeof AdminAiMentorRoute
   AdminCollaborationRoute: typeof AdminCollaborationRoute
+  AdminHackathonsRoute: typeof AdminHackathonsRouteWithChildren
   AdminIncidentsRoute: typeof AdminIncidentsRoute
   AdminInfrastructureRoute: typeof AdminInfrastructureRoute
   AdminInstitutionsRoute: typeof AdminInstitutionsRoute
@@ -926,6 +1035,7 @@ interface AdminRouteChildren {
 const AdminRouteChildren: AdminRouteChildren = {
   AdminAiMentorRoute: AdminAiMentorRoute,
   AdminCollaborationRoute: AdminCollaborationRoute,
+  AdminHackathonsRoute: AdminHackathonsRouteWithChildren,
   AdminIncidentsRoute: AdminIncidentsRoute,
   AdminInfrastructureRoute: AdminInfrastructureRoute,
   AdminInstitutionsRoute: AdminInstitutionsRoute,
@@ -984,6 +1094,18 @@ const CollaborationRouteWithChildren = CollaborationRoute._addFileChildren(
   CollaborationRouteChildren,
 )
 
+interface HackathonsRouteChildren {
+  HackathonsIdRoute: typeof HackathonsIdRoute
+}
+
+const HackathonsRouteChildren: HackathonsRouteChildren = {
+  HackathonsIdRoute: HackathonsIdRoute,
+}
+
+const HackathonsRouteWithChildren = HackathonsRoute._addFileChildren(
+  HackathonsRouteChildren,
+)
+
 interface LabSlugTicketTicketIdRouteChildren {
   LabSlugTicketTicketIdReviewRoute: typeof LabSlugTicketTicketIdReviewRoute
 }
@@ -1017,6 +1139,7 @@ const rootRouteChildren: RootRouteChildren = {
   CollaborationRoute: CollaborationRouteWithChildren,
   DashboardRoute: DashboardRoute,
   ForumRoute: ForumRoute,
+  HackathonsRoute: HackathonsRouteWithChildren,
   LeaderboardRoute: LeaderboardRoute,
   ProfileRoute: ProfileRoute,
   LabSlugRoute: LabSlugRouteWithChildren,
@@ -1024,13 +1147,3 @@ const rootRouteChildren: RootRouteChildren = {
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
   ._addFileTypes<FileRouteTypes>()
-
-import type { getRouter } from './router.tsx'
-import type { startInstance } from './start.ts'
-declare module '@tanstack/react-start' {
-  interface Register {
-    ssr: true
-    router: Awaited<ReturnType<typeof getRouter>>
-    config: Awaited<ReturnType<typeof startInstance.getOptions>>
-  }
-}
