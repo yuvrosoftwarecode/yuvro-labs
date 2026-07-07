@@ -5,7 +5,7 @@ import { ProgressRing } from "@/components/ProgressRing";
 import { DiffBadge } from "@/components/Badges";
 import { labs, me, type Lab } from "@/lib/dummy";
 import { getEnrolled, enroll, unenroll } from "@/lib/enrollment";
-import { ArrowRight, Sparkles, Flame, Zap, Trophy, Rocket, Check, Plus, Star, Search } from "lucide-react";
+import { ArrowRight, Sparkles, Flame, Zap, Trophy, Check, Plus, Star, Search } from "lucide-react";
 
 export const Route = createFileRoute("/dashboard")({ component: Hub });
 
