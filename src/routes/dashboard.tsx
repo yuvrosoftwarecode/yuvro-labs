@@ -10,7 +10,7 @@ import { ArrowRight, Sparkles, Flame, Zap, Trophy, Check, Plus, Star, Search } f
 export const Route = createFileRoute("/dashboard")({ component: Hub });
 
 // Curated set of labs to feature.
-const FEATURED_SLUGS = ["javaspring", "systemdesign", "cybersecurity"];
+const FEATURED_SLUGS = ["javaspring", "systemdesign", "cybersecurity", "pydjango", "postgres", "datastructures", "qa"];
 
 type Category = "Backend" | "Frontend" | "Database" | "DevOps" | "QA" | "AI" | "Security" | "Design";
 const CATEGORIES: Category[] = ["Backend", "Frontend", "Database", "DevOps", "QA", "Security", "Design"];
