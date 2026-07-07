@@ -16,7 +16,6 @@ const otherLinks = [
   { to: "/leaderboard", label: "Leaderboard", icon: Trophy },
   { to: "/forum", label: "Forum", icon: MessagesSquare },
   { to: "/certificates", label: "Certificates", icon: Award },
-  { to: "/profile", label: "Profile", icon: User },
 ];
 
 export function TopNav({ rightSlot, activeOverride }: { rightSlot?: React.ReactNode; activeOverride?: string } = {}) {
@@ -86,15 +85,45 @@ export function TopNav({ rightSlot, activeOverride }: { rightSlot?: React.ReactN
           <span className="hidden sm:flex items-center gap-1 text-warning"><Flame className="h-4 w-4" />{me.streak}</span>
           <span className="hidden sm:flex items-center gap-1 text-primary"><Zap className="h-4 w-4" />{me.xp.toLocaleString()} XP</span>
           <span className="rounded-full bg-accent px-2 py-0.5 text-xs">Lv {me.level}</span>
-          <div className="grid h-8 w-8 place-items-center rounded-full bg-primary text-primary-foreground text-xs font-semibold">{me.avatar}</div>
-          {user && (
-            <button onClick={() => { logout(); nav({ to: "/" }); }} title="Sign out"
-              className="grid h-8 w-8 place-items-center rounded-md border hover:bg-accent text-muted-foreground hover:text-foreground">
-              <LogOut className="h-4 w-4" />
-            </button>
-          )}
+          <ProfileMenu onLogout={() => { logout(); nav({ to: "/" }); }} userName={user?.name ?? me.name} userEmail={user?.email} />
         </div>
       </div>
     </header>
+  );
+}
+
+function ProfileMenu({ onLogout, userName, userEmail }: { onLogout: () => void; userName: string; userEmail?: string }) {
+  const [open, setOpen] = useState(false);
+  const ref = useRef<HTMLDivElement | null>(null);
+  useEffect(() => {
+    if (!open) return;
+    const onDown = (e: MouseEvent) => { if (!ref.current?.contains(e.target as Node)) setOpen(false); };
+    document.addEventListener("mousedown", onDown);
+    return () => document.removeEventListener("mousedown", onDown);
+  }, [open]);
+  const initial = (userName || "?").trim().charAt(0).toUpperCase();
+  return (
+    <div ref={ref} className="relative">
+      <button type="button" onClick={() => setOpen(v => !v)}
+        className="grid h-8 w-8 place-items-center rounded-full bg-primary text-primary-foreground text-xs font-semibold hover:opacity-90">
+        {initial}
+      </button>
+      {open && (
+        <div className="absolute right-0 top-full mt-1 w-56 rounded-md border border-border bg-popover shadow-lg p-1 z-50">
+          <div className="px-2.5 py-2 border-b border-border/60">
+            <div className="text-sm font-medium truncate">{userName}</div>
+            {userEmail && <div className="text-[11px] text-muted-foreground truncate">{userEmail}</div>}
+          </div>
+          <Link to="/profile" onClick={() => setOpen(false)}
+            className="flex items-center gap-2 rounded-md px-2.5 py-1.5 text-sm text-muted-foreground hover:text-foreground hover:bg-accent/60">
+            <User className="h-3.5 w-3.5" /> Profile
+          </Link>
+          <button onClick={() => { setOpen(false); onLogout(); }}
+            className="w-full flex items-center gap-2 rounded-md px-2.5 py-1.5 text-sm text-muted-foreground hover:text-foreground hover:bg-accent/60">
+            <LogOut className="h-3.5 w-3.5" /> Logout
+          </button>
+        </div>
+      )}
+    </div>
   );
 }
