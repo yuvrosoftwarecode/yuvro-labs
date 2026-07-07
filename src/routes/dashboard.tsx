@@ -267,7 +267,7 @@ function FeaturedCard({ lab, isEnrolled, onToggle }: { lab: Lab; isEnrolled: boo
   );
 }
 
-function EnrolledCard({ lab, onUnenroll }: { lab: Lab; onUnenroll: () => void }) {
+function EnrolledCard({ lab }: { lab: Lab }) {
   const pct = Math.round((lab.completed / lab.total) * 100);
   return (
     <div className="group relative overflow-hidden rounded-xl border bg-card p-5 hover:border-primary/50 hover:ring-glow transition">
@@ -284,18 +284,15 @@ function EnrolledCard({ lab, onUnenroll }: { lab: Lab; onUnenroll: () => void })
         <DiffBadge value={lab.difficulty} />
         <span className="text-muted-foreground">{lab.completed}/{lab.total} · {lab.hoursLeft}h left</span>
       </div>
-      <div className="mt-4 flex gap-2">
+      <div className="mt-4">
         <Link to="/lab/$slug" params={{ slug: lab.slug }}
-          className="flex-1 inline-flex items-center justify-center gap-1 rounded-md bg-primary px-3 py-1.5 text-xs font-medium text-primary-foreground hover:opacity-90">
+          className="w-full inline-flex items-center justify-center gap-1 rounded-md bg-primary px-3 py-1.5 text-xs font-medium text-primary-foreground hover:opacity-90">
           {lab.completed > 0 ? "Continue" : "Start"} <ArrowRight className="h-3.5 w-3.5" />
         </Link>
-        <button onClick={onUnenroll} title="Unenroll"
-          className="inline-flex items-center justify-center rounded-md border border-border px-3 py-1.5 text-xs text-muted-foreground hover:bg-accent hover:text-foreground">
-          Leave
-        </button>
       </div>
     </div>
   );
+
 }
 
 function CatalogCard({ lab, isEnrolled, onToggle }: { lab: Lab; isEnrolled: boolean; onToggle: () => void }) {
