@@ -90,7 +90,10 @@ function Hub() {
               <p className="mt-2 text-sm text-muted-foreground max-w-xl hidden sm:block">
                 Continue enrolled labs, explore featured tracks and dive into any lab in the catalog.
               </p>
-              <div className="mt-5">
+              <div className="mt-5 flex flex-wrap items-center gap-2">
+                <button type="button" className="inline-flex items-center gap-2 rounded-md border border-border bg-card px-3 py-2 text-xs sm:text-sm font-medium hover:bg-accent">
+                  <Github className="h-4 w-4" /> Connect GitHub
+                </button>
                 <Link to="/lab/$slug" params={{ slug: "java" }} className="inline-flex items-center gap-2 rounded-md bg-primary px-3 py-2 text-xs sm:text-sm font-medium text-primary-foreground hover:opacity-90">
                   Continue Java Lab <ArrowRight className="h-4 w-4" />
                 </Link>
