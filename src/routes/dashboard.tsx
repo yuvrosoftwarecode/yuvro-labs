@@ -5,7 +5,7 @@ import { ProgressRing } from "@/components/ProgressRing";
 import { DiffBadge } from "@/components/Badges";
 import { labs, me, type Lab } from "@/lib/dummy";
 import { getEnrolled, enroll, unenroll } from "@/lib/enrollment";
-import { ArrowRight, Sparkles, Flame, Zap, Trophy, Rocket, Check, Plus, Star, Search } from "lucide-react";
+import { ArrowRight, Sparkles, Flame, Zap, Trophy, Check, Plus, Star, Search } from "lucide-react";
 
 export const Route = createFileRoute("/dashboard")({ component: Hub });
 
@@ -34,111 +34,92 @@ function Hub() {
   return (
     <div className="min-h-screen">
       <TopNav />
-      <main className="mx-auto max-w-[1400px] px-4 py-8">
-        {/* Hero */}
-        <section className="relative overflow-hidden rounded-2xl border bg-gradient-to-br from-accent/40 via-card to-background p-8 md:p-10">
+      <main className="mx-auto max-w-[1200px] px-4 py-8">
+        {/* Header row: title left, quick stats right */}
+        <section className="relative overflow-hidden rounded-2xl border bg-gradient-to-br from-accent/40 via-card to-background p-6 md:p-8">
           <div className="absolute -right-20 -top-20 h-64 w-64 rounded-full bg-primary/20 blur-3xl" />
           <div className="absolute -bottom-24 left-1/3 h-64 w-64 rounded-full bg-ui/20 blur-3xl" />
-          <div className="relative max-w-2xl">
-            <span className="inline-flex items-center gap-1.5 rounded-full border border-primary/30 bg-primary/10 px-3 py-1 text-xs font-medium text-primary">
-              <Sparkles className="h-3 w-3" /> Welcome back, {me.name.split(" ")[0]}
-            </span>
-            <h1 className="mt-4 text-3xl md:text-5xl font-semibold tracking-tight">
-              Your <span className="text-primary">Individual Hub</span>
-            </h1>
-            <p className="mt-3 text-muted-foreground max-w-xl">
-              Continue enrolled labs, explore featured tracks and dive into any lab in the catalog.
-            </p>
-            <div className="mt-6 flex flex-wrap gap-3">
-              <Link to="/lab/$slug" params={{ slug: "java" }} className="inline-flex items-center gap-2 rounded-md bg-primary px-4 py-2 text-sm font-medium text-primary-foreground hover:opacity-90">
-                Continue Java Lab <ArrowRight className="h-4 w-4" />
-              </Link>
-              <Link to="/hackathons" className="inline-flex items-center gap-2 rounded-md border border-warning/40 bg-warning/10 px-4 py-2 text-sm font-medium text-warning hover:bg-warning/15">
-                <Rocket className="h-4 w-4" /> Explore Hackathons
-              </Link>
+          <div className="relative flex flex-col gap-6 lg:flex-row lg:items-start lg:justify-between">
+            <div className="min-w-0 max-w-2xl">
+              <span className="inline-flex items-center gap-1.5 rounded-full border border-primary/30 bg-primary/10 px-3 py-1 text-xs font-medium text-primary">
+                <Sparkles className="h-3 w-3" /> Welcome back, {me.name.split(" ")[0]}
+              </span>
+              <h1 className="mt-3 text-3xl md:text-4xl font-semibold tracking-tight">
+                Your <span className="text-primary">Individual Hub</span>
+              </h1>
+              <p className="mt-2 text-sm text-muted-foreground max-w-xl">
+                Continue enrolled labs, explore featured tracks and dive into any lab in the catalog.
+              </p>
+              <div className="mt-5">
+                <Link to="/lab/$slug" params={{ slug: "java" }} className="inline-flex items-center gap-2 rounded-md bg-primary px-4 py-2 text-sm font-medium text-primary-foreground hover:opacity-90">
+                  Continue Java Lab <ArrowRight className="h-4 w-4" />
+                </Link>
+              </div>
+            </div>
+            <div className="grid grid-cols-3 gap-2 shrink-0 lg:min-w-[420px]">
+              <MiniStat icon={<Flame className="h-3.5 w-3.5 text-warning" />} label="Day streak" value={`${me.streak}d`} accent="warning" />
+              <MiniStat icon={<Zap className="h-3.5 w-3.5 text-primary" />} label="XP / week" value="+450" accent="primary" />
+              <MiniStat icon={<Trophy className="h-3.5 w-3.5 text-info" />} label="Rank" value={`#${me.rank}`} accent="info" />
             </div>
           </div>
         </section>
 
-        {/* Two-column layout: labs on the left, stats on the right */}
-        <div className="mt-8 grid gap-6 lg:grid-cols-[minmax(0,1fr)_320px]">
-          <div className="min-w-0 space-y-10">
-            {/* My labs */}
-            <section>
-              <div className="mb-4 flex items-end justify-between">
-                <div>
-                  <h2 className="text-xl font-semibold">My labs</h2>
-                  <p className="text-xs text-muted-foreground mt-0.5">{enrolledLabs.length} enrolled · {enrolledLabs.reduce((a, l) => a + l.completed, 0)} tickets solved</p>
-                </div>
+        <div className="mt-8 space-y-10">
+          {/* My labs */}
+          <section>
+            <div className="mb-4 flex items-end justify-between">
+              <div>
+                <h2 className="text-xl font-semibold">My labs</h2>
+                <p className="text-xs text-muted-foreground mt-0.5">{enrolledLabs.length} enrolled · {enrolledLabs.reduce((a, l) => a + l.completed, 0)} tickets solved</p>
               </div>
-              {enrolledLabs.length === 0 ? (
-                <div className="rounded-xl border border-dashed bg-card/40 p-10 text-center">
-                  <p className="text-sm text-muted-foreground">You haven't enrolled in any lab yet. Pick one from the catalog below to get started.</p>
-                </div>
-              ) : (
-                <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-3">
-                  {enrolledLabs.map(lab => (
-                    <EnrolledCard key={lab.slug} lab={lab} onUnenroll={() => toggle(lab.slug)} />
-                  ))}
-                </div>
-              )}
-            </section>
-
-            {/* Featured labs */}
-            <section>
-              <div className="mb-4 flex items-end justify-between">
-                <div>
-                  <h2 className="text-xl font-semibold flex items-center gap-2"><Star className="h-4 w-4 text-warning" /> Featured labs</h2>
-                  <p className="text-xs text-muted-foreground mt-0.5">Handpicked tracks trending this month.</p>
-                </div>
-              </div>
-              <div className="grid gap-4 md:grid-cols-3">
-                {featuredLabs.map(lab => (
-                  <FeaturedCard key={lab.slug} lab={lab} isEnrolled={enrolled.includes(lab.slug)} onToggle={() => toggle(lab.slug)} />
-                ))}
-              </div>
-            </section>
-
-
-            {/* All labs catalog */}
-            <section>
-              <div className="mb-4 flex items-end justify-between gap-3 flex-wrap">
-                <div>
-                  <h2 className="text-xl font-semibold">All labs</h2>
-                  <p className="text-xs text-muted-foreground mt-0.5">{filteredAll.length} of {labs.length} labs</p>
-                </div>
-                <div className="relative">
-                  <Search className="absolute left-2.5 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-muted-foreground" />
-                  <input value={q} onChange={e => setQ(e.target.value)} placeholder="Search labs…"
-                    className="pl-8 pr-3 py-1.5 text-xs rounded-md border border-border bg-transparent w-56 outline-none focus:border-primary" />
-                </div>
-              </div>
-              <div className="grid gap-3 sm:grid-cols-2 xl:grid-cols-3">
-                {filteredAll.map(lab => (
-                  <CatalogCard key={lab.slug} lab={lab} isEnrolled={enrolled.includes(lab.slug)} onToggle={() => toggle(lab.slug)} />
-                ))}
-              </div>
-            </section>
-          </div>
-
-          {/* Right rail — stats */}
-          <aside className="space-y-4 lg:sticky lg:top-20 self-start">
-            <StatCard icon={<Flame className="h-4 w-4 text-warning" />} label="Day streak" value={`${me.streak} days`} hint="Keep it alive — solve 1 ticket today" accent="warning" />
-            <StatCard icon={<Zap className="h-4 w-4 text-primary" />} label="XP this week" value="+450" hint={`${me.nextLevelXp - me.xp} XP to Level ${me.level + 1}`} accent="primary" />
-            <StatCard icon={<Trophy className="h-4 w-4 text-info" />} label="Global rank" value={`#${me.rank}`} hint="Top 2% of active learners" accent="info" />
-
-            <div className="rounded-xl border bg-card p-4">
-              <div className="text-xs font-semibold mb-3">This week</div>
-              <div className="space-y-2 text-xs">
-                <Row label="Tickets solved" value="7" />
-                <Row label="Hours logged" value="4h 20m" />
-                <Row label="Badges earned" value="2" />
-              </div>
-              <Link to="/analytics" className="mt-4 inline-flex items-center gap-1 text-xs text-primary hover:underline">
-                View analytics <ArrowRight className="h-3 w-3" />
-              </Link>
             </div>
-          </aside>
+            {enrolledLabs.length === 0 ? (
+              <div className="rounded-xl border border-dashed bg-card/40 p-10 text-center">
+                <p className="text-sm text-muted-foreground">You haven't enrolled in any lab yet. Pick one from the catalog below to get started.</p>
+              </div>
+            ) : (
+              <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+                {enrolledLabs.map(lab => (
+                  <EnrolledCard key={lab.slug} lab={lab} onUnenroll={() => toggle(lab.slug)} />
+                ))}
+              </div>
+            )}
+          </section>
+
+          {/* Featured labs */}
+          <section>
+            <div className="mb-4 flex items-end justify-between">
+              <div>
+                <h2 className="text-xl font-semibold flex items-center gap-2"><Star className="h-4 w-4 text-warning" /> Featured labs</h2>
+                <p className="text-xs text-muted-foreground mt-0.5">Handpicked tracks trending this month.</p>
+              </div>
+            </div>
+            <div className="grid gap-4 md:grid-cols-3">
+              {featuredLabs.map(lab => (
+                <FeaturedCard key={lab.slug} lab={lab} isEnrolled={enrolled.includes(lab.slug)} onToggle={() => toggle(lab.slug)} />
+              ))}
+            </div>
+          </section>
+
+          {/* All labs catalog */}
+          <section>
+            <div className="mb-4 flex items-end justify-between gap-3 flex-wrap">
+              <div>
+                <h2 className="text-xl font-semibold">All labs</h2>
+                <p className="text-xs text-muted-foreground mt-0.5">{filteredAll.length} of {labs.length} labs</p>
+              </div>
+              <div className="relative">
+                <Search className="absolute left-2.5 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-muted-foreground" />
+                <input value={q} onChange={e => setQ(e.target.value)} placeholder="Search labs…"
+                  className="pl-8 pr-3 py-1.5 text-xs rounded-md border border-border bg-transparent w-56 outline-none focus:border-primary" />
+              </div>
+            </div>
+            <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
+              {filteredAll.map(lab => (
+                <CatalogCard key={lab.slug} lab={lab} isEnrolled={enrolled.includes(lab.slug)} onToggle={() => toggle(lab.slug)} />
+              ))}
+            </div>
+          </section>
         </div>
       </main>
     </div>
@@ -236,22 +217,13 @@ function CatalogCard({ lab, isEnrolled, onToggle }: { lab: Lab; isEnrolled: bool
   );
 }
 
-function StatCard({ icon, label, value, hint, accent }: { icon: React.ReactNode; label: string; value: string; hint: string; accent: string }) {
+function MiniStat({ icon, label, value, accent }: { icon: React.ReactNode; label: string; value: string; accent: string }) {
   return (
-    <div className="relative overflow-hidden rounded-xl border bg-card p-4">
-      <div className="absolute -right-6 -top-6 h-16 w-16 rounded-full blur-2xl opacity-30" style={{ background: `var(--${accent})` }} />
-      <div className="flex items-center gap-2 text-xs text-muted-foreground">{icon}{label}</div>
-      <div className="mt-1.5 text-2xl font-semibold">{value}</div>
-      <div className="mt-1 text-[11px] text-muted-foreground">{hint}</div>
+    <div className="relative overflow-hidden rounded-xl border bg-card/70 backdrop-blur px-3 py-2.5">
+      <div className="absolute -right-4 -top-4 h-10 w-10 rounded-full blur-2xl opacity-30" style={{ background: `var(--${accent})` }} />
+      <div className="flex items-center gap-1.5 text-[10px] uppercase tracking-wide text-muted-foreground">{icon}{label}</div>
+      <div className="mt-0.5 text-lg font-semibold leading-tight">{value}</div>
     </div>
   );
 }
 
-function Row({ label, value }: { label: string; value: string }) {
-  return (
-    <div className="flex items-center justify-between">
-      <span className="text-muted-foreground">{label}</span>
-      <span className="font-medium">{value}</span>
-    </div>
-  );
-}
