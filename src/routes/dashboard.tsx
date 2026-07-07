@@ -63,26 +63,11 @@ function Hub() {
         {/* Two-column layout: labs on the left, stats on the right */}
         <div className="mt-8 grid gap-6 lg:grid-cols-[minmax(0,1fr)_320px]">
           <div className="min-w-0 space-y-10">
-            {/* Featured labs */}
+            {/* My labs */}
             <section>
               <div className="mb-4 flex items-end justify-between">
                 <div>
-                  <h2 className="text-xl font-semibold flex items-center gap-2"><Star className="h-4 w-4 text-warning" /> Featured labs</h2>
-                  <p className="text-xs text-muted-foreground mt-0.5">Handpicked tracks trending this month.</p>
-                </div>
-              </div>
-              <div className="grid gap-4 md:grid-cols-3">
-                {featuredLabs.map(lab => (
-                  <FeaturedCard key={lab.slug} lab={lab} isEnrolled={enrolled.includes(lab.slug)} onToggle={() => toggle(lab.slug)} />
-                ))}
-              </div>
-            </section>
-
-            {/* Enrolled labs */}
-            <section>
-              <div className="mb-4 flex items-end justify-between">
-                <div>
-                  <h2 className="text-xl font-semibold">My enrolled labs</h2>
+                  <h2 className="text-xl font-semibold">My labs</h2>
                   <p className="text-xs text-muted-foreground mt-0.5">{enrolledLabs.length} enrolled · {enrolledLabs.reduce((a, l) => a + l.completed, 0)} tickets solved</p>
                 </div>
               </div>
@@ -98,6 +83,22 @@ function Hub() {
                 </div>
               )}
             </section>
+
+            {/* Featured labs */}
+            <section>
+              <div className="mb-4 flex items-end justify-between">
+                <div>
+                  <h2 className="text-xl font-semibold flex items-center gap-2"><Star className="h-4 w-4 text-warning" /> Featured labs</h2>
+                  <p className="text-xs text-muted-foreground mt-0.5">Handpicked tracks trending this month.</p>
+                </div>
+              </div>
+              <div className="grid gap-4 md:grid-cols-3">
+                {featuredLabs.map(lab => (
+                  <FeaturedCard key={lab.slug} lab={lab} isEnrolled={enrolled.includes(lab.slug)} onToggle={() => toggle(lab.slug)} />
+                ))}
+              </div>
+            </section>
+
 
             {/* All labs catalog */}
             <section>
