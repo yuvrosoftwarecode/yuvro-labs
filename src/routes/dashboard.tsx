@@ -29,6 +29,9 @@ function Hub() {
               <Link to="/lab/$slug" params={{ slug: "java" }} className="inline-flex items-center gap-2 rounded-md bg-primary px-4 py-2 text-sm font-medium text-primary-foreground hover:opacity-90">
                 Continue Java Lab <ArrowRight className="h-4 w-4" />
               </Link>
+              <Link to="/hackathons" className="inline-flex items-center gap-2 rounded-md border border-warning/40 bg-warning/10 px-4 py-2 text-sm font-medium text-warning hover:bg-warning/15">
+                <Rocket className="h-4 w-4" /> Explore Hackathons
+              </Link>
               <Link to="/analytics" className="inline-flex items-center gap-2 rounded-md border px-4 py-2 text-sm hover:bg-accent">
                 View analytics
               </Link>
