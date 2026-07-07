@@ -195,6 +195,33 @@ function Hub() {
   );
 }
 
+function HScroll({ children }: { children: React.ReactNode }) {
+  return (
+    <div className="-mx-4 px-4 overflow-x-auto scrollbar-thin">
+      <div className="flex gap-4 pb-2">{children}</div>
+    </div>
+  );
+}
+
+function FilterRow({ label, children }: { label: string; children: React.ReactNode }) {
+  return (
+    <div className="flex items-center gap-2 flex-wrap">
+      <span className="text-[11px] uppercase tracking-wider text-muted-foreground w-20 shrink-0">{label}</span>
+      <div className="flex flex-wrap gap-1.5">{children}</div>
+    </div>
+  );
+}
+
+function Chip({ active, onClick, children }: { active: boolean; onClick: () => void; children: React.ReactNode }) {
+  return (
+    <button onClick={onClick}
+      className={`text-[11px] px-2.5 py-1 rounded-full border transition ${active ? "bg-primary text-primary-foreground border-primary" : "border-border text-muted-foreground hover:bg-accent hover:text-foreground"}`}>
+      {children}
+    </button>
+  );
+}
+
+
 function FeaturedCard({ lab, isEnrolled, onToggle }: { lab: Lab; isEnrolled: boolean; onToggle: () => void }) {
   return (
     <div className="group relative overflow-hidden rounded-xl border bg-gradient-to-br from-card via-card to-accent/20 p-5 hover:border-primary/50 transition">
