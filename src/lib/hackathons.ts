@@ -83,6 +83,27 @@ export function newGoal(labSlug = "sql"): HackathonGoal {
 
 export const availableLabs = () => studentLabs.map(l => ({ slug: l.slug, name: l.name, icon: l.icon, color: l.color }));
 
+// Joined-hackathons store (per-student, localStorage).
+const JOIN_KEY = "yuvro-joined-hackathons-v1";
+const DEFAULT_JOINED = ["hk-seed-fintech"];
+export function getJoinedHackathons(): string[] {
+  if (typeof window === "undefined") return DEFAULT_JOINED;
+  const raw = localStorage.getItem(JOIN_KEY);
+  if (raw === null) { try { localStorage.setItem(JOIN_KEY, JSON.stringify(DEFAULT_JOINED)); } catch {} return [...DEFAULT_JOINED]; }
+  try { return JSON.parse(raw) as string[]; } catch { return []; }
+}
+function writeJoined(list: string[]) {
+  if (typeof window === "undefined") return;
+  try { localStorage.setItem(JOIN_KEY, JSON.stringify(list)); } catch {}
+}
+export function joinHackathon(id: string) {
+  const l = getJoinedHackathons();
+  if (!l.includes(id)) writeJoined([...l, id]);
+}
+export function leaveHackathon(id: string) {
+  writeJoined(getJoinedHackathons().filter(x => x !== id));
+}
+
 // A small seed so both admin & student sides feel populated on first visit.
 const SEED: Hackathon[] = [
   {
