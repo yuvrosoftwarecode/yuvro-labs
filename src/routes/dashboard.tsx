@@ -43,9 +43,9 @@ const ALL_LANGUAGES = Array.from(new Set(Object.values(LAB_LANGUAGES).flat())).s
 function Hub() {
   const [enrolled, setEnrolled] = useState<string[]>([]);
   const [q, setQ] = useState("");
-  const [cat, setCat] = useState<Category | null>(null);
-  const [diff, setDiff] = useState<typeof DIFFICULTIES[number] | null>(null);
-  const [lang, setLang] = useState<string | null>(null);
+  const [cats, setCats] = useState<Category[]>([]);
+  const [diffs, setDiffs] = useState<Array<typeof DIFFICULTIES[number]>>([]);
+  const [langs, setLangs] = useState<string[]>([]);
 
   useEffect(() => { setEnrolled(getEnrolled()); }, []);
 
@@ -55,19 +55,21 @@ function Hub() {
     const s = q.trim().toLowerCase();
     return labs.filter(l => {
       if (s && !l.name.toLowerCase().includes(s) && !l.description.toLowerCase().includes(s)) return false;
-      if (cat && LAB_CATEGORY[l.slug] !== cat) return false;
-      if (diff && l.difficulty !== diff) return false;
-      if (lang && !(LAB_LANGUAGES[l.slug] ?? []).includes(lang)) return false;
+      if (cats.length && !cats.includes(LAB_CATEGORY[l.slug])) return false;
+      if (diffs.length && !diffs.includes(l.difficulty)) return false;
+      if (langs.length && !(LAB_LANGUAGES[l.slug] ?? []).some(x => langs.includes(x))) return false;
       return true;
     });
-  }, [q, cat, diff, lang]);
+  }, [q, cats, diffs, langs]);
 
   const toggle = (slug: string) => {
     if (enrolled.includes(slug)) { unenroll(slug); setEnrolled(prev => prev.filter(s => s !== slug)); }
     else { enroll(slug); setEnrolled(prev => [...prev, slug]); }
   };
-  const clearFilters = () => { setCat(null); setDiff(null); setLang(null); setQ(""); };
-  const hasFilters = !!(cat || diff || lang || q);
+  const clearFilters = () => { setCats([]); setDiffs([]); setLangs([]); setQ(""); };
+  const hasFilters = !!(cats.length || diffs.length || langs.length || q);
+  const toggleIn = <T,>(arr: T[], v: T) => arr.includes(v) ? arr.filter(x => x !== v) : [...arr, v];
+
 
   return (
     <div className="min-h-screen">
