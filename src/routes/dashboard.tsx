@@ -217,22 +217,13 @@ function CatalogCard({ lab, isEnrolled, onToggle }: { lab: Lab; isEnrolled: bool
   );
 }
 
-function StatCard({ icon, label, value, hint, accent }: { icon: React.ReactNode; label: string; value: string; hint: string; accent: string }) {
+function MiniStat({ icon, label, value, accent }: { icon: React.ReactNode; label: string; value: string; accent: string }) {
   return (
-    <div className="relative overflow-hidden rounded-xl border bg-card p-4">
-      <div className="absolute -right-6 -top-6 h-16 w-16 rounded-full blur-2xl opacity-30" style={{ background: `var(--${accent})` }} />
-      <div className="flex items-center gap-2 text-xs text-muted-foreground">{icon}{label}</div>
-      <div className="mt-1.5 text-2xl font-semibold">{value}</div>
-      <div className="mt-1 text-[11px] text-muted-foreground">{hint}</div>
+    <div className="relative overflow-hidden rounded-xl border bg-card/70 backdrop-blur px-3 py-2.5">
+      <div className="absolute -right-4 -top-4 h-10 w-10 rounded-full blur-2xl opacity-30" style={{ background: `var(--${accent})` }} />
+      <div className="flex items-center gap-1.5 text-[10px] uppercase tracking-wide text-muted-foreground">{icon}{label}</div>
+      <div className="mt-0.5 text-lg font-semibold leading-tight">{value}</div>
     </div>
   );
 }
 
-function Row({ label, value }: { label: string; value: string }) {
-  return (
-    <div className="flex items-center justify-between">
-      <span className="text-muted-foreground">{label}</span>
-      <span className="font-medium">{value}</span>
-    </div>
-  );
-}
