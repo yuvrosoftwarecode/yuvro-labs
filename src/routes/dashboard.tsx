@@ -216,26 +216,27 @@ function HScroll({ children }: { children: React.ReactNode }) {
   );
 }
 
-function FilterRow({ label, children }: { label: string; children: React.ReactNode }) {
+function FilterGroup({ label, children }: { label: string; children: React.ReactNode }) {
   return (
-    <div className="flex items-center gap-2 flex-wrap">
-      <span className="text-[11px] uppercase tracking-wider text-muted-foreground w-20 shrink-0">{label}</span>
-      <div className="flex flex-wrap gap-1.5">{children}</div>
+    <div>
+      <div className="text-[10px] uppercase tracking-wider text-muted-foreground mb-2">{label}</div>
+      <div className="space-y-1.5">{children}</div>
     </div>
   );
 }
 
-function Chip({ active, onClick, children }: { active: boolean; onClick: () => void; children: React.ReactNode }) {
+function CheckRow({ checked, onChange, label }: { checked: boolean; onChange: () => void; label: string }) {
   return (
-    <button onClick={onClick}
-      className={`text-[11px] px-2.5 py-1 rounded-full border transition ${active ? "bg-primary text-primary-foreground border-primary" : "border-border text-muted-foreground hover:bg-accent hover:text-foreground"}`}>
-      {children}
-    </button>
+    <label className="flex items-center gap-2 text-xs cursor-pointer hover:text-foreground text-muted-foreground select-none">
+      <input type="checkbox" checked={checked} onChange={onChange}
+        className="h-3.5 w-3.5 accent-primary rounded border-border" />
+      <span className={checked ? "text-foreground" : ""}>{label}</span>
+    </label>
   );
 }
 
-
 function FeaturedCard({ lab, isEnrolled, onToggle }: { lab: Lab; isEnrolled: boolean; onToggle: () => void }) {
+
   return (
     <div className="group relative overflow-hidden rounded-xl border bg-gradient-to-br from-card via-card to-accent/20 p-5 hover:border-primary/50 transition">
       <div className="absolute -right-8 -top-8 h-24 w-24 rounded-full blur-2xl opacity-30" style={{ background: `var(--${lab.color})` }} />
