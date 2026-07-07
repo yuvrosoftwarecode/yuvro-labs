@@ -5,7 +5,7 @@ import {
   LayoutDashboard, Users, FlaskConical, Ticket, Network, BarChart3, Briefcase,
   Bot, Bell, Search, LogOut, GitBranch, Database, Building2, GraduationCap,
   Brain, Cpu, AlertTriangle, ListChecks, Activity, Sparkles, ChevronRight,
-  PanelLeftClose, PanelLeftOpen,
+  PanelLeftClose, PanelLeftOpen, Rocket,
 } from "lucide-react";
 
 const NAV: { group: string; items: { to: string; label: string; icon: any }[] }[] = [
@@ -32,6 +32,7 @@ const NAV: { group: string; items: { to: string; label: string; icon: any }[] }[
       { to: "/admin/labs", label: "Labs", icon: FlaskConical },
       { to: "/admin/sprints", label: "Sprint Templates", icon: GitBranch },
       { to: "/admin/tickets", label: "Tickets", icon: Ticket },
+      { to: "/admin/hackathons", label: "Hackathons", icon: Rocket },
       { to: "/admin/questions", label: "Question Bank", icon: Database },
       { to: "/admin/incidents", label: "Incident Rooms", icon: AlertTriangle },
     ],
