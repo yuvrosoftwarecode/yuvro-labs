@@ -1,5 +1,5 @@
 // Simple client-side enrollment store (localStorage).
-const KEY = "yuvro-enrolled-labs";
+const KEY = "yuvro-enrolled-labs-v2";
 
 function read(): string[] {
   if (typeof window === "undefined") return [];
