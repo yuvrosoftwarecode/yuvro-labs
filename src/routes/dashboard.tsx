@@ -121,12 +121,13 @@ function Hub() {
               <HScroll>
                 {enrolledLabs.map(lab => (
                   <div key={lab.slug} className="w-[300px] shrink-0">
-                    <EnrolledCard lab={lab} onUnenroll={() => toggle(lab.slug)} />
+                    <EnrolledCard lab={lab} />
                   </div>
                 ))}
               </HScroll>
             )}
           </section>
+
 
           {/* Featured labs — horizontal scroll */}
           <section>
@@ -145,7 +146,7 @@ function Hub() {
             </HScroll>
           </section>
 
-          {/* All labs catalog with filters */}
+          {/* All labs catalog with sidebar filters */}
           <section>
             <div className="mb-4 flex items-end justify-between gap-3 flex-wrap">
               <div className="min-w-0">
@@ -159,37 +160,47 @@ function Hub() {
               </div>
             </div>
 
-            {/* Filter chips */}
-            <div className="mb-4 space-y-2">
-              <FilterRow label="Category">
-                <Chip active={!cat} onClick={() => setCat(null)}>All</Chip>
-                {CATEGORIES.map(c => <Chip key={c} active={cat === c} onClick={() => setCat(cat === c ? null : c)}>{c}</Chip>)}
-              </FilterRow>
-              <FilterRow label="Difficulty">
-                <Chip active={!diff} onClick={() => setDiff(null)}>All</Chip>
-                {DIFFICULTIES.map(d => <Chip key={d} active={diff === d} onClick={() => setDiff(diff === d ? null : d)}>{d}</Chip>)}
-              </FilterRow>
-              <FilterRow label="Language">
-                <Chip active={!lang} onClick={() => setLang(null)}>All</Chip>
-                {ALL_LANGUAGES.map(l => <Chip key={l} active={lang === l} onClick={() => setLang(lang === l ? null : l)}>{l}</Chip>)}
-              </FilterRow>
-              {hasFilters && (
-                <button onClick={clearFilters} className="text-[11px] text-muted-foreground hover:text-foreground underline">Clear filters</button>
-              )}
-            </div>
+            <div className="grid gap-6 md:grid-cols-[220px_minmax(0,1fr)]">
+              <aside className="rounded-xl border bg-card/40 p-4 md:sticky md:top-20 self-start space-y-5">
+                <div className="flex items-center justify-between">
+                  <span className="text-xs font-semibold">Filters</span>
+                  {hasFilters && (
+                    <button onClick={clearFilters} className="text-[10px] text-muted-foreground hover:text-foreground underline">Clear</button>
+                  )}
+                </div>
+                <FilterGroup label="Category">
+                  {CATEGORIES.map(c => (
+                    <CheckRow key={c} checked={cats.includes(c)} onChange={() => setCats(prev => toggleIn(prev, c))} label={c} />
+                  ))}
+                </FilterGroup>
+                <FilterGroup label="Difficulty">
+                  {DIFFICULTIES.map(d => (
+                    <CheckRow key={d} checked={diffs.includes(d)} onChange={() => setDiffs(prev => toggleIn(prev, d))} label={d} />
+                  ))}
+                </FilterGroup>
+                <FilterGroup label="Language">
+                  {ALL_LANGUAGES.map(l => (
+                    <CheckRow key={l} checked={langs.includes(l)} onChange={() => setLangs(prev => toggleIn(prev, l))} label={l} />
+                  ))}
+                </FilterGroup>
+              </aside>
 
-            {filteredAll.length === 0 ? (
-              <div className="rounded-xl border border-dashed bg-card/40 p-10 text-center text-sm text-muted-foreground">
-                No labs match these filters.
+              <div className="min-w-0">
+                {filteredAll.length === 0 ? (
+                  <div className="rounded-xl border border-dashed bg-card/40 p-10 text-center text-sm text-muted-foreground">
+                    No labs match these filters.
+                  </div>
+                ) : (
+                  <div className="grid gap-3 sm:grid-cols-2">
+                    {filteredAll.map(lab => (
+                      <CatalogCard key={lab.slug} lab={lab} isEnrolled={enrolled.includes(lab.slug)} onToggle={() => toggle(lab.slug)} />
+                    ))}
+                  </div>
+                )}
               </div>
-            ) : (
-              <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
-                {filteredAll.map(lab => (
-                  <CatalogCard key={lab.slug} lab={lab} isEnrolled={enrolled.includes(lab.slug)} onToggle={() => toggle(lab.slug)} />
-                ))}
-              </div>
-            )}
+            </div>
           </section>
+
         </div>
       </main>
     </div>
