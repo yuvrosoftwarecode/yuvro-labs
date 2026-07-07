@@ -1,5 +1,5 @@
 // Simple client-side enrollment store (localStorage).
-const KEY = "yuvro-enrolled-labs";
+const KEY = "yuvro-enrolled-labs-v2";
 
 function read(): string[] {
   if (typeof window === "undefined") return [];
@@ -11,7 +11,7 @@ function write(list: string[]) {
 }
 
 // Seed a couple of enrollments so the section isn't empty on first load.
-const DEFAULT_ENROLLED = ["java", "python", "ui"];
+const DEFAULT_ENROLLED = ["java", "python", "ui", "sql", "git", "linux", "mongo", "datastructures"];
 
 export function getEnrolled(): string[] {
   if (typeof window === "undefined") return DEFAULT_ENROLLED;
