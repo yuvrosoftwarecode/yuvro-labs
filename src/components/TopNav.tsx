@@ -127,7 +127,3 @@ function ProfileMenu({ onLogout, userName, userEmail }: { onLogout: () => void; 
     </div>
   );
 }
-      </div>
-    </header>
-  );
-}
