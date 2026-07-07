@@ -43,9 +43,9 @@ const ALL_LANGUAGES = Array.from(new Set(Object.values(LAB_LANGUAGES).flat())).s
 function Hub() {
   const [enrolled, setEnrolled] = useState<string[]>([]);
   const [q, setQ] = useState("");
-  const [cat, setCat] = useState<Category | null>(null);
-  const [diff, setDiff] = useState<typeof DIFFICULTIES[number] | null>(null);
-  const [lang, setLang] = useState<string | null>(null);
+  const [cats, setCats] = useState<Category[]>([]);
+  const [diffs, setDiffs] = useState<Array<typeof DIFFICULTIES[number]>>([]);
+  const [langs, setLangs] = useState<string[]>([]);
 
   useEffect(() => { setEnrolled(getEnrolled()); }, []);
 
@@ -55,19 +55,21 @@ function Hub() {
     const s = q.trim().toLowerCase();
     return labs.filter(l => {
       if (s && !l.name.toLowerCase().includes(s) && !l.description.toLowerCase().includes(s)) return false;
-      if (cat && LAB_CATEGORY[l.slug] !== cat) return false;
-      if (diff && l.difficulty !== diff) return false;
-      if (lang && !(LAB_LANGUAGES[l.slug] ?? []).includes(lang)) return false;
+      if (cats.length && !cats.includes(LAB_CATEGORY[l.slug])) return false;
+      if (diffs.length && !diffs.includes(l.difficulty)) return false;
+      if (langs.length && !(LAB_LANGUAGES[l.slug] ?? []).some(x => langs.includes(x))) return false;
       return true;
     });
-  }, [q, cat, diff, lang]);
+  }, [q, cats, diffs, langs]);
 
   const toggle = (slug: string) => {
     if (enrolled.includes(slug)) { unenroll(slug); setEnrolled(prev => prev.filter(s => s !== slug)); }
     else { enroll(slug); setEnrolled(prev => [...prev, slug]); }
   };
-  const clearFilters = () => { setCat(null); setDiff(null); setLang(null); setQ(""); };
-  const hasFilters = !!(cat || diff || lang || q);
+  const clearFilters = () => { setCats([]); setDiffs([]); setLangs([]); setQ(""); };
+  const hasFilters = !!(cats.length || diffs.length || langs.length || q);
+  const toggleIn = <T,>(arr: T[], v: T) => arr.includes(v) ? arr.filter(x => x !== v) : [...arr, v];
+
 
   return (
     <div className="min-h-screen">
@@ -119,12 +121,13 @@ function Hub() {
               <HScroll>
                 {enrolledLabs.map(lab => (
                   <div key={lab.slug} className="w-[300px] shrink-0">
-                    <EnrolledCard lab={lab} onUnenroll={() => toggle(lab.slug)} />
+                    <EnrolledCard lab={lab} />
                   </div>
                 ))}
               </HScroll>
             )}
           </section>
+
 
           {/* Featured labs — horizontal scroll */}
           <section>
@@ -143,7 +146,7 @@ function Hub() {
             </HScroll>
           </section>
 
-          {/* All labs catalog with filters */}
+          {/* All labs catalog with sidebar filters */}
           <section>
             <div className="mb-4 flex items-end justify-between gap-3 flex-wrap">
               <div className="min-w-0">
@@ -157,37 +160,47 @@ function Hub() {
               </div>
             </div>
 
-            {/* Filter chips */}
-            <div className="mb-4 space-y-2">
-              <FilterRow label="Category">
-                <Chip active={!cat} onClick={() => setCat(null)}>All</Chip>
-                {CATEGORIES.map(c => <Chip key={c} active={cat === c} onClick={() => setCat(cat === c ? null : c)}>{c}</Chip>)}
-              </FilterRow>
-              <FilterRow label="Difficulty">
-                <Chip active={!diff} onClick={() => setDiff(null)}>All</Chip>
-                {DIFFICULTIES.map(d => <Chip key={d} active={diff === d} onClick={() => setDiff(diff === d ? null : d)}>{d}</Chip>)}
-              </FilterRow>
-              <FilterRow label="Language">
-                <Chip active={!lang} onClick={() => setLang(null)}>All</Chip>
-                {ALL_LANGUAGES.map(l => <Chip key={l} active={lang === l} onClick={() => setLang(lang === l ? null : l)}>{l}</Chip>)}
-              </FilterRow>
-              {hasFilters && (
-                <button onClick={clearFilters} className="text-[11px] text-muted-foreground hover:text-foreground underline">Clear filters</button>
-              )}
-            </div>
+            <div className="grid gap-6 md:grid-cols-[220px_minmax(0,1fr)]">
+              <aside className="rounded-xl border bg-card/40 p-4 md:sticky md:top-20 self-start space-y-5">
+                <div className="flex items-center justify-between">
+                  <span className="text-xs font-semibold">Filters</span>
+                  {hasFilters && (
+                    <button onClick={clearFilters} className="text-[10px] text-muted-foreground hover:text-foreground underline">Clear</button>
+                  )}
+                </div>
+                <FilterGroup label="Category">
+                  {CATEGORIES.map(c => (
+                    <CheckRow key={c} checked={cats.includes(c)} onChange={() => setCats(prev => toggleIn(prev, c))} label={c} />
+                  ))}
+                </FilterGroup>
+                <FilterGroup label="Difficulty">
+                  {DIFFICULTIES.map(d => (
+                    <CheckRow key={d} checked={diffs.includes(d)} onChange={() => setDiffs(prev => toggleIn(prev, d))} label={d} />
+                  ))}
+                </FilterGroup>
+                <FilterGroup label="Language">
+                  {ALL_LANGUAGES.map(l => (
+                    <CheckRow key={l} checked={langs.includes(l)} onChange={() => setLangs(prev => toggleIn(prev, l))} label={l} />
+                  ))}
+                </FilterGroup>
+              </aside>
 
-            {filteredAll.length === 0 ? (
-              <div className="rounded-xl border border-dashed bg-card/40 p-10 text-center text-sm text-muted-foreground">
-                No labs match these filters.
+              <div className="min-w-0">
+                {filteredAll.length === 0 ? (
+                  <div className="rounded-xl border border-dashed bg-card/40 p-10 text-center text-sm text-muted-foreground">
+                    No labs match these filters.
+                  </div>
+                ) : (
+                  <div className="grid gap-3 sm:grid-cols-2">
+                    {filteredAll.map(lab => (
+                      <CatalogCard key={lab.slug} lab={lab} isEnrolled={enrolled.includes(lab.slug)} onToggle={() => toggle(lab.slug)} />
+                    ))}
+                  </div>
+                )}
               </div>
-            ) : (
-              <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
-                {filteredAll.map(lab => (
-                  <CatalogCard key={lab.slug} lab={lab} isEnrolled={enrolled.includes(lab.slug)} onToggle={() => toggle(lab.slug)} />
-                ))}
-              </div>
-            )}
+            </div>
           </section>
+
         </div>
       </main>
     </div>
@@ -203,26 +216,27 @@ function HScroll({ children }: { children: React.ReactNode }) {
   );
 }
 
-function FilterRow({ label, children }: { label: string; children: React.ReactNode }) {
+function FilterGroup({ label, children }: { label: string; children: React.ReactNode }) {
   return (
-    <div className="flex items-center gap-2 flex-wrap">
-      <span className="text-[11px] uppercase tracking-wider text-muted-foreground w-20 shrink-0">{label}</span>
-      <div className="flex flex-wrap gap-1.5">{children}</div>
+    <div>
+      <div className="text-[10px] uppercase tracking-wider text-muted-foreground mb-2">{label}</div>
+      <div className="space-y-1.5">{children}</div>
     </div>
   );
 }
 
-function Chip({ active, onClick, children }: { active: boolean; onClick: () => void; children: React.ReactNode }) {
+function CheckRow({ checked, onChange, label }: { checked: boolean; onChange: () => void; label: string }) {
   return (
-    <button onClick={onClick}
-      className={`text-[11px] px-2.5 py-1 rounded-full border transition ${active ? "bg-primary text-primary-foreground border-primary" : "border-border text-muted-foreground hover:bg-accent hover:text-foreground"}`}>
-      {children}
-    </button>
+    <label className="flex items-center gap-2 text-xs cursor-pointer hover:text-foreground text-muted-foreground select-none">
+      <input type="checkbox" checked={checked} onChange={onChange}
+        className="h-3.5 w-3.5 accent-primary rounded border-border" />
+      <span className={checked ? "text-foreground" : ""}>{label}</span>
+    </label>
   );
 }
 
-
 function FeaturedCard({ lab, isEnrolled, onToggle }: { lab: Lab; isEnrolled: boolean; onToggle: () => void }) {
+
   return (
     <div className="group relative overflow-hidden rounded-xl border bg-gradient-to-br from-card via-card to-accent/20 p-5 hover:border-primary/50 transition">
       <div className="absolute -right-8 -top-8 h-24 w-24 rounded-full blur-2xl opacity-30" style={{ background: `var(--${lab.color})` }} />
@@ -253,7 +267,7 @@ function FeaturedCard({ lab, isEnrolled, onToggle }: { lab: Lab; isEnrolled: boo
   );
 }
 
-function EnrolledCard({ lab, onUnenroll }: { lab: Lab; onUnenroll: () => void }) {
+function EnrolledCard({ lab }: { lab: Lab }) {
   const pct = Math.round((lab.completed / lab.total) * 100);
   return (
     <div className="group relative overflow-hidden rounded-xl border bg-card p-5 hover:border-primary/50 hover:ring-glow transition">
@@ -270,18 +284,15 @@ function EnrolledCard({ lab, onUnenroll }: { lab: Lab; onUnenroll: () => void })
         <DiffBadge value={lab.difficulty} />
         <span className="text-muted-foreground">{lab.completed}/{lab.total} · {lab.hoursLeft}h left</span>
       </div>
-      <div className="mt-4 flex gap-2">
+      <div className="mt-4">
         <Link to="/lab/$slug" params={{ slug: lab.slug }}
-          className="flex-1 inline-flex items-center justify-center gap-1 rounded-md bg-primary px-3 py-1.5 text-xs font-medium text-primary-foreground hover:opacity-90">
+          className="w-full inline-flex items-center justify-center gap-1 rounded-md bg-primary px-3 py-1.5 text-xs font-medium text-primary-foreground hover:opacity-90">
           {lab.completed > 0 ? "Continue" : "Start"} <ArrowRight className="h-3.5 w-3.5" />
         </Link>
-        <button onClick={onUnenroll} title="Unenroll"
-          className="inline-flex items-center justify-center rounded-md border border-border px-3 py-1.5 text-xs text-muted-foreground hover:bg-accent hover:text-foreground">
-          Leave
-        </button>
       </div>
     </div>
   );
+
 }
 
 function CatalogCard({ lab, isEnrolled, onToggle }: { lab: Lab; isEnrolled: boolean; onToggle: () => void }) {
