@@ -16,7 +16,6 @@ const otherLinks = [
   { to: "/leaderboard", label: "Leaderboard", icon: Trophy },
   { to: "/forum", label: "Forum", icon: MessagesSquare },
   { to: "/certificates", label: "Certificates", icon: Award },
-  { to: "/profile", label: "Profile", icon: User },
 ];
 
 export function TopNav({ rightSlot, activeOverride }: { rightSlot?: React.ReactNode; activeOverride?: string } = {}) {
