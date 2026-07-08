@@ -13,7 +13,6 @@ import { Route as ProfileRouteImport } from './routes/profile'
 import { Route as LeaderboardRouteImport } from './routes/leaderboard'
 import { Route as HackathonsRouteImport } from './routes/hackathons'
 import { Route as ForumRouteImport } from './routes/forum'
-import { Route as EvaluationRouteImport } from './routes/evaluation'
 import { Route as DashboardRouteImport } from './routes/dashboard'
 import { Route as CollaborationRouteImport } from './routes/collaboration'
 import { Route as CertificatesRouteImport } from './routes/certificates'
@@ -85,11 +84,6 @@ const ForumRoute = ForumRouteImport.update({
   path: '/forum',
   getParentRoute: () => rootRouteImport,
 } as any)
-const EvaluationRoute = EvaluationRouteImport.update({
-  id: '/evaluation',
-  path: '/evaluation',
-  getParentRoute: () => rootRouteImport,
-} as any)
 const DashboardRoute = DashboardRouteImport.update({
   id: '/dashboard',
   path: '/dashboard',
@@ -146,34 +140,34 @@ const HackathonsIdRoute = HackathonsIdRouteImport.update({
   getParentRoute: () => HackathonsRoute,
 } as any)
 const EvaluationWorkspaceRoute = EvaluationWorkspaceRouteImport.update({
-  id: '/workspace',
-  path: '/workspace',
-  getParentRoute: () => EvaluationRoute,
+  id: '/evaluation/workspace',
+  path: '/evaluation/workspace',
+  getParentRoute: () => rootRouteImport,
 } as any)
 const EvaluationSystemCheckRoute = EvaluationSystemCheckRouteImport.update({
-  id: '/system-check',
-  path: '/system-check',
-  getParentRoute: () => EvaluationRoute,
+  id: '/evaluation/system-check',
+  path: '/evaluation/system-check',
+  getParentRoute: () => rootRouteImport,
 } as any)
 const EvaluationProctoringRoute = EvaluationProctoringRouteImport.update({
-  id: '/proctoring',
-  path: '/proctoring',
-  getParentRoute: () => EvaluationRoute,
+  id: '/evaluation/proctoring',
+  path: '/evaluation/proctoring',
+  getParentRoute: () => rootRouteImport,
 } as any)
 const EvaluationOtpRoute = EvaluationOtpRouteImport.update({
-  id: '/otp',
-  path: '/otp',
-  getParentRoute: () => EvaluationRoute,
+  id: '/evaluation/otp',
+  path: '/evaluation/otp',
+  getParentRoute: () => rootRouteImport,
 } as any)
 const EvaluationInstructionsRoute = EvaluationInstructionsRouteImport.update({
-  id: '/instructions',
-  path: '/instructions',
-  getParentRoute: () => EvaluationRoute,
+  id: '/evaluation/instructions',
+  path: '/evaluation/instructions',
+  getParentRoute: () => rootRouteImport,
 } as any)
 const EvaluationCompleteRoute = EvaluationCompleteRouteImport.update({
-  id: '/complete',
-  path: '/complete',
-  getParentRoute: () => EvaluationRoute,
+  id: '/evaluation/complete',
+  path: '/evaluation/complete',
+  getParentRoute: () => rootRouteImport,
 } as any)
 const CollaborationSquadsRoute = CollaborationSquadsRouteImport.update({
   id: '/squads',
@@ -356,7 +350,6 @@ export interface FileRoutesByFullPath {
   '/certificates': typeof CertificatesRoute
   '/collaboration': typeof CollaborationRouteWithChildren
   '/dashboard': typeof DashboardRoute
-  '/evaluation': typeof EvaluationRouteWithChildren
   '/forum': typeof ForumRoute
   '/hackathons': typeof HackathonsRouteWithChildren
   '/leaderboard': typeof LeaderboardRoute
@@ -411,7 +404,6 @@ export interface FileRoutesByTo {
   '/auth': typeof AuthRoute
   '/certificates': typeof CertificatesRoute
   '/dashboard': typeof DashboardRoute
-  '/evaluation': typeof EvaluationRouteWithChildren
   '/forum': typeof ForumRoute
   '/hackathons': typeof HackathonsRouteWithChildren
   '/leaderboard': typeof LeaderboardRoute
@@ -467,7 +459,6 @@ export interface FileRoutesById {
   '/certificates': typeof CertificatesRoute
   '/collaboration': typeof CollaborationRouteWithChildren
   '/dashboard': typeof DashboardRoute
-  '/evaluation': typeof EvaluationRouteWithChildren
   '/forum': typeof ForumRoute
   '/hackathons': typeof HackathonsRouteWithChildren
   '/leaderboard': typeof LeaderboardRoute
@@ -526,7 +517,6 @@ export interface FileRouteTypes {
     | '/certificates'
     | '/collaboration'
     | '/dashboard'
-    | '/evaluation'
     | '/forum'
     | '/hackathons'
     | '/leaderboard'
@@ -581,7 +571,6 @@ export interface FileRouteTypes {
     | '/auth'
     | '/certificates'
     | '/dashboard'
-    | '/evaluation'
     | '/forum'
     | '/hackathons'
     | '/leaderboard'
@@ -636,7 +625,6 @@ export interface FileRouteTypes {
     | '/certificates'
     | '/collaboration'
     | '/dashboard'
-    | '/evaluation'
     | '/forum'
     | '/hackathons'
     | '/leaderboard'
@@ -694,11 +682,16 @@ export interface RootRouteChildren {
   CertificatesRoute: typeof CertificatesRoute
   CollaborationRoute: typeof CollaborationRouteWithChildren
   DashboardRoute: typeof DashboardRoute
-  EvaluationRoute: typeof EvaluationRouteWithChildren
   ForumRoute: typeof ForumRoute
   HackathonsRoute: typeof HackathonsRouteWithChildren
   LeaderboardRoute: typeof LeaderboardRoute
   ProfileRoute: typeof ProfileRoute
+  EvaluationCompleteRoute: typeof EvaluationCompleteRoute
+  EvaluationInstructionsRoute: typeof EvaluationInstructionsRoute
+  EvaluationOtpRoute: typeof EvaluationOtpRoute
+  EvaluationProctoringRoute: typeof EvaluationProctoringRoute
+  EvaluationSystemCheckRoute: typeof EvaluationSystemCheckRoute
+  EvaluationWorkspaceRoute: typeof EvaluationWorkspaceRoute
   LabSlugRoute: typeof LabSlugRouteWithChildren
 }
 
@@ -730,13 +723,6 @@ declare module '@tanstack/react-router' {
       path: '/forum'
       fullPath: '/forum'
       preLoaderRoute: typeof ForumRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/evaluation': {
-      id: '/evaluation'
-      path: '/evaluation'
-      fullPath: '/evaluation'
-      preLoaderRoute: typeof EvaluationRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/dashboard': {
@@ -818,45 +804,45 @@ declare module '@tanstack/react-router' {
     }
     '/evaluation/workspace': {
       id: '/evaluation/workspace'
-      path: '/workspace'
+      path: '/evaluation/workspace'
       fullPath: '/evaluation/workspace'
       preLoaderRoute: typeof EvaluationWorkspaceRouteImport
-      parentRoute: typeof EvaluationRoute
+      parentRoute: typeof rootRouteImport
     }
     '/evaluation/system-check': {
       id: '/evaluation/system-check'
-      path: '/system-check'
+      path: '/evaluation/system-check'
       fullPath: '/evaluation/system-check'
       preLoaderRoute: typeof EvaluationSystemCheckRouteImport
-      parentRoute: typeof EvaluationRoute
+      parentRoute: typeof rootRouteImport
     }
     '/evaluation/proctoring': {
       id: '/evaluation/proctoring'
-      path: '/proctoring'
+      path: '/evaluation/proctoring'
       fullPath: '/evaluation/proctoring'
       preLoaderRoute: typeof EvaluationProctoringRouteImport
-      parentRoute: typeof EvaluationRoute
+      parentRoute: typeof rootRouteImport
     }
     '/evaluation/otp': {
       id: '/evaluation/otp'
-      path: '/otp'
+      path: '/evaluation/otp'
       fullPath: '/evaluation/otp'
       preLoaderRoute: typeof EvaluationOtpRouteImport
-      parentRoute: typeof EvaluationRoute
+      parentRoute: typeof rootRouteImport
     }
     '/evaluation/instructions': {
       id: '/evaluation/instructions'
-      path: '/instructions'
+      path: '/evaluation/instructions'
       fullPath: '/evaluation/instructions'
       preLoaderRoute: typeof EvaluationInstructionsRouteImport
-      parentRoute: typeof EvaluationRoute
+      parentRoute: typeof rootRouteImport
     }
     '/evaluation/complete': {
       id: '/evaluation/complete'
-      path: '/complete'
+      path: '/evaluation/complete'
       fullPath: '/evaluation/complete'
       preLoaderRoute: typeof EvaluationCompleteRouteImport
-      parentRoute: typeof EvaluationRoute
+      parentRoute: typeof rootRouteImport
     }
     '/collaboration/squads': {
       id: '/collaboration/squads'
@@ -1228,28 +1214,6 @@ const CollaborationRouteWithChildren = CollaborationRoute._addFileChildren(
   CollaborationRouteChildren,
 )
 
-interface EvaluationRouteChildren {
-  EvaluationCompleteRoute: typeof EvaluationCompleteRoute
-  EvaluationInstructionsRoute: typeof EvaluationInstructionsRoute
-  EvaluationOtpRoute: typeof EvaluationOtpRoute
-  EvaluationProctoringRoute: typeof EvaluationProctoringRoute
-  EvaluationSystemCheckRoute: typeof EvaluationSystemCheckRoute
-  EvaluationWorkspaceRoute: typeof EvaluationWorkspaceRoute
-}
-
-const EvaluationRouteChildren: EvaluationRouteChildren = {
-  EvaluationCompleteRoute: EvaluationCompleteRoute,
-  EvaluationInstructionsRoute: EvaluationInstructionsRoute,
-  EvaluationOtpRoute: EvaluationOtpRoute,
-  EvaluationProctoringRoute: EvaluationProctoringRoute,
-  EvaluationSystemCheckRoute: EvaluationSystemCheckRoute,
-  EvaluationWorkspaceRoute: EvaluationWorkspaceRoute,
-}
-
-const EvaluationRouteWithChildren = EvaluationRoute._addFileChildren(
-  EvaluationRouteChildren,
-)
-
 interface HackathonsRouteChildren {
   HackathonsIdRoute: typeof HackathonsIdRoute
 }
@@ -1294,23 +1258,18 @@ const rootRouteChildren: RootRouteChildren = {
   CertificatesRoute: CertificatesRoute,
   CollaborationRoute: CollaborationRouteWithChildren,
   DashboardRoute: DashboardRoute,
-  EvaluationRoute: EvaluationRouteWithChildren,
   ForumRoute: ForumRoute,
   HackathonsRoute: HackathonsRouteWithChildren,
   LeaderboardRoute: LeaderboardRoute,
   ProfileRoute: ProfileRoute,
+  EvaluationCompleteRoute: EvaluationCompleteRoute,
+  EvaluationInstructionsRoute: EvaluationInstructionsRoute,
+  EvaluationOtpRoute: EvaluationOtpRoute,
+  EvaluationProctoringRoute: EvaluationProctoringRoute,
+  EvaluationSystemCheckRoute: EvaluationSystemCheckRoute,
+  EvaluationWorkspaceRoute: EvaluationWorkspaceRoute,
   LabSlugRoute: LabSlugRouteWithChildren,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
   ._addFileTypes<FileRouteTypes>()
-
-import type { getRouter } from './router.tsx'
-import type { startInstance } from './start.ts'
-declare module '@tanstack/react-start' {
-  interface Register {
-    ssr: true
-    router: Awaited<ReturnType<typeof getRouter>>
-    config: Awaited<ReturnType<typeof startInstance.getOptions>>
-  }
-}
