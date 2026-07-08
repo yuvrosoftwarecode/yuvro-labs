@@ -22,7 +22,7 @@ function EvaluationInvite() {
   const [err, setErr] = useState<string | null>(null);
   const inputRef = useRef<HTMLInputElement>(null);
 
-  const valid = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email) && phone.replace(/\D/g, "").length >= 7 && !!file;
+  const valid = true;
 
   const onFiles = (list: FileList | null) => {
     const f = list?.[0];
