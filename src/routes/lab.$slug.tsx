@@ -96,11 +96,29 @@ function LabDashboard() {
   const lab = labs.find((l) => l.slug === slug) ?? labs[0];
   const [view, setView] = useState<"kanban" | "list">("kanban");
   const [activeSprint, setActiveSprint] = useState<string | null>(null);
+  const [payOpen, setPayOpen] = useState(false);
+  const [unlockBump, setUnlockBump] = useState(0);
   const sprints = useMemo(() => buildSprints(slug, tickets), [slug]);
   const sprint = sprints.find((s) => s.id === activeSprint) ?? null;
+  const activeSprintIndex = sprint ? sprints.findIndex(s => s.id === sprint.id) : -1;
   const sprintTickets = sprint ? tickets.filter((t) => sprint.ticketIds.includes(t.id)) : tickets;
   const cols: { key: "Not Started" | "In Progress" | "Completed"; }[] = [{ key: "Not Started" }, { key: "In Progress" }, { key: "Completed" }];
   const pct = Math.round((lab.completed / lab.total) * 100);
+
+  const tier = getLabTier(slug);
+  const meta = TIER_META[tier];
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  const _bump = unlockBump; // ensure re-render after unlock
+  const unlocked = isLabUnlocked(slug);
+  const freeCount = freeSprintCount(tier);
+  const sprintLocked = (i: number) => isSprintLocked(slug, i);
+  const activeLocked = activeSprintIndex >= 0 && sprintLocked(activeSprintIndex);
+
+  const openSprint = (sprintId: string, index: number) => {
+    if (sprintLocked(index)) { setPayOpen(true); return; }
+    setActiveSprint(sprintId);
+  };
+  const handleUnlock = () => { unlockLab(slug); setPayOpen(false); setUnlockBump(x => x + 1); };
 
   if (ticketMatch) return <Outlet />;
 
