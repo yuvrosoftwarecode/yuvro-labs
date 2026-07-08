@@ -392,7 +392,7 @@ function LabDashboard() {
                     </table>
                   </div>
                 )}
-                </>
+                  </>
                 )}
               </>
             )}
