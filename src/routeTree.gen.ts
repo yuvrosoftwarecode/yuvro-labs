@@ -25,6 +25,7 @@ import { Route as CollaborationIndexRouteImport } from './routes/collaboration.i
 import { Route as AdminIndexRouteImport } from './routes/admin.index'
 import { Route as LabSlugRouteImport } from './routes/lab.$slug'
 import { Route as HackathonsIdRouteImport } from './routes/hackathons.$id'
+import { Route as EvaluationSystemCheckRouteImport } from './routes/evaluation.system-check'
 import { Route as EvaluationOtpRouteImport } from './routes/evaluation.otp'
 import { Route as CollaborationSquadsRouteImport } from './routes/collaboration.squads'
 import { Route as CollaborationConnectionsRouteImport } from './routes/collaboration.connections'
@@ -139,6 +140,11 @@ const HackathonsIdRoute = HackathonsIdRouteImport.update({
   id: '/$id',
   path: '/$id',
   getParentRoute: () => HackathonsRoute,
+} as any)
+const EvaluationSystemCheckRoute = EvaluationSystemCheckRouteImport.update({
+  id: '/system-check',
+  path: '/system-check',
+  getParentRoute: () => EvaluationRoute,
 } as any)
 const EvaluationOtpRoute = EvaluationOtpRouteImport.update({
   id: '/otp',
@@ -350,6 +356,7 @@ export interface FileRoutesByFullPath {
   '/collaboration/connections': typeof CollaborationConnectionsRoute
   '/collaboration/squads': typeof CollaborationSquadsRoute
   '/evaluation/otp': typeof EvaluationOtpRoute
+  '/evaluation/system-check': typeof EvaluationSystemCheckRoute
   '/hackathons/$id': typeof HackathonsIdRoute
   '/lab/$slug': typeof LabSlugRouteWithChildren
   '/admin/': typeof AdminIndexRoute
@@ -398,6 +405,7 @@ export interface FileRoutesByTo {
   '/collaboration/connections': typeof CollaborationConnectionsRoute
   '/collaboration/squads': typeof CollaborationSquadsRoute
   '/evaluation/otp': typeof EvaluationOtpRoute
+  '/evaluation/system-check': typeof EvaluationSystemCheckRoute
   '/hackathons/$id': typeof HackathonsIdRoute
   '/lab/$slug': typeof LabSlugRouteWithChildren
   '/admin': typeof AdminIndexRoute
@@ -451,6 +459,7 @@ export interface FileRoutesById {
   '/collaboration/connections': typeof CollaborationConnectionsRoute
   '/collaboration/squads': typeof CollaborationSquadsRoute
   '/evaluation/otp': typeof EvaluationOtpRoute
+  '/evaluation/system-check': typeof EvaluationSystemCheckRoute
   '/hackathons/$id': typeof HackathonsIdRoute
   '/lab/$slug': typeof LabSlugRouteWithChildren
   '/admin/': typeof AdminIndexRoute
@@ -505,6 +514,7 @@ export interface FileRouteTypes {
     | '/collaboration/connections'
     | '/collaboration/squads'
     | '/evaluation/otp'
+    | '/evaluation/system-check'
     | '/hackathons/$id'
     | '/lab/$slug'
     | '/admin/'
@@ -553,6 +563,7 @@ export interface FileRouteTypes {
     | '/collaboration/connections'
     | '/collaboration/squads'
     | '/evaluation/otp'
+    | '/evaluation/system-check'
     | '/hackathons/$id'
     | '/lab/$slug'
     | '/admin'
@@ -605,6 +616,7 @@ export interface FileRouteTypes {
     | '/collaboration/connections'
     | '/collaboration/squads'
     | '/evaluation/otp'
+    | '/evaluation/system-check'
     | '/hackathons/$id'
     | '/lab/$slug'
     | '/admin/'
@@ -755,6 +767,13 @@ declare module '@tanstack/react-router' {
       fullPath: '/hackathons/$id'
       preLoaderRoute: typeof HackathonsIdRouteImport
       parentRoute: typeof HackathonsRoute
+    }
+    '/evaluation/system-check': {
+      id: '/evaluation/system-check'
+      path: '/system-check'
+      fullPath: '/evaluation/system-check'
+      preLoaderRoute: typeof EvaluationSystemCheckRouteImport
+      parentRoute: typeof EvaluationRoute
     }
     '/evaluation/otp': {
       id: '/evaluation/otp'
@@ -1135,10 +1154,12 @@ const CollaborationRouteWithChildren = CollaborationRoute._addFileChildren(
 
 interface EvaluationRouteChildren {
   EvaluationOtpRoute: typeof EvaluationOtpRoute
+  EvaluationSystemCheckRoute: typeof EvaluationSystemCheckRoute
 }
 
 const EvaluationRouteChildren: EvaluationRouteChildren = {
   EvaluationOtpRoute: EvaluationOtpRoute,
+  EvaluationSystemCheckRoute: EvaluationSystemCheckRoute,
 }
 
 const EvaluationRouteWithChildren = EvaluationRoute._addFileChildren(
