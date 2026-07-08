@@ -13,6 +13,7 @@ import { Route as ProfileRouteImport } from './routes/profile'
 import { Route as LeaderboardRouteImport } from './routes/leaderboard'
 import { Route as HackathonsRouteImport } from './routes/hackathons'
 import { Route as ForumRouteImport } from './routes/forum'
+import { Route as EvaluationRouteImport } from './routes/evaluation'
 import { Route as DashboardRouteImport } from './routes/dashboard'
 import { Route as CollaborationRouteImport } from './routes/collaboration'
 import { Route as CertificatesRouteImport } from './routes/certificates'
@@ -76,6 +77,11 @@ const HackathonsRoute = HackathonsRouteImport.update({
 const ForumRoute = ForumRouteImport.update({
   id: '/forum',
   path: '/forum',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const EvaluationRoute = EvaluationRouteImport.update({
+  id: '/evaluation',
+  path: '/evaluation',
   getParentRoute: () => rootRouteImport,
 } as any)
 const DashboardRoute = DashboardRouteImport.update({
@@ -314,6 +320,7 @@ export interface FileRoutesByFullPath {
   '/certificates': typeof CertificatesRoute
   '/collaboration': typeof CollaborationRouteWithChildren
   '/dashboard': typeof DashboardRoute
+  '/evaluation': typeof EvaluationRoute
   '/forum': typeof ForumRoute
   '/hackathons': typeof HackathonsRouteWithChildren
   '/leaderboard': typeof LeaderboardRoute
@@ -362,6 +369,7 @@ export interface FileRoutesByTo {
   '/auth': typeof AuthRoute
   '/certificates': typeof CertificatesRoute
   '/dashboard': typeof DashboardRoute
+  '/evaluation': typeof EvaluationRoute
   '/forum': typeof ForumRoute
   '/hackathons': typeof HackathonsRouteWithChildren
   '/leaderboard': typeof LeaderboardRoute
@@ -411,6 +419,7 @@ export interface FileRoutesById {
   '/certificates': typeof CertificatesRoute
   '/collaboration': typeof CollaborationRouteWithChildren
   '/dashboard': typeof DashboardRoute
+  '/evaluation': typeof EvaluationRoute
   '/forum': typeof ForumRoute
   '/hackathons': typeof HackathonsRouteWithChildren
   '/leaderboard': typeof LeaderboardRoute
@@ -463,6 +472,7 @@ export interface FileRouteTypes {
     | '/certificates'
     | '/collaboration'
     | '/dashboard'
+    | '/evaluation'
     | '/forum'
     | '/hackathons'
     | '/leaderboard'
@@ -511,6 +521,7 @@ export interface FileRouteTypes {
     | '/auth'
     | '/certificates'
     | '/dashboard'
+    | '/evaluation'
     | '/forum'
     | '/hackathons'
     | '/leaderboard'
@@ -559,6 +570,7 @@ export interface FileRouteTypes {
     | '/certificates'
     | '/collaboration'
     | '/dashboard'
+    | '/evaluation'
     | '/forum'
     | '/hackathons'
     | '/leaderboard'
@@ -610,6 +622,7 @@ export interface RootRouteChildren {
   CertificatesRoute: typeof CertificatesRoute
   CollaborationRoute: typeof CollaborationRouteWithChildren
   DashboardRoute: typeof DashboardRoute
+  EvaluationRoute: typeof EvaluationRoute
   ForumRoute: typeof ForumRoute
   HackathonsRoute: typeof HackathonsRouteWithChildren
   LeaderboardRoute: typeof LeaderboardRoute
@@ -645,6 +658,13 @@ declare module '@tanstack/react-router' {
       path: '/forum'
       fullPath: '/forum'
       preLoaderRoute: typeof ForumRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/evaluation': {
+      id: '/evaluation'
+      path: '/evaluation'
+      fullPath: '/evaluation'
+      preLoaderRoute: typeof EvaluationRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/dashboard': {
@@ -1138,6 +1158,7 @@ const rootRouteChildren: RootRouteChildren = {
   CertificatesRoute: CertificatesRoute,
   CollaborationRoute: CollaborationRouteWithChildren,
   DashboardRoute: DashboardRoute,
+  EvaluationRoute: EvaluationRoute,
   ForumRoute: ForumRoute,
   HackathonsRoute: HackathonsRouteWithChildren,
   LeaderboardRoute: LeaderboardRoute,
