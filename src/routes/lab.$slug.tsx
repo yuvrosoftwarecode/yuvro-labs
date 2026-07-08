@@ -324,7 +324,7 @@ function LabDashboard() {
                     </button>
                   </div>
                 ) : (
-
+                  <>
                 {view === "kanban" ? (
                   <div className="grid gap-3 md:grid-cols-3">
                     {cols.map((c) => {
