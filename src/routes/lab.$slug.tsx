@@ -392,6 +392,8 @@ function LabDashboard() {
                     </table>
                   </div>
                 )}
+                </>
+                )}
               </>
             )}
           </section>
