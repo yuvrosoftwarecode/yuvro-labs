@@ -297,7 +297,7 @@ function EnrolledCard({ lab }: { lab: Lab }) {
         <ProgressRing value={pct} color={`var(--${lab.color})`} />
       </div>
       <div className="mt-3 flex items-center justify-between text-xs">
-        <DiffBadge value={lab.difficulty} />
+        <div className="flex items-center gap-1.5"><DiffBadge value={lab.difficulty} /><TierBadge slug={lab.slug} /></div>
         <span className="text-muted-foreground">{lab.completed}/{lab.total} · {lab.hoursLeft}h left</span>
       </div>
       <div className="mt-4">
