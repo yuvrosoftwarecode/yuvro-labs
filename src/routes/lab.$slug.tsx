@@ -312,6 +312,19 @@ function LabDashboard() {
                   </div>
                 </div>
 
+                {activeLocked ? (
+                  <div className="rounded-xl border border-warning/30 bg-warning/5 p-8 text-center">
+                    <div className="mx-auto grid h-12 w-12 place-items-center rounded-full bg-warning/15 text-warning">
+                      <Lock className="h-5 w-5" />
+                    </div>
+                    <div className="mt-3 text-base font-semibold">This sprint is part of the {meta.label}</div>
+                    <p className="mt-1 text-sm text-muted-foreground max-w-md mx-auto">{meta.blurb}</p>
+                    <button onClick={() => setPayOpen(true)} className="mt-4 rounded-md bg-primary text-primary-foreground px-4 py-2 text-sm font-medium hover:opacity-90">
+                      Unlock full track · {meta.price}
+                    </button>
+                  </div>
+                ) : (
+
                 {view === "kanban" ? (
                   <div className="grid gap-3 md:grid-cols-3">
                     {cols.map((c) => {
