@@ -30,6 +30,7 @@ import { Route as EvaluationSystemCheckRouteImport } from './routes/evaluation.s
 import { Route as EvaluationProctoringRouteImport } from './routes/evaluation.proctoring'
 import { Route as EvaluationOtpRouteImport } from './routes/evaluation.otp'
 import { Route as EvaluationInstructionsRouteImport } from './routes/evaluation.instructions'
+import { Route as EvaluationCompleteRouteImport } from './routes/evaluation.complete'
 import { Route as CollaborationSquadsRouteImport } from './routes/collaboration.squads'
 import { Route as CollaborationConnectionsRouteImport } from './routes/collaboration.connections'
 import { Route as CollaborationBrowseRouteImport } from './routes/collaboration.browse'
@@ -167,6 +168,11 @@ const EvaluationOtpRoute = EvaluationOtpRouteImport.update({
 const EvaluationInstructionsRoute = EvaluationInstructionsRouteImport.update({
   id: '/instructions',
   path: '/instructions',
+  getParentRoute: () => EvaluationRoute,
+} as any)
+const EvaluationCompleteRoute = EvaluationCompleteRouteImport.update({
+  id: '/complete',
+  path: '/complete',
   getParentRoute: () => EvaluationRoute,
 } as any)
 const CollaborationSquadsRoute = CollaborationSquadsRouteImport.update({
@@ -373,6 +379,7 @@ export interface FileRoutesByFullPath {
   '/collaboration/browse': typeof CollaborationBrowseRoute
   '/collaboration/connections': typeof CollaborationConnectionsRoute
   '/collaboration/squads': typeof CollaborationSquadsRoute
+  '/evaluation/complete': typeof EvaluationCompleteRoute
   '/evaluation/instructions': typeof EvaluationInstructionsRoute
   '/evaluation/otp': typeof EvaluationOtpRoute
   '/evaluation/proctoring': typeof EvaluationProctoringRoute
@@ -425,6 +432,7 @@ export interface FileRoutesByTo {
   '/collaboration/browse': typeof CollaborationBrowseRoute
   '/collaboration/connections': typeof CollaborationConnectionsRoute
   '/collaboration/squads': typeof CollaborationSquadsRoute
+  '/evaluation/complete': typeof EvaluationCompleteRoute
   '/evaluation/instructions': typeof EvaluationInstructionsRoute
   '/evaluation/otp': typeof EvaluationOtpRoute
   '/evaluation/proctoring': typeof EvaluationProctoringRoute
@@ -482,6 +490,7 @@ export interface FileRoutesById {
   '/collaboration/browse': typeof CollaborationBrowseRoute
   '/collaboration/connections': typeof CollaborationConnectionsRoute
   '/collaboration/squads': typeof CollaborationSquadsRoute
+  '/evaluation/complete': typeof EvaluationCompleteRoute
   '/evaluation/instructions': typeof EvaluationInstructionsRoute
   '/evaluation/otp': typeof EvaluationOtpRoute
   '/evaluation/proctoring': typeof EvaluationProctoringRoute
@@ -540,6 +549,7 @@ export interface FileRouteTypes {
     | '/collaboration/browse'
     | '/collaboration/connections'
     | '/collaboration/squads'
+    | '/evaluation/complete'
     | '/evaluation/instructions'
     | '/evaluation/otp'
     | '/evaluation/proctoring'
@@ -592,6 +602,7 @@ export interface FileRouteTypes {
     | '/collaboration/browse'
     | '/collaboration/connections'
     | '/collaboration/squads'
+    | '/evaluation/complete'
     | '/evaluation/instructions'
     | '/evaluation/otp'
     | '/evaluation/proctoring'
@@ -648,6 +659,7 @@ export interface FileRouteTypes {
     | '/collaboration/browse'
     | '/collaboration/connections'
     | '/collaboration/squads'
+    | '/evaluation/complete'
     | '/evaluation/instructions'
     | '/evaluation/otp'
     | '/evaluation/proctoring'
@@ -837,6 +849,13 @@ declare module '@tanstack/react-router' {
       path: '/instructions'
       fullPath: '/evaluation/instructions'
       preLoaderRoute: typeof EvaluationInstructionsRouteImport
+      parentRoute: typeof EvaluationRoute
+    }
+    '/evaluation/complete': {
+      id: '/evaluation/complete'
+      path: '/complete'
+      fullPath: '/evaluation/complete'
+      preLoaderRoute: typeof EvaluationCompleteRouteImport
       parentRoute: typeof EvaluationRoute
     }
     '/collaboration/squads': {
@@ -1210,6 +1229,7 @@ const CollaborationRouteWithChildren = CollaborationRoute._addFileChildren(
 )
 
 interface EvaluationRouteChildren {
+  EvaluationCompleteRoute: typeof EvaluationCompleteRoute
   EvaluationInstructionsRoute: typeof EvaluationInstructionsRoute
   EvaluationOtpRoute: typeof EvaluationOtpRoute
   EvaluationProctoringRoute: typeof EvaluationProctoringRoute
@@ -1218,6 +1238,7 @@ interface EvaluationRouteChildren {
 }
 
 const EvaluationRouteChildren: EvaluationRouteChildren = {
+  EvaluationCompleteRoute: EvaluationCompleteRoute,
   EvaluationInstructionsRoute: EvaluationInstructionsRoute,
   EvaluationOtpRoute: EvaluationOtpRoute,
   EvaluationProctoringRoute: EvaluationProctoringRoute,
