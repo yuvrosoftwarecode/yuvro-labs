@@ -26,6 +26,7 @@ import { Route as AdminIndexRouteImport } from './routes/admin.index'
 import { Route as LabSlugRouteImport } from './routes/lab.$slug'
 import { Route as HackathonsIdRouteImport } from './routes/hackathons.$id'
 import { Route as EvaluationSystemCheckRouteImport } from './routes/evaluation.system-check'
+import { Route as EvaluationProctoringRouteImport } from './routes/evaluation.proctoring'
 import { Route as EvaluationOtpRouteImport } from './routes/evaluation.otp'
 import { Route as CollaborationSquadsRouteImport } from './routes/collaboration.squads'
 import { Route as CollaborationConnectionsRouteImport } from './routes/collaboration.connections'
@@ -144,6 +145,11 @@ const HackathonsIdRoute = HackathonsIdRouteImport.update({
 const EvaluationSystemCheckRoute = EvaluationSystemCheckRouteImport.update({
   id: '/system-check',
   path: '/system-check',
+  getParentRoute: () => EvaluationRoute,
+} as any)
+const EvaluationProctoringRoute = EvaluationProctoringRouteImport.update({
+  id: '/proctoring',
+  path: '/proctoring',
   getParentRoute: () => EvaluationRoute,
 } as any)
 const EvaluationOtpRoute = EvaluationOtpRouteImport.update({
@@ -356,6 +362,7 @@ export interface FileRoutesByFullPath {
   '/collaboration/connections': typeof CollaborationConnectionsRoute
   '/collaboration/squads': typeof CollaborationSquadsRoute
   '/evaluation/otp': typeof EvaluationOtpRoute
+  '/evaluation/proctoring': typeof EvaluationProctoringRoute
   '/evaluation/system-check': typeof EvaluationSystemCheckRoute
   '/hackathons/$id': typeof HackathonsIdRoute
   '/lab/$slug': typeof LabSlugRouteWithChildren
@@ -405,6 +412,7 @@ export interface FileRoutesByTo {
   '/collaboration/connections': typeof CollaborationConnectionsRoute
   '/collaboration/squads': typeof CollaborationSquadsRoute
   '/evaluation/otp': typeof EvaluationOtpRoute
+  '/evaluation/proctoring': typeof EvaluationProctoringRoute
   '/evaluation/system-check': typeof EvaluationSystemCheckRoute
   '/hackathons/$id': typeof HackathonsIdRoute
   '/lab/$slug': typeof LabSlugRouteWithChildren
@@ -459,6 +467,7 @@ export interface FileRoutesById {
   '/collaboration/connections': typeof CollaborationConnectionsRoute
   '/collaboration/squads': typeof CollaborationSquadsRoute
   '/evaluation/otp': typeof EvaluationOtpRoute
+  '/evaluation/proctoring': typeof EvaluationProctoringRoute
   '/evaluation/system-check': typeof EvaluationSystemCheckRoute
   '/hackathons/$id': typeof HackathonsIdRoute
   '/lab/$slug': typeof LabSlugRouteWithChildren
@@ -514,6 +523,7 @@ export interface FileRouteTypes {
     | '/collaboration/connections'
     | '/collaboration/squads'
     | '/evaluation/otp'
+    | '/evaluation/proctoring'
     | '/evaluation/system-check'
     | '/hackathons/$id'
     | '/lab/$slug'
@@ -563,6 +573,7 @@ export interface FileRouteTypes {
     | '/collaboration/connections'
     | '/collaboration/squads'
     | '/evaluation/otp'
+    | '/evaluation/proctoring'
     | '/evaluation/system-check'
     | '/hackathons/$id'
     | '/lab/$slug'
@@ -616,6 +627,7 @@ export interface FileRouteTypes {
     | '/collaboration/connections'
     | '/collaboration/squads'
     | '/evaluation/otp'
+    | '/evaluation/proctoring'
     | '/evaluation/system-check'
     | '/hackathons/$id'
     | '/lab/$slug'
@@ -773,6 +785,13 @@ declare module '@tanstack/react-router' {
       path: '/system-check'
       fullPath: '/evaluation/system-check'
       preLoaderRoute: typeof EvaluationSystemCheckRouteImport
+      parentRoute: typeof EvaluationRoute
+    }
+    '/evaluation/proctoring': {
+      id: '/evaluation/proctoring'
+      path: '/proctoring'
+      fullPath: '/evaluation/proctoring'
+      preLoaderRoute: typeof EvaluationProctoringRouteImport
       parentRoute: typeof EvaluationRoute
     }
     '/evaluation/otp': {
@@ -1154,11 +1173,13 @@ const CollaborationRouteWithChildren = CollaborationRoute._addFileChildren(
 
 interface EvaluationRouteChildren {
   EvaluationOtpRoute: typeof EvaluationOtpRoute
+  EvaluationProctoringRoute: typeof EvaluationProctoringRoute
   EvaluationSystemCheckRoute: typeof EvaluationSystemCheckRoute
 }
 
 const EvaluationRouteChildren: EvaluationRouteChildren = {
   EvaluationOtpRoute: EvaluationOtpRoute,
+  EvaluationProctoringRoute: EvaluationProctoringRoute,
   EvaluationSystemCheckRoute: EvaluationSystemCheckRoute,
 }
 
