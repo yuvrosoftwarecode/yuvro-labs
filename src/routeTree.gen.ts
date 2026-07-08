@@ -21,6 +21,7 @@ import { Route as AuthRouteImport } from './routes/auth'
 import { Route as AnalyticsRouteImport } from './routes/analytics'
 import { Route as AdminRouteImport } from './routes/admin'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as EvaluationIndexRouteImport } from './routes/evaluation.index'
 import { Route as CollaborationIndexRouteImport } from './routes/collaboration.index'
 import { Route as AdminIndexRouteImport } from './routes/admin.index'
 import { Route as LabSlugRouteImport } from './routes/lab.$slug'
@@ -124,6 +125,11 @@ const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
   getParentRoute: () => rootRouteImport,
+} as any)
+const EvaluationIndexRoute = EvaluationIndexRouteImport.update({
+  id: '/',
+  path: '/',
+  getParentRoute: () => EvaluationRoute,
 } as any)
 const CollaborationIndexRoute = CollaborationIndexRouteImport.update({
   id: '/',
@@ -389,6 +395,7 @@ export interface FileRoutesByFullPath {
   '/lab/$slug': typeof LabSlugRouteWithChildren
   '/admin/': typeof AdminIndexRoute
   '/collaboration/': typeof CollaborationIndexRoute
+  '/evaluation/': typeof EvaluationIndexRoute
   '/admin/hackathons/$id': typeof AdminHackathonsIdRoute
   '/admin/labs/new': typeof AdminLabsNewRoute
   '/admin/users/$id': typeof AdminUsersIdRoute
@@ -411,7 +418,6 @@ export interface FileRoutesByTo {
   '/auth': typeof AuthRoute
   '/certificates': typeof CertificatesRoute
   '/dashboard': typeof DashboardRoute
-  '/evaluation': typeof EvaluationRouteWithChildren
   '/forum': typeof ForumRoute
   '/hackathons': typeof HackathonsRouteWithChildren
   '/leaderboard': typeof LeaderboardRoute
@@ -442,6 +448,7 @@ export interface FileRoutesByTo {
   '/lab/$slug': typeof LabSlugRouteWithChildren
   '/admin': typeof AdminIndexRoute
   '/collaboration': typeof CollaborationIndexRoute
+  '/evaluation': typeof EvaluationIndexRoute
   '/admin/hackathons/$id': typeof AdminHackathonsIdRoute
   '/admin/labs/new': typeof AdminLabsNewRoute
   '/admin/users/$id': typeof AdminUsersIdRoute
@@ -500,6 +507,7 @@ export interface FileRoutesById {
   '/lab/$slug': typeof LabSlugRouteWithChildren
   '/admin/': typeof AdminIndexRoute
   '/collaboration/': typeof CollaborationIndexRoute
+  '/evaluation/': typeof EvaluationIndexRoute
   '/admin/hackathons/$id': typeof AdminHackathonsIdRoute
   '/admin/labs/new': typeof AdminLabsNewRoute
   '/admin/users/$id': typeof AdminUsersIdRoute
@@ -559,6 +567,7 @@ export interface FileRouteTypes {
     | '/lab/$slug'
     | '/admin/'
     | '/collaboration/'
+    | '/evaluation/'
     | '/admin/hackathons/$id'
     | '/admin/labs/new'
     | '/admin/users/$id'
@@ -581,7 +590,6 @@ export interface FileRouteTypes {
     | '/auth'
     | '/certificates'
     | '/dashboard'
-    | '/evaluation'
     | '/forum'
     | '/hackathons'
     | '/leaderboard'
@@ -612,6 +620,7 @@ export interface FileRouteTypes {
     | '/lab/$slug'
     | '/admin'
     | '/collaboration'
+    | '/evaluation'
     | '/admin/hackathons/$id'
     | '/admin/labs/new'
     | '/admin/users/$id'
@@ -669,6 +678,7 @@ export interface FileRouteTypes {
     | '/lab/$slug'
     | '/admin/'
     | '/collaboration/'
+    | '/evaluation/'
     | '/admin/hackathons/$id'
     | '/admin/labs/new'
     | '/admin/users/$id'
@@ -787,6 +797,13 @@ declare module '@tanstack/react-router' {
       fullPath: '/'
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
+    }
+    '/evaluation/': {
+      id: '/evaluation/'
+      path: '/'
+      fullPath: '/evaluation/'
+      preLoaderRoute: typeof EvaluationIndexRouteImport
+      parentRoute: typeof EvaluationRoute
     }
     '/collaboration/': {
       id: '/collaboration/'
@@ -1235,6 +1252,7 @@ interface EvaluationRouteChildren {
   EvaluationProctoringRoute: typeof EvaluationProctoringRoute
   EvaluationSystemCheckRoute: typeof EvaluationSystemCheckRoute
   EvaluationWorkspaceRoute: typeof EvaluationWorkspaceRoute
+  EvaluationIndexRoute: typeof EvaluationIndexRoute
 }
 
 const EvaluationRouteChildren: EvaluationRouteChildren = {
@@ -1244,6 +1262,7 @@ const EvaluationRouteChildren: EvaluationRouteChildren = {
   EvaluationProctoringRoute: EvaluationProctoringRoute,
   EvaluationSystemCheckRoute: EvaluationSystemCheckRoute,
   EvaluationWorkspaceRoute: EvaluationWorkspaceRoute,
+  EvaluationIndexRoute: EvaluationIndexRoute,
 }
 
 const EvaluationRouteWithChildren = EvaluationRoute._addFileChildren(
