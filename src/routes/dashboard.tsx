@@ -326,6 +326,7 @@ function CatalogCard({ lab, isEnrolled, onToggle }: { lab: Lab; isEnrolled: bool
       <div className="mt-3 flex items-center justify-between text-[11px]">
         <div className="flex items-center gap-2">
           <DiffBadge value={lab.difficulty} />
+          <TierBadge slug={lab.slug} />
           <span className="text-muted-foreground">{lab.total} tickets</span>
         </div>
         <div className="flex items-center gap-1.5">
