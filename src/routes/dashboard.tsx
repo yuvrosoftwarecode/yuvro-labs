@@ -267,7 +267,7 @@ function FeaturedCard({ lab, isEnrolled, onToggle }: { lab: Lab; isEnrolled: boo
         </div>
       </div>
       <div className="mt-4 flex items-center justify-between text-xs">
-        <DiffBadge value={lab.difficulty} />
+        <div className="flex items-center gap-1.5"><DiffBadge value={lab.difficulty} /><TierBadge slug={lab.slug} /></div>
         <span className="text-muted-foreground">{lab.total} tickets</span>
       </div>
       <div className="mt-4 flex gap-2">
