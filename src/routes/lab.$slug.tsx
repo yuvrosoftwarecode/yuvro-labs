@@ -450,6 +450,36 @@ function LabDashboard() {
           </aside>
         </div>
       </main>
+
+      {payOpen && (
+        <div className="fixed inset-0 z-50 grid place-items-center bg-black/60 p-4" onClick={() => setPayOpen(false)}>
+          <div className="w-full max-w-md rounded-2xl border bg-card p-6 shadow-xl" onClick={(e) => e.stopPropagation()}>
+            <div className="flex items-start gap-3">
+              <div className="grid h-10 w-10 place-items-center rounded-full bg-primary/15 text-primary">
+                <ShieldCheck className="h-5 w-5" />
+              </div>
+              <div>
+                <div className="text-base font-semibold">Unlock {meta.label}</div>
+                <div className="text-xs text-muted-foreground">{lab.name}</div>
+              </div>
+            </div>
+            <p className="mt-4 text-sm text-muted-foreground">{meta.blurb}</p>
+            <ul className="mt-4 space-y-2 text-sm">
+              <li className="flex items-center gap-2"><CheckCircle2 className="h-4 w-4 text-success" /> All {sprints.length} sprints unlocked</li>
+              <li className="flex items-center gap-2"><CheckCircle2 className="h-4 w-4 text-success" /> Every ticket, hint and solution</li>
+              <li className="flex items-center gap-2"><CheckCircle2 className="h-4 w-4 text-success" /> Lifetime access for this lab</li>
+            </ul>
+            <div className="mt-5 flex items-baseline gap-2">
+              <span className="text-2xl font-semibold">{meta.price}</span>
+              <span className="text-xs text-muted-foreground">one-time · demo</span>
+            </div>
+            <div className="mt-5 flex gap-2">
+              <button onClick={() => setPayOpen(false)} className="flex-1 rounded-md border px-3 py-2 text-sm hover:bg-accent">Not now</button>
+              <button onClick={handleUnlock} className="flex-1 rounded-md bg-primary text-primary-foreground px-3 py-2 text-sm font-medium hover:opacity-90">Unlock now</button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
