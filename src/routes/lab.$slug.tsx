@@ -214,12 +214,17 @@ function LabDashboard() {
                 <div className="mb-3 flex items-center justify-between">
                   <div>
                     <h2 className="text-base font-semibold">Sprints</h2>
-                    <p className="text-xs text-muted-foreground">Pick a sprint to view its ticket board</p>
+                    <p className="text-xs text-muted-foreground">
+                      {tier === "free" && "All sprints are unlocked."}
+                      {tier === "freemium" && !unlocked && `Sprint 1 is free. Unlock the full track for ${sprints.length - freeCount} more sprints.`}
+                      {tier === "premium" && !unlocked && "All sprints are locked. Unlock the premium track to begin."}
+                      {tier !== "free" && unlocked && "Full track unlocked. Enjoy every sprint."}
+                    </p>
                   </div>
                   <span className="text-xs text-muted-foreground">{sprints.length} sprints · {tickets.length} tickets</span>
                 </div>
                 <div className="grid gap-3 md:grid-cols-2">
-                  {sprints.map((s) => {
+                  {sprints.map((s, i) => {
                     const items = tickets.filter((t) => s.ticketIds.includes(t.id));
                     const done = items.filter((t) => t.status === "Completed").length;
                     const pctS = items.length ? Math.round((done / items.length) * 100) : 0;
@@ -227,34 +232,57 @@ function LabDashboard() {
                     const mins = items.reduce((a, t) => a + t.estMin, 0);
                     const tone = s.status === "Completed" ? "success" : s.status === "Active" ? "info" : "muted-foreground";
                     const Icon = s.status === "Completed" ? CheckCircle2 : s.status === "Active" ? Play : Flag;
+                    const locked = sprintLocked(i);
                     return (
-                      <button key={s.id} onClick={() => setActiveSprint(s.id)}
-                        className="text-left rounded-xl border bg-card p-4 hover:border-primary/60 hover:shadow-md transition">
-                        <div className="flex items-start justify-between gap-2">
-                          <div className="min-w-0">
-                            <div className="flex items-center gap-2 text-[11px] text-muted-foreground">
-                              <span className="font-mono">{s.id}</span>
-                              <span>·</span>
-                              <span>{s.range}</span>
-                            </div>
-                            <div className="mt-1 font-semibold leading-snug">{s.name}</div>
-                            <p className="mt-1 text-xs text-muted-foreground line-clamp-2">{s.goal}</p>
-                          </div>
-                          <span className="inline-flex items-center gap-1 rounded-md border px-2 py-0.5 text-[10px] font-medium"
-                            style={{ color: `var(--${tone})`, borderColor: `color-mix(in oklab, var(--${tone}) 40%, transparent)`, background: `color-mix(in oklab, var(--${tone}) 12%, transparent)` }}>
-                            <Icon className="h-3 w-3" />{s.status}
+                      <button key={s.id} onClick={() => openSprint(s.id, i)}
+                        className={`relative text-left rounded-xl border bg-card p-4 transition ${locked ? "hover:border-warning/60" : "hover:border-primary/60 hover:shadow-md"}`}>
+                        {locked && (
+                          <span className="absolute right-3 top-3 inline-flex items-center gap-1 rounded-md border border-warning/40 bg-warning/10 px-1.5 py-0.5 text-[10px] font-medium text-warning">
+                            <Lock className="h-3 w-3" /> Locked
                           </span>
-                        </div>
-                        <div className="mt-4">
-                          <div className="flex justify-between text-[11px] text-muted-foreground"><span>{done}/{items.length} tickets</span><span>{pctS}%</span></div>
-                          <div className="mt-1 h-1.5 rounded-full bg-muted overflow-hidden">
-                            <div className="h-full bg-primary" style={{ width: `${pctS}%` }} />
+                        )}
+                        {!locked && tier === "freemium" && i < freeCount && (
+                          <span className="absolute right-3 top-3 inline-flex items-center gap-1 rounded-md border border-success/40 bg-success/10 px-1.5 py-0.5 text-[10px] font-medium text-success">
+                            Free preview
+                          </span>
+                        )}
+                        <div className={`${locked ? "opacity-70" : ""}`}>
+                          <div className="flex items-start justify-between gap-2 pr-20">
+                            <div className="min-w-0">
+                              <div className="flex items-center gap-2 text-[11px] text-muted-foreground">
+                                <span className="font-mono">{s.id}</span>
+                                <span>·</span>
+                                <span>{s.range}</span>
+                              </div>
+                              <div className="mt-1 font-semibold leading-snug">{s.name}</div>
+                              <p className="mt-1 text-xs text-muted-foreground line-clamp-2">{s.goal}</p>
+                            </div>
+                            {!locked && (
+                              <span className="inline-flex items-center gap-1 rounded-md border px-2 py-0.5 text-[10px] font-medium"
+                                style={{ color: `var(--${tone})`, borderColor: `color-mix(in oklab, var(--${tone}) 40%, transparent)`, background: `color-mix(in oklab, var(--${tone}) 12%, transparent)` }}>
+                                <Icon className="h-3 w-3" />{s.status}
+                              </span>
+                            )}
                           </div>
-                        </div>
-                        <div className="mt-3 flex items-center justify-between text-[11px] text-muted-foreground">
-                          <span className="inline-flex items-center gap-1"><Target className="h-3 w-3" />{items.length} tickets</span>
-                          <span className="inline-flex items-center gap-1"><Clock className="h-3 w-3" />{Math.round(mins/60)}h</span>
-                          <span className="inline-flex items-center gap-1 text-primary"><Zap className="h-3 w-3" />{xp} XP</span>
+                          <div className="mt-4">
+                            <div className="flex justify-between text-[11px] text-muted-foreground">
+                              <span>{locked ? `${items.length} tickets` : `${done}/${items.length} tickets`}</span>
+                              <span>{locked ? "—" : `${pctS}%`}</span>
+                            </div>
+                            <div className="mt-1 h-1.5 rounded-full bg-muted overflow-hidden">
+                              <div className="h-full bg-primary" style={{ width: `${locked ? 0 : pctS}%` }} />
+                            </div>
+                          </div>
+                          <div className="mt-3 flex items-center justify-between text-[11px] text-muted-foreground">
+                            <span className="inline-flex items-center gap-1"><Target className="h-3 w-3" />{items.length} tickets</span>
+                            <span className="inline-flex items-center gap-1"><Clock className="h-3 w-3" />{Math.round(mins/60)}h</span>
+                            <span className="inline-flex items-center gap-1 text-primary"><Zap className="h-3 w-3" />{xp} XP</span>
+                          </div>
+                          {locked && (
+                            <div className="mt-3 text-[11px] text-warning inline-flex items-center gap-1">
+                              <Lock className="h-3 w-3" /> Unlock the {meta.short.toLowerCase()} track to access this sprint
+                            </div>
+                          )}
                         </div>
                       </button>
                     );
