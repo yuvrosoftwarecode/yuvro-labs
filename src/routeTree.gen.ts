@@ -25,6 +25,7 @@ import { Route as CollaborationIndexRouteImport } from './routes/collaboration.i
 import { Route as AdminIndexRouteImport } from './routes/admin.index'
 import { Route as LabSlugRouteImport } from './routes/lab.$slug'
 import { Route as HackathonsIdRouteImport } from './routes/hackathons.$id'
+import { Route as EvaluationOtpRouteImport } from './routes/evaluation.otp'
 import { Route as CollaborationSquadsRouteImport } from './routes/collaboration.squads'
 import { Route as CollaborationConnectionsRouteImport } from './routes/collaboration.connections'
 import { Route as CollaborationBrowseRouteImport } from './routes/collaboration.browse'
@@ -138,6 +139,11 @@ const HackathonsIdRoute = HackathonsIdRouteImport.update({
   id: '/$id',
   path: '/$id',
   getParentRoute: () => HackathonsRoute,
+} as any)
+const EvaluationOtpRoute = EvaluationOtpRouteImport.update({
+  id: '/otp',
+  path: '/otp',
+  getParentRoute: () => EvaluationRoute,
 } as any)
 const CollaborationSquadsRoute = CollaborationSquadsRouteImport.update({
   id: '/squads',
@@ -320,7 +326,7 @@ export interface FileRoutesByFullPath {
   '/certificates': typeof CertificatesRoute
   '/collaboration': typeof CollaborationRouteWithChildren
   '/dashboard': typeof DashboardRoute
-  '/evaluation': typeof EvaluationRoute
+  '/evaluation': typeof EvaluationRouteWithChildren
   '/forum': typeof ForumRoute
   '/hackathons': typeof HackathonsRouteWithChildren
   '/leaderboard': typeof LeaderboardRoute
@@ -343,6 +349,7 @@ export interface FileRoutesByFullPath {
   '/collaboration/browse': typeof CollaborationBrowseRoute
   '/collaboration/connections': typeof CollaborationConnectionsRoute
   '/collaboration/squads': typeof CollaborationSquadsRoute
+  '/evaluation/otp': typeof EvaluationOtpRoute
   '/hackathons/$id': typeof HackathonsIdRoute
   '/lab/$slug': typeof LabSlugRouteWithChildren
   '/admin/': typeof AdminIndexRoute
@@ -369,7 +376,7 @@ export interface FileRoutesByTo {
   '/auth': typeof AuthRoute
   '/certificates': typeof CertificatesRoute
   '/dashboard': typeof DashboardRoute
-  '/evaluation': typeof EvaluationRoute
+  '/evaluation': typeof EvaluationRouteWithChildren
   '/forum': typeof ForumRoute
   '/hackathons': typeof HackathonsRouteWithChildren
   '/leaderboard': typeof LeaderboardRoute
@@ -390,6 +397,7 @@ export interface FileRoutesByTo {
   '/collaboration/browse': typeof CollaborationBrowseRoute
   '/collaboration/connections': typeof CollaborationConnectionsRoute
   '/collaboration/squads': typeof CollaborationSquadsRoute
+  '/evaluation/otp': typeof EvaluationOtpRoute
   '/hackathons/$id': typeof HackathonsIdRoute
   '/lab/$slug': typeof LabSlugRouteWithChildren
   '/admin': typeof AdminIndexRoute
@@ -419,7 +427,7 @@ export interface FileRoutesById {
   '/certificates': typeof CertificatesRoute
   '/collaboration': typeof CollaborationRouteWithChildren
   '/dashboard': typeof DashboardRoute
-  '/evaluation': typeof EvaluationRoute
+  '/evaluation': typeof EvaluationRouteWithChildren
   '/forum': typeof ForumRoute
   '/hackathons': typeof HackathonsRouteWithChildren
   '/leaderboard': typeof LeaderboardRoute
@@ -442,6 +450,7 @@ export interface FileRoutesById {
   '/collaboration/browse': typeof CollaborationBrowseRoute
   '/collaboration/connections': typeof CollaborationConnectionsRoute
   '/collaboration/squads': typeof CollaborationSquadsRoute
+  '/evaluation/otp': typeof EvaluationOtpRoute
   '/hackathons/$id': typeof HackathonsIdRoute
   '/lab/$slug': typeof LabSlugRouteWithChildren
   '/admin/': typeof AdminIndexRoute
@@ -495,6 +504,7 @@ export interface FileRouteTypes {
     | '/collaboration/browse'
     | '/collaboration/connections'
     | '/collaboration/squads'
+    | '/evaluation/otp'
     | '/hackathons/$id'
     | '/lab/$slug'
     | '/admin/'
@@ -542,6 +552,7 @@ export interface FileRouteTypes {
     | '/collaboration/browse'
     | '/collaboration/connections'
     | '/collaboration/squads'
+    | '/evaluation/otp'
     | '/hackathons/$id'
     | '/lab/$slug'
     | '/admin'
@@ -593,6 +604,7 @@ export interface FileRouteTypes {
     | '/collaboration/browse'
     | '/collaboration/connections'
     | '/collaboration/squads'
+    | '/evaluation/otp'
     | '/hackathons/$id'
     | '/lab/$slug'
     | '/admin/'
@@ -622,7 +634,7 @@ export interface RootRouteChildren {
   CertificatesRoute: typeof CertificatesRoute
   CollaborationRoute: typeof CollaborationRouteWithChildren
   DashboardRoute: typeof DashboardRoute
-  EvaluationRoute: typeof EvaluationRoute
+  EvaluationRoute: typeof EvaluationRouteWithChildren
   ForumRoute: typeof ForumRoute
   HackathonsRoute: typeof HackathonsRouteWithChildren
   LeaderboardRoute: typeof LeaderboardRoute
@@ -743,6 +755,13 @@ declare module '@tanstack/react-router' {
       fullPath: '/hackathons/$id'
       preLoaderRoute: typeof HackathonsIdRouteImport
       parentRoute: typeof HackathonsRoute
+    }
+    '/evaluation/otp': {
+      id: '/evaluation/otp'
+      path: '/otp'
+      fullPath: '/evaluation/otp'
+      preLoaderRoute: typeof EvaluationOtpRouteImport
+      parentRoute: typeof EvaluationRoute
     }
     '/collaboration/squads': {
       id: '/collaboration/squads'
@@ -1114,6 +1133,18 @@ const CollaborationRouteWithChildren = CollaborationRoute._addFileChildren(
   CollaborationRouteChildren,
 )
 
+interface EvaluationRouteChildren {
+  EvaluationOtpRoute: typeof EvaluationOtpRoute
+}
+
+const EvaluationRouteChildren: EvaluationRouteChildren = {
+  EvaluationOtpRoute: EvaluationOtpRoute,
+}
+
+const EvaluationRouteWithChildren = EvaluationRoute._addFileChildren(
+  EvaluationRouteChildren,
+)
+
 interface HackathonsRouteChildren {
   HackathonsIdRoute: typeof HackathonsIdRoute
 }
@@ -1158,7 +1189,7 @@ const rootRouteChildren: RootRouteChildren = {
   CertificatesRoute: CertificatesRoute,
   CollaborationRoute: CollaborationRouteWithChildren,
   DashboardRoute: DashboardRoute,
-  EvaluationRoute: EvaluationRoute,
+  EvaluationRoute: EvaluationRouteWithChildren,
   ForumRoute: ForumRoute,
   HackathonsRoute: HackathonsRouteWithChildren,
   LeaderboardRoute: LeaderboardRoute,
