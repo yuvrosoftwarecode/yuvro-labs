@@ -5,7 +5,20 @@ import { ProgressRing } from "@/components/ProgressRing";
 import { DiffBadge } from "@/components/Badges";
 import { labs, me, type Lab } from "@/lib/dummy";
 import { getEnrolled, enroll, unenroll } from "@/lib/enrollment";
-import { ArrowRight, Sparkles, Flame, Zap, Trophy, Check, Plus, Star, Search, Github } from "lucide-react";
+import { ArrowRight, Sparkles, Flame, Zap, Trophy, Check, Plus, Star, Search, Github, Lock } from "lucide-react";
+import { getLabTier, TIER_META } from "@/lib/labAccess";
+
+function TierBadge({ slug }: { slug: string }) {
+  const t = getLabTier(slug);
+  const m = TIER_META[t];
+  return (
+    <span className="inline-flex items-center gap-1 rounded-md border px-1.5 py-0.5 text-[10px] font-medium"
+      style={{ color: `var(--${m.tone})`, borderColor: `color-mix(in oklab, var(--${m.tone}) 40%, transparent)`, background: `color-mix(in oklab, var(--${m.tone}) 12%, transparent)` }}>
+      {t === "premium" ? <Lock className="h-3 w-3" /> : t === "freemium" ? <Star className="h-3 w-3" /> : <Check className="h-3 w-3" />}
+      {m.short}
+    </span>
+  );
+}
 
 export const Route = createFileRoute("/dashboard")({ component: Hub });
 
