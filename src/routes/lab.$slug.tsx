@@ -2,9 +2,10 @@ import { createFileRoute, Link, Outlet, useMatch, useParams } from "@tanstack/re
 import { TopNav } from "@/components/TopNav";
 import { DiffBadge, StatusBadge } from "@/components/Badges";
 import { labs, tickets, leaderboard } from "@/lib/dummy";
-import { Search, Filter, LayoutGrid, List, Calendar, Zap, TrendingUp, TrendingDown, Award, Lock, Sparkles, ArrowLeft, CheckCircle2, Play, Clock, Target, Flag } from "lucide-react";
+import { Search, Filter, LayoutGrid, List, Calendar, Zap, TrendingUp, TrendingDown, Award, Lock, Sparkles, ArrowLeft, CheckCircle2, Play, Clock, Target, Flag, ShieldCheck, Sparkle } from "lucide-react";
 import { useMemo, useState } from "react";
 import type { Ticket } from "@/lib/dummy";
+import { getLabTier, TIER_META, isLabUnlocked, unlockLab, isSprintLocked, freeSprintCount } from "@/lib/labAccess";
 
 export const Route = createFileRoute("/lab/$slug")({ component: LabDashboard });
 
