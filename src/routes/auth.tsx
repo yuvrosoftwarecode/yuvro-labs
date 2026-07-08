@@ -234,7 +234,6 @@ function DemoCreds() {
   };
   const demos = [
     { label: "Student", email: "student@yuvrolabs.com", pwd: "student123", c: "primary" },
-    
     { label: "Admin", email: "admin@yuvrolabs.com", pwd: "admin123", c: "warning" },
   ];
   return (
@@ -255,6 +254,18 @@ function DemoCreds() {
             </button>
           </div>
         ))}
+        <Link to="/evaluation" className="flex items-center justify-between gap-3 rounded-md border border-dashed border-border/60 bg-background/30 p-2.5 hover:border-foreground/40 hover:bg-background/60 transition group">
+          <div className="min-w-0">
+            <div className="flex items-center gap-2 text-xs">
+              <span className="rounded px-1.5 py-0.5 text-[10px] font-medium tracking-wide uppercase text-foreground/80 border border-border/70">Test link</span>
+              <span className="text-muted-foreground">Recruiter · Candidate evaluation preview</span>
+            </div>
+            <div className="mt-0.5 text-[10px] text-muted-foreground">Opens the Yuvro Labs engineering evaluation experience</div>
+          </div>
+          <span className="shrink-0 inline-flex items-center gap-1 text-[11px] text-muted-foreground group-hover:text-foreground transition">
+            Open <ArrowRight className="h-3 w-3" />
+          </span>
+        </Link>
       </div>
     </div>
   );
