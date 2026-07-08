@@ -27,14 +27,11 @@ function EvaluationInvite() {
   const onFiles = (list: FileList | null) => {
     const f = list?.[0];
     if (!f) return;
-    if (!/\.(pdf|docx?|rtf)$/i.test(f.name)) { setErr("Resume must be PDF, DOC, DOCX or RTF."); return; }
-    if (f.size > 8 * 1024 * 1024) { setErr("Resume must be under 8 MB."); return; }
     setErr(null); setFile(f);
   };
 
   const submit = (e: React.FormEvent) => {
     e.preventDefault();
-    if (!valid) { setErr("Please complete every field to continue."); return; }
     try {
       localStorage.setItem("yuvro-eval-candidate", JSON.stringify({ email, phone, resume: file?.name }));
     } catch {}
