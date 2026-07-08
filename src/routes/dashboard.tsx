@@ -5,7 +5,20 @@ import { ProgressRing } from "@/components/ProgressRing";
 import { DiffBadge } from "@/components/Badges";
 import { labs, me, type Lab } from "@/lib/dummy";
 import { getEnrolled, enroll, unenroll } from "@/lib/enrollment";
-import { ArrowRight, Sparkles, Flame, Zap, Trophy, Check, Plus, Star, Search, Github } from "lucide-react";
+import { ArrowRight, Sparkles, Flame, Zap, Trophy, Check, Plus, Star, Search, Github, Lock } from "lucide-react";
+import { getLabTier, TIER_META } from "@/lib/labAccess";
+
+function TierBadge({ slug }: { slug: string }) {
+  const t = getLabTier(slug);
+  const m = TIER_META[t];
+  return (
+    <span className="inline-flex items-center gap-1 rounded-md border px-1.5 py-0.5 text-[10px] font-medium"
+      style={{ color: `var(--${m.tone})`, borderColor: `color-mix(in oklab, var(--${m.tone}) 40%, transparent)`, background: `color-mix(in oklab, var(--${m.tone}) 12%, transparent)` }}>
+      {t === "premium" ? <Lock className="h-3 w-3" /> : t === "freemium" ? <Star className="h-3 w-3" /> : <Check className="h-3 w-3" />}
+      {m.short}
+    </span>
+  );
+}
 
 export const Route = createFileRoute("/dashboard")({ component: Hub });
 
@@ -254,7 +267,7 @@ function FeaturedCard({ lab, isEnrolled, onToggle }: { lab: Lab; isEnrolled: boo
         </div>
       </div>
       <div className="mt-4 flex items-center justify-between text-xs">
-        <DiffBadge value={lab.difficulty} />
+        <div className="flex items-center gap-1.5"><DiffBadge value={lab.difficulty} /><TierBadge slug={lab.slug} /></div>
         <span className="text-muted-foreground">{lab.total} tickets</span>
       </div>
       <div className="mt-4 flex gap-2">
@@ -284,7 +297,7 @@ function EnrolledCard({ lab }: { lab: Lab }) {
         <ProgressRing value={pct} color={`var(--${lab.color})`} />
       </div>
       <div className="mt-3 flex items-center justify-between text-xs">
-        <DiffBadge value={lab.difficulty} />
+        <div className="flex items-center gap-1.5"><DiffBadge value={lab.difficulty} /><TierBadge slug={lab.slug} /></div>
         <span className="text-muted-foreground">{lab.completed}/{lab.total} · {lab.hoursLeft}h left</span>
       </div>
       <div className="mt-4">
@@ -313,6 +326,7 @@ function CatalogCard({ lab, isEnrolled, onToggle }: { lab: Lab; isEnrolled: bool
       <div className="mt-3 flex items-center justify-between text-[11px]">
         <div className="flex items-center gap-2">
           <DiffBadge value={lab.difficulty} />
+          <TierBadge slug={lab.slug} />
           <span className="text-muted-foreground">{lab.total} tickets</span>
         </div>
         <div className="flex items-center gap-1.5">

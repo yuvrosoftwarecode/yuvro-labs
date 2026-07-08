@@ -2,9 +2,10 @@ import { createFileRoute, Link, Outlet, useMatch, useParams } from "@tanstack/re
 import { TopNav } from "@/components/TopNav";
 import { DiffBadge, StatusBadge } from "@/components/Badges";
 import { labs, tickets, leaderboard } from "@/lib/dummy";
-import { Search, Filter, LayoutGrid, List, Calendar, Zap, TrendingUp, TrendingDown, Award, Lock, Sparkles, ArrowLeft, CheckCircle2, Play, Clock, Target, Flag } from "lucide-react";
+import { Search, Filter, LayoutGrid, List, Calendar, Zap, TrendingUp, TrendingDown, Award, Lock, Sparkles, ArrowLeft, CheckCircle2, Play, Clock, Target, Flag, ShieldCheck, Sparkle } from "lucide-react";
 import { useMemo, useState } from "react";
 import type { Ticket } from "@/lib/dummy";
+import { getLabTier, TIER_META, isLabUnlocked, unlockLab, isSprintLocked, freeSprintCount } from "@/lib/labAccess";
 
 export const Route = createFileRoute("/lab/$slug")({ component: LabDashboard });
 
@@ -95,11 +96,29 @@ function LabDashboard() {
   const lab = labs.find((l) => l.slug === slug) ?? labs[0];
   const [view, setView] = useState<"kanban" | "list">("kanban");
   const [activeSprint, setActiveSprint] = useState<string | null>(null);
+  const [payOpen, setPayOpen] = useState(false);
+  const [unlockBump, setUnlockBump] = useState(0);
   const sprints = useMemo(() => buildSprints(slug, tickets), [slug]);
   const sprint = sprints.find((s) => s.id === activeSprint) ?? null;
+  const activeSprintIndex = sprint ? sprints.findIndex(s => s.id === sprint.id) : -1;
   const sprintTickets = sprint ? tickets.filter((t) => sprint.ticketIds.includes(t.id)) : tickets;
   const cols: { key: "Not Started" | "In Progress" | "Completed"; }[] = [{ key: "Not Started" }, { key: "In Progress" }, { key: "Completed" }];
   const pct = Math.round((lab.completed / lab.total) * 100);
+
+  const tier = getLabTier(slug);
+  const meta = TIER_META[tier];
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  const _bump = unlockBump; // ensure re-render after unlock
+  const unlocked = isLabUnlocked(slug);
+  const freeCount = freeSprintCount(tier);
+  const sprintLocked = (i: number) => isSprintLocked(slug, i);
+  const activeLocked = activeSprintIndex >= 0 && sprintLocked(activeSprintIndex);
+
+  const openSprint = (sprintId: string, index: number) => {
+    if (sprintLocked(index)) { setPayOpen(true); return; }
+    setActiveSprint(sprintId);
+  };
+  const handleUnlock = () => { unlockLab(slug); setPayOpen(false); setUnlockBump(x => x + 1); };
 
   if (ticketMatch) return <Outlet />;
 
@@ -136,6 +155,26 @@ function LabDashboard() {
                   <li>• Basic programming concepts</li>
                   <li>• Familiarity with terminal</li>
                 </ul>
+              </div>
+              <div className="mt-4 border-t pt-3">
+                <div className="mb-1.5 flex items-center justify-between text-xs">
+                  <span className="text-muted-foreground">Access</span>
+                  <span className="inline-flex items-center gap-1 rounded-md border px-1.5 py-0.5 text-[10px] font-medium"
+                    style={{ color: `var(--${meta.tone})`, borderColor: `color-mix(in oklab, var(--${meta.tone}) 40%, transparent)`, background: `color-mix(in oklab, var(--${meta.tone}) 12%, transparent)` }}>
+                    {tier === "free" ? <CheckCircle2 className="h-3 w-3" /> : tier === "freemium" ? <Sparkle className="h-3 w-3" /> : <ShieldCheck className="h-3 w-3" />}
+                    {meta.label}
+                  </span>
+                </div>
+                <p className="text-[11px] text-muted-foreground leading-snug">{meta.blurb}</p>
+                {tier !== "free" && (
+                  unlocked ? (
+                    <div className="mt-2 inline-flex items-center gap-1 text-[11px] text-success"><CheckCircle2 className="h-3 w-3" /> Unlocked</div>
+                  ) : (
+                    <button onClick={() => setPayOpen(true)} className="mt-2 w-full rounded-md bg-primary text-primary-foreground text-xs py-1.5 font-medium hover:opacity-90">
+                      Unlock full track · {meta.price}
+                    </button>
+                  )
+                )}
               </div>
             </div>
 
@@ -175,12 +214,17 @@ function LabDashboard() {
                 <div className="mb-3 flex items-center justify-between">
                   <div>
                     <h2 className="text-base font-semibold">Sprints</h2>
-                    <p className="text-xs text-muted-foreground">Pick a sprint to view its ticket board</p>
+                    <p className="text-xs text-muted-foreground">
+                      {tier === "free" && "All sprints are unlocked."}
+                      {tier === "freemium" && !unlocked && `Sprint 1 is free. Unlock the full track for ${sprints.length - freeCount} more sprints.`}
+                      {tier === "premium" && !unlocked && "All sprints are locked. Unlock the premium track to begin."}
+                      {tier !== "free" && unlocked && "Full track unlocked. Enjoy every sprint."}
+                    </p>
                   </div>
                   <span className="text-xs text-muted-foreground">{sprints.length} sprints · {tickets.length} tickets</span>
                 </div>
                 <div className="grid gap-3 md:grid-cols-2">
-                  {sprints.map((s) => {
+                  {sprints.map((s, i) => {
                     const items = tickets.filter((t) => s.ticketIds.includes(t.id));
                     const done = items.filter((t) => t.status === "Completed").length;
                     const pctS = items.length ? Math.round((done / items.length) * 100) : 0;
@@ -188,34 +232,57 @@ function LabDashboard() {
                     const mins = items.reduce((a, t) => a + t.estMin, 0);
                     const tone = s.status === "Completed" ? "success" : s.status === "Active" ? "info" : "muted-foreground";
                     const Icon = s.status === "Completed" ? CheckCircle2 : s.status === "Active" ? Play : Flag;
+                    const locked = sprintLocked(i);
                     return (
-                      <button key={s.id} onClick={() => setActiveSprint(s.id)}
-                        className="text-left rounded-xl border bg-card p-4 hover:border-primary/60 hover:shadow-md transition">
-                        <div className="flex items-start justify-between gap-2">
-                          <div className="min-w-0">
-                            <div className="flex items-center gap-2 text-[11px] text-muted-foreground">
-                              <span className="font-mono">{s.id}</span>
-                              <span>·</span>
-                              <span>{s.range}</span>
-                            </div>
-                            <div className="mt-1 font-semibold leading-snug">{s.name}</div>
-                            <p className="mt-1 text-xs text-muted-foreground line-clamp-2">{s.goal}</p>
-                          </div>
-                          <span className="inline-flex items-center gap-1 rounded-md border px-2 py-0.5 text-[10px] font-medium"
-                            style={{ color: `var(--${tone})`, borderColor: `color-mix(in oklab, var(--${tone}) 40%, transparent)`, background: `color-mix(in oklab, var(--${tone}) 12%, transparent)` }}>
-                            <Icon className="h-3 w-3" />{s.status}
+                      <button key={s.id} onClick={() => openSprint(s.id, i)}
+                        className={`relative text-left rounded-xl border bg-card p-4 transition ${locked ? "hover:border-warning/60" : "hover:border-primary/60 hover:shadow-md"}`}>
+                        {locked && (
+                          <span className="absolute right-3 top-3 inline-flex items-center gap-1 rounded-md border border-warning/40 bg-warning/10 px-1.5 py-0.5 text-[10px] font-medium text-warning">
+                            <Lock className="h-3 w-3" /> Locked
                           </span>
-                        </div>
-                        <div className="mt-4">
-                          <div className="flex justify-between text-[11px] text-muted-foreground"><span>{done}/{items.length} tickets</span><span>{pctS}%</span></div>
-                          <div className="mt-1 h-1.5 rounded-full bg-muted overflow-hidden">
-                            <div className="h-full bg-primary" style={{ width: `${pctS}%` }} />
+                        )}
+                        {!locked && tier === "freemium" && i < freeCount && (
+                          <span className="absolute right-3 top-3 inline-flex items-center gap-1 rounded-md border border-success/40 bg-success/10 px-1.5 py-0.5 text-[10px] font-medium text-success">
+                            Free preview
+                          </span>
+                        )}
+                        <div className={`${locked ? "opacity-70" : ""}`}>
+                          <div className="flex items-start justify-between gap-2 pr-20">
+                            <div className="min-w-0">
+                              <div className="flex items-center gap-2 text-[11px] text-muted-foreground">
+                                <span className="font-mono">{s.id}</span>
+                                <span>·</span>
+                                <span>{s.range}</span>
+                              </div>
+                              <div className="mt-1 font-semibold leading-snug">{s.name}</div>
+                              <p className="mt-1 text-xs text-muted-foreground line-clamp-2">{s.goal}</p>
+                            </div>
+                            {!locked && (
+                              <span className="inline-flex items-center gap-1 rounded-md border px-2 py-0.5 text-[10px] font-medium"
+                                style={{ color: `var(--${tone})`, borderColor: `color-mix(in oklab, var(--${tone}) 40%, transparent)`, background: `color-mix(in oklab, var(--${tone}) 12%, transparent)` }}>
+                                <Icon className="h-3 w-3" />{s.status}
+                              </span>
+                            )}
                           </div>
-                        </div>
-                        <div className="mt-3 flex items-center justify-between text-[11px] text-muted-foreground">
-                          <span className="inline-flex items-center gap-1"><Target className="h-3 w-3" />{items.length} tickets</span>
-                          <span className="inline-flex items-center gap-1"><Clock className="h-3 w-3" />{Math.round(mins/60)}h</span>
-                          <span className="inline-flex items-center gap-1 text-primary"><Zap className="h-3 w-3" />{xp} XP</span>
+                          <div className="mt-4">
+                            <div className="flex justify-between text-[11px] text-muted-foreground">
+                              <span>{locked ? `${items.length} tickets` : `${done}/${items.length} tickets`}</span>
+                              <span>{locked ? "—" : `${pctS}%`}</span>
+                            </div>
+                            <div className="mt-1 h-1.5 rounded-full bg-muted overflow-hidden">
+                              <div className="h-full bg-primary" style={{ width: `${locked ? 0 : pctS}%` }} />
+                            </div>
+                          </div>
+                          <div className="mt-3 flex items-center justify-between text-[11px] text-muted-foreground">
+                            <span className="inline-flex items-center gap-1"><Target className="h-3 w-3" />{items.length} tickets</span>
+                            <span className="inline-flex items-center gap-1"><Clock className="h-3 w-3" />{Math.round(mins/60)}h</span>
+                            <span className="inline-flex items-center gap-1 text-primary"><Zap className="h-3 w-3" />{xp} XP</span>
+                          </div>
+                          {locked && (
+                            <div className="mt-3 text-[11px] text-warning inline-flex items-center gap-1">
+                              <Lock className="h-3 w-3" /> Unlock the {meta.short.toLowerCase()} track to access this sprint
+                            </div>
+                          )}
                         </div>
                       </button>
                     );
@@ -245,6 +312,19 @@ function LabDashboard() {
                   </div>
                 </div>
 
+                {activeLocked ? (
+                  <div className="rounded-xl border border-warning/30 bg-warning/5 p-8 text-center">
+                    <div className="mx-auto grid h-12 w-12 place-items-center rounded-full bg-warning/15 text-warning">
+                      <Lock className="h-5 w-5" />
+                    </div>
+                    <div className="mt-3 text-base font-semibold">This sprint is part of the {meta.label}</div>
+                    <p className="mt-1 text-sm text-muted-foreground max-w-md mx-auto">{meta.blurb}</p>
+                    <button onClick={() => setPayOpen(true)} className="mt-4 rounded-md bg-primary text-primary-foreground px-4 py-2 text-sm font-medium hover:opacity-90">
+                      Unlock full track · {meta.price}
+                    </button>
+                  </div>
+                ) : (
+                  <>
                 {view === "kanban" ? (
                   <div className="grid gap-3 md:grid-cols-3">
                     {cols.map((c) => {
@@ -312,6 +392,8 @@ function LabDashboard() {
                     </table>
                   </div>
                 )}
+                  </>
+                )}
               </>
             )}
           </section>
@@ -368,6 +450,36 @@ function LabDashboard() {
           </aside>
         </div>
       </main>
+
+      {payOpen && (
+        <div className="fixed inset-0 z-50 grid place-items-center bg-black/60 p-4" onClick={() => setPayOpen(false)}>
+          <div className="w-full max-w-md rounded-2xl border bg-card p-6 shadow-xl" onClick={(e) => e.stopPropagation()}>
+            <div className="flex items-start gap-3">
+              <div className="grid h-10 w-10 place-items-center rounded-full bg-primary/15 text-primary">
+                <ShieldCheck className="h-5 w-5" />
+              </div>
+              <div>
+                <div className="text-base font-semibold">Unlock {meta.label}</div>
+                <div className="text-xs text-muted-foreground">{lab.name}</div>
+              </div>
+            </div>
+            <p className="mt-4 text-sm text-muted-foreground">{meta.blurb}</p>
+            <ul className="mt-4 space-y-2 text-sm">
+              <li className="flex items-center gap-2"><CheckCircle2 className="h-4 w-4 text-success" /> All {sprints.length} sprints unlocked</li>
+              <li className="flex items-center gap-2"><CheckCircle2 className="h-4 w-4 text-success" /> Every ticket, hint and solution</li>
+              <li className="flex items-center gap-2"><CheckCircle2 className="h-4 w-4 text-success" /> Lifetime access for this lab</li>
+            </ul>
+            <div className="mt-5 flex items-baseline gap-2">
+              <span className="text-2xl font-semibold">{meta.price}</span>
+              <span className="text-xs text-muted-foreground">one-time · demo</span>
+            </div>
+            <div className="mt-5 flex gap-2">
+              <button onClick={() => setPayOpen(false)} className="flex-1 rounded-md border px-3 py-2 text-sm hover:bg-accent">Not now</button>
+              <button onClick={handleUnlock} className="flex-1 rounded-md bg-primary text-primary-foreground px-3 py-2 text-sm font-medium hover:opacity-90">Unlock now</button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
