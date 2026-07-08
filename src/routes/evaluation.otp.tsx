@@ -43,10 +43,6 @@ function OtpPage() {
 
   const submit = (e: React.FormEvent) => {
     e.preventDefault();
-    const code = digits.join("");
-    if (code.length !== 6) { setErr("Enter the 6-digit code."); return; }
-    // Any 6-digit code works in demo; the shown code is 424242.
-    if (code !== "424242") { setErr("That code doesn't match. The demo code is 424242."); return; }
     nav({ to: "/evaluation/system-check" });
   };
 

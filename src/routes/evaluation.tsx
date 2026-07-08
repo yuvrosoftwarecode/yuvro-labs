@@ -22,19 +22,16 @@ function EvaluationInvite() {
   const [err, setErr] = useState<string | null>(null);
   const inputRef = useRef<HTMLInputElement>(null);
 
-  const valid = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email) && phone.replace(/\D/g, "").length >= 7 && !!file;
+  const valid = true;
 
   const onFiles = (list: FileList | null) => {
     const f = list?.[0];
     if (!f) return;
-    if (!/\.(pdf|docx?|rtf)$/i.test(f.name)) { setErr("Resume must be PDF, DOC, DOCX or RTF."); return; }
-    if (f.size > 8 * 1024 * 1024) { setErr("Resume must be under 8 MB."); return; }
     setErr(null); setFile(f);
   };
 
   const submit = (e: React.FormEvent) => {
     e.preventDefault();
-    if (!valid) { setErr("Please complete every field to continue."); return; }
     try {
       localStorage.setItem("yuvro-eval-candidate", JSON.stringify({ email, phone, resume: file?.name }));
     } catch {}
@@ -72,10 +69,10 @@ function EvaluationInvite() {
 
             <div className="mt-8 space-y-6">
               <Field label="Email address" hint="We'll send a one-time verification code.">
-                <input type="email" required value={email} onChange={(e) => setEmail(e.target.value)} placeholder="you@company.com" className="eval-input" />
+                <input type="email" value={email} onChange={(e) => setEmail(e.target.value)} placeholder="you@company.com" className="eval-input" />
               </Field>
               <Field label="Phone number" hint="For account recovery only.">
-                <input type="tel" required value={phone} onChange={(e) => setPhone(e.target.value)} placeholder="+1 (555) 000-0000" className="eval-input" />
+                <input type="tel" value={phone} onChange={(e) => setPhone(e.target.value)} placeholder="+1 (555) 000-0000" className="eval-input" />
               </Field>
               <Field label="Resume" hint="PDF, DOC, DOCX or RTF · up to 8 MB · required">
                 <label
