@@ -1,4 +1,4 @@
-import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
+import { createFileRoute, Link } from "@tanstack/react-router";
 import { useRef, useState } from "react";
 import { EvalShell, EvalStepHeader, PrimaryButton, Field } from "@/components/evaluation/EvalShell";
 
@@ -14,7 +14,6 @@ export const Route = createFileRoute("/evaluation/")({
 });
 
 function EvaluationInvite() {
-  const nav = useNavigate();
   const [email, setEmail] = useState("");
   const [phone, setPhone] = useState("");
   const [file, setFile] = useState<File | null>(null);
@@ -32,7 +31,7 @@ function EvaluationInvite() {
     try {
       localStorage.setItem("yuvro-eval-candidate", JSON.stringify({ email, phone, resume: file?.name }));
     } catch {}
-    nav({ to: "/evaluation/otp" });
+    window.location.assign("/evaluation/otp");
   };
 
   return (

@@ -1,4 +1,4 @@
-import { createFileRoute, useNavigate } from "@tanstack/react-router";
+import { createFileRoute } from "@tanstack/react-router";
 import { useEffect, useRef, useState } from "react";
 import { EvalShell, EvalStepHeader, PrimaryButton } from "@/components/evaluation/EvalShell";
 
@@ -8,7 +8,6 @@ export const Route = createFileRoute("/evaluation/otp")({
 });
 
 function OtpPage() {
-  const nav = useNavigate();
   const [digits, setDigits] = useState<string[]>(["", "", "", "", "", ""]);
   const [err, setErr] = useState<string | null>(null);
   const [cooldown, setCooldown] = useState(30);
@@ -43,7 +42,7 @@ function OtpPage() {
 
   const submit = (e: React.FormEvent) => {
     e.preventDefault();
-    nav({ to: "/evaluation/system-check" });
+    window.location.assign("/evaluation/system-check");
   };
 
   return (
