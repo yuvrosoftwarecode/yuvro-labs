@@ -69,10 +69,10 @@ function EvaluationInvite() {
 
             <div className="mt-8 space-y-6">
               <Field label="Email address" hint="We'll send a one-time verification code.">
-                <input type="email" required value={email} onChange={(e) => setEmail(e.target.value)} placeholder="you@company.com" className="eval-input" />
+                <input type="email" value={email} onChange={(e) => setEmail(e.target.value)} placeholder="you@company.com" className="eval-input" />
               </Field>
               <Field label="Phone number" hint="For account recovery only.">
-                <input type="tel" required value={phone} onChange={(e) => setPhone(e.target.value)} placeholder="+1 (555) 000-0000" className="eval-input" />
+                <input type="tel" value={phone} onChange={(e) => setPhone(e.target.value)} placeholder="+1 (555) 000-0000" className="eval-input" />
               </Field>
               <Field label="Resume" hint="PDF, DOC, DOCX or RTF · up to 8 MB · required">
                 <label
