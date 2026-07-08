@@ -156,6 +156,26 @@ function LabDashboard() {
                   <li>• Familiarity with terminal</li>
                 </ul>
               </div>
+              <div className="mt-4 border-t pt-3">
+                <div className="mb-1.5 flex items-center justify-between text-xs">
+                  <span className="text-muted-foreground">Access</span>
+                  <span className="inline-flex items-center gap-1 rounded-md border px-1.5 py-0.5 text-[10px] font-medium"
+                    style={{ color: `var(--${meta.tone})`, borderColor: `color-mix(in oklab, var(--${meta.tone}) 40%, transparent)`, background: `color-mix(in oklab, var(--${meta.tone}) 12%, transparent)` }}>
+                    {tier === "free" ? <CheckCircle2 className="h-3 w-3" /> : tier === "freemium" ? <Sparkle className="h-3 w-3" /> : <ShieldCheck className="h-3 w-3" />}
+                    {meta.label}
+                  </span>
+                </div>
+                <p className="text-[11px] text-muted-foreground leading-snug">{meta.blurb}</p>
+                {tier !== "free" && (
+                  unlocked ? (
+                    <div className="mt-2 inline-flex items-center gap-1 text-[11px] text-success"><CheckCircle2 className="h-3 w-3" /> Unlocked</div>
+                  ) : (
+                    <button onClick={() => setPayOpen(true)} className="mt-2 w-full rounded-md bg-primary text-primary-foreground text-xs py-1.5 font-medium hover:opacity-90">
+                      Unlock full track · {meta.price}
+                    </button>
+                  )
+                )}
+              </div>
             </div>
 
             <div className="rounded-xl border bg-card p-4">
