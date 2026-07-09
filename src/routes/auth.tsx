@@ -124,7 +124,7 @@ function SignInForm() {
       return;
     }
     login(acc.user);
-    nav({ to: acc.user.role === "admin" ? "/admin" : "/dashboard" });
+    nav({ to: acc.user.role === "admin" ? "/admin" : acc.user.role === "recruiter" ? "/recruiter" : "/dashboard" });
   };
 
   return (
@@ -230,11 +230,12 @@ function DemoCreds() {
     const acc = DEMO_ACCOUNTS[email];
     if (!acc) return;
     login(acc.user);
-    nav({ to: acc.user.role === "admin" ? "/admin" : "/dashboard" });
+    nav({ to: acc.user.role === "admin" ? "/admin" : acc.user.role === "recruiter" ? "/recruiter" : "/dashboard" });
   };
   const demos = [
     { label: "Student", email: "student@yuvrolabs.com", pwd: "student123", c: "primary" },
     { label: "Admin", email: "admin@yuvrolabs.com", pwd: "admin123", c: "warning" },
+    { label: "Recruiter", email: "recruiter@yuvrolabs.com", pwd: "recruiter123", c: "success" },
   ];
   return (
     <div className="mt-6 rounded-xl border border-border/60 bg-card/40 backdrop-blur p-4">

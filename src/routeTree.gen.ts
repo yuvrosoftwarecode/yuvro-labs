@@ -9,6 +9,7 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
+import { Route as RecruiterRouteImport } from './routes/recruiter'
 import { Route as ProfileRouteImport } from './routes/profile'
 import { Route as LeaderboardRouteImport } from './routes/leaderboard'
 import { Route as HackathonsRouteImport } from './routes/hackathons'
@@ -21,9 +22,11 @@ import { Route as AuthRouteImport } from './routes/auth'
 import { Route as AnalyticsRouteImport } from './routes/analytics'
 import { Route as AdminRouteImport } from './routes/admin'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as RecruiterIndexRouteImport } from './routes/recruiter.index'
 import { Route as EvaluationIndexRouteImport } from './routes/evaluation.index'
 import { Route as CollaborationIndexRouteImport } from './routes/collaboration.index'
 import { Route as AdminIndexRouteImport } from './routes/admin.index'
+import { Route as RecruiterSettingsRouteImport } from './routes/recruiter.settings'
 import { Route as LabSlugRouteImport } from './routes/lab.$slug'
 import { Route as HackathonsIdRouteImport } from './routes/hackathons.$id'
 import { Route as EvaluationWorkspaceRouteImport } from './routes/evaluation.workspace'
@@ -50,8 +53,10 @@ import { Route as AdminIncidentsRouteImport } from './routes/admin.incidents'
 import { Route as AdminHackathonsRouteImport } from './routes/admin.hackathons'
 import { Route as AdminCollaborationRouteImport } from './routes/admin.collaboration'
 import { Route as AdminAiMentorRouteImport } from './routes/admin.ai-mentor'
+import { Route as RecruiterEvaluationsIndexRouteImport } from './routes/recruiter.evaluations.index'
 import { Route as AdminLabsIndexRouteImport } from './routes/admin.labs.index'
 import { Route as AdminHackathonsIndexRouteImport } from './routes/admin.hackathons.index'
+import { Route as RecruiterEvaluationsIdRouteImport } from './routes/recruiter.evaluations.$id'
 import { Route as CollaborationSprintIdRouteImport } from './routes/collaboration.sprint.$id'
 import { Route as AdminUsersIdRouteImport } from './routes/admin.users.$id'
 import { Route as AdminLabsNewRouteImport } from './routes/admin.labs.new'
@@ -66,6 +71,11 @@ import { Route as CollaborationSprintIdReportTeamRouteImport } from './routes/co
 import { Route as CollaborationSprintIdReportIndividualRouteImport } from './routes/collaboration.sprint.$id.report.individual'
 import { Route as AdminLabsIdSprintsSprintIdRouteImport } from './routes/admin.labs.$id.sprints.$sprintId'
 
+const RecruiterRoute = RecruiterRouteImport.update({
+  id: '/recruiter',
+  path: '/recruiter',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const ProfileRoute = ProfileRouteImport.update({
   id: '/profile',
   path: '/profile',
@@ -126,6 +136,11 @@ const IndexRoute = IndexRouteImport.update({
   path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const RecruiterIndexRoute = RecruiterIndexRouteImport.update({
+  id: '/',
+  path: '/',
+  getParentRoute: () => RecruiterRoute,
+} as any)
 const EvaluationIndexRoute = EvaluationIndexRouteImport.update({
   id: '/',
   path: '/',
@@ -140,6 +155,11 @@ const AdminIndexRoute = AdminIndexRouteImport.update({
   id: '/',
   path: '/',
   getParentRoute: () => AdminRoute,
+} as any)
+const RecruiterSettingsRoute = RecruiterSettingsRouteImport.update({
+  id: '/settings',
+  path: '/settings',
+  getParentRoute: () => RecruiterRoute,
 } as any)
 const LabSlugRoute = LabSlugRouteImport.update({
   id: '/lab/$slug',
@@ -272,6 +292,12 @@ const AdminAiMentorRoute = AdminAiMentorRouteImport.update({
   path: '/ai-mentor',
   getParentRoute: () => AdminRoute,
 } as any)
+const RecruiterEvaluationsIndexRoute =
+  RecruiterEvaluationsIndexRouteImport.update({
+    id: '/evaluations/',
+    path: '/evaluations/',
+    getParentRoute: () => RecruiterRoute,
+  } as any)
 const AdminLabsIndexRoute = AdminLabsIndexRouteImport.update({
   id: '/',
   path: '/',
@@ -281,6 +307,11 @@ const AdminHackathonsIndexRoute = AdminHackathonsIndexRouteImport.update({
   id: '/',
   path: '/',
   getParentRoute: () => AdminHackathonsRoute,
+} as any)
+const RecruiterEvaluationsIdRoute = RecruiterEvaluationsIdRouteImport.update({
+  id: '/evaluations/$id',
+  path: '/evaluations/$id',
+  getParentRoute: () => RecruiterRoute,
 } as any)
 const CollaborationSprintIdRoute = CollaborationSprintIdRouteImport.update({
   id: '/sprint/$id',
@@ -367,6 +398,7 @@ export interface FileRoutesByFullPath {
   '/hackathons': typeof HackathonsRouteWithChildren
   '/leaderboard': typeof LeaderboardRoute
   '/profile': typeof ProfileRoute
+  '/recruiter': typeof RecruiterRouteWithChildren
   '/admin/ai-mentor': typeof AdminAiMentorRoute
   '/admin/collaboration': typeof AdminCollaborationRoute
   '/admin/hackathons': typeof AdminHackathonsRouteWithChildren
@@ -393,15 +425,19 @@ export interface FileRoutesByFullPath {
   '/evaluation/workspace': typeof EvaluationWorkspaceRoute
   '/hackathons/$id': typeof HackathonsIdRoute
   '/lab/$slug': typeof LabSlugRouteWithChildren
+  '/recruiter/settings': typeof RecruiterSettingsRoute
   '/admin/': typeof AdminIndexRoute
   '/collaboration/': typeof CollaborationIndexRoute
   '/evaluation/': typeof EvaluationIndexRoute
+  '/recruiter/': typeof RecruiterIndexRoute
   '/admin/hackathons/$id': typeof AdminHackathonsIdRoute
   '/admin/labs/new': typeof AdminLabsNewRoute
   '/admin/users/$id': typeof AdminUsersIdRoute
   '/collaboration/sprint/$id': typeof CollaborationSprintIdRouteWithChildren
+  '/recruiter/evaluations/$id': typeof RecruiterEvaluationsIdRoute
   '/admin/hackathons/': typeof AdminHackathonsIndexRoute
   '/admin/labs/': typeof AdminLabsIndexRoute
+  '/recruiter/evaluations/': typeof RecruiterEvaluationsIndexRoute
   '/admin/labs/$id/edit': typeof AdminLabsIdEditRoute
   '/admin/labs/$id/sprints': typeof AdminLabsIdSprintsRouteWithChildren
   '/collaboration/sprint/$id/workspace': typeof CollaborationSprintIdWorkspaceRoute
@@ -446,15 +482,19 @@ export interface FileRoutesByTo {
   '/evaluation/workspace': typeof EvaluationWorkspaceRoute
   '/hackathons/$id': typeof HackathonsIdRoute
   '/lab/$slug': typeof LabSlugRouteWithChildren
+  '/recruiter/settings': typeof RecruiterSettingsRoute
   '/admin': typeof AdminIndexRoute
   '/collaboration': typeof CollaborationIndexRoute
   '/evaluation': typeof EvaluationIndexRoute
+  '/recruiter': typeof RecruiterIndexRoute
   '/admin/hackathons/$id': typeof AdminHackathonsIdRoute
   '/admin/labs/new': typeof AdminLabsNewRoute
   '/admin/users/$id': typeof AdminUsersIdRoute
   '/collaboration/sprint/$id': typeof CollaborationSprintIdRouteWithChildren
+  '/recruiter/evaluations/$id': typeof RecruiterEvaluationsIdRoute
   '/admin/hackathons': typeof AdminHackathonsIndexRoute
   '/admin/labs': typeof AdminLabsIndexRoute
+  '/recruiter/evaluations': typeof RecruiterEvaluationsIndexRoute
   '/admin/labs/$id/edit': typeof AdminLabsIdEditRoute
   '/admin/labs/$id/sprints': typeof AdminLabsIdSprintsRouteWithChildren
   '/collaboration/sprint/$id/workspace': typeof CollaborationSprintIdWorkspaceRoute
@@ -479,6 +519,7 @@ export interface FileRoutesById {
   '/hackathons': typeof HackathonsRouteWithChildren
   '/leaderboard': typeof LeaderboardRoute
   '/profile': typeof ProfileRoute
+  '/recruiter': typeof RecruiterRouteWithChildren
   '/admin/ai-mentor': typeof AdminAiMentorRoute
   '/admin/collaboration': typeof AdminCollaborationRoute
   '/admin/hackathons': typeof AdminHackathonsRouteWithChildren
@@ -505,15 +546,19 @@ export interface FileRoutesById {
   '/evaluation/workspace': typeof EvaluationWorkspaceRoute
   '/hackathons/$id': typeof HackathonsIdRoute
   '/lab/$slug': typeof LabSlugRouteWithChildren
+  '/recruiter/settings': typeof RecruiterSettingsRoute
   '/admin/': typeof AdminIndexRoute
   '/collaboration/': typeof CollaborationIndexRoute
   '/evaluation/': typeof EvaluationIndexRoute
+  '/recruiter/': typeof RecruiterIndexRoute
   '/admin/hackathons/$id': typeof AdminHackathonsIdRoute
   '/admin/labs/new': typeof AdminLabsNewRoute
   '/admin/users/$id': typeof AdminUsersIdRoute
   '/collaboration/sprint/$id': typeof CollaborationSprintIdRouteWithChildren
+  '/recruiter/evaluations/$id': typeof RecruiterEvaluationsIdRoute
   '/admin/hackathons/': typeof AdminHackathonsIndexRoute
   '/admin/labs/': typeof AdminLabsIndexRoute
+  '/recruiter/evaluations/': typeof RecruiterEvaluationsIndexRoute
   '/admin/labs/$id/edit': typeof AdminLabsIdEditRoute
   '/admin/labs/$id/sprints': typeof AdminLabsIdSprintsRouteWithChildren
   '/collaboration/sprint/$id/workspace': typeof CollaborationSprintIdWorkspaceRoute
@@ -539,6 +584,7 @@ export interface FileRouteTypes {
     | '/hackathons'
     | '/leaderboard'
     | '/profile'
+    | '/recruiter'
     | '/admin/ai-mentor'
     | '/admin/collaboration'
     | '/admin/hackathons'
@@ -565,15 +611,19 @@ export interface FileRouteTypes {
     | '/evaluation/workspace'
     | '/hackathons/$id'
     | '/lab/$slug'
+    | '/recruiter/settings'
     | '/admin/'
     | '/collaboration/'
     | '/evaluation/'
+    | '/recruiter/'
     | '/admin/hackathons/$id'
     | '/admin/labs/new'
     | '/admin/users/$id'
     | '/collaboration/sprint/$id'
+    | '/recruiter/evaluations/$id'
     | '/admin/hackathons/'
     | '/admin/labs/'
+    | '/recruiter/evaluations/'
     | '/admin/labs/$id/edit'
     | '/admin/labs/$id/sprints'
     | '/collaboration/sprint/$id/workspace'
@@ -618,15 +668,19 @@ export interface FileRouteTypes {
     | '/evaluation/workspace'
     | '/hackathons/$id'
     | '/lab/$slug'
+    | '/recruiter/settings'
     | '/admin'
     | '/collaboration'
     | '/evaluation'
+    | '/recruiter'
     | '/admin/hackathons/$id'
     | '/admin/labs/new'
     | '/admin/users/$id'
     | '/collaboration/sprint/$id'
+    | '/recruiter/evaluations/$id'
     | '/admin/hackathons'
     | '/admin/labs'
+    | '/recruiter/evaluations'
     | '/admin/labs/$id/edit'
     | '/admin/labs/$id/sprints'
     | '/collaboration/sprint/$id/workspace'
@@ -650,6 +704,7 @@ export interface FileRouteTypes {
     | '/hackathons'
     | '/leaderboard'
     | '/profile'
+    | '/recruiter'
     | '/admin/ai-mentor'
     | '/admin/collaboration'
     | '/admin/hackathons'
@@ -676,15 +731,19 @@ export interface FileRouteTypes {
     | '/evaluation/workspace'
     | '/hackathons/$id'
     | '/lab/$slug'
+    | '/recruiter/settings'
     | '/admin/'
     | '/collaboration/'
     | '/evaluation/'
+    | '/recruiter/'
     | '/admin/hackathons/$id'
     | '/admin/labs/new'
     | '/admin/users/$id'
     | '/collaboration/sprint/$id'
+    | '/recruiter/evaluations/$id'
     | '/admin/hackathons/'
     | '/admin/labs/'
+    | '/recruiter/evaluations/'
     | '/admin/labs/$id/edit'
     | '/admin/labs/$id/sprints'
     | '/collaboration/sprint/$id/workspace'
@@ -709,11 +768,19 @@ export interface RootRouteChildren {
   HackathonsRoute: typeof HackathonsRouteWithChildren
   LeaderboardRoute: typeof LeaderboardRoute
   ProfileRoute: typeof ProfileRoute
+  RecruiterRoute: typeof RecruiterRouteWithChildren
   LabSlugRoute: typeof LabSlugRouteWithChildren
 }
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
+    '/recruiter': {
+      id: '/recruiter'
+      path: '/recruiter'
+      fullPath: '/recruiter'
+      preLoaderRoute: typeof RecruiterRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/profile': {
       id: '/profile'
       path: '/profile'
@@ -798,6 +865,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/recruiter/': {
+      id: '/recruiter/'
+      path: '/'
+      fullPath: '/recruiter/'
+      preLoaderRoute: typeof RecruiterIndexRouteImport
+      parentRoute: typeof RecruiterRoute
+    }
     '/evaluation/': {
       id: '/evaluation/'
       path: '/'
@@ -818,6 +892,13 @@ declare module '@tanstack/react-router' {
       fullPath: '/admin/'
       preLoaderRoute: typeof AdminIndexRouteImport
       parentRoute: typeof AdminRoute
+    }
+    '/recruiter/settings': {
+      id: '/recruiter/settings'
+      path: '/settings'
+      fullPath: '/recruiter/settings'
+      preLoaderRoute: typeof RecruiterSettingsRouteImport
+      parentRoute: typeof RecruiterRoute
     }
     '/lab/$slug': {
       id: '/lab/$slug'
@@ -1001,6 +1082,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AdminAiMentorRouteImport
       parentRoute: typeof AdminRoute
     }
+    '/recruiter/evaluations/': {
+      id: '/recruiter/evaluations/'
+      path: '/evaluations'
+      fullPath: '/recruiter/evaluations/'
+      preLoaderRoute: typeof RecruiterEvaluationsIndexRouteImport
+      parentRoute: typeof RecruiterRoute
+    }
     '/admin/labs/': {
       id: '/admin/labs/'
       path: '/'
@@ -1014,6 +1102,13 @@ declare module '@tanstack/react-router' {
       fullPath: '/admin/hackathons/'
       preLoaderRoute: typeof AdminHackathonsIndexRouteImport
       parentRoute: typeof AdminHackathonsRoute
+    }
+    '/recruiter/evaluations/$id': {
+      id: '/recruiter/evaluations/$id'
+      path: '/evaluations/$id'
+      fullPath: '/recruiter/evaluations/$id'
+      preLoaderRoute: typeof RecruiterEvaluationsIdRouteImport
+      parentRoute: typeof RecruiterRoute
     }
     '/collaboration/sprint/$id': {
       id: '/collaboration/sprint/$id'
@@ -1281,6 +1376,24 @@ const HackathonsRouteWithChildren = HackathonsRoute._addFileChildren(
   HackathonsRouteChildren,
 )
 
+interface RecruiterRouteChildren {
+  RecruiterSettingsRoute: typeof RecruiterSettingsRoute
+  RecruiterIndexRoute: typeof RecruiterIndexRoute
+  RecruiterEvaluationsIdRoute: typeof RecruiterEvaluationsIdRoute
+  RecruiterEvaluationsIndexRoute: typeof RecruiterEvaluationsIndexRoute
+}
+
+const RecruiterRouteChildren: RecruiterRouteChildren = {
+  RecruiterSettingsRoute: RecruiterSettingsRoute,
+  RecruiterIndexRoute: RecruiterIndexRoute,
+  RecruiterEvaluationsIdRoute: RecruiterEvaluationsIdRoute,
+  RecruiterEvaluationsIndexRoute: RecruiterEvaluationsIndexRoute,
+}
+
+const RecruiterRouteWithChildren = RecruiterRoute._addFileChildren(
+  RecruiterRouteChildren,
+)
+
 interface LabSlugTicketTicketIdRouteChildren {
   LabSlugTicketTicketIdReviewRoute: typeof LabSlugTicketTicketIdReviewRoute
 }
@@ -1318,6 +1431,7 @@ const rootRouteChildren: RootRouteChildren = {
   HackathonsRoute: HackathonsRouteWithChildren,
   LeaderboardRoute: LeaderboardRoute,
   ProfileRoute: ProfileRoute,
+  RecruiterRoute: RecruiterRouteWithChildren,
   LabSlugRoute: LabSlugRouteWithChildren,
 }
 export const routeTree = rootRouteImport
