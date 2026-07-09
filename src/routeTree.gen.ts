@@ -26,6 +26,7 @@ import { Route as RecruiterIndexRouteImport } from './routes/recruiter.index'
 import { Route as EvaluationIndexRouteImport } from './routes/evaluation.index'
 import { Route as CollaborationIndexRouteImport } from './routes/collaboration.index'
 import { Route as AdminIndexRouteImport } from './routes/admin.index'
+import { Route as RecruiterSettingsRouteImport } from './routes/recruiter.settings'
 import { Route as LabSlugRouteImport } from './routes/lab.$slug'
 import { Route as HackathonsIdRouteImport } from './routes/hackathons.$id'
 import { Route as EvaluationWorkspaceRouteImport } from './routes/evaluation.workspace'
@@ -153,6 +154,11 @@ const AdminIndexRoute = AdminIndexRouteImport.update({
   id: '/',
   path: '/',
   getParentRoute: () => AdminRoute,
+} as any)
+const RecruiterSettingsRoute = RecruiterSettingsRouteImport.update({
+  id: '/settings',
+  path: '/settings',
+  getParentRoute: () => RecruiterRoute,
 } as any)
 const LabSlugRoute = LabSlugRouteImport.update({
   id: '/lab/$slug',
@@ -413,6 +419,7 @@ export interface FileRoutesByFullPath {
   '/evaluation/workspace': typeof EvaluationWorkspaceRoute
   '/hackathons/$id': typeof HackathonsIdRoute
   '/lab/$slug': typeof LabSlugRouteWithChildren
+  '/recruiter/settings': typeof RecruiterSettingsRoute
   '/admin/': typeof AdminIndexRoute
   '/collaboration/': typeof CollaborationIndexRoute
   '/evaluation/': typeof EvaluationIndexRoute
@@ -468,6 +475,7 @@ export interface FileRoutesByTo {
   '/evaluation/workspace': typeof EvaluationWorkspaceRoute
   '/hackathons/$id': typeof HackathonsIdRoute
   '/lab/$slug': typeof LabSlugRouteWithChildren
+  '/recruiter/settings': typeof RecruiterSettingsRoute
   '/admin': typeof AdminIndexRoute
   '/collaboration': typeof CollaborationIndexRoute
   '/evaluation': typeof EvaluationIndexRoute
@@ -530,6 +538,7 @@ export interface FileRoutesById {
   '/evaluation/workspace': typeof EvaluationWorkspaceRoute
   '/hackathons/$id': typeof HackathonsIdRoute
   '/lab/$slug': typeof LabSlugRouteWithChildren
+  '/recruiter/settings': typeof RecruiterSettingsRoute
   '/admin/': typeof AdminIndexRoute
   '/collaboration/': typeof CollaborationIndexRoute
   '/evaluation/': typeof EvaluationIndexRoute
@@ -593,6 +602,7 @@ export interface FileRouteTypes {
     | '/evaluation/workspace'
     | '/hackathons/$id'
     | '/lab/$slug'
+    | '/recruiter/settings'
     | '/admin/'
     | '/collaboration/'
     | '/evaluation/'
@@ -648,6 +658,7 @@ export interface FileRouteTypes {
     | '/evaluation/workspace'
     | '/hackathons/$id'
     | '/lab/$slug'
+    | '/recruiter/settings'
     | '/admin'
     | '/collaboration'
     | '/evaluation'
@@ -709,6 +720,7 @@ export interface FileRouteTypes {
     | '/evaluation/workspace'
     | '/hackathons/$id'
     | '/lab/$slug'
+    | '/recruiter/settings'
     | '/admin/'
     | '/collaboration/'
     | '/evaluation/'
@@ -868,6 +880,13 @@ declare module '@tanstack/react-router' {
       fullPath: '/admin/'
       preLoaderRoute: typeof AdminIndexRouteImport
       parentRoute: typeof AdminRoute
+    }
+    '/recruiter/settings': {
+      id: '/recruiter/settings'
+      path: '/settings'
+      fullPath: '/recruiter/settings'
+      preLoaderRoute: typeof RecruiterSettingsRouteImport
+      parentRoute: typeof RecruiterRoute
     }
     '/lab/$slug': {
       id: '/lab/$slug'
@@ -1339,11 +1358,13 @@ const HackathonsRouteWithChildren = HackathonsRoute._addFileChildren(
 )
 
 interface RecruiterRouteChildren {
+  RecruiterSettingsRoute: typeof RecruiterSettingsRoute
   RecruiterIndexRoute: typeof RecruiterIndexRoute
   RecruiterEvaluationsIndexRoute: typeof RecruiterEvaluationsIndexRoute
 }
 
 const RecruiterRouteChildren: RecruiterRouteChildren = {
+  RecruiterSettingsRoute: RecruiterSettingsRoute,
   RecruiterIndexRoute: RecruiterIndexRoute,
   RecruiterEvaluationsIndexRoute: RecruiterEvaluationsIndexRoute,
 }
