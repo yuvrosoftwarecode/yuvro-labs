@@ -124,7 +124,7 @@ function SignInForm() {
       return;
     }
     login(acc.user);
-    nav({ to: acc.user.role === "admin" ? "/admin" : "/dashboard" });
+    nav({ to: acc.user.role === "admin" ? "/admin" : acc.user.role === "recruiter" ? "/recruiter" : "/dashboard" });
   };
 
   return (
