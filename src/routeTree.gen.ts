@@ -9,6 +9,7 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
+import { Route as RecruiterRouteImport } from './routes/recruiter'
 import { Route as ProfileRouteImport } from './routes/profile'
 import { Route as LeaderboardRouteImport } from './routes/leaderboard'
 import { Route as HackathonsRouteImport } from './routes/hackathons'
@@ -66,6 +67,11 @@ import { Route as CollaborationSprintIdReportTeamRouteImport } from './routes/co
 import { Route as CollaborationSprintIdReportIndividualRouteImport } from './routes/collaboration.sprint.$id.report.individual'
 import { Route as AdminLabsIdSprintsSprintIdRouteImport } from './routes/admin.labs.$id.sprints.$sprintId'
 
+const RecruiterRoute = RecruiterRouteImport.update({
+  id: '/recruiter',
+  path: '/recruiter',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const ProfileRoute = ProfileRouteImport.update({
   id: '/profile',
   path: '/profile',
@@ -367,6 +373,7 @@ export interface FileRoutesByFullPath {
   '/hackathons': typeof HackathonsRouteWithChildren
   '/leaderboard': typeof LeaderboardRoute
   '/profile': typeof ProfileRoute
+  '/recruiter': typeof RecruiterRoute
   '/admin/ai-mentor': typeof AdminAiMentorRoute
   '/admin/collaboration': typeof AdminCollaborationRoute
   '/admin/hackathons': typeof AdminHackathonsRouteWithChildren
@@ -422,6 +429,7 @@ export interface FileRoutesByTo {
   '/hackathons': typeof HackathonsRouteWithChildren
   '/leaderboard': typeof LeaderboardRoute
   '/profile': typeof ProfileRoute
+  '/recruiter': typeof RecruiterRoute
   '/admin/ai-mentor': typeof AdminAiMentorRoute
   '/admin/collaboration': typeof AdminCollaborationRoute
   '/admin/incidents': typeof AdminIncidentsRoute
@@ -479,6 +487,7 @@ export interface FileRoutesById {
   '/hackathons': typeof HackathonsRouteWithChildren
   '/leaderboard': typeof LeaderboardRoute
   '/profile': typeof ProfileRoute
+  '/recruiter': typeof RecruiterRoute
   '/admin/ai-mentor': typeof AdminAiMentorRoute
   '/admin/collaboration': typeof AdminCollaborationRoute
   '/admin/hackathons': typeof AdminHackathonsRouteWithChildren
@@ -539,6 +548,7 @@ export interface FileRouteTypes {
     | '/hackathons'
     | '/leaderboard'
     | '/profile'
+    | '/recruiter'
     | '/admin/ai-mentor'
     | '/admin/collaboration'
     | '/admin/hackathons'
@@ -594,6 +604,7 @@ export interface FileRouteTypes {
     | '/hackathons'
     | '/leaderboard'
     | '/profile'
+    | '/recruiter'
     | '/admin/ai-mentor'
     | '/admin/collaboration'
     | '/admin/incidents'
@@ -650,6 +661,7 @@ export interface FileRouteTypes {
     | '/hackathons'
     | '/leaderboard'
     | '/profile'
+    | '/recruiter'
     | '/admin/ai-mentor'
     | '/admin/collaboration'
     | '/admin/hackathons'
@@ -709,11 +721,19 @@ export interface RootRouteChildren {
   HackathonsRoute: typeof HackathonsRouteWithChildren
   LeaderboardRoute: typeof LeaderboardRoute
   ProfileRoute: typeof ProfileRoute
+  RecruiterRoute: typeof RecruiterRoute
   LabSlugRoute: typeof LabSlugRouteWithChildren
 }
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
+    '/recruiter': {
+      id: '/recruiter'
+      path: '/recruiter'
+      fullPath: '/recruiter'
+      preLoaderRoute: typeof RecruiterRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/profile': {
       id: '/profile'
       path: '/profile'
@@ -1318,6 +1338,7 @@ const rootRouteChildren: RootRouteChildren = {
   HackathonsRoute: HackathonsRouteWithChildren,
   LeaderboardRoute: LeaderboardRoute,
   ProfileRoute: ProfileRoute,
+  RecruiterRoute: RecruiterRoute,
   LabSlugRoute: LabSlugRouteWithChildren,
 }
 export const routeTree = rootRouteImport
