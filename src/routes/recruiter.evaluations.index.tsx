@@ -53,7 +53,7 @@ function EvaluationsList() {
             return (
               <div key={e.id} className="group relative overflow-hidden rounded-2xl border border-white/5 bg-gradient-to-b from-white/[0.03] to-white/[0.01] transition hover:border-white/15">
                 <div className="absolute -right-16 -top-16 h-40 w-40 rounded-full bg-emerald-400/10 blur-3xl opacity-0 transition group-hover:opacity-100" />
-                <Link to="/recruiter/evaluations/$id" params={{ id: e.id }} className="block p-5">
+                <Link to="/recruiter/evaluations/$id/workspace" params={{ id: e.id }} search={{ tab: "overview" }} className="block p-5">
                   <div className="flex items-start justify-between">
                     <div className="min-w-0">
                       <div className="text-[10px] uppercase tracking-widest text-neutral-500">{e.domain || "Uncategorized"}</div>
@@ -79,9 +79,9 @@ function EvaluationsList() {
                 </Link>
                 <div className="flex items-center justify-between border-t border-white/5 bg-black/20 px-3 py-2">
                   <div className="flex items-center gap-1">
-                    <IconBtn title="Preview" onClick={() => nav({ to: "/recruiter/evaluations/$id", params: { id: e.id }, search: { view: "preview" } as any })}><Eye className="h-3.5 w-3.5" /></IconBtn>
+                    <IconBtn title="Open workspace" onClick={() => nav({ to: "/recruiter/evaluations/$id/workspace", params: { id: e.id }, search: { tab: "overview" } })}><Eye className="h-3.5 w-3.5" /></IconBtn>
                     <IconBtn title="Duplicate" onClick={() => onDuplicate(e.id)}><Copy className="h-3.5 w-3.5" /></IconBtn>
-                    <IconBtn title="Edit" onClick={() => nav({ to: "/recruiter/evaluations/$id", params: { id: e.id } })}><Pencil className="h-3.5 w-3.5" /></IconBtn>
+                    <IconBtn title="Edit builder" onClick={() => nav({ to: "/recruiter/evaluations/$id", params: { id: e.id }, search: { view: "edit" } as any })}><Pencil className="h-3.5 w-3.5" /></IconBtn>
                   </div>
                   <div className="relative">
                     <IconBtn title="More" onClick={() => setMenuFor(menuFor === e.id ? null : e.id)}><MoreHorizontal className="h-3.5 w-3.5" /></IconBtn>
