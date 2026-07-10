@@ -1,9 +1,11 @@
 import { Link } from "@tanstack/react-router";
 import { type ReactNode } from "react";
+import { useTheme } from "@/hooks/use-theme";
 
 export function EvalShell({ children, step, totalSteps, stepLabel }: { children: ReactNode; step?: number; totalSteps?: number; stepLabel?: string }) {
+  const { theme, toggle } = useTheme();
   return (
-    <div className="min-h-screen bg-[#fafaf7] text-neutral-900 antialiased selection:bg-neutral-900 selection:text-white">
+    <div className="eval-theme min-h-screen bg-[#fafaf7] text-neutral-900 antialiased selection:bg-neutral-900 selection:text-white">
       <header className="border-b border-neutral-200/80">
         <div className="mx-auto flex h-14 max-w-6xl items-center justify-between px-6">
           <Link to="/" className="flex items-center gap-2.5">
@@ -21,6 +23,19 @@ export function EvalShell({ children, step, totalSteps, stepLabel }: { children:
               </div>
             )}
             <a href="mailto:support@yuvrolabs.com" className="hover:text-neutral-900 transition">Need help?</a>
+            <button
+              type="button"
+              onClick={toggle}
+              aria-label="Toggle theme"
+              title={theme === "dark" ? "Switch to light" : "Switch to dark"}
+              className="inline-flex h-8 w-8 items-center justify-center rounded-md border border-neutral-200 bg-white text-neutral-600 transition hover:border-neutral-900 hover:text-neutral-900"
+            >
+              {theme === "dark" ? (
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="4" stroke="currentColor" strokeWidth="1.6"/><path d="M12 2v2M12 20v2M2 12h2M20 12h2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round"/></svg>
+              ) : (
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none"><path d="M20 14.5A8 8 0 1 1 9.5 4a6.5 6.5 0 0 0 10.5 10.5Z" stroke="currentColor" strokeWidth="1.6" strokeLinejoin="round"/></svg>
+              )}
+            </button>
           </div>
         </div>
         {step && totalSteps && (
