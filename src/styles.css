@@ -339,3 +339,82 @@
 .recruiter-theme .bg-violet-500\/10 { background-color: var(--rec-overlay-2) !important; }
 .recruiter-theme .focus\:border-violet-400\/60:focus,
 .recruiter-theme .hover\:border-violet-400\/40:hover { border-color: var(--rec-border-strong) !important; }
+
+/* ============================================================
+   Evaluation candidate experience — dark mode
+   Scoped overrides so hardcoded neutral colors in EvalShell and
+   evaluation.* routes flip cleanly in dark, and primary buttons
+   pick up the Yuvro orange.
+   ============================================================ */
+.eval-theme {
+  --eval-orange: #f97316;
+  --eval-orange-hover: #ea580c;
+  --eval-orange-fg: #ffffff;
+}
+.dark .eval-theme {
+  --eval-bg: #0b0b0d;
+  --eval-surface: #131316;
+  --eval-surface-2: #17171b;
+  --eval-border: rgba(255,255,255,0.08);
+  --eval-border-strong: rgba(255,255,255,0.18);
+  --eval-text: #ededf0;
+  --eval-text-muted: #a1a1aa;
+  --eval-text-dim: #71717a;
+  color: var(--eval-text);
+}
+
+/* Backgrounds */
+.dark .eval-theme.bg-\[\#fafaf7\],
+.dark .eval-theme .bg-\[\#fafaf7\] { background-color: var(--eval-bg) !important; }
+.dark .eval-theme .bg-white,
+.dark .eval-theme .bg-neutral-50,
+.dark .eval-theme .bg-neutral-50\/60 { background-color: var(--eval-surface) !important; }
+.dark .eval-theme .hover\:bg-neutral-50\/60:hover,
+.dark .eval-theme .hover\:bg-neutral-50:hover { background-color: var(--eval-surface-2) !important; }
+.dark .eval-theme .bg-neutral-100 { background-color: var(--eval-surface-2) !important; }
+
+/* Borders */
+.dark .eval-theme .border-neutral-200,
+.dark .eval-theme .border-neutral-200\/80,
+.dark .eval-theme .border-neutral-300 { border-color: var(--eval-border) !important; }
+.dark .eval-theme .hover\:border-neutral-500:hover,
+.dark .eval-theme .hover\:border-neutral-900:hover,
+.dark .eval-theme .focus\:border-neutral-900:focus { border-color: var(--eval-border-strong) !important; }
+.dark .eval-theme .bg-neutral-200\/80 { background-color: var(--eval-border) !important; }
+
+/* Text */
+.dark .eval-theme.text-neutral-900,
+.dark .eval-theme .text-neutral-900 { color: var(--eval-text) !important; }
+.dark .eval-theme .text-neutral-700,
+.dark .eval-theme .text-neutral-600 { color: var(--eval-text-muted) !important; }
+.dark .eval-theme .text-neutral-500,
+.dark .eval-theme .text-neutral-400,
+.dark .eval-theme .text-neutral-300 { color: var(--eval-text-dim) !important; }
+.dark .eval-theme .hover\:text-neutral-900:hover { color: var(--eval-text) !important; }
+.dark .eval-theme .placeholder\:text-neutral-400::placeholder { color: var(--eval-text-dim) !important; }
+
+/* Inputs */
+.dark .eval-theme .eval-input { color: var(--eval-text); border-bottom-color: var(--eval-border-strong); }
+.dark .eval-theme .eval-input::placeholder { color: var(--eval-text-dim); }
+.dark .eval-theme .eval-input:focus { border-color: var(--eval-text); }
+
+/* Primary buttons → Yuvro orange in dark */
+.dark .eval-theme .bg-neutral-900 { background-color: var(--eval-orange) !important; color: var(--eval-orange-fg) !important; }
+.dark .eval-theme .hover\:bg-neutral-800:hover { background-color: var(--eval-orange-hover) !important; }
+.dark .eval-theme .disabled\:bg-neutral-300:disabled { background-color: rgba(255,255,255,0.08) !important; color: var(--eval-text-dim) !important; }
+.dark .eval-theme .disabled\:text-neutral-500:disabled { color: var(--eval-text-dim) !important; }
+
+/* Progress bar accent */
+.dark .eval-theme header .bg-neutral-900 { background-color: var(--eval-orange) !important; }
+
+/* Y mark stays dark on dark */
+.dark .eval-theme .bg-neutral-900.grid { background-color: var(--eval-orange) !important; }
+
+/* Shadow softening on cards */
+.dark .eval-theme .shadow-\[0_1px_0_rgba\(0\,0\,0\,0\.02\)\,0_20px_60px_-30px_rgba\(0\,0\,0\,0\.15\)\] {
+  box-shadow: 0 1px 0 rgba(255,255,255,0.03), 0 20px 60px -30px rgba(0,0,0,0.6) !important;
+}
+
+/* Emerald success accents stay legible */
+.dark .eval-theme .bg-emerald-50 { background-color: rgba(16,185,129,0.12) !important; }
+.dark .eval-theme .text-emerald-600 { color: #34d399 !important; }
