@@ -66,6 +66,7 @@ import { Route as LabSlugTicketTicketIdRouteImport } from './routes/lab.$slug.ti
 import { Route as CollaborationSprintIdWorkspaceRouteImport } from './routes/collaboration.sprint.$id.workspace'
 import { Route as AdminLabsIdSprintsRouteImport } from './routes/admin.labs.$id.sprints'
 import { Route as AdminLabsIdEditRouteImport } from './routes/admin.labs.$id.edit'
+import { Route as RecruiterEvaluationsIdCandidatesCandidateIdRouteImport } from './routes/recruiter.evaluations.$id.candidates.$candidateId'
 import { Route as LabSlugTicketTicketIdReviewRouteImport } from './routes/lab.$slug.ticket.$ticketId.review'
 import { Route as CollaborationSprintIdTicketTicketIdRouteImport } from './routes/collaboration.sprint.$id.ticket.$ticketId'
 import { Route as CollaborationSprintIdReportTeamRouteImport } from './routes/collaboration.sprint.$id.report.team'
@@ -361,6 +362,12 @@ const AdminLabsIdEditRoute = AdminLabsIdEditRouteImport.update({
   path: '/$id/edit',
   getParentRoute: () => AdminLabsRoute,
 } as any)
+const RecruiterEvaluationsIdCandidatesCandidateIdRoute =
+  RecruiterEvaluationsIdCandidatesCandidateIdRouteImport.update({
+    id: '/candidates/$candidateId',
+    path: '/candidates/$candidateId',
+    getParentRoute: () => RecruiterEvaluationsIdRoute,
+  } as any)
 const LabSlugTicketTicketIdReviewRoute =
   LabSlugTicketTicketIdReviewRouteImport.update({
     id: '/review',
@@ -455,6 +462,7 @@ export interface FileRoutesByFullPath {
   '/collaboration/sprint/$id/report/team': typeof CollaborationSprintIdReportTeamRoute
   '/collaboration/sprint/$id/ticket/$ticketId': typeof CollaborationSprintIdTicketTicketIdRoute
   '/lab/$slug/ticket/$ticketId/review': typeof LabSlugTicketTicketIdReviewRoute
+  '/recruiter/evaluations/$id/candidates/$candidateId': typeof RecruiterEvaluationsIdCandidatesCandidateIdRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
@@ -513,6 +521,7 @@ export interface FileRoutesByTo {
   '/collaboration/sprint/$id/report/team': typeof CollaborationSprintIdReportTeamRoute
   '/collaboration/sprint/$id/ticket/$ticketId': typeof CollaborationSprintIdTicketTicketIdRoute
   '/lab/$slug/ticket/$ticketId/review': typeof LabSlugTicketTicketIdReviewRoute
+  '/recruiter/evaluations/$id/candidates/$candidateId': typeof RecruiterEvaluationsIdCandidatesCandidateIdRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -578,6 +587,7 @@ export interface FileRoutesById {
   '/collaboration/sprint/$id/report/team': typeof CollaborationSprintIdReportTeamRoute
   '/collaboration/sprint/$id/ticket/$ticketId': typeof CollaborationSprintIdTicketTicketIdRoute
   '/lab/$slug/ticket/$ticketId/review': typeof LabSlugTicketTicketIdReviewRoute
+  '/recruiter/evaluations/$id/candidates/$candidateId': typeof RecruiterEvaluationsIdCandidatesCandidateIdRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -644,6 +654,7 @@ export interface FileRouteTypes {
     | '/collaboration/sprint/$id/report/team'
     | '/collaboration/sprint/$id/ticket/$ticketId'
     | '/lab/$slug/ticket/$ticketId/review'
+    | '/recruiter/evaluations/$id/candidates/$candidateId'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
@@ -702,6 +713,7 @@ export interface FileRouteTypes {
     | '/collaboration/sprint/$id/report/team'
     | '/collaboration/sprint/$id/ticket/$ticketId'
     | '/lab/$slug/ticket/$ticketId/review'
+    | '/recruiter/evaluations/$id/candidates/$candidateId'
   id:
     | '__root__'
     | '/'
@@ -766,6 +778,7 @@ export interface FileRouteTypes {
     | '/collaboration/sprint/$id/report/team'
     | '/collaboration/sprint/$id/ticket/$ticketId'
     | '/lab/$slug/ticket/$ticketId/review'
+    | '/recruiter/evaluations/$id/candidates/$candidateId'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -1186,6 +1199,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AdminLabsIdEditRouteImport
       parentRoute: typeof AdminLabsRoute
     }
+    '/recruiter/evaluations/$id/candidates/$candidateId': {
+      id: '/recruiter/evaluations/$id/candidates/$candidateId'
+      path: '/candidates/$candidateId'
+      fullPath: '/recruiter/evaluations/$id/candidates/$candidateId'
+      preLoaderRoute: typeof RecruiterEvaluationsIdCandidatesCandidateIdRouteImport
+      parentRoute: typeof RecruiterEvaluationsIdRoute
+    }
     '/lab/$slug/ticket/$ticketId/review': {
       id: '/lab/$slug/ticket/$ticketId/review'
       path: '/review'
@@ -1398,11 +1418,14 @@ const HackathonsRouteWithChildren = HackathonsRoute._addFileChildren(
 
 interface RecruiterEvaluationsIdRouteChildren {
   RecruiterEvaluationsIdWorkspaceRoute: typeof RecruiterEvaluationsIdWorkspaceRoute
+  RecruiterEvaluationsIdCandidatesCandidateIdRoute: typeof RecruiterEvaluationsIdCandidatesCandidateIdRoute
 }
 
 const RecruiterEvaluationsIdRouteChildren: RecruiterEvaluationsIdRouteChildren =
   {
     RecruiterEvaluationsIdWorkspaceRoute: RecruiterEvaluationsIdWorkspaceRoute,
+    RecruiterEvaluationsIdCandidatesCandidateIdRoute:
+      RecruiterEvaluationsIdCandidatesCandidateIdRoute,
   }
 
 const RecruiterEvaluationsIdRouteWithChildren =
