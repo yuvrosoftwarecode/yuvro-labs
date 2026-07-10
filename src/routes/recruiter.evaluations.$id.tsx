@@ -124,10 +124,13 @@ function EvaluationWorkspace() {
         <LabDrawer
           existing={((ev.sections.find(s => s.id === labDrawerFor) as LabsSection | undefined)?.labs ?? []).map(l => l.id)}
           onClose={() => setLabDrawerFor(null)}
-          onAdd={(lab) => update(x => {
-            const sec = x.sections.find(s => s.id === labDrawerFor) as LabsSection | undefined;
-            if (sec && !sec.labs.find(l => l.id === lab.id)) sec.labs.push(lab);
-          })}
+          onAdd={(lab) => {
+            update(x => {
+              const sec = x.sections.find(s => s.id === labDrawerFor) as LabsSection | undefined;
+              if (sec && !sec.labs.find(l => l.id === lab.id)) sec.labs.push(lab);
+            });
+            setLabDrawerFor(null);
+          }}
         />
       )}
       {addSubFor && (
@@ -146,11 +149,14 @@ function EvaluationWorkspace() {
         <QuestionDrawer
           existing={((ev.sections.find(s => s.id === qDrawerFor.sectionId) as AssessmentSection | undefined)?.subsections.find(sb => sb.id === qDrawerFor.subId)?.questions ?? []).map(q => q.id)}
           onClose={() => setQDrawerFor(null)}
-          onAdd={(q) => update(x => {
-            const sec = x.sections.find(s => s.id === qDrawerFor.sectionId) as AssessmentSection | undefined;
-            const sub = sec?.subsections.find(sb => sb.id === qDrawerFor.subId);
-            if (sub && !sub.questions.find(qq => qq.id === q.id)) sub.questions.push(q);
-          })}
+          onAdd={(q) => {
+            update(x => {
+              const sec = x.sections.find(s => s.id === qDrawerFor.sectionId) as AssessmentSection | undefined;
+              const sub = sec?.subsections.find(sb => sb.id === qDrawerFor.subId);
+              if (sub && !sub.questions.find(qq => qq.id === q.id)) sub.questions.push(q);
+            });
+            setQDrawerFor(null);
+          }}
         />
       )}
     </div>

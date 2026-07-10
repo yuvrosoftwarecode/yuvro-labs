@@ -232,12 +232,18 @@
 .recruiter-theme .text-\[32px\],
 .recruiter-theme .text-\[34px\],
 .recruiter-theme .text-\[42px\] {
-  font-family: "Instrument Serif", "Times New Roman", ui-serif, Georgia, serif;
-  font-weight: 400 !important;
-  letter-spacing: -0.015em;
-  line-height: 1.08;
+  font-family: "Fraunces", "Instrument Serif", ui-serif, Georgia, serif;
+  font-weight: 500 !important;
+  letter-spacing: -0.02em;
+  line-height: 1.1;
   color: var(--rec-fg);
+  font-optical-sizing: auto;
 }
+.recruiter-theme .text-\[42px\] { font-size: 30px !important; }
+.recruiter-theme .text-\[34px\] { font-size: 26px !important; }
+.recruiter-theme .text-\[32px\] { font-size: 26px !important; }
+.recruiter-theme .text-\[28px\] { font-size: 24px !important; }
+.recruiter-theme .text-\[26px\] { font-size: 22px !important; }
 
 /* Hide the ambient neon glow (belongs to the old dark identity) */
 .recruiter-theme .recruiter-glow { display: none; }

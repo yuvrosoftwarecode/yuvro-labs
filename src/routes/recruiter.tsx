@@ -1,6 +1,7 @@
 import { createFileRoute, Link, Outlet, useRouterState, useNavigate } from "@tanstack/react-router";
-import { LayoutDashboard, ClipboardList, Settings, LogOut, Sparkles } from "lucide-react";
+import { LayoutDashboard, ClipboardList, Settings, LogOut, Sparkles, Sun, Moon } from "lucide-react";
 import { useAuth } from "@/lib/auth";
+import { useTheme } from "@/hooks/use-theme";
 
 export const Route = createFileRoute("/recruiter")({
   head: () => ({ meta: [{ title: "Recruiter — Yuvro Labs" }, { name: "robots", content: "noindex" }] }),
@@ -10,6 +11,7 @@ export const Route = createFileRoute("/recruiter")({
 function RecruiterLayout() {
   const { user, logout } = useAuth();
   const nav = useNavigate();
+  const { theme, toggle } = useTheme();
   const pathname = useRouterState({ select: s => s.location.pathname });
   const items = [
     { to: "/recruiter", label: "Dashboard", icon: LayoutDashboard, exact: true },
@@ -58,6 +60,9 @@ function RecruiterLayout() {
                 <div className="truncate text-[12px] text-white">{user?.name ?? "Recruiter"}</div>
                 <div className="truncate text-[10px] text-neutral-500">{user?.email ?? "recruiter@yuvrolabs.com"}</div>
               </div>
+              <button onClick={toggle} className="rounded-md p-1.5 text-neutral-500 transition hover:bg-white/5 hover:text-white" title={theme === "dark" ? "Switch to light" : "Switch to dark"} aria-label="Toggle theme">
+                {theme === "dark" ? <Sun className="h-3.5 w-3.5" /> : <Moon className="h-3.5 w-3.5" />}
+              </button>
               <button onClick={() => { logout(); nav({ to: "/auth", search: { tab: "signin" } }); }} className="rounded-md p-1.5 text-neutral-500 transition hover:bg-white/5 hover:text-white" title="Sign out">
                 <LogOut className="h-3.5 w-3.5" />
               </button>
