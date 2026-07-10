@@ -283,12 +283,31 @@
 .recruiter-theme .placeholder-neutral-600::placeholder { color: var(--rec-muted-2) !important; }
 
 /* --- Accent replacements (drop neon gradients for a mono ink accent) --- */
-.recruiter-theme .bg-gradient-to-r,
-.recruiter-theme .bg-gradient-to-br,
-.recruiter-theme .bg-gradient-to-b {
+/* Solid ink accent for buttons + icon chips: anything with a colored from-* */
+.recruiter-theme .bg-gradient-to-r.from-emerald-400,
+.recruiter-theme .bg-gradient-to-br.from-emerald-400,
+.recruiter-theme .bg-gradient-to-r.from-cyan-400,
+.recruiter-theme .bg-gradient-to-r.from-violet-400,
+.recruiter-theme .bg-gradient-to-br.from-violet-400,
+.recruiter-theme .bg-gradient-to-r.from-amber-400,
+.recruiter-theme .bg-gradient-to-br.from-amber-400,
+.recruiter-theme .bg-gradient-to-br.from-cyan-400 {
   background-image: none !important;
   background-color: var(--rec-accent) !important;
   color: var(--rec-accent-fg) !important;
+}
+/* Subtle surface cards (from-white overlays) */
+.recruiter-theme .bg-gradient-to-b.from-white\/\[0\.03\],
+.recruiter-theme .bg-gradient-to-br.from-white\/\[0\.03\] {
+  background-image: none !important;
+  background-color: var(--rec-surface) !important;
+}
+/* Decorative empty gradients (no from-*) — neutralize */
+.recruiter-theme .bg-gradient-to-b:not([class*="from-"]),
+.recruiter-theme .bg-gradient-to-br:not([class*="from-"]),
+.recruiter-theme .bg-gradient-to-r:not([class*="from-"]) {
+  background-image: none !important;
+  background-color: transparent !important;
 }
 .recruiter-theme .text-black { color: var(--rec-accent-fg) !important; }
 .recruiter-theme .text-emerald-400,
