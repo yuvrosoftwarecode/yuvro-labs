@@ -1,4 +1,4 @@
-import { createFileRoute, useNavigate, Link } from "@tanstack/react-router";
+import { createFileRoute, useNavigate, Link, Outlet, useLocation } from "@tanstack/react-router";
 import { useEffect, useMemo, useState } from "react";
 import { z } from "zod";
 import {
@@ -23,17 +23,23 @@ function EvaluationWorkspace() {
   const { id } = Route.useParams();
   const { view } = Route.useSearch();
   const nav = useNavigate();
+  const loc = useLocation();
   const [ev, setEv] = useState<Evaluation | null>(null);
   const [addSectionOpen, setAddSectionOpen] = useState(false);
   const [labDrawerFor, setLabDrawerFor] = useState<string | null>(null);
   const [qDrawerFor, setQDrawerFor] = useState<{ sectionId: string; subId: string } | null>(null);
   const [addSubFor, setAddSubFor] = useState<string | null>(null);
 
+  // Child route matched (e.g. /workspace, /candidates/...) — defer to it.
+  const isChild = loc.pathname.replace(/\/$/, "") !== `/recruiter/evaluations/${id}`;
+
   useEffect(() => {
+    if (isChild) return;
     const e = getEvaluation(id);
     if (!e) nav({ to: "/recruiter/evaluations" }); else setEv(e);
-  }, [id, nav]);
+  }, [id, nav, isChild]);
 
+  if (isChild) return <Outlet />;
   if (!ev) return null;
 
   const update = (fn: (e: Evaluation) => void) => {
