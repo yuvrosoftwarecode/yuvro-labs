@@ -19,8 +19,9 @@ function RecruiterLayout() {
   const isActive = (to: string, exact?: boolean) => exact ? pathname === to : pathname.startsWith(to);
 
   return (
-    <div className="min-h-screen bg-[#0a0a0b] text-neutral-100">
-      <div className="pointer-events-none fixed inset-0 -z-10 opacity-40">
+    <div className="recruiter-theme min-h-screen bg-[#0a0a0b] text-neutral-100">
+      <div className="pointer-events-none fixed inset-0 -z-10 opacity-40 recruiter-glow">
+
         <div className="absolute -top-40 -left-40 h-[520px] w-[520px] rounded-full bg-emerald-500/10 blur-[160px]" />
         <div className="absolute -bottom-40 -right-20 h-[520px] w-[520px] rounded-full bg-violet-500/10 blur-[160px]" />
       </div>
