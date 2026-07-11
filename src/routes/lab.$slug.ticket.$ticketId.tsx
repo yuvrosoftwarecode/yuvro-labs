@@ -1236,48 +1236,89 @@ export function StudentTicketView({
         {/* Center editor */}
         <section className="flex flex-1 min-w-0 flex-col relative">
           <div ref={splitContainerRef} className="flex flex-1 min-h-0">
-            {/* File tree */}
+            {/* File tree + DB Explorer sidebar */}
             {fileTreeOpen && (
               <div className="flex w-60 shrink-0 flex-col border-r bg-editor-panel text-xs">
-                <div className="flex items-center justify-between px-3 py-2 text-[11px] uppercase tracking-wide text-muted-foreground">
-                  <span>Explorer</span>
-                  <div className="flex items-center gap-1 normal-case">
-                    <button
-                      title="New File"
-                      onClick={() => {
-                        const name = prompt("New file path (e.g. todos/utils.py)");
-                        if (name) createFile(name);
-                      }}
-                      className="grid h-5 w-5 place-items-center rounded hover:bg-accent text-muted-foreground hover:text-foreground"
-                    ><FilePlus className="h-3.5 w-3.5" /></button>
-                    <button
-                      title="New Folder"
-                      onClick={() => {
-                        const name = prompt("New folder path (e.g. todos/api)");
-                        if (name) {
-                          const folder = name.replace(/\/+$/, "");
-                          createFile(`${folder}/.gitkeep`, "");
-                        }
-                      }}
-                      className="grid h-5 w-5 place-items-center rounded hover:bg-accent text-muted-foreground hover:text-foreground"
-                    ><FolderPlus className="h-3.5 w-3.5" /></button>
+                {/* File Explorer — 50% height */}
+                <div className="flex flex-col min-h-0" style={{ height: isSql ? "50%" : "100%" }}>
+                  <div className="flex items-center justify-between px-3 py-2 text-[11px] uppercase tracking-wide text-muted-foreground">
+                    <span>Explorer</span>
+                    <div className="flex items-center gap-1 normal-case">
+                      <button
+                        title="New File"
+                        onClick={() => {
+                          const name = prompt("New file path (e.g. todos/utils.py)");
+                          if (name) createFile(name);
+                        }}
+                        className="grid h-5 w-5 place-items-center rounded hover:bg-accent text-muted-foreground hover:text-foreground"
+                      ><FilePlus className="h-3.5 w-3.5" /></button>
+                      <button
+                        title="New Folder"
+                        onClick={() => {
+                          const name = prompt("New folder path (e.g. todos/api)");
+                          if (name) {
+                            const folder = name.replace(/\/+$/, "");
+                            createFile(`${folder}/.gitkeep`, "");
+                          }
+                        }}
+                        className="grid h-5 w-5 place-items-center rounded hover:bg-accent text-muted-foreground hover:text-foreground"
+                      ><FolderPlus className="h-3.5 w-3.5" /></button>
+                    </div>
+                  </div>
+                  <div className="flex-1 overflow-auto px-1 pb-2 min-h-0">
+                    <FileTree
+                      rootLabel={kit.rootLabel}
+                      paths={fileList}
+                      activeFile={activeFile}
+                      dirty={dirty}
+                      onOpenFile={setActiveFile}
+                      onCreateFile={createFile}
+                      onRenameFile={renameFile}
+                      onDeleteFile={deleteFile}
+                      onDeleteFolder={deleteFolder}
+                      isFolderOpen={isFolderOpen}
+                      toggleFolder={toggleFolder}
+                    />
                   </div>
                 </div>
-                <div className="flex-1 overflow-auto px-1 pb-2">
-                  <FileTree
-                    rootLabel={kit.rootLabel}
-                    paths={fileList}
-                    activeFile={activeFile}
-                    dirty={dirty}
-                    onOpenFile={setActiveFile}
-                    onCreateFile={createFile}
-                    onRenameFile={renameFile}
-                    onDeleteFile={deleteFile}
-                    onDeleteFolder={deleteFolder}
-                    isFolderOpen={isFolderOpen}
-                    toggleFolder={toggleFolder}
-                  />
-                </div>
+
+                {/* DB Explorer — SQL kits only */}
+                {isSql && (
+                  <div className="flex flex-col min-h-0 border-t" style={{ height: "50%" }}>
+                    <div className="flex items-center gap-1.5 px-3 py-2 text-[11px] uppercase tracking-wide text-muted-foreground">
+                      <Database className="h-3 w-3" />
+                      <span>DB Explorer</span>
+                    </div>
+                    <div className="flex-1 overflow-auto px-2 pb-2 min-h-0 text-[12px]">
+                      <div className="flex items-center gap-1.5 px-1 py-1 text-foreground">
+                        <Database className="h-3.5 w-3.5 text-primary" />
+                        <span className="font-medium">{SQL_DB.name}</span>
+                        <span className="ml-auto text-[10px] text-muted-foreground">PostgreSQL</span>
+                      </div>
+                      <div className="pl-3 mt-1 space-y-0.5">
+                        <div className="text-[10px] uppercase tracking-wide text-muted-foreground pl-1">Tables</div>
+                        {SQL_DB.tables.map((t) => {
+                          const opened = openSchemas.includes(t.name);
+                          const active = activeFile === `schema:${t.name}`;
+                          return (
+                            <button
+                              key={t.name}
+                              onClick={() => openSchemaTab(t.name)}
+                              title={`Open schema for ${t.name}`}
+                              className={`w-full flex items-center gap-1.5 rounded px-2 py-1 text-left hover:bg-accent/60 ${active ? "bg-accent text-foreground" : "text-foreground/90"}`}
+                            >
+                              <TableIcon className="h-3.5 w-3.5 text-info" />
+                              <span className="flex-1 truncate">{t.name}</span>
+                              <span className="text-[10px] text-muted-foreground">{t.columns.length} cols</span>
+                              {opened && <span className="h-1.5 w-1.5 rounded-full bg-primary" />}
+                            </button>
+                          );
+                        })}
+                      </div>
+                    </div>
+                  </div>
+                )}
+
                 <div className="mt-auto border-t px-3 py-2 text-[11px] text-muted-foreground">
                   <div className="flex items-center gap-1"><GitBranch className="h-3 w-3" /> main</div>
                 </div>
@@ -1285,9 +1326,10 @@ export function StudentTicketView({
             )}
 
 
-            <div className="flex flex-1 min-w-0 flex-col">
+            <div ref={editorColumnRef} className="flex flex-1 min-w-0 flex-col">
 
               {/* Tabs row */}
+              {fullscreen !== "bottom" && (
               <div className="flex items-center border-b bg-editor-panel text-xs overflow-x-auto">
                 {fileList.map((f) => (
                   <button key={f} onClick={() => setActiveFile(f)}
@@ -1296,6 +1338,21 @@ export function StudentTicketView({
                     {dirty[f] && <CircleDot className="h-2.5 w-2.5 text-warning" />}
                   </button>
                 ))}
+                {openSchemas.map((t) => {
+                  const key = `schema:${t}`;
+                  const active = activeFile === key;
+                  return (
+                    <div key={key} className={`group flex items-center gap-1.5 border-r pl-3 pr-2 py-2 whitespace-nowrap ${active ? "bg-editor-bg text-foreground" : "text-muted-foreground hover:text-foreground"}`}>
+                      <button onClick={() => setActiveFile(key)} className="flex items-center gap-1.5">
+                        <TableIcon className="h-3 w-3 text-info" />
+                        <span>schema · {t}</span>
+                      </button>
+                      <button onClick={() => closeSchemaTab(t)} title="Close" className="opacity-60 hover:opacity-100 hover:text-destructive">
+                        <XCircle className="h-3 w-3" />
+                      </button>
+                    </div>
+                  );
+                })}
                 <div className="ml-auto flex items-center gap-2 pr-3 text-[11px] text-muted-foreground whitespace-nowrap">
                   {isMultiLang && (
                     <label className="flex items-center gap-1">
@@ -1317,10 +1374,19 @@ export function StudentTicketView({
                     {theme === "dark" ? "☀ Light" : "🌙 Dark"}
                   </button>
                   <button title="Format" onClick={() => showToast("Code formatted")} className="rounded border px-2 py-0.5 hover:bg-accent"><Wand2 className="h-3 w-3" /></button>
+                  <button
+                    title={fullscreen === "editor" ? "Exit full screen" : "Full screen editor"}
+                    onClick={() => setFullscreen((f) => (f === "editor" ? null : "editor"))}
+                    className={`rounded border px-2 py-0.5 hover:bg-accent ${fullscreen === "editor" ? "bg-accent text-foreground border-primary/40" : ""}`}
+                  >
+                    {fullscreen === "editor" ? <Minimize2 className="h-3 w-3" /> : <Maximize2 className="h-3 w-3" />}
+                  </button>
                 </div>
               </div>
+              )}
 
               {/* Breadcrumb path (VS Code style) */}
+              {fullscreen !== "bottom" && (
               <div className="flex items-center gap-1 border-b bg-editor-bg/60 px-3 py-1 text-[11px] text-muted-foreground overflow-x-auto whitespace-nowrap">
                 <Folder className="h-3 w-3 text-info shrink-0" />
                 {activeFile.split("/").map((seg, i, arr) => {
@@ -1336,18 +1402,36 @@ export function StudentTicketView({
                   );
                 })}
                 <span className="ml-auto pl-3 text-[10px] uppercase tracking-wider">
-                  {editorLanguage(activeFile)}
+                  {isSchemaTab ? "schema" : editorLanguage(activeFile)}
                 </span>
               </div>
+              )}
 
-              {/* Editor */}
-              <div className="flex flex-1 min-h-0">
-                <CodeEditor code={code} onChange={updateCode} language={editorLanguage(activeFile)} theme={theme} />
-              </div>
+              {/* Editor / Schema viewer */}
+              {fullscreen !== "bottom" && (
+                <div className="flex flex-1 min-h-0">
+                  {isSchemaTab
+                    ? <SchemaViewer table={activeFile.slice("schema:".length)} />
+                    : <CodeEditor code={code} onChange={updateCode} language={editorLanguage(activeFile)} theme={theme} />}
+                </div>
+              )}
 
+              {/* Vertical resizer between editor and bottom panel */}
+              {fullscreen === null && (
+                <div
+                  role="separator"
+                  onMouseDown={startVResize}
+                  title="Drag to resize"
+                  className="h-1 cursor-row-resize bg-border hover:bg-primary/50 transition-colors shrink-0"
+                />
+              )}
 
               {/* Bottom panel */}
-              <div className="border-t bg-editor-panel">
+              {fullscreen !== "editor" && (
+              <div
+                className="border-t bg-editor-panel flex flex-col shrink-0"
+                style={fullscreen === "bottom" ? { flex: "1 1 auto", minHeight: 0 } : { height: bottomHeight }}
+              >
                 <div className="flex items-center border-b text-xs overflow-x-auto">
                   {([
                     { k: "output", label: "Console", icon: TerminalIcon },
@@ -1360,14 +1444,20 @@ export function StudentTicketView({
                       <t.icon className="h-3 w-3" />{t.label}
                     </button>
                   ))}
-
+                  <button
+                    title={fullscreen === "bottom" ? "Exit full screen" : "Full screen results"}
+                    onClick={() => setFullscreen((f) => (f === "bottom" ? null : "bottom"))}
+                    className={`ml-auto mr-2 rounded border px-2 py-0.5 text-[11px] hover:bg-accent ${fullscreen === "bottom" ? "bg-accent text-foreground border-primary/40" : "text-muted-foreground"}`}
+                  >
+                    {fullscreen === "bottom" ? <Minimize2 className="h-3 w-3" /> : <Maximize2 className="h-3 w-3" />}
+                  </button>
                 </div>
-                <div className="h-52 overflow-auto scrollbar-thin p-3 text-xs">
+                <div className="flex-1 overflow-auto scrollbar-thin p-3 text-xs min-h-0">
                   {bottomTab === "output" && <OutputView output={output} />}
                   {bottomTab === "errors" && <ErrorsView state={compileState} />}
                   {bottomTab === "preview" && (
                     isDjango ? <DjangoTodoPreview /> :
-                    isSql    ? <SqlResultsView query={files[activeFile] ?? ""} /> :
+                    isSql    ? <SqlResultsView query={files[primaryFile ?? activeFile] ?? files[activeFile] ?? ""} /> :
                     isMongo  ? <MongoResultsView query={files[activeFile] ?? ""} /> :
                     isUi     ? <UiPreview files={files} /> :
                     isPython ? <PythonOutputView code={files[activeFile] ?? ""} /> :
@@ -1376,7 +1466,10 @@ export function StudentTicketView({
                   {bottomTab === "terminal" && <TerminalView />}
                 </div>
               </div>
+              )}
             </div>
+
+
 
             {sidePanel && (
               <div
