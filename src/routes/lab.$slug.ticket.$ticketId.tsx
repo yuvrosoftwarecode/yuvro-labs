@@ -9,7 +9,7 @@ import {
   CircleDot, Terminal as TerminalIcon, CheckCircle2, XCircle, Clock, Zap,
   MessageSquare, Lock, Unlock, RotateCcw, Copy, Share2, Flag, HelpCircle,
   Sparkles, Gauge, Wand2, Globe, Check, ArrowLeft, PanelLeftClose, PanelLeftOpen, BookOpen,
-  FilePlus, FolderPlus, Pencil, Trash2,
+  FilePlus, FolderPlus, Pencil, Trash2, Maximize2, Minimize2, Database, Table as TableIcon, KeyRound,
 } from "lucide-react";
 import CodeMirror from "@uiw/react-codemirror";
 import { python } from "@codemirror/lang-python";
@@ -730,6 +730,45 @@ export function StudentTicketView({
   const [previewDevice, setPreviewDevice] = useState<"Mobile" | "Tablet" | "Desktop">("Desktop");
   const [sideWidth, setSideWidth] = useState<number | null>(null);
   const splitContainerRef = useRef<HTMLDivElement>(null);
+  const editorColumnRef = useRef<HTMLDivElement>(null);
+  const [bottomHeight, setBottomHeight] = useState<number>(220);
+  const [fullscreen, setFullscreen] = useState<null | "editor" | "bottom">(null);
+  const [openSchemas, setOpenSchemas] = useState<string[]>([]);
+
+  function startVResize(e: React.MouseEvent) {
+    e.preventDefault();
+    const container = editorColumnRef.current;
+    if (!container) return;
+    const onMove = (ev: MouseEvent) => {
+      const rect = container.getBoundingClientRect();
+      const next = rect.bottom - ev.clientY;
+      const min = 100;
+      const max = Math.max(min + 80, rect.height - 160);
+      setBottomHeight(Math.min(max, Math.max(min, next)));
+    };
+    const onUp = () => {
+      window.removeEventListener("mousemove", onMove);
+      window.removeEventListener("mouseup", onUp);
+      document.body.style.cursor = "";
+      document.body.style.userSelect = "";
+    };
+    document.body.style.cursor = "row-resize";
+    document.body.style.userSelect = "none";
+    window.addEventListener("mousemove", onMove);
+    window.addEventListener("mouseup", onUp);
+  }
+
+  function openSchemaTab(table: string) {
+    setOpenSchemas((s) => (s.includes(table) ? s : [...s, table]));
+    setActiveFile(`schema:${table}`);
+  }
+  function closeSchemaTab(table: string) {
+    setOpenSchemas((s) => s.filter((t) => t !== table));
+    if (activeFile === `schema:${table}`) {
+      const first = Object.keys(files)[0];
+      if (first) setActiveFile(first);
+    }
+  }
 
   function startResize(e: React.MouseEvent) {
     e.preventDefault();
@@ -887,7 +926,8 @@ export function StudentTicketView({
   const allPass = testsRan && passed === tests.length;
   const timeStr = `${String(Math.floor(elapsed / 60)).padStart(2, "0")}:${String(elapsed % 60).padStart(2, "0")}`;
 
-  const code = files[activeFile];
+  const isSchemaTab = activeFile.startsWith("schema:");
+  const code = files[activeFile] ?? "";
 
   // Simple compile-state heuristic based on Main.java code
   const compileState: "ok" | "warn" | "err" = useMemo(() => {
@@ -904,7 +944,7 @@ export function StudentTicketView({
 
   function handleRun() {
     setRunning(true);
-    setBottomTab("output");
+    setBottomTab(isSql || isMongo ? "preview" : "output");
     const src = files[activeFile] ?? "";
     const file = activeFile;
 
@@ -1081,6 +1121,7 @@ export function StudentTicketView({
   }
 
   function updateCode(v: string) {
+    if (activeFile.startsWith("schema:")) return;
     setFiles((f) => ({ ...f, [activeFile]: v }));
     setDirty((d) => ({ ...d, [activeFile]: true }));
   }
@@ -1195,48 +1236,89 @@ export function StudentTicketView({
         {/* Center editor */}
         <section className="flex flex-1 min-w-0 flex-col relative">
           <div ref={splitContainerRef} className="flex flex-1 min-h-0">
-            {/* File tree */}
+            {/* File tree + DB Explorer sidebar */}
             {fileTreeOpen && (
               <div className="flex w-60 shrink-0 flex-col border-r bg-editor-panel text-xs">
-                <div className="flex items-center justify-between px-3 py-2 text-[11px] uppercase tracking-wide text-muted-foreground">
-                  <span>Explorer</span>
-                  <div className="flex items-center gap-1 normal-case">
-                    <button
-                      title="New File"
-                      onClick={() => {
-                        const name = prompt("New file path (e.g. todos/utils.py)");
-                        if (name) createFile(name);
-                      }}
-                      className="grid h-5 w-5 place-items-center rounded hover:bg-accent text-muted-foreground hover:text-foreground"
-                    ><FilePlus className="h-3.5 w-3.5" /></button>
-                    <button
-                      title="New Folder"
-                      onClick={() => {
-                        const name = prompt("New folder path (e.g. todos/api)");
-                        if (name) {
-                          const folder = name.replace(/\/+$/, "");
-                          createFile(`${folder}/.gitkeep`, "");
-                        }
-                      }}
-                      className="grid h-5 w-5 place-items-center rounded hover:bg-accent text-muted-foreground hover:text-foreground"
-                    ><FolderPlus className="h-3.5 w-3.5" /></button>
+                {/* File Explorer — 50% height */}
+                <div className="flex flex-col min-h-0" style={{ height: isSql ? "50%" : "100%" }}>
+                  <div className="flex items-center justify-between px-3 py-2 text-[11px] uppercase tracking-wide text-muted-foreground">
+                    <span>Explorer</span>
+                    <div className="flex items-center gap-1 normal-case">
+                      <button
+                        title="New File"
+                        onClick={() => {
+                          const name = prompt("New file path (e.g. todos/utils.py)");
+                          if (name) createFile(name);
+                        }}
+                        className="grid h-5 w-5 place-items-center rounded hover:bg-accent text-muted-foreground hover:text-foreground"
+                      ><FilePlus className="h-3.5 w-3.5" /></button>
+                      <button
+                        title="New Folder"
+                        onClick={() => {
+                          const name = prompt("New folder path (e.g. todos/api)");
+                          if (name) {
+                            const folder = name.replace(/\/+$/, "");
+                            createFile(`${folder}/.gitkeep`, "");
+                          }
+                        }}
+                        className="grid h-5 w-5 place-items-center rounded hover:bg-accent text-muted-foreground hover:text-foreground"
+                      ><FolderPlus className="h-3.5 w-3.5" /></button>
+                    </div>
+                  </div>
+                  <div className="flex-1 overflow-auto px-1 pb-2 min-h-0">
+                    <FileTree
+                      rootLabel={kit.rootLabel}
+                      paths={fileList}
+                      activeFile={activeFile}
+                      dirty={dirty}
+                      onOpenFile={setActiveFile}
+                      onCreateFile={createFile}
+                      onRenameFile={renameFile}
+                      onDeleteFile={deleteFile}
+                      onDeleteFolder={deleteFolder}
+                      isFolderOpen={isFolderOpen}
+                      toggleFolder={toggleFolder}
+                    />
                   </div>
                 </div>
-                <div className="flex-1 overflow-auto px-1 pb-2">
-                  <FileTree
-                    rootLabel={kit.rootLabel}
-                    paths={fileList}
-                    activeFile={activeFile}
-                    dirty={dirty}
-                    onOpenFile={setActiveFile}
-                    onCreateFile={createFile}
-                    onRenameFile={renameFile}
-                    onDeleteFile={deleteFile}
-                    onDeleteFolder={deleteFolder}
-                    isFolderOpen={isFolderOpen}
-                    toggleFolder={toggleFolder}
-                  />
-                </div>
+
+                {/* DB Explorer — SQL kits only */}
+                {isSql && (
+                  <div className="flex flex-col min-h-0 border-t" style={{ height: "50%" }}>
+                    <div className="flex items-center gap-1.5 px-3 py-2 text-[11px] uppercase tracking-wide text-muted-foreground">
+                      <Database className="h-3 w-3" />
+                      <span>DB Explorer</span>
+                    </div>
+                    <div className="flex-1 overflow-auto px-2 pb-2 min-h-0 text-[12px]">
+                      <div className="flex items-center gap-1.5 px-1 py-1 text-foreground">
+                        <Database className="h-3.5 w-3.5 text-primary" />
+                        <span className="font-medium">{SQL_DB.name}</span>
+                        <span className="ml-auto text-[10px] text-muted-foreground">PostgreSQL</span>
+                      </div>
+                      <div className="pl-3 mt-1 space-y-0.5">
+                        <div className="text-[10px] uppercase tracking-wide text-muted-foreground pl-1">Tables</div>
+                        {SQL_DB.tables.map((t) => {
+                          const opened = openSchemas.includes(t.name);
+                          const active = activeFile === `schema:${t.name}`;
+                          return (
+                            <button
+                              key={t.name}
+                              onClick={() => openSchemaTab(t.name)}
+                              title={`Open schema for ${t.name}`}
+                              className={`w-full flex items-center gap-1.5 rounded px-2 py-1 text-left hover:bg-accent/60 ${active ? "bg-accent text-foreground" : "text-foreground/90"}`}
+                            >
+                              <TableIcon className="h-3.5 w-3.5 text-info" />
+                              <span className="flex-1 truncate">{t.name}</span>
+                              <span className="text-[10px] text-muted-foreground">{t.columns.length} cols</span>
+                              {opened && <span className="h-1.5 w-1.5 rounded-full bg-primary" />}
+                            </button>
+                          );
+                        })}
+                      </div>
+                    </div>
+                  </div>
+                )}
+
                 <div className="mt-auto border-t px-3 py-2 text-[11px] text-muted-foreground">
                   <div className="flex items-center gap-1"><GitBranch className="h-3 w-3" /> main</div>
                 </div>
@@ -1244,9 +1326,10 @@ export function StudentTicketView({
             )}
 
 
-            <div className="flex flex-1 min-w-0 flex-col">
+            <div ref={editorColumnRef} className="flex flex-1 min-w-0 flex-col">
 
               {/* Tabs row */}
+              {fullscreen !== "bottom" && (
               <div className="flex items-center border-b bg-editor-panel text-xs overflow-x-auto">
                 {fileList.map((f) => (
                   <button key={f} onClick={() => setActiveFile(f)}
@@ -1255,6 +1338,21 @@ export function StudentTicketView({
                     {dirty[f] && <CircleDot className="h-2.5 w-2.5 text-warning" />}
                   </button>
                 ))}
+                {openSchemas.map((t) => {
+                  const key = `schema:${t}`;
+                  const active = activeFile === key;
+                  return (
+                    <div key={key} className={`group flex items-center gap-1.5 border-r pl-3 pr-2 py-2 whitespace-nowrap ${active ? "bg-editor-bg text-foreground" : "text-muted-foreground hover:text-foreground"}`}>
+                      <button onClick={() => setActiveFile(key)} className="flex items-center gap-1.5">
+                        <TableIcon className="h-3 w-3 text-info" />
+                        <span>schema · {t}</span>
+                      </button>
+                      <button onClick={() => closeSchemaTab(t)} title="Close" className="opacity-60 hover:opacity-100 hover:text-destructive">
+                        <XCircle className="h-3 w-3" />
+                      </button>
+                    </div>
+                  );
+                })}
                 <div className="ml-auto flex items-center gap-2 pr-3 text-[11px] text-muted-foreground whitespace-nowrap">
                   {isMultiLang && (
                     <label className="flex items-center gap-1">
@@ -1276,10 +1374,19 @@ export function StudentTicketView({
                     {theme === "dark" ? "☀ Light" : "🌙 Dark"}
                   </button>
                   <button title="Format" onClick={() => showToast("Code formatted")} className="rounded border px-2 py-0.5 hover:bg-accent"><Wand2 className="h-3 w-3" /></button>
+                  <button
+                    title={fullscreen === "editor" ? "Exit full screen" : "Full screen editor"}
+                    onClick={() => setFullscreen((f) => (f === "editor" ? null : "editor"))}
+                    className={`rounded border px-2 py-0.5 hover:bg-accent ${fullscreen === "editor" ? "bg-accent text-foreground border-primary/40" : ""}`}
+                  >
+                    {fullscreen === "editor" ? <Minimize2 className="h-3 w-3" /> : <Maximize2 className="h-3 w-3" />}
+                  </button>
                 </div>
               </div>
+              )}
 
               {/* Breadcrumb path (VS Code style) */}
+              {fullscreen !== "bottom" && (
               <div className="flex items-center gap-1 border-b bg-editor-bg/60 px-3 py-1 text-[11px] text-muted-foreground overflow-x-auto whitespace-nowrap">
                 <Folder className="h-3 w-3 text-info shrink-0" />
                 {activeFile.split("/").map((seg, i, arr) => {
@@ -1295,18 +1402,36 @@ export function StudentTicketView({
                   );
                 })}
                 <span className="ml-auto pl-3 text-[10px] uppercase tracking-wider">
-                  {editorLanguage(activeFile)}
+                  {isSchemaTab ? "schema" : editorLanguage(activeFile)}
                 </span>
               </div>
+              )}
 
-              {/* Editor */}
-              <div className="flex flex-1 min-h-0">
-                <CodeEditor code={code} onChange={updateCode} language={editorLanguage(activeFile)} theme={theme} />
-              </div>
+              {/* Editor / Schema viewer */}
+              {fullscreen !== "bottom" && (
+                <div className="flex flex-1 min-h-0">
+                  {isSchemaTab
+                    ? <SchemaViewer table={activeFile.slice("schema:".length)} />
+                    : <CodeEditor code={code} onChange={updateCode} language={editorLanguage(activeFile)} theme={theme} />}
+                </div>
+              )}
 
+              {/* Vertical resizer between editor and bottom panel */}
+              {fullscreen === null && (
+                <div
+                  role="separator"
+                  onMouseDown={startVResize}
+                  title="Drag to resize"
+                  className="h-1 cursor-row-resize bg-border hover:bg-primary/50 transition-colors shrink-0"
+                />
+              )}
 
               {/* Bottom panel */}
-              <div className="border-t bg-editor-panel">
+              {fullscreen !== "editor" && (
+              <div
+                className="border-t bg-editor-panel flex flex-col shrink-0"
+                style={fullscreen === "bottom" ? { flex: "1 1 auto", minHeight: 0 } : { height: bottomHeight }}
+              >
                 <div className="flex items-center border-b text-xs overflow-x-auto">
                   {([
                     { k: "output", label: "Console", icon: TerminalIcon },
@@ -1319,14 +1444,20 @@ export function StudentTicketView({
                       <t.icon className="h-3 w-3" />{t.label}
                     </button>
                   ))}
-
+                  <button
+                    title={fullscreen === "bottom" ? "Exit full screen" : "Full screen results"}
+                    onClick={() => setFullscreen((f) => (f === "bottom" ? null : "bottom"))}
+                    className={`ml-auto mr-2 rounded border px-2 py-0.5 text-[11px] hover:bg-accent ${fullscreen === "bottom" ? "bg-accent text-foreground border-primary/40" : "text-muted-foreground"}`}
+                  >
+                    {fullscreen === "bottom" ? <Minimize2 className="h-3 w-3" /> : <Maximize2 className="h-3 w-3" />}
+                  </button>
                 </div>
-                <div className="h-52 overflow-auto scrollbar-thin p-3 text-xs">
+                <div className="flex-1 overflow-auto scrollbar-thin p-3 text-xs min-h-0">
                   {bottomTab === "output" && <OutputView output={output} />}
                   {bottomTab === "errors" && <ErrorsView state={compileState} />}
                   {bottomTab === "preview" && (
                     isDjango ? <DjangoTodoPreview /> :
-                    isSql    ? <SqlResultsView query={files[activeFile] ?? ""} /> :
+                    isSql    ? <SqlResultsView query={files[primaryFile ?? activeFile] ?? files[activeFile] ?? ""} /> :
                     isMongo  ? <MongoResultsView query={files[activeFile] ?? ""} /> :
                     isUi     ? <UiPreview files={files} /> :
                     isPython ? <PythonOutputView code={files[activeFile] ?? ""} /> :
@@ -1335,7 +1466,10 @@ export function StudentTicketView({
                   {bottomTab === "terminal" && <TerminalView />}
                 </div>
               </div>
+              )}
             </div>
+
+
 
             {sidePanel && (
               <div
@@ -2191,6 +2325,107 @@ function TreeFileNode({
 }
 
 /* ---------- SQL query results viewer ---------- */
+
+type SqlColumnDef = { name: string; type: string; nullable: boolean; key?: string; default?: string };
+type SqlTableDef = { name: string; columns: SqlColumnDef[]; rowCount: number };
+const SQL_DB: { name: string; tables: SqlTableDef[] } = {
+  name: "yuvro_sql_lab",
+  tables: [
+    {
+      name: "customers",
+      rowCount: 5,
+      columns: [
+        { name: "id",            type: "SERIAL",       nullable: false, key: "PK" },
+        { name: "name",          type: "TEXT",         nullable: false },
+        { name: "country",       type: "VARCHAR(2)",   nullable: true },
+        { name: "signed_up_at",  type: "DATE",         nullable: false, default: "CURRENT_DATE" },
+      ],
+    },
+    {
+      name: "orders",
+      rowCount: 5,
+      columns: [
+        { name: "id",            type: "SERIAL",         nullable: false, key: "PK" },
+        { name: "customer_id",   type: "INTEGER",        nullable: false, key: "FK → customers.id" },
+        { name: "amount",        type: "NUMERIC(10,2)",  nullable: false },
+        { name: "created_at",    type: "DATE",           nullable: false, default: "CURRENT_DATE" },
+      ],
+    },
+  ],
+};
+
+function SchemaViewer({ table }: { table: string }) {
+  const def = SQL_DB.tables.find((t) => t.name === table);
+  if (!def) {
+    return <div className="p-6 text-sm text-muted-foreground">Table <code>{table}</code> not found in <code>{SQL_DB.name}</code>.</div>;
+  }
+  const ddl =
+`CREATE TABLE ${def.name} (
+${def.columns.map((c) => {
+  const parts = [`  ${c.name.padEnd(14)} ${c.type}`];
+  if (!c.nullable) parts.push("NOT NULL");
+  if (c.default) parts.push(`DEFAULT ${c.default}`);
+  if (c.key === "PK") parts.push("PRIMARY KEY");
+  return parts.join(" ");
+}).join(",\n")}
+);`;
+  return (
+    <div className="flex-1 overflow-auto bg-editor-bg text-foreground">
+      <div className="max-w-4xl mx-auto p-6 space-y-5">
+        <header className="flex items-center gap-2 border-b pb-3">
+          <TableIcon className="h-5 w-5 text-info" />
+          <div>
+            <div className="text-[11px] uppercase tracking-wider text-muted-foreground">Schema Viewer</div>
+            <h2 className="text-lg font-semibold">{SQL_DB.name}.{def.name}</h2>
+          </div>
+          <div className="ml-auto text-xs text-muted-foreground">
+            {def.columns.length} columns · {def.rowCount} rows
+          </div>
+        </header>
+
+        <section>
+          <h3 className="text-xs uppercase tracking-wide text-muted-foreground mb-2">Columns</h3>
+          <div className="overflow-auto rounded-lg border">
+            <table className="w-full text-[12px]">
+              <thead className="bg-accent/40 text-muted-foreground">
+                <tr>
+                  <th className="px-3 py-2 text-left font-medium">Column</th>
+                  <th className="px-3 py-2 text-left font-medium">Type</th>
+                  <th className="px-3 py-2 text-left font-medium">Nullable</th>
+                  <th className="px-3 py-2 text-left font-medium">Default</th>
+                  <th className="px-3 py-2 text-left font-medium">Key</th>
+                </tr>
+              </thead>
+              <tbody className="font-mono">
+                {def.columns.map((c) => (
+                  <tr key={c.name} className="border-t hover:bg-accent/30">
+                    <td className="px-3 py-2">{c.name}</td>
+                    <td className="px-3 py-2 text-info">{c.type}</td>
+                    <td className="px-3 py-2">{c.nullable ? "YES" : "NO"}</td>
+                    <td className="px-3 py-2 text-muted-foreground">{c.default ?? "—"}</td>
+                    <td className="px-3 py-2">
+                      {c.key ? (
+                        <span className="inline-flex items-center gap-1 rounded bg-primary/10 text-primary px-1.5 py-0.5 text-[10px]">
+                          <KeyRound className="h-3 w-3" />{c.key}
+                        </span>
+                      ) : "—"}
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        </section>
+
+        <section>
+          <h3 className="text-xs uppercase tracking-wide text-muted-foreground mb-2">DDL</h3>
+          <pre className="rounded-lg border bg-editor-panel p-3 text-[12px] font-mono overflow-auto">{ddl}</pre>
+        </section>
+      </div>
+    </div>
+  );
+}
+
 
 type SqlRow = Record<string, string | number>;
 function runSqlQuery(q: string): { columns: string[]; rows: SqlRow[]; note: string; ms: number } {
