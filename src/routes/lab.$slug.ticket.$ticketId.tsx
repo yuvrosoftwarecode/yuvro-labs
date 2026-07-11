@@ -944,7 +944,7 @@ export function StudentTicketView({
 
   function handleRun() {
     setRunning(true);
-    setBottomTab("output");
+    setBottomTab(isSql || isMongo ? "preview" : "output");
     const src = files[activeFile] ?? "";
     const file = activeFile;
 
