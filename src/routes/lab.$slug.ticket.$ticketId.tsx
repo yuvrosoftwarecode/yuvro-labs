@@ -2326,6 +2326,107 @@ function TreeFileNode({
 
 /* ---------- SQL query results viewer ---------- */
 
+type SqlColumnDef = { name: string; type: string; nullable: boolean; key?: string; default?: string };
+type SqlTableDef = { name: string; columns: SqlColumnDef[]; rowCount: number };
+const SQL_DB: { name: string; tables: SqlTableDef[] } = {
+  name: "yuvro_sql_lab",
+  tables: [
+    {
+      name: "customers",
+      rowCount: 5,
+      columns: [
+        { name: "id",            type: "SERIAL",       nullable: false, key: "PK" },
+        { name: "name",          type: "TEXT",         nullable: false },
+        { name: "country",       type: "VARCHAR(2)",   nullable: true },
+        { name: "signed_up_at",  type: "DATE",         nullable: false, default: "CURRENT_DATE" },
+      ],
+    },
+    {
+      name: "orders",
+      rowCount: 5,
+      columns: [
+        { name: "id",            type: "SERIAL",         nullable: false, key: "PK" },
+        { name: "customer_id",   type: "INTEGER",        nullable: false, key: "FK → customers.id" },
+        { name: "amount",        type: "NUMERIC(10,2)",  nullable: false },
+        { name: "created_at",    type: "DATE",           nullable: false, default: "CURRENT_DATE" },
+      ],
+    },
+  ],
+};
+
+function SchemaViewer({ table }: { table: string }) {
+  const def = SQL_DB.tables.find((t) => t.name === table);
+  if (!def) {
+    return <div className="p-6 text-sm text-muted-foreground">Table <code>{table}</code> not found in <code>{SQL_DB.name}</code>.</div>;
+  }
+  const ddl =
+`CREATE TABLE ${def.name} (
+${def.columns.map((c) => {
+  const parts = [`  ${c.name.padEnd(14)} ${c.type}`];
+  if (!c.nullable) parts.push("NOT NULL");
+  if (c.default) parts.push(`DEFAULT ${c.default}`);
+  if (c.key === "PK") parts.push("PRIMARY KEY");
+  return parts.join(" ");
+}).join(",\n")}
+);`;
+  return (
+    <div className="flex-1 overflow-auto bg-editor-bg text-foreground">
+      <div className="max-w-4xl mx-auto p-6 space-y-5">
+        <header className="flex items-center gap-2 border-b pb-3">
+          <TableIcon className="h-5 w-5 text-info" />
+          <div>
+            <div className="text-[11px] uppercase tracking-wider text-muted-foreground">Schema Viewer</div>
+            <h2 className="text-lg font-semibold">{SQL_DB.name}.{def.name}</h2>
+          </div>
+          <div className="ml-auto text-xs text-muted-foreground">
+            {def.columns.length} columns · {def.rowCount} rows
+          </div>
+        </header>
+
+        <section>
+          <h3 className="text-xs uppercase tracking-wide text-muted-foreground mb-2">Columns</h3>
+          <div className="overflow-auto rounded-lg border">
+            <table className="w-full text-[12px]">
+              <thead className="bg-accent/40 text-muted-foreground">
+                <tr>
+                  <th className="px-3 py-2 text-left font-medium">Column</th>
+                  <th className="px-3 py-2 text-left font-medium">Type</th>
+                  <th className="px-3 py-2 text-left font-medium">Nullable</th>
+                  <th className="px-3 py-2 text-left font-medium">Default</th>
+                  <th className="px-3 py-2 text-left font-medium">Key</th>
+                </tr>
+              </thead>
+              <tbody className="font-mono">
+                {def.columns.map((c) => (
+                  <tr key={c.name} className="border-t hover:bg-accent/30">
+                    <td className="px-3 py-2">{c.name}</td>
+                    <td className="px-3 py-2 text-info">{c.type}</td>
+                    <td className="px-3 py-2">{c.nullable ? "YES" : "NO"}</td>
+                    <td className="px-3 py-2 text-muted-foreground">{c.default ?? "—"}</td>
+                    <td className="px-3 py-2">
+                      {c.key ? (
+                        <span className="inline-flex items-center gap-1 rounded bg-primary/10 text-primary px-1.5 py-0.5 text-[10px]">
+                          <KeyRound className="h-3 w-3" />{c.key}
+                        </span>
+                      ) : "—"}
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        </section>
+
+        <section>
+          <h3 className="text-xs uppercase tracking-wide text-muted-foreground mb-2">DDL</h3>
+          <pre className="rounded-lg border bg-editor-panel p-3 text-[12px] font-mono overflow-auto">{ddl}</pre>
+        </section>
+      </div>
+    </div>
+  );
+}
+
+
 type SqlRow = Record<string, string | number>;
 function runSqlQuery(q: string): { columns: string[]; rows: SqlRow[]; note: string; ms: number } {
   const lower = q.toLowerCase();
