@@ -1121,6 +1121,7 @@ export function StudentTicketView({
   }
 
   function updateCode(v: string) {
+    if (activeFile.startsWith("schema:")) return;
     setFiles((f) => ({ ...f, [activeFile]: v }));
     setDirty((d) => ({ ...d, [activeFile]: true }));
   }
