@@ -1308,17 +1308,18 @@ export function StudentTicketView({
               {/* Bottom panel */}
               <div className="border-t bg-editor-panel">
                 <div className="flex items-center border-b text-xs overflow-x-auto">
-                  {[
+                  {([
                     { k: "output", label: "Console", icon: TerminalIcon },
-                    { k: "errors", label: "Errors", icon: AlertTriangle },
+                    ...(isSql ? [] : [{ k: "errors" as const, label: "Errors", icon: AlertTriangle }]),
                     { k: "preview", label: isSql || isMongo ? "Results" : "Preview", icon: Globe },
-                    { k: "terminal", label: "Terminal", icon: TerminalIcon },
-                  ].map((t) => (
+                    ...(isSql ? [] : [{ k: "terminal" as const, label: "Terminal", icon: TerminalIcon }]),
+                  ]).map((t) => (
                     <button key={t.k} onClick={() => setBottomTab(t.k as BottomTab)}
                       className={`inline-flex items-center gap-1.5 whitespace-nowrap px-3 py-1.5 uppercase tracking-wide ${bottomTab === t.k ? "text-foreground border-b-2 border-primary" : "text-muted-foreground hover:text-foreground"}`}>
                       <t.icon className="h-3 w-3" />{t.label}
                     </button>
                   ))}
+
                 </div>
                 <div className="h-52 overflow-auto scrollbar-thin p-3 text-xs">
                   {bottomTab === "output" && <OutputView output={output} />}
