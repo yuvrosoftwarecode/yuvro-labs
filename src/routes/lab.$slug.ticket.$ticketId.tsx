@@ -730,6 +730,45 @@ export function StudentTicketView({
   const [previewDevice, setPreviewDevice] = useState<"Mobile" | "Tablet" | "Desktop">("Desktop");
   const [sideWidth, setSideWidth] = useState<number | null>(null);
   const splitContainerRef = useRef<HTMLDivElement>(null);
+  const editorColumnRef = useRef<HTMLDivElement>(null);
+  const [bottomHeight, setBottomHeight] = useState<number>(220);
+  const [fullscreen, setFullscreen] = useState<null | "editor" | "bottom">(null);
+  const [openSchemas, setOpenSchemas] = useState<string[]>([]);
+
+  function startVResize(e: React.MouseEvent) {
+    e.preventDefault();
+    const container = editorColumnRef.current;
+    if (!container) return;
+    const onMove = (ev: MouseEvent) => {
+      const rect = container.getBoundingClientRect();
+      const next = rect.bottom - ev.clientY;
+      const min = 100;
+      const max = Math.max(min + 80, rect.height - 160);
+      setBottomHeight(Math.min(max, Math.max(min, next)));
+    };
+    const onUp = () => {
+      window.removeEventListener("mousemove", onMove);
+      window.removeEventListener("mouseup", onUp);
+      document.body.style.cursor = "";
+      document.body.style.userSelect = "";
+    };
+    document.body.style.cursor = "row-resize";
+    document.body.style.userSelect = "none";
+    window.addEventListener("mousemove", onMove);
+    window.addEventListener("mouseup", onUp);
+  }
+
+  function openSchemaTab(table: string) {
+    setOpenSchemas((s) => (s.includes(table) ? s : [...s, table]));
+    setActiveFile(`schema:${table}`);
+  }
+  function closeSchemaTab(table: string) {
+    setOpenSchemas((s) => s.filter((t) => t !== table));
+    if (activeFile === `schema:${table}`) {
+      const first = Object.keys(files)[0];
+      if (first) setActiveFile(first);
+    }
+  }
 
   function startResize(e: React.MouseEvent) {
     e.preventDefault();
