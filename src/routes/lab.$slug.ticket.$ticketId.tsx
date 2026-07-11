@@ -9,7 +9,7 @@ import {
   CircleDot, Terminal as TerminalIcon, CheckCircle2, XCircle, Clock, Zap,
   MessageSquare, Lock, Unlock, RotateCcw, Copy, Share2, Flag, HelpCircle,
   Sparkles, Gauge, Wand2, Globe, Check, ArrowLeft, PanelLeftClose, PanelLeftOpen, BookOpen,
-  FilePlus, FolderPlus, Pencil, Trash2,
+  FilePlus, FolderPlus, Pencil, Trash2, Maximize2, Minimize2, Database, Table as TableIcon, KeyRound,
 } from "lucide-react";
 import CodeMirror from "@uiw/react-codemirror";
 import { python } from "@codemirror/lang-python";
