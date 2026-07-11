@@ -1308,17 +1308,18 @@ export function StudentTicketView({
               {/* Bottom panel */}
               <div className="border-t bg-editor-panel">
                 <div className="flex items-center border-b text-xs overflow-x-auto">
-                  {[
+                  {([
                     { k: "output", label: "Console", icon: TerminalIcon },
-                    { k: "errors", label: "Errors", icon: AlertTriangle },
+                    ...(isSql ? [] : [{ k: "errors" as const, label: "Errors", icon: AlertTriangle }]),
                     { k: "preview", label: isSql || isMongo ? "Results" : "Preview", icon: Globe },
-                    { k: "terminal", label: "Terminal", icon: TerminalIcon },
-                  ].map((t) => (
+                    ...(isSql ? [] : [{ k: "terminal" as const, label: "Terminal", icon: TerminalIcon }]),
+                  ]).map((t) => (
                     <button key={t.k} onClick={() => setBottomTab(t.k as BottomTab)}
                       className={`inline-flex items-center gap-1.5 whitespace-nowrap px-3 py-1.5 uppercase tracking-wide ${bottomTab === t.k ? "text-foreground border-b-2 border-primary" : "text-muted-foreground hover:text-foreground"}`}>
                       <t.icon className="h-3 w-3" />{t.label}
                     </button>
                   ))}
+
                 </div>
                 <div className="h-52 overflow-auto scrollbar-thin p-3 text-xs">
                   {bottomTab === "output" && <OutputView output={output} />}
@@ -2234,6 +2235,15 @@ function runSqlQuery(q: string): { columns: string[]; rows: SqlRow[]; note: stri
 
 function SqlResultsView({ query }: { query: string }) {
   const res = useMemo(() => runSqlQuery(query), [query]);
+  const [view, setView] = useState<"table" | "json">("table");
+  const jsonRows = useMemo(
+    () => res.rows.map((r) => {
+      const o: Record<string, unknown> = {};
+      for (const c of res.columns) o[c] = r[c];
+      return o;
+    }),
+    [res]
+  );
   if (res.columns.length === 0) {
     return <div className="text-muted-foreground p-2">{res.note}</div>;
   }
@@ -2241,25 +2251,43 @@ function SqlResultsView({ query }: { query: string }) {
     <div className="text-[12px]">
       <div className="mb-2 flex items-center justify-between text-muted-foreground">
         <span>{res.note}</span>
-        <span>executed in {res.ms}ms</span>
-      </div>
-      <div className="overflow-auto rounded border">
-        <table className="w-full font-mono">
-          <thead className="bg-accent/40 text-muted-foreground">
-            <tr>{res.columns.map((c) => <th key={c} className="px-2 py-1 text-left font-medium">{c}</th>)}</tr>
-          </thead>
-          <tbody>
-            {res.rows.map((r, i) => (
-              <tr key={i} className="border-t hover:bg-accent/30">
-                {res.columns.map((c) => <td key={c} className="px-2 py-1 whitespace-nowrap">{String(r[c])}</td>)}
-              </tr>
+        <div className="flex items-center gap-3">
+          <div className="inline-flex rounded border overflow-hidden">
+            {(["table", "json"] as const).map((v) => (
+              <button
+                key={v}
+                onClick={() => setView(v)}
+                className={`px-2 py-0.5 uppercase tracking-wide text-[10px] ${view === v ? "bg-primary text-primary-foreground" : "hover:bg-accent/50"}`}
+              >
+                {v}
+              </button>
             ))}
-          </tbody>
-        </table>
+          </div>
+          <span>executed in {res.ms}ms</span>
+        </div>
       </div>
+      {view === "table" ? (
+        <div className="overflow-auto rounded border">
+          <table className="w-full font-mono">
+            <thead className="bg-accent/40 text-muted-foreground">
+              <tr>{res.columns.map((c) => <th key={c} className="px-2 py-1 text-left font-medium">{c}</th>)}</tr>
+            </thead>
+            <tbody>
+              {res.rows.map((r, i) => (
+                <tr key={i} className="border-t hover:bg-accent/30">
+                  {res.columns.map((c) => <td key={c} className="px-2 py-1 whitespace-nowrap">{String(r[c])}</td>)}
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      ) : (
+        <pre className="overflow-auto rounded border bg-editor-bg p-2 font-mono text-foreground/90">{JSON.stringify(jsonRows, null, 2)}</pre>
+      )}
     </div>
   );
 }
+
 
 /* ---------- Mongo query results viewer ---------- */
 
