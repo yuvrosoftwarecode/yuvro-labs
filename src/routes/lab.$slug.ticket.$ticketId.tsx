@@ -926,7 +926,8 @@ export function StudentTicketView({
   const allPass = testsRan && passed === tests.length;
   const timeStr = `${String(Math.floor(elapsed / 60)).padStart(2, "0")}:${String(elapsed % 60).padStart(2, "0")}`;
 
-  const code = files[activeFile];
+  const isSchemaTab = activeFile.startsWith("schema:");
+  const code = files[activeFile] ?? "";
 
   // Simple compile-state heuristic based on Main.java code
   const compileState: "ok" | "warn" | "err" = useMemo(() => {
