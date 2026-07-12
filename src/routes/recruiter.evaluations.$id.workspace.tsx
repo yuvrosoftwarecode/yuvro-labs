@@ -4,13 +4,14 @@ import { z } from "zod";
 import {
   ChevronLeft, Copy as CopyIcon, Mail, Download, FileSpreadsheet, FileText, MoreHorizontal,
   Archive, Trash2, Pencil, Eye, Users, Clock, Search, SlidersHorizontal, LayoutGrid, Table as TableIcon,
-  ChevronDown, X, Check, Star, TrendingUp, Activity, ArrowUpRight, CircleDot, Plus, Bookmark, ArrowUpDown, Filter,
+  ChevronDown, X, Check, Star, TrendingUp, Activity, ArrowUpRight, CircleDot, Plus, Bookmark, ArrowUpDown, Filter, Sparkles,
 } from "lucide-react";
 import { getEvaluation, evaluationTotals, saveEvaluation, duplicateEvaluation, deleteEvaluation, Evaluation } from "@/lib/recruiter";
 import {
   getCandidates, applyFilters, emptyFilters, activeFilterCount, vitarkaLabel, experienceBucket, completionBucket,
   Candidate, CandidateFilters, SortKey, CandStatus, HiringStatus, Recommendation, VitarkaLabel,
 } from "@/lib/recruiterCandidates";
+import { computeAttentionGroups, loadViewed, loadNotedSet, type AttentionGroup } from "@/lib/recruiterCandidateDetail";
 
 const searchSchema = z.object({
   tab: z.enum(["overview", "candidates", "insights", "reports", "settings"]).default("overview").catch("overview"),
@@ -275,9 +276,12 @@ function CandidatesTab({ evId, candidates, notify }: { evId: string; candidates:
   const [preview, setPreview] = useState<Candidate | null>(null);
   const [activeView, setActiveView] = useState("default");
   const [savedViews, setSavedViews] = useState<SavedView[]>([]);
+  const [viewed, setViewed] = useState<Set<string>>(new Set());
+  const [noted, setNoted] = useState<Set<string>>(new Set());
 
   useEffect(() => { try { const raw = localStorage.getItem(SAVED_VIEWS_KEY); if (raw) setSavedViews(JSON.parse(raw)); } catch {} }, []);
   useEffect(() => { try { localStorage.setItem(VIEW_KEY, view); } catch {} }, [view]);
+  useEffect(() => { setViewed(loadViewed(evId)); setNoted(loadNotedSet(evId, candidates.map(c => c.id))); }, [evId, candidates]);
 
   const filtered = useMemo(() => applyFilters(candidates, filters, sort), [candidates, filters, sort]);
   const totalPages = Math.max(1, Math.ceil(filtered.length / perPage));
@@ -327,6 +331,10 @@ function CandidatesTab({ evId, candidates, notify }: { evId: string; candidates:
           <SortMenu value={sort} onChange={setSort} />
         </div>
       </div>
+
+      <AttentionSection candidates={candidates} viewed={viewed} noted={noted} onApply={(f) => { setFilters(f); setActiveView("__attention"); }} onOpen={openDetails} />
+
+
 
       {/* Search */}
       <div className="mt-4 flex items-center gap-3">
@@ -912,3 +920,72 @@ function buildActivity(candidates: Candidate[]) {
   }
   return items.sort((a, b) => b.when - a.when);
 }
+
+// ============================ ATTENTION ============================
+
+const TONE_MAP: Record<AttentionGroup["tone"], { ring: string; dot: string; btn: string; glow: string }> = {
+  red: { ring: "border-red-400/25 hover:border-red-400/50", dot: "bg-red-400", btn: "bg-red-400/10 text-red-300 hover:bg-red-400/20", glow: "from-red-500/10" },
+  green: { ring: "border-emerald-400/25 hover:border-emerald-400/50", dot: "bg-emerald-400", btn: "bg-emerald-400/10 text-emerald-300 hover:bg-emerald-400/20", glow: "from-emerald-500/10" },
+  amber: { ring: "border-amber-400/25 hover:border-amber-400/50", dot: "bg-amber-400", btn: "bg-amber-400/10 text-amber-300 hover:bg-amber-400/20", glow: "from-amber-500/10" },
+  blue: { ring: "border-cyan-400/25 hover:border-cyan-400/50", dot: "bg-cyan-400", btn: "bg-cyan-400/10 text-cyan-300 hover:bg-cyan-400/20", glow: "from-cyan-500/10" },
+  violet: { ring: "border-violet-400/25 hover:border-violet-400/50", dot: "bg-violet-400", btn: "bg-violet-400/10 text-violet-300 hover:bg-violet-400/20", glow: "from-violet-500/10" },
+};
+
+function AttentionSection({ candidates, viewed, noted, onApply, onOpen }: { candidates: Candidate[]; viewed: Set<string>; noted: Set<string>; onApply: (f: CandidateFilters) => void; onOpen: (c: Candidate) => void }) {
+  const groups = useMemo(() => computeAttentionGroups(candidates, viewed, noted), [candidates, viewed, noted]);
+  if (groups.length === 0) return null;
+
+  const applyGroup = (g: AttentionGroup) => {
+    const matches = candidates.filter(g.match);
+    if (matches.length === 1) return onOpen(matches[0]);
+    const f = emptyFilters();
+    if (g.id === "awaiting") f.hiring = new Set(["Pending Review"]);
+    else if (g.id === "strong") { f.recommendation = new Set(["Strong Hire"]); f.eciMin = 90; }
+    else if (g.id === "gems") { f.eciMin = 66; f.labsMin = 82; }
+    else if (g.id === "expiring") f.status = new Set(["Not Started"]);
+    else if (g.id === "comm-code") { f.vitarka = new Set(["Excellent"]); f.labsMin = null; }
+    else if (g.id === "debug") { f.labsMin = 90; }
+    else if (g.id === "labs-perfect") { f.labsMin = 88; f.status = new Set(["Submitted","Completed"]); }
+    else if (g.id === "fastest") { f.completion = new Set(["Below 45 mins"]); f.status = new Set(["Submitted","Completed"]); }
+    else if (g.id === "abandoned") f.status = new Set(["In Progress"]);
+    onApply(f);
+  };
+
+  return (
+    <section className="mt-6">
+      <div className="flex items-center justify-between">
+        <div>
+          <div className="flex items-center gap-2 text-[11px] uppercase tracking-widest text-neutral-500">
+            <Sparkles className="h-3.5 w-3.5 text-emerald-400" /> Needs your attention
+          </div>
+          <div className="mt-1 text-[12px] text-neutral-500">{groups.length} actionable signal{groups.length === 1 ? "" : "s"} across {candidates.length.toLocaleString()} candidates</div>
+        </div>
+      </div>
+      <div className="mt-3 grid grid-cols-1 gap-3 sm:grid-cols-2 xl:grid-cols-3">
+        {groups.map(g => {
+          const t = TONE_MAP[g.tone];
+          return (
+            <div key={g.id} className={`group relative overflow-hidden rounded-2xl border ${t.ring} bg-white/[0.02] p-5 transition`}>
+              <div className={`pointer-events-none absolute -top-16 -right-16 h-40 w-40 rounded-full bg-gradient-to-br ${t.glow} to-transparent blur-2xl`} />
+              <div className="relative">
+                <div className="flex items-start justify-between gap-3">
+                  <div className="text-[24px] leading-none">{g.emoji}</div>
+                  <span className={`inline-flex h-1.5 w-1.5 shrink-0 rounded-full ${t.dot}`} />
+                </div>
+                <div className="mt-3 flex items-baseline gap-2">
+                  <div className="text-[28px] font-medium leading-none text-white">{g.count}</div>
+                  <div className="text-[12px] text-neutral-400">{g.title}</div>
+                </div>
+                <p className="mt-2 text-[12px] leading-relaxed text-neutral-500">{g.description}</p>
+                <button onClick={() => applyGroup(g)} className={`mt-4 inline-flex items-center gap-1.5 rounded-md px-2.5 py-1 text-[11px] font-medium transition ${t.btn}`}>
+                  {g.cta} <ArrowUpRight className="h-3 w-3" />
+                </button>
+              </div>
+            </div>
+          );
+        })}
+      </div>
+    </section>
+  );
+}
+
