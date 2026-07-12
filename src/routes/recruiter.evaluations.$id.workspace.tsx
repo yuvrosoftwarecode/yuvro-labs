@@ -276,9 +276,12 @@ function CandidatesTab({ evId, candidates, notify }: { evId: string; candidates:
   const [preview, setPreview] = useState<Candidate | null>(null);
   const [activeView, setActiveView] = useState("default");
   const [savedViews, setSavedViews] = useState<SavedView[]>([]);
+  const [viewed, setViewed] = useState<Set<string>>(new Set());
+  const [noted, setNoted] = useState<Set<string>>(new Set());
 
   useEffect(() => { try { const raw = localStorage.getItem(SAVED_VIEWS_KEY); if (raw) setSavedViews(JSON.parse(raw)); } catch {} }, []);
   useEffect(() => { try { localStorage.setItem(VIEW_KEY, view); } catch {} }, [view]);
+  useEffect(() => { setViewed(loadViewed(evId)); setNoted(loadNotedSet(evId, candidates.map(c => c.id))); }, [evId, candidates]);
 
   const filtered = useMemo(() => applyFilters(candidates, filters, sort), [candidates, filters, sort]);
   const totalPages = Math.max(1, Math.ceil(filtered.length / perPage));
