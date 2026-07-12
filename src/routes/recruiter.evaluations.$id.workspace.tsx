@@ -332,6 +332,10 @@ function CandidatesTab({ evId, candidates, notify }: { evId: string; candidates:
         </div>
       </div>
 
+      <AttentionSection candidates={candidates} viewed={viewed} noted={noted} onApply={(f) => { setFilters(f); setActiveView("__attention"); }} onOpen={openDetails} />
+
+
+
       {/* Search */}
       <div className="mt-4 flex items-center gap-3">
         <div className="relative flex-1">
