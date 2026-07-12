@@ -11,6 +11,7 @@ import {
   getCandidates, applyFilters, emptyFilters, activeFilterCount, vitarkaLabel, experienceBucket, completionBucket,
   Candidate, CandidateFilters, SortKey, CandStatus, HiringStatus, Recommendation, VitarkaLabel,
 } from "@/lib/recruiterCandidates";
+import { computeAttentionGroups, loadViewed, loadNotedSet, type AttentionGroup } from "@/lib/recruiterCandidateDetail";
 
 const searchSchema = z.object({
   tab: z.enum(["overview", "candidates", "insights", "reports", "settings"]).default("overview").catch("overview"),
