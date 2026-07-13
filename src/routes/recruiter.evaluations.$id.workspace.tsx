@@ -400,6 +400,15 @@ function CandidatesTab({ evId, candidates, notify }: { evId: string; candidates:
         <div className="mt-4 flex flex-wrap items-center gap-2 rounded-xl border border-white/10 bg-white/[0.03] px-3 py-2">
           <div className="text-[12px] text-white">{selected.size} selected</div>
           <div className="mx-2 h-4 w-px bg-white/10" />
+          <BulkBtn
+            onClick={() => {
+              if (selected.size < 2 || selected.size > 4) return notify("Select 2 to 4 candidates to compare");
+              nav({ to: "/recruiter/evaluations/$id/compare", params: { id: evId }, search: { ids: Array.from(selected).join(",") } });
+            }}
+            accent
+          >
+            Compare {selected.size >= 2 && selected.size <= 4 ? `(${selected.size})` : ""}
+          </BulkBtn>
           <BulkBtn onClick={() => bulk("Moved to Interview")}>Move to Interview</BulkBtn>
           <BulkBtn onClick={() => bulk("Shortlisted")}>Shortlist</BulkBtn>
           <BulkBtn onClick={() => bulk("Rejected")}>Reject</BulkBtn>
