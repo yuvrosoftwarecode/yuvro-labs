@@ -125,13 +125,13 @@ function Workspace() {
 
           {/* Tabs */}
           <nav className="mt-6 flex items-center gap-1">
-            {(["overview","candidates","insights","reports","settings"] as const).map(t => (
+            {(["overview","candidates","intelligence","settings"] as const).map(t => (
               <button
                 key={t}
                 onClick={() => goto(t)}
                 className={`relative px-3 py-2 text-[13px] transition ${tab === t ? "text-white" : "text-neutral-500 hover:text-neutral-300"}`}
               >
-                {cap(t)}
+                {TAB_LABELS[t]}
                 {tab === t && <span className="absolute inset-x-3 -bottom-[13px] h-px bg-white" />}
               </button>
             ))}
@@ -142,9 +142,8 @@ function Workspace() {
       <main className="mx-auto max-w-[1440px] px-8 py-8">
         {tab === "overview" && <OverviewTab ev={ev} candidates={candidates} onGoto={goto} notify={notify} />}
         {tab === "candidates" && <CandidatesTab evId={ev.id} candidates={candidates} notify={notify} />}
-        {tab === "insights" && <SimplePane title="Insights" desc="Aggregate skill heatmaps, question difficulty analysis, and cohort comparisons will be published here." />}
-        {tab === "reports" && <SimplePane title="Reports" desc="Downloadable per-candidate reports, batch summaries and ATS-ready exports live in this tab." />}
-        {tab === "settings" && <SimplePane title="Settings" desc="Evaluation window, proctoring rules, retake policy, and access controls are managed here." />}
+        {tab === "intelligence" && <IntelligenceTab ev={ev} candidates={candidates} notify={notify} />}
+        {tab === "settings" && <SettingsTab ev={ev} notify={notify} />}
       </main>
 
       {toast && (
