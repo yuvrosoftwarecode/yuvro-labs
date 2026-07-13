@@ -4,7 +4,7 @@ import { z } from "zod";
 import {
   ChevronLeft, Copy as CopyIcon, Mail, Download, FileSpreadsheet, FileText, MoreHorizontal,
   Archive, Trash2, Pencil, Eye, Users, Clock, Search, SlidersHorizontal, LayoutGrid, Table as TableIcon,
-  ChevronDown, X, Check, Star, TrendingUp, Activity, ArrowUpRight, CircleDot, Plus, Bookmark, ArrowUpDown, Filter, Sparkles,
+  ChevronDown, X, Check, Star, TrendingUp, Activity, ArrowUpRight, CircleDot, Plus, Bookmark, ArrowUpDown, Filter, Sparkles, GitCompare,
 } from "lucide-react";
 import { getEvaluation, evaluationTotals, saveEvaluation, duplicateEvaluation, deleteEvaluation, Evaluation } from "@/lib/recruiter";
 import {
@@ -12,10 +12,19 @@ import {
   Candidate, CandidateFilters, SortKey, CandStatus, HiringStatus, Recommendation, VitarkaLabel,
 } from "@/lib/recruiterCandidates";
 import { computeAttentionGroups, loadViewed, loadNotedSet, type AttentionGroup } from "@/lib/recruiterCandidateDetail";
+import { IntelligenceTab } from "@/components/recruiter/IntelligenceTab";
+import { SettingsTab } from "@/components/recruiter/SettingsTab";
 
 const searchSchema = z.object({
-  tab: z.enum(["overview", "candidates", "insights", "reports", "settings"]).default("overview").catch("overview"),
+  tab: z.enum(["overview", "candidates", "intelligence", "settings"]).default("overview").catch("overview"),
 });
+
+const TAB_LABELS: Record<"overview" | "candidates" | "intelligence" | "settings", string> = {
+  overview: "Overview",
+  candidates: "Candidates",
+  intelligence: "Hiring Intelligence",
+  settings: "Settings",
+};
 
 export const Route = createFileRoute("/recruiter/evaluations/$id/workspace")({
   validateSearch: (s) => searchSchema.parse(s),
@@ -116,13 +125,13 @@ function Workspace() {
 
           {/* Tabs */}
           <nav className="mt-6 flex items-center gap-1">
-            {(["overview","candidates","insights","reports","settings"] as const).map(t => (
+            {(["overview","candidates","intelligence","settings"] as const).map(t => (
               <button
                 key={t}
                 onClick={() => goto(t)}
                 className={`relative px-3 py-2 text-[13px] transition ${tab === t ? "text-white" : "text-neutral-500 hover:text-neutral-300"}`}
               >
-                {cap(t)}
+                {TAB_LABELS[t]}
                 {tab === t && <span className="absolute inset-x-3 -bottom-[13px] h-px bg-white" />}
               </button>
             ))}
@@ -133,9 +142,8 @@ function Workspace() {
       <main className="mx-auto max-w-[1440px] px-8 py-8">
         {tab === "overview" && <OverviewTab ev={ev} candidates={candidates} onGoto={goto} notify={notify} />}
         {tab === "candidates" && <CandidatesTab evId={ev.id} candidates={candidates} notify={notify} />}
-        {tab === "insights" && <SimplePane title="Insights" desc="Aggregate skill heatmaps, question difficulty analysis, and cohort comparisons will be published here." />}
-        {tab === "reports" && <SimplePane title="Reports" desc="Downloadable per-candidate reports, batch summaries and ATS-ready exports live in this tab." />}
-        {tab === "settings" && <SimplePane title="Settings" desc="Evaluation window, proctoring rules, retake policy, and access controls are managed here." />}
+        {tab === "intelligence" && <IntelligenceTab ev={ev} candidates={candidates} notify={notify} />}
+        {tab === "settings" && <SettingsTab ev={ev} notify={notify} />}
       </main>
 
       {toast && (
@@ -392,6 +400,15 @@ function CandidatesTab({ evId, candidates, notify }: { evId: string; candidates:
         <div className="mt-4 flex flex-wrap items-center gap-2 rounded-xl border border-white/10 bg-white/[0.03] px-3 py-2">
           <div className="text-[12px] text-white">{selected.size} selected</div>
           <div className="mx-2 h-4 w-px bg-white/10" />
+          <BulkBtn
+            onClick={() => {
+              if (selected.size < 2 || selected.size > 4) return notify("Select 2 to 4 candidates to compare");
+              nav({ to: "/recruiter/evaluations/$id/compare", params: { id: evId }, search: { ids: Array.from(selected).join(",") } });
+            }}
+            accent
+          >
+            Compare {selected.size >= 2 && selected.size <= 4 ? `(${selected.size})` : ""}
+          </BulkBtn>
           <BulkBtn onClick={() => bulk("Moved to Interview")}>Move to Interview</BulkBtn>
           <BulkBtn onClick={() => bulk("Shortlisted")}>Shortlist</BulkBtn>
           <BulkBtn onClick={() => bulk("Rejected")}>Reject</BulkBtn>
@@ -809,8 +826,13 @@ function StatusBadge({ status }: { status: "draft" | "published" }) {
 function ViewChip({ active, onClick, children }: { active?: boolean; onClick?: () => void; children: React.ReactNode }) {
   return <button onClick={onClick} className={`rounded-full px-2.5 py-1 text-[11px] transition ${active ? "bg-white text-black" : "border border-white/10 text-neutral-300 hover:border-white/20 hover:text-white"}`}>{children}</button>;
 }
-function BulkBtn({ children, onClick, danger }: { children: React.ReactNode; onClick: () => void; danger?: boolean }) {
-  return <button onClick={onClick} className={`rounded-md border px-2 py-1 text-[11px] ${danger ? "border-red-500/30 text-red-300 hover:bg-red-500/10" : "border-white/10 text-neutral-200 hover:bg-white/5"}`}>{children}</button>;
+function BulkBtn({ children, onClick, danger, accent }: { children: React.ReactNode; onClick: () => void; danger?: boolean; accent?: boolean }) {
+  const cls = danger
+    ? "border-red-500/30 text-red-300 hover:bg-red-500/10"
+    : accent
+      ? "border-emerald-400/40 bg-emerald-400/10 text-emerald-300 hover:bg-emerald-400/20"
+      : "border-white/10 text-neutral-200 hover:bg-white/5";
+  return <button onClick={onClick} className={`inline-flex items-center gap-1.5 rounded-md border px-2 py-1 text-[11px] ${cls}`}>{children}</button>;
 }
 function Th({ children, className = "" }: { children?: React.ReactNode; className?: string }) { return <th className={`px-3 py-2 font-medium ${className}`}>{children}</th>; }
 function Td({ children, className = "", onClick }: { children?: React.ReactNode; className?: string; onClick?: (e: React.MouseEvent) => void }) { return <td onClick={onClick} className={`px-3 py-2 align-middle ${className}`}>{children}</td>; }
