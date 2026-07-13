@@ -4,7 +4,7 @@ import { z } from "zod";
 import {
   ChevronLeft, Copy as CopyIcon, Mail, Download, FileSpreadsheet, FileText, MoreHorizontal,
   Archive, Trash2, Pencil, Eye, Users, Clock, Search, SlidersHorizontal, LayoutGrid, Table as TableIcon,
-  ChevronDown, X, Check, Star, TrendingUp, Activity, ArrowUpRight, CircleDot, Plus, Bookmark, ArrowUpDown, Filter, Sparkles,
+  ChevronDown, X, Check, Star, TrendingUp, Activity, ArrowUpRight, CircleDot, Plus, Bookmark, ArrowUpDown, Filter, Sparkles, GitCompare,
 } from "lucide-react";
 import { getEvaluation, evaluationTotals, saveEvaluation, duplicateEvaluation, deleteEvaluation, Evaluation } from "@/lib/recruiter";
 import {
@@ -12,10 +12,19 @@ import {
   Candidate, CandidateFilters, SortKey, CandStatus, HiringStatus, Recommendation, VitarkaLabel,
 } from "@/lib/recruiterCandidates";
 import { computeAttentionGroups, loadViewed, loadNotedSet, type AttentionGroup } from "@/lib/recruiterCandidateDetail";
+import { IntelligenceTab } from "@/components/recruiter/IntelligenceTab";
+import { SettingsTab } from "@/components/recruiter/SettingsTab";
 
 const searchSchema = z.object({
-  tab: z.enum(["overview", "candidates", "insights", "reports", "settings"]).default("overview").catch("overview"),
+  tab: z.enum(["overview", "candidates", "intelligence", "settings"]).default("overview").catch("overview"),
 });
+
+const TAB_LABELS: Record<"overview" | "candidates" | "intelligence" | "settings", string> = {
+  overview: "Overview",
+  candidates: "Candidates",
+  intelligence: "Hiring Intelligence",
+  settings: "Settings",
+};
 
 export const Route = createFileRoute("/recruiter/evaluations/$id/workspace")({
   validateSearch: (s) => searchSchema.parse(s),
