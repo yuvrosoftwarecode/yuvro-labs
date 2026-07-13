@@ -826,8 +826,13 @@ function StatusBadge({ status }: { status: "draft" | "published" }) {
 function ViewChip({ active, onClick, children }: { active?: boolean; onClick?: () => void; children: React.ReactNode }) {
   return <button onClick={onClick} className={`rounded-full px-2.5 py-1 text-[11px] transition ${active ? "bg-white text-black" : "border border-white/10 text-neutral-300 hover:border-white/20 hover:text-white"}`}>{children}</button>;
 }
-function BulkBtn({ children, onClick, danger }: { children: React.ReactNode; onClick: () => void; danger?: boolean }) {
-  return <button onClick={onClick} className={`rounded-md border px-2 py-1 text-[11px] ${danger ? "border-red-500/30 text-red-300 hover:bg-red-500/10" : "border-white/10 text-neutral-200 hover:bg-white/5"}`}>{children}</button>;
+function BulkBtn({ children, onClick, danger, accent }: { children: React.ReactNode; onClick: () => void; danger?: boolean; accent?: boolean }) {
+  const cls = danger
+    ? "border-red-500/30 text-red-300 hover:bg-red-500/10"
+    : accent
+      ? "border-emerald-400/40 bg-emerald-400/10 text-emerald-300 hover:bg-emerald-400/20"
+      : "border-white/10 text-neutral-200 hover:bg-white/5";
+  return <button onClick={onClick} className={`inline-flex items-center gap-1.5 rounded-md border px-2 py-1 text-[11px] ${cls}`}>{children}</button>;
 }
 function Th({ children, className = "" }: { children?: React.ReactNode; className?: string }) { return <th className={`px-3 py-2 font-medium ${className}`}>{children}</th>; }
 function Td({ children, className = "", onClick }: { children?: React.ReactNode; className?: string; onClick?: (e: React.MouseEvent) => void }) { return <td onClick={onClick} className={`px-3 py-2 align-middle ${className}`}>{children}</td>; }
