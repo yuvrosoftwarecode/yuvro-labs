@@ -31,7 +31,7 @@ function Compare() {
   const ev = getEvaluation(id);
   const list = ids.split(",").filter(Boolean);
   const all = ev ? getCandidates(ev.id) : [];
-  const candidates = useMemo(() => list.map(cid => all.find(c => c.id === cid)).filter(Boolean) as Candidate[], [list, all]);
+  const candidates = useMemo(() => list.map((cid: string) => all.find(c => c.id === cid)).filter(Boolean) as Candidate[], [list, all]);
 
   if (!ev) return null;
 
