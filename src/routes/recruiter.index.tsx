@@ -47,7 +47,7 @@ function RecruiterDashboard() {
 
       <div className="mt-10 grid grid-cols-1 gap-4 sm:grid-cols-2 xl:grid-cols-4">
         {metrics.map(m => (
-          <div key={m.label} className="relative overflow-hidden rounded-2xl border border-white/5 bg-white/[0.02] p-5">
+          <div key={m.label} className="relative overflow-hidden rounded-2xl border border-white/5 bg-white p-5 shadow-sm">
             <div className="absolute right-0 top-0 h-24 w-24 rounded-full bg-gradient-to-br opacity-10 blur-2xl" style={{ backgroundImage: `linear-gradient(135deg, var(--tw-gradient-stops))` }} />
             <div className={`inline-flex h-8 w-8 items-center justify-center rounded-lg bg-gradient-to-br ${m.tone} text-black`}><m.icon className="h-4 w-4" /></div>
             <div className="mt-6 text-[11px] uppercase tracking-widest text-neutral-500">{m.label}</div>
