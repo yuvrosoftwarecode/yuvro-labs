@@ -201,28 +201,6 @@
   background-color: var(--rec-bg) !important;
   color: var(--rec-fg) !important;
 }
-.dark .recruiter-theme {
-  --rec-bg: #0e0e10;
-  --rec-surface: #17171a;
-  --rec-surface-2: #1c1c20;
-  --rec-fg: #ececec;
-  --rec-fg-soft: #d2d2d0;
-  --rec-muted: #8a8a86;
-  --rec-muted-2: #6c6c68;
-  --rec-border: rgba(255, 255, 255, 0.08);
-  --rec-border-strong: rgba(255, 255, 255, 0.16);
-  --rec-overlay-1: rgba(255, 255, 255, 0.03);
-  --rec-overlay-2: rgba(255, 255, 255, 0.05);
-  --rec-overlay-3: rgba(255, 255, 255, 0.09);
-  --rec-accent: #ececec;
-  --rec-accent-fg: #17171a;
-  --rec-success: #7fbf94;
-  --rec-success-soft: rgba(127, 191, 148, 0.14);
-  --rec-warning: #d9a765;
-  --rec-warning-soft: rgba(217, 167, 101, 0.14);
-  --rec-danger: #e58a8a;
-  --rec-menu-bg: #1c1c20;
-}
 
 /* Serif display for headings + oversized numerals */
 .recruiter-theme h1,
