@@ -56,7 +56,7 @@ function RecruiterDashboard() {
         ))}
       </div>
 
-      <div className="mt-10 rounded-2xl border border-white/5 bg-white p-5 shadow-sm">
+      <div className="mt-10 rounded-2xl border border-white/5 bg-white p-5">
         <div className="flex items-center justify-between border-b border-white/5 px-5 py-4">
           <div>
             <div className="text-[13px] font-medium">Recent Evaluations</div>
