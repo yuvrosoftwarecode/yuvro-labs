@@ -47,7 +47,7 @@ function RecruiterDashboard() {
 
       <div className="mt-10 grid grid-cols-1 gap-4 sm:grid-cols-2 xl:grid-cols-4">
         {metrics.map(m => (
-          <div key={m.label} className="relative overflow-hidden rounded-2xl border border-white/5 bg-white/[0.02] p-5">
+          <div key={m.label} className="relative overflow-hidden rounded-2xl border border-white/5 bg-white p-5">
             <div className="absolute right-0 top-0 h-24 w-24 rounded-full bg-gradient-to-br opacity-10 blur-2xl" style={{ backgroundImage: `linear-gradient(135deg, var(--tw-gradient-stops))` }} />
             <div className={`inline-flex h-8 w-8 items-center justify-center rounded-lg bg-gradient-to-br ${m.tone} text-black`}><m.icon className="h-4 w-4" /></div>
             <div className="mt-6 text-[11px] uppercase tracking-widest text-neutral-500">{m.label}</div>
@@ -56,7 +56,7 @@ function RecruiterDashboard() {
         ))}
       </div>
 
-      <div className="mt-10 rounded-2xl border border-white/5 bg-white/[0.02]">
+      <div className="mt-10 rounded-2xl border border-white/5 bg-white p-5">
         <div className="flex items-center justify-between border-b border-white/5 px-5 py-4">
           <div>
             <div className="text-[13px] font-medium">Recent Evaluations</div>
@@ -71,7 +71,7 @@ function RecruiterDashboard() {
             {evals.slice(0, 5).map(e => {
               const t = evaluationTotals(e);
               return (
-                <Link key={e.id} to="/recruiter/evaluations/$id" params={{ id: e.id }} className="group grid grid-cols-[1fr_auto_auto_auto] items-center gap-6 px-5 py-4 transition hover:bg-white/[0.02]">
+                <Link key={e.id} to="/recruiter/evaluations/$id" params={{ id: e.id }} className="group grid grid-cols-[1fr_auto_auto_auto] items-center gap-6 px-5 py-4 transition hover:bg-[var(--rec-overlay-1)]">
                   <div className="min-w-0">
                     <div className="flex items-center gap-2">
                       <span className="truncate text-[14px] text-white">{e.title}</span>
