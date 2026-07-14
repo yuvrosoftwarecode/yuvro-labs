@@ -56,7 +56,7 @@ function RecruiterDashboard() {
         ))}
       </div>
 
-      <div className="mt-10 rounded-2xl border border-white/5 bg-white/[0.02]">
+      <div className="mt-10 rounded-2xl border border-white/5 bg-white p-5 shadow-sm">
         <div className="flex items-center justify-between border-b border-white/5 px-5 py-4">
           <div>
             <div className="text-[13px] font-medium">Recent Evaluations</div>
@@ -71,7 +71,7 @@ function RecruiterDashboard() {
             {evals.slice(0, 5).map(e => {
               const t = evaluationTotals(e);
               return (
-                <Link key={e.id} to="/recruiter/evaluations/$id" params={{ id: e.id }} className="group grid grid-cols-[1fr_auto_auto_auto] items-center gap-6 px-5 py-4 transition hover:bg-white/[0.02]">
+                <Link key={e.id} to="/recruiter/evaluations/$id" params={{ id: e.id }} className="group grid grid-cols-[1fr_auto_auto_auto] items-center gap-6 px-5 py-4 transition hover:bg-[var(--rec-overlay-1)]">
                   <div className="min-w-0">
                     <div className="flex items-center gap-2">
                       <span className="truncate text-[14px] text-white">{e.title}</span>
