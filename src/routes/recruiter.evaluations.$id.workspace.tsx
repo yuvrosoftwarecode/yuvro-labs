@@ -342,7 +342,8 @@ function CandidatesTab({ evId, candidates, notify }: { evId: string; candidates:
         </div>
       </div>
 
-      <AttentionSection candidates={candidates} viewed={viewed} noted={noted} onApply={(f) => { setFilters(f); setActiveView("__attention"); }} onOpen={openDetails} />
+
+
 
 
 
