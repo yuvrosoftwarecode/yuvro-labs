@@ -16,13 +16,14 @@ import { IntelligenceTab } from "@/components/recruiter/IntelligenceTab";
 import { SettingsTab } from "@/components/recruiter/SettingsTab";
 
 const searchSchema = z.object({
-  tab: z.enum(["overview", "candidates", "intelligence", "settings"]).default("overview").catch("overview"),
+  tab: z.enum(["overview", "candidates", "intelligence", "attention", "settings"]).default("overview").catch("overview"),
 });
 
-const TAB_LABELS: Record<"overview" | "candidates" | "intelligence" | "settings", string> = {
+const TAB_LABELS: Record<"overview" | "candidates" | "intelligence" | "attention" | "settings", string> = {
   overview: "Overview",
   candidates: "Candidates",
   intelligence: "Hiring Intelligence",
+  attention: "Need Your Attention",
   settings: "Settings",
 };
 
