@@ -144,6 +144,7 @@ function Workspace() {
         {tab === "overview" && <OverviewTab ev={ev} candidates={candidates} onGoto={goto} notify={notify} />}
         {tab === "candidates" && <CandidatesTab evId={ev.id} candidates={candidates} notify={notify} />}
         {tab === "intelligence" && <IntelligenceTab ev={ev} candidates={candidates} notify={notify} />}
+        {tab === "attention" && <AttentionTab evId={ev.id} candidates={candidates} onGoto={goto} />}
         {tab === "settings" && <SettingsTab ev={ev} notify={notify} />}
       </main>
 
