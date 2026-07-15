@@ -77,7 +77,7 @@ function Workspace() {
   return (
     <div className="min-h-screen">
       {/* Top header */}
-      <header className="border-b border-white/5 bg-black/10 backdrop-blur">
+      <header className="border-b border-white/5 bg-white">
         <div className="mx-auto max-w-[1440px] px-8 pt-6 pb-4">
           <Link to="/recruiter/evaluations" className="inline-flex items-center gap-1.5 text-[12px] text-neutral-500 hover:text-white">
             <ChevronLeft className="h-3.5 w-3.5" /> All evaluations
@@ -183,12 +183,12 @@ function OverviewTab({ ev, candidates, onGoto, notify }: { ev: Evaluation; candi
       {/* Quick actions strip */}
       <section>
         <SectionTitle>Quick actions</SectionTitle>
-        <div className="mt-3 grid grid-cols-2 gap-2 sm:grid-cols-3 lg:grid-cols-5">
-          <QuickAction label="Invite Candidates" onClick={() => notify("Invite dialog opened")} />
-          <QuickAction label="Copy Public Link" onClick={() => { navigator.clipboard.writeText(`${location.origin}/evaluation/${ev.id}`); notify("Public link copied"); }} />
-          <QuickAction label="Email Candidates" onClick={() => notify("Email queued")} />
-          <QuickAction label="Download Reports" onClick={() => notify("Report bundle prepared")} />
-          <QuickAction label="View Candidates" onClick={() => onGoto("candidates")} accent />
+        <div className="mt-3 grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-5">
+          <QuickAction label="Invite Candidates" icon={<Mail className="h-4 w-4" />} onClick={() => notify("Invite dialog opened")} />
+          <QuickAction label="Copy Public Link" icon={<CopyIcon className="h-4 w-4" />} onClick={() => { navigator.clipboard.writeText(`${location.origin}/evaluation/${ev.id}`); notify("Public link copied"); }} />
+          <QuickAction label="Email Candidates" icon={<Mail className="h-4 w-4" />} onClick={() => notify("Email queued")} />
+          <QuickAction label="Download Reports" icon={<Download className="h-4 w-4" />} onClick={() => notify("Report bundle prepared")} />
+          <QuickAction label="View Candidates" icon={<Users className="h-4 w-4" />} onClick={() => onGoto("candidates")} accent />
         </div>
       </section>
 
@@ -799,8 +799,17 @@ function HeaderBtn({ children, onClick, icon }: { children: React.ReactNode; onC
 function MenuItem({ children, onClick, icon, danger }: { children: React.ReactNode; onClick: () => void; icon?: React.ReactNode; danger?: boolean }) {
   return <button onClick={onClick} className={`flex w-full items-center gap-2 px-3 py-2 text-left text-[12px] ${danger ? "text-red-400 hover:bg-red-500/10" : "text-neutral-200 hover:bg-white/5"}`}>{icon}{children}</button>;
 }
-function QuickAction({ label, onClick, accent }: { label: string; onClick: () => void; accent?: boolean }) {
-  return <button onClick={onClick} className={`rounded-xl border px-3 py-3 text-left text-[12px] transition ${accent ? "border-emerald-400/30 bg-emerald-400/[0.06] text-white hover:bg-emerald-400/10" : "border-white/5 bg-white/[0.02] text-neutral-300 hover:border-white/15 hover:text-white"}`}>{label}</button>;
+function QuickAction({ label, onClick, accent, icon }: { label: string; onClick: () => void; accent?: boolean; icon?: React.ReactNode }) {
+  return (
+    <button
+      onClick={onClick}
+      className={`group flex items-center gap-2.5 rounded-xl border bg-white px-4 py-3.5 text-left text-[13px] transition hover:-translate-y-0.5 hover:shadow-sm ${accent ? "border-emerald-400/40 text-emerald-700" : "border-black/10 text-neutral-800 hover:border-black/20"}`}
+    >
+      {icon && <span className={`grid h-7 w-7 flex-shrink-0 place-items-center rounded-lg ${accent ? "bg-emerald-400/10 text-emerald-700" : "bg-black/[0.04] text-neutral-700"}`}>{icon}</span>}
+      <span className="flex-1 font-medium">{label}</span>
+      <ArrowUpRight className="h-3.5 w-3.5 opacity-40 transition group-hover:opacity-100" />
+    </button>
+  );
 }
 function MiniStat({ label, value, tone }: { label: string; value: number; tone?: "good" | "muted" }) {
   return (
@@ -987,8 +996,7 @@ function AttentionSection({ candidates, viewed, noted, onApply, onOpen }: { cand
         {groups.map(g => {
           const t = TONE_MAP[g.tone];
           return (
-            <div key={g.id} className={`group relative overflow-hidden rounded-2xl border ${t.ring} bg-white/[0.02] p-5 transition`}>
-              <div className={`pointer-events-none absolute -top-16 -right-16 h-40 w-40 rounded-full bg-gradient-to-br ${t.glow} to-transparent blur-2xl`} />
+            <div key={g.id} className={`group relative overflow-hidden rounded-2xl border ${t.ring} bg-white p-5 transition hover:shadow-sm`}>
               <div className="relative">
                 <div className="flex items-start justify-between gap-3">
                   <div className="text-[24px] leading-none">{g.emoji}</div>
