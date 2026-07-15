@@ -996,8 +996,7 @@ function AttentionSection({ candidates, viewed, noted, onApply, onOpen }: { cand
         {groups.map(g => {
           const t = TONE_MAP[g.tone];
           return (
-            <div key={g.id} className={`group relative overflow-hidden rounded-2xl border ${t.ring} bg-white/[0.02] p-5 transition`}>
-              <div className={`pointer-events-none absolute -top-16 -right-16 h-40 w-40 rounded-full bg-gradient-to-br ${t.glow} to-transparent blur-2xl`} />
+            <div key={g.id} className={`group relative overflow-hidden rounded-2xl border ${t.ring} bg-white p-5 transition hover:shadow-sm`}>
               <div className="relative">
                 <div className="flex items-start justify-between gap-3">
                   <div className="text-[24px] leading-none">{g.emoji}</div>
