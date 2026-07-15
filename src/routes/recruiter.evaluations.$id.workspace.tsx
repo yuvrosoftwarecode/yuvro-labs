@@ -487,30 +487,30 @@ function CandidateTable({ rows, selected, onToggle, onToggleAll, allChecked, onO
     <div className="overflow-hidden rounded-xl border border-white/5">
       <div className="max-h-[70vh] overflow-auto">
         <table className="w-full text-left text-[12px]">
-          <thead className="sticky top-0 z-10 bg-neutral-950/95 backdrop-blur">
-            <tr className="border-b border-white/5 text-[11px] uppercase tracking-wider text-neutral-500">
+          <thead className="sticky top-0 z-10 bg-[#111217] backdrop-blur">
+            <tr className="border-b border-white/5 text-[11px] uppercase tracking-wider text-[#ffffff]">
               <Th className="w-8"><input type="checkbox" checked={allChecked} onChange={onToggleAll} /></Th>
               <Th>Candidate</Th><Th>Experience</Th><Th>Labs</Th><Th>Assessment</Th><Th>Vitarka</Th><Th>ECI</Th><Th>Recommendation</Th><Th>Submitted</Th><Th>Time</Th><Th>Status</Th><Th className="w-8"></Th>
             </tr>
           </thead>
           <tbody>
             {rows.map(c => (
-              <tr key={c.id} onClick={() => onPreview(c)} className={`cursor-pointer border-b border-white/5 transition hover:bg-white/[0.03] ${selected.has(c.id) ? "bg-white/[0.04]" : ""}`}>
+              <tr key={c.id} onClick={() => onPreview(c)} className={`cursor-pointer border-b border-white/5 text-neutral-900 transition hover:bg-neutral-100 ${selected.has(c.id) ? "bg-neutral-50" : ""}`}>
                 <Td onClick={e => e.stopPropagation()}><input type="checkbox" checked={selected.has(c.id)} onChange={() => onToggle(c.id)} /></Td>
                 <Td>
                   <div className="flex items-center gap-2.5">
                     <Avatar name={c.name} hue={c.avatarHue} />
                     <div className="min-w-0">
-                      <div className="truncate font-medium text-white">{c.name}</div>
-                      <div className="truncate text-[11px] text-neutral-500">{c.email}</div>
+                      <div className="truncate font-medium text-neutral-900">{c.name}</div>
+                      <div className="truncate text-[11px] text-neutral-900">{c.email}</div>
                     </div>
                   </div>
                 </Td>
                 <Td>{experienceBucket(c.experience)}</Td>
-                <Td><ScorePill v={c.labsScore} /></Td>
-                <Td><ScorePill v={c.assessmentScore} /></Td>
-                <Td><span className="text-neutral-300">{vitarkaLabel(c.vitarkaScore)}</span></Td>
-                <Td><ScorePill v={c.eci} bold /></Td>
+                <Td className="text-neutral-900">{c.labsScore}</Td>
+                <Td className="text-neutral-900">{c.assessmentScore}</Td>
+                <Td className="text-neutral-900">{vitarkaLabel(c.vitarkaScore)}</Td>
+                <Td className="font-medium text-neutral-900">{c.eci}</Td>
                 <Td><RecBadge r={c.recommendation} /></Td>
                 <Td>{fmtRel(c.submittedAt)}</Td>
                 <Td>{c.completionMinutes}m</Td>
@@ -542,7 +542,7 @@ function RowMenu({ onOpen, onAction }: { onOpen: () => void; onAction: (l: strin
   ];
   return (
     <div className="relative">
-      <button onClick={e => { e.stopPropagation(); setOpen(v => !v); }} className="rounded p-1 text-neutral-400 hover:bg-white/5 hover:text-white"><MoreHorizontal className="h-3.5 w-3.5" /></button>
+      <button onClick={e => { e.stopPropagation(); setOpen(v => !v); }} className="rounded p-1 text-neutral-900 hover:bg-neutral-100"><MoreHorizontal className="h-3.5 w-3.5" /></button>
       {open && (
         <>
           <div className="fixed inset-0 z-30" onClick={() => setOpen(false)} />
@@ -561,7 +561,7 @@ function CandidateCard({ c, selected, onToggle, onOpen, onPreview, onAction }: {
   c: Candidate; selected: boolean; onToggle: () => void; onOpen: () => void; onPreview: () => void; onAction: (l: string) => void;
 }) {
   return (
-    <div className={`group relative overflow-hidden rounded-xl border transition ${selected ? "border-emerald-400/40 bg-emerald-400/[0.04]" : "border-white/5 bg-white/[0.02] hover:border-white/15"}`}>
+    <div className={`group relative overflow-hidden rounded-xl border bg-white transition ${selected ? "border-emerald-400/40 bg-emerald-400/[0.04]" : "border-black/10 hover:border-black/20"}`}>
       <div className="p-4">
         <div className="flex items-start gap-3">
           <input type="checkbox" checked={selected} onChange={onToggle} className="mt-1" />
@@ -569,14 +569,14 @@ function CandidateCard({ c, selected, onToggle, onOpen, onPreview, onAction }: {
             <div className="flex items-center gap-2.5">
               <Avatar name={c.name} hue={c.avatarHue} size="lg" />
               <div className="min-w-0">
-                <div className="truncate text-[14px] font-medium text-white">{c.name}</div>
-                <div className="truncate text-[11px] text-neutral-500">{c.company} · {experienceBucket(c.experience)}</div>
+                <div className="truncate text-[14px] font-medium text-neutral-900">{c.name}</div>
+                <div className="truncate text-[11px] text-neutral-900">{c.company} · {experienceBucket(c.experience)}</div>
               </div>
             </div>
           </button>
           <RecBadge r={c.recommendation} />
         </div>
-        <dl className="mt-4 grid grid-cols-2 gap-1 text-[11px] text-neutral-500">
+        <dl className="mt-4 grid grid-cols-2 gap-1 text-[11px] text-neutral-900">
           <span className="truncate">{c.email}</span>
           <span className="truncate text-right">{c.phone}</span>
         </dl>
@@ -586,16 +586,16 @@ function CandidateCard({ c, selected, onToggle, onOpen, onPreview, onAction }: {
           <ScoreBlock label="Vitarka" v={c.vitarkaScore} />
           <ScoreBlock label="ECI" v={c.eci} highlight />
         </div>
-        <div className="mt-3 flex items-center justify-between text-[11px] text-neutral-500">
+        <div className="mt-3 flex items-center justify-between text-[11px] text-neutral-900">
           <span>{fmtRel(c.submittedAt)} · {c.completionMinutes}m</span>
           <StatusChip s={c.status} h={c.hiringStatus} compact />
         </div>
       </div>
-      <div className="flex items-center justify-between border-t border-white/5 bg-black/20 px-3 py-2 text-[11px]">
-        <button onClick={() => onAction("Resume opened")} className="text-neutral-400 hover:text-white">Resume</button>
+      <div className="flex items-center justify-between border-t border-black/10 bg-neutral-50 px-3 py-2 text-[11px]">
+        <button onClick={() => onAction("Resume opened")} className="text-neutral-900 hover:underline">Resume</button>
         <div className="flex items-center gap-1.5">
-          <button onClick={onPreview} className="rounded-md border border-white/10 px-2 py-1 text-neutral-300 hover:bg-white/5">Preview</button>
-          <button onClick={onOpen} className="rounded-md bg-white/10 px-2 py-1 text-white hover:bg-white/15">View Details</button>
+          <button onClick={onPreview} className="rounded-md border border-black/10 px-2 py-1 text-neutral-900 hover:bg-neutral-100">Preview</button>
+          <button onClick={onOpen} className="rounded-md bg-neutral-900 px-2 py-1 text-white hover:bg-neutral-800">View Details</button>
         </div>
       </div>
     </div>
@@ -849,8 +849,7 @@ function BulkBtn({ children, onClick, danger, accent }: { children: React.ReactN
 function Th({ children, className = "" }: { children?: React.ReactNode; className?: string }) { return <th className={`px-3 py-2 font-medium ${className}`}>{children}</th>; }
 function Td({ children, className = "", onClick }: { children?: React.ReactNode; className?: string; onClick?: (e: React.MouseEvent) => void }) { return <td onClick={onClick} className={`px-3 py-2 align-middle ${className}`}>{children}</td>; }
 function ScorePill({ v, bold }: { v: number; bold?: boolean }) {
-  const t = v >= 85 ? "text-emerald-300" : v >= 70 ? "text-cyan-300" : v >= 55 ? "text-amber-300" : "text-red-300";
-  return <span className={`${t} ${bold ? "font-medium" : ""}`}>{v}</span>;
+  return <span className={`text-neutral-900 ${bold ? "font-medium" : ""}`}>{v}</span>;
 }
 function ScoreBlock({ label, v, highlight, big }: { label: string; v: number; highlight?: boolean; big?: boolean }) {
   return (
@@ -861,21 +860,14 @@ function ScoreBlock({ label, v, highlight, big }: { label: string; v: number; hi
   );
 }
 function RecBadge({ r }: { r: Recommendation }) {
-  const map: Record<Recommendation, string> = {
-    "Strong Hire": "border-emerald-400/30 bg-emerald-400/10 text-emerald-300",
-    "Hire": "border-cyan-400/30 bg-cyan-400/10 text-cyan-300",
-    "Maybe": "border-amber-400/30 bg-amber-400/10 text-amber-300",
-    "Reject": "border-red-400/30 bg-red-400/10 text-red-300",
-  };
-  return <span className={`inline-flex rounded-full border px-1.5 py-0.5 text-[10px] font-medium ${map[r]}`}>{r}</span>;
+  return <span className="inline-flex rounded-full border border-neutral-200 bg-neutral-100 px-1.5 py-0.5 text-[10px] font-medium text-neutral-900">{r}</span>;
 }
 function StatusChip({ s, h, compact }: { s: CandStatus; h: HiringStatus; compact?: boolean }) {
-  const color = h === "Selected" ? "text-emerald-300" : h === "Rejected" ? "text-red-300" : h === "Shortlisted" || h === "Interview Scheduled" ? "text-cyan-300" : "text-neutral-400";
   return (
-    <div className={`inline-flex items-center gap-1.5 ${compact ? "text-[10px]" : "text-[11px]"}`}>
-      <span className="text-neutral-500">{s}</span>
-      <span className="text-neutral-700">·</span>
-      <span className={color}>{h}</span>
+    <div className={`inline-flex items-center gap-1.5 text-neutral-900 ${compact ? "text-[10px]" : "text-[11px]"}`}>
+      <span>{s}</span>
+      <span>·</span>
+      <span>{h}</span>
     </div>
   );
 }
