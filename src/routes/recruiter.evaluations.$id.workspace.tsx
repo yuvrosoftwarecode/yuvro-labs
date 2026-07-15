@@ -126,7 +126,7 @@ function Workspace() {
 
           {/* Tabs */}
           <nav className="mt-6 flex items-center gap-1">
-            {(["overview","candidates","intelligence","settings"] as const).map(t => (
+            {(["overview","candidates","intelligence","attention","settings"] as const).map(t => (
               <button
                 key={t}
                 onClick={() => goto(t)}
