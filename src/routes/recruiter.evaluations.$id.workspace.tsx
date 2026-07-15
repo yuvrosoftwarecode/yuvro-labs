@@ -16,13 +16,14 @@ import { IntelligenceTab } from "@/components/recruiter/IntelligenceTab";
 import { SettingsTab } from "@/components/recruiter/SettingsTab";
 
 const searchSchema = z.object({
-  tab: z.enum(["overview", "candidates", "intelligence", "settings"]).default("overview").catch("overview"),
+  tab: z.enum(["overview", "candidates", "intelligence", "attention", "settings"]).default("overview").catch("overview"),
 });
 
-const TAB_LABELS: Record<"overview" | "candidates" | "intelligence" | "settings", string> = {
+const TAB_LABELS: Record<"overview" | "candidates" | "intelligence" | "attention" | "settings", string> = {
   overview: "Overview",
   candidates: "Candidates",
   intelligence: "Hiring Intelligence",
+  attention: "Need Your Attention",
   settings: "Settings",
 };
 
@@ -125,7 +126,7 @@ function Workspace() {
 
           {/* Tabs */}
           <nav className="mt-6 flex items-center gap-1">
-            {(["overview","candidates","intelligence","settings"] as const).map(t => (
+            {(["overview","candidates","intelligence","attention","settings"] as const).map(t => (
               <button
                 key={t}
                 onClick={() => goto(t)}
@@ -143,6 +144,7 @@ function Workspace() {
         {tab === "overview" && <OverviewTab ev={ev} candidates={candidates} onGoto={goto} notify={notify} />}
         {tab === "candidates" && <CandidatesTab evId={ev.id} candidates={candidates} notify={notify} />}
         {tab === "intelligence" && <IntelligenceTab ev={ev} candidates={candidates} notify={notify} />}
+        {tab === "attention" && <AttentionTab evId={ev.id} candidates={candidates} onGoto={goto} />}
         {tab === "settings" && <SettingsTab ev={ev} notify={notify} />}
       </main>
 
@@ -340,7 +342,8 @@ function CandidatesTab({ evId, candidates, notify }: { evId: string; candidates:
         </div>
       </div>
 
-      <AttentionSection candidates={candidates} viewed={viewed} noted={noted} onApply={(f) => { setFilters(f); setActiveView("__attention"); }} onOpen={openDetails} />
+
+
 
 
 
@@ -1016,6 +1019,25 @@ function AttentionSection({ candidates, viewed, noted, onApply, onOpen }: { cand
         })}
       </div>
     </section>
+  );
+}
+
+function AttentionTab({ evId, candidates, onGoto }: { evId: string; candidates: Candidate[]; onGoto: (t: "overview" | "candidates" | "intelligence" | "attention" | "settings") => void }) {
+  const nav = useNavigate();
+  const [viewed, setViewed] = useState<Set<string>>(new Set());
+  const [noted, setNoted] = useState<Set<string>>(new Set());
+  useEffect(() => { setViewed(loadViewed(evId)); setNoted(loadNotedSet(evId, candidates.map(c => c.id))); }, [evId, candidates]);
+  const openDetails = (c: Candidate) => nav({ to: "/recruiter/evaluations/$id/candidates/$candidateId", params: { id: evId, candidateId: c.id } });
+  return (
+    <div>
+      <AttentionSection
+        candidates={candidates}
+        viewed={viewed}
+        noted={noted}
+        onApply={() => onGoto("candidates")}
+        onOpen={openDetails}
+      />
+    </div>
   );
 }
 
