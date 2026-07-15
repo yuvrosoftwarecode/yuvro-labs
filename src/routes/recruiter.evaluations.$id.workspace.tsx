@@ -77,7 +77,7 @@ function Workspace() {
   return (
     <div className="min-h-screen">
       {/* Top header */}
-      <header className="border-b border-white/5 bg-black/10 backdrop-blur">
+      <header className="border-b border-white/5 bg-white">
         <div className="mx-auto max-w-[1440px] px-8 pt-6 pb-4">
           <Link to="/recruiter/evaluations" className="inline-flex items-center gap-1.5 text-[12px] text-neutral-500 hover:text-white">
             <ChevronLeft className="h-3.5 w-3.5" /> All evaluations
