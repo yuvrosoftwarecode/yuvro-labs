@@ -1022,3 +1022,22 @@ function AttentionSection({ candidates, viewed, noted, onApply, onOpen }: { cand
   );
 }
 
+function AttentionTab({ evId, candidates, onGoto }: { evId: string; candidates: Candidate[]; onGoto: (t: "overview" | "candidates" | "intelligence" | "attention" | "settings") => void }) {
+  const nav = useNavigate();
+  const [viewed, setViewed] = useState<Set<string>>(new Set());
+  const [noted, setNoted] = useState<Set<string>>(new Set());
+  useEffect(() => { setViewed(loadViewed(evId)); setNoted(loadNotedSet(evId, candidates.map(c => c.id))); }, [evId, candidates]);
+  const openDetails = (c: Candidate) => nav({ to: "/recruiter/evaluations/$id/candidates/$candidateId", params: { id: evId, candidateId: c.id } });
+  return (
+    <div>
+      <AttentionSection
+        candidates={candidates}
+        viewed={viewed}
+        noted={noted}
+        onApply={() => onGoto("candidates")}
+        onOpen={openDetails}
+      />
+    </div>
+  );
+}
+
