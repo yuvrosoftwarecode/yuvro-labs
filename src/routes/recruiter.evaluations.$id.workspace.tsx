@@ -799,8 +799,17 @@ function HeaderBtn({ children, onClick, icon }: { children: React.ReactNode; onC
 function MenuItem({ children, onClick, icon, danger }: { children: React.ReactNode; onClick: () => void; icon?: React.ReactNode; danger?: boolean }) {
   return <button onClick={onClick} className={`flex w-full items-center gap-2 px-3 py-2 text-left text-[12px] ${danger ? "text-red-400 hover:bg-red-500/10" : "text-neutral-200 hover:bg-white/5"}`}>{icon}{children}</button>;
 }
-function QuickAction({ label, onClick, accent }: { label: string; onClick: () => void; accent?: boolean }) {
-  return <button onClick={onClick} className={`rounded-xl border px-3 py-3 text-left text-[12px] transition ${accent ? "border-emerald-400/30 bg-emerald-400/[0.06] text-white hover:bg-emerald-400/10" : "border-white/5 bg-white/[0.02] text-neutral-300 hover:border-white/15 hover:text-white"}`}>{label}</button>;
+function QuickAction({ label, onClick, accent, icon }: { label: string; onClick: () => void; accent?: boolean; icon?: React.ReactNode }) {
+  return (
+    <button
+      onClick={onClick}
+      className={`group flex items-center gap-2.5 rounded-xl border bg-white px-4 py-3.5 text-left text-[13px] transition hover:-translate-y-0.5 hover:shadow-sm ${accent ? "border-emerald-400/40 text-emerald-700" : "border-black/10 text-neutral-800 hover:border-black/20"}`}
+    >
+      {icon && <span className={`grid h-7 w-7 flex-shrink-0 place-items-center rounded-lg ${accent ? "bg-emerald-400/10 text-emerald-700" : "bg-black/[0.04] text-neutral-700"}`}>{icon}</span>}
+      <span className="flex-1 font-medium">{label}</span>
+      <ArrowUpRight className="h-3.5 w-3.5 opacity-40 transition group-hover:opacity-100" />
+    </button>
+  );
 }
 function MiniStat({ label, value, tone }: { label: string; value: number; tone?: "good" | "muted" }) {
   return (
