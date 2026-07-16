@@ -28,7 +28,7 @@ function Landing() {
 
 function LandingNav() {
   return (
-    <header className="sticky top-0 z-50 backdrop-blur-xl bg-background/70 border-b border-neutral-200">
+    <header className="sticky top-0 z-50 backdrop-blur-xl bg-white/80 border-b border-neutral-200">
       <div className="mx-auto flex h-16 max-w-7xl items-center px-6">
         <Link to="/" className="flex items-center gap-2 font-semibold tracking-tight">
           <div className="grid h-8 w-8 place-items-center rounded-lg bg-gradient-to-br from-blue-600 via-blue-500 to-blue-600 text-white font-mono text-sm shadow-lg shadow-blue-500/30">Y</div>
@@ -100,7 +100,7 @@ function WorkspaceMockup() {
           <div className="ml-3 text-xs text-muted-foreground font-mono">yuvro-labs / sprint-12 / TICKET-247</div>
         </div>
         <div className="grid grid-cols-12 gap-0 h-[420px]">
-          <div className="col-span-3 border-r border-neutral-200 p-3 bg-card/40">
+          <div className="col-span-3 border-r border-neutral-200 p-3 bg-neutral-50">
             <div className="text-[10px] uppercase tracking-wider text-muted-foreground mb-2">Sprint Board</div>
             {[
               { t: "Fix auth flow", s: "done", c: "success" },
@@ -108,7 +108,7 @@ function WorkspaceMockup() {
               { t: "Refactor cache", s: "todo", c: "muted-foreground" },
               { t: "DB indexes", s: "review", c: "info" },
             ].map((tk) => (
-              <div key={tk.t} className="mb-2 rounded-md border border-neutral-200 bg-card p-2 text-xs">
+              <div key={tk.t} className="mb-2 rounded-md border border-neutral-200 bg-white p-2 text-xs">
                 <div className="font-medium truncate">{tk.t}</div>
                 <div className="mt-1 flex items-center justify-between">
                   <span className="text-[10px] capitalize" style={{ color: `var(--${tk.c})` }}>{tk.s}</span>
@@ -130,7 +130,7 @@ function WorkspaceMockup() {
             <div>{'}'}</div>
             <div className="mt-4 rounded-md border border-success/40 bg-success/10 p-2 text-success">✓ All tests passing</div>
           </div>
-          <div className="col-span-3 p-3 bg-card/40">
+          <div className="col-span-3 p-3 bg-neutral-50">
             <div className="text-[10px] uppercase tracking-wider text-muted-foreground mb-2 flex items-center gap-1"><Bot className="h-3 w-3" /> AI Mentor</div>
             <div className="rounded-lg bg-blue-500/10 border border-blue-500/30 p-2.5 text-[11px] leading-relaxed">
               Wrap your DB calls in a transaction so partial failures rollback. Nice catch on signature verification!
@@ -280,7 +280,7 @@ function FeatureLabs() {
               </div>
               <h3 className="mt-4 font-semibold">{l.name}</h3>
               <div className="mt-3 flex flex-wrap gap-1.5">
-                {l.skills.map((s) => (<span key={s} className="rounded-md border border-neutral-200 bg-background/40 px-2 py-0.5 text-[10px] text-muted-foreground">{s}</span>))}
+                {l.skills.map((s) => (<span key={s} className="rounded-md border border-neutral-200 bg-white px-2 py-0.5 text-[10px] text-muted-foreground">{s}</span>))}
               </div>
               <div className="mt-4 flex items-center justify-between text-sm">
                 <span className="inline-flex items-center gap-1 text-blue-600"><Zap className="h-3.5 w-3.5" />Hands-on</span>
