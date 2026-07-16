@@ -483,14 +483,14 @@ function FinalCTA() {
   return (
     <section className="border-b border-border/50 py-24 relative overflow-hidden">
       <div className="absolute inset-0 -z-10">
-        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 h-[600px] w-[800px] rounded-full bg-primary/20 blur-3xl" />
+        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 h-[600px] w-[800px] rounded-full bg-blue-500/20 blur-3xl" />
       </div>
       <div className="mx-auto max-w-3xl px-6 text-center">
-        <Rocket className="h-10 w-10 text-primary mx-auto" />
+        <Rocket className="h-10 w-10 text-blue-600 mx-auto" />
         <h2 className="mt-5 text-4xl md:text-5xl font-semibold tracking-tight">Start Building Real Engineering Experience Today.</h2>
-        <p className="mt-4 text-lg text-muted-foreground">Join 15,000+ engineers proving their skill through real work.</p>
+        <p className="mt-4 text-lg text-muted-foreground">Join a growing community of engineers proving their skill through real work.</p>
         <div className="mt-8 flex flex-wrap justify-center gap-3">
-          <Link to="/auth" search={{ tab: "signup" }} className="inline-flex items-center gap-2 rounded-md bg-gradient-to-r from-primary to-ui px-6 py-3 text-sm font-medium text-primary-foreground shadow-lg shadow-primary/40 hover:shadow-primary/60 transition">
+          <Link to="/auth" search={{ tab: "signup" }} className="inline-flex items-center gap-2 rounded-md bg-blue-600 px-6 py-3 text-sm font-medium text-white shadow-lg shadow-blue-600/40 hover:bg-blue-700 hover:shadow-blue-600/60 transition">
             Create Account <ArrowRight className="h-4 w-4" />
           </Link>
           <Link to="/auth" search={{ tab: "signin" }} className="inline-flex items-center gap-2 rounded-md border border-border bg-card/50 px-6 py-3 text-sm hover:bg-accent transition">
