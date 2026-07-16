@@ -42,7 +42,7 @@ function LandingNav() {
         </nav>
         <div className="ml-auto flex items-center gap-3">
           <Link to="/auth" search={{ tab: "signin" }} className="text-sm text-muted-foreground hover:text-foreground transition">Sign In</Link>
-          <Link to="/auth" search={{ tab: "signup" }} className="inline-flex items-center gap-1.5 rounded-md bg-gradient-to-r from-primary to-ui px-4 py-2 text-sm font-medium text-primary-foreground shadow-lg shadow-primary/20 hover:shadow-primary/40 transition">
+          <Link to="/auth" search={{ tab: "signup" }} className="inline-flex items-center gap-1.5 rounded-md bg-blue-600 px-4 py-2 text-sm font-medium text-white shadow-lg shadow-blue-600/20 hover:bg-blue-700 hover:shadow-blue-600/40 transition">
             Get Started <ArrowRight className="h-3.5 w-3.5" />
           </Link>
         </div>
