@@ -384,17 +384,17 @@ function Reputation() {
     <section className="border-b border-border/50 py-20 bg-gradient-to-b from-transparent via-card/20 to-transparent">
       <div className="mx-auto max-w-7xl px-6 grid lg:grid-cols-2 gap-12 items-center">
         <div className="relative">
-          <div className="absolute -inset-6 bg-gradient-to-br from-ui/20 to-primary/20 rounded-3xl blur-2xl" />
+          <div className="absolute -inset-6 bg-gradient-to-br from-blue-500/20 to-blue-700/20 rounded-3xl blur-2xl" />
           <div className="relative rounded-2xl border border-border/80 bg-card/80 backdrop-blur-xl p-6 shadow-2xl">
             <div className="flex items-center gap-4 pb-4 border-b border-border/60">
-              <div className="grid h-14 w-14 place-items-center rounded-2xl bg-gradient-to-br from-primary to-ui text-primary-foreground text-xl font-semibold shadow-lg">AR</div>
+              <div className="grid h-14 w-14 place-items-center rounded-2xl bg-blue-600 text-white text-xl font-semibold shadow-lg">AR</div>
               <div>
                 <div className="font-semibold">Aarav Reddy</div>
-                <div className="text-xs text-muted-foreground">Senior Full-Stack · Lv 24</div>
+                <div className="text-xs text-muted-foreground">Senior Full-Stack Engineer</div>
               </div>
               <div className="ml-auto text-right">
-                <div className="text-2xl font-semibold text-primary">86</div>
-                <div className="text-[10px] text-muted-foreground uppercase tracking-wider">Engineering Score</div>
+                <div className="text-sm font-semibold text-blue-600">Verified</div>
+                <div className="text-[10px] text-muted-foreground uppercase tracking-wider">Engineering Profile</div>
               </div>
             </div>
             <div className="mt-5 space-y-3">
@@ -402,7 +402,7 @@ function Reputation() {
                 <div key={s.l}>
                   <div className="flex items-center justify-between text-xs mb-1">
                     <span className="text-muted-foreground">{s.l}</span>
-                    <span style={{ color: `var(--${s.c})` }} className="font-medium">{s.v}</span>
+                    <span style={{ color: `var(--${s.c})` }} className="font-medium">●</span>
                   </div>
                   <div className="h-1.5 rounded-full bg-muted/40 overflow-hidden">
                     <div className="h-full rounded-full" style={{ width: `${s.v}%`, background: `var(--${s.c})` }} />
