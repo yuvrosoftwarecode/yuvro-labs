@@ -131,7 +131,7 @@ function WorkspaceMockup() {
             <div className="pl-8 bg-success/10">+   <span className="text-ui">await</span> processOrder(tx, body);</div>
             <div className="pl-4 bg-success/10">+ {'}'});</div>
             <div>{'}'}</div>
-            <div className="mt-4 rounded-md border border-success/40 bg-success/10 p-2 text-success">✓ All 24 tests passing · Coverage 94%</div>
+            <div className="mt-4 rounded-md border border-success/40 bg-success/10 p-2 text-success">✓ All tests passing</div>
           </div>
           <div className="col-span-3 p-3 bg-card/40">
             <div className="text-[10px] uppercase tracking-wider text-muted-foreground mb-2 flex items-center gap-1"><Bot className="h-3 w-3" /> AI Mentor</div>
