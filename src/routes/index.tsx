@@ -66,7 +66,7 @@ function Hero() {
           </span>
           <h1 className="mt-5 text-5xl lg:text-6xl font-semibold tracking-tight leading-[1.05]">
             Build Real Engineering Experience.<br />
-            <span className="bg-gradient-to-r from-primary via-ui to-primary bg-clip-text text-transparent">Not Just Coding Skills.</span>
+            <span className="bg-gradient-to-r from-blue-600 via-blue-500 to-blue-700 bg-clip-text text-transparent">Not Just Coding Skills.</span>
           </h1>
           <p className="mt-6 text-lg text-muted-foreground max-w-xl leading-relaxed">
             Solve real engineering tickets, work in simulated software teams, collaborate with developers, debug production issues, and prove your practical skills through AI-powered labs.
