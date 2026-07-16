@@ -42,7 +42,7 @@ function LandingNav() {
         </nav>
         <div className="ml-auto flex items-center gap-3">
           <Link to="/auth" search={{ tab: "signin" }} className="text-sm text-muted-foreground hover:text-foreground transition">Sign In</Link>
-          <Link to="/auth" search={{ tab: "signup" }} className="inline-flex items-center gap-1.5 rounded-md bg-gradient-to-r from-primary to-ui px-4 py-2 text-sm font-medium text-primary-foreground shadow-lg shadow-primary/20 hover:shadow-primary/40 transition">
+          <Link to="/auth" search={{ tab: "signup" }} className="inline-flex items-center gap-1.5 rounded-md bg-blue-600 px-4 py-2 text-sm font-medium text-white shadow-lg shadow-blue-600/20 hover:bg-blue-700 hover:shadow-blue-600/40 transition">
             Get Started <ArrowRight className="h-3.5 w-3.5" />
           </Link>
         </div>
@@ -66,13 +66,13 @@ function Hero() {
           </span>
           <h1 className="mt-5 text-5xl lg:text-6xl font-semibold tracking-tight leading-[1.05]">
             Build Real Engineering Experience.<br />
-            <span className="bg-gradient-to-r from-primary via-ui to-primary bg-clip-text text-transparent">Not Just Coding Skills.</span>
+            <span className="bg-gradient-to-r from-blue-600 via-blue-500 to-blue-700 bg-clip-text text-transparent">Not Just Coding Skills.</span>
           </h1>
           <p className="mt-6 text-lg text-muted-foreground max-w-xl leading-relaxed">
             Solve real engineering tickets, work in simulated software teams, collaborate with developers, debug production issues, and prove your practical skills through AI-powered labs.
           </p>
           <div className="mt-8 flex flex-wrap gap-3">
-            <Link to="/auth" search={{ tab: "signup" }} className="inline-flex items-center gap-2 rounded-md bg-gradient-to-r from-primary to-ui px-5 py-3 text-sm font-medium text-primary-foreground shadow-lg shadow-primary/30 hover:shadow-primary/50 transition">
+            <Link to="/auth" search={{ tab: "signup" }} className="inline-flex items-center gap-2 rounded-md bg-blue-600 px-5 py-3 text-sm font-medium text-white shadow-lg shadow-blue-600/30 hover:bg-blue-700 hover:shadow-blue-600/50 transition">
               Start Building <ArrowRight className="h-4 w-4" />
             </Link>
             <a href="#features" className="inline-flex items-center gap-2 rounded-md border border-border bg-card/50 px-5 py-3 text-sm hover:bg-accent transition">
@@ -81,19 +81,6 @@ function Hero() {
             <a href="#how" className="inline-flex items-center gap-2 rounded-md px-5 py-3 text-sm text-muted-foreground hover:text-foreground transition">
               <Play className="h-4 w-4" /> Watch Demo
             </a>
-          </div>
-          <div className="mt-10 grid grid-cols-2 sm:grid-cols-4 gap-4">
-            {[
-              { v: "120K+", l: "Tickets Solved" },
-              { v: "15K+", l: "Active Engineers" },
-              { v: "500+", l: "Practical Labs" },
-              { v: "95%", l: "Skill Improvement" },
-            ].map((s) => (
-              <div key={s.l} className="rounded-lg border border-border/50 bg-card/30 backdrop-blur p-3">
-                <div className="text-2xl font-semibold bg-gradient-to-br from-foreground to-muted-foreground bg-clip-text text-transparent">{s.v}</div>
-                <div className="text-xs text-muted-foreground mt-0.5">{s.l}</div>
-              </div>
-            ))}
           </div>
         </div>
         <WorkspaceMockup />
@@ -144,7 +131,7 @@ function WorkspaceMockup() {
             <div className="pl-8 bg-success/10">+   <span className="text-ui">await</span> processOrder(tx, body);</div>
             <div className="pl-4 bg-success/10">+ {'}'});</div>
             <div>{'}'}</div>
-            <div className="mt-4 rounded-md border border-success/40 bg-success/10 p-2 text-success">✓ All 24 tests passing · Coverage 94%</div>
+            <div className="mt-4 rounded-md border border-success/40 bg-success/10 p-2 text-success">✓ All tests passing</div>
           </div>
           <div className="col-span-3 p-3 bg-card/40">
             <div className="text-[10px] uppercase tracking-wider text-muted-foreground mb-2 flex items-center gap-1"><Bot className="h-3 w-3" /> AI Mentor</div>
@@ -163,9 +150,10 @@ function WorkspaceMockup() {
           </div>
         </div>
       </div>
-      <div className="absolute -bottom-4 -right-4 rounded-xl border border-border bg-card/90 backdrop-blur p-3 shadow-xl animate-pulse">
-        <div className="text-[10px] text-muted-foreground">XP earned</div>
-        <div className="text-lg font-semibold text-primary">+250 XP</div>
+      <div className="absolute -bottom-4 -right-4 rounded-xl border border-border bg-card/90 backdrop-blur p-3 shadow-xl">
+        <div className="flex items-center gap-2 text-xs">
+          <CheckCircle2 className="h-3.5 w-3.5 text-blue-600" /> <span className="text-blue-600">PR merged</span>
+        </div>
       </div>
       <div className="absolute -top-4 -left-4 rounded-xl border border-border bg-card/90 backdrop-blur p-3 shadow-xl">
         <div className="flex items-center gap-2 text-xs">
@@ -299,7 +287,7 @@ function FeatureLabs() {
                 {l.skills.map((s) => (<span key={s} className="rounded-md border border-border/60 bg-background/40 px-2 py-0.5 text-[10px] text-muted-foreground">{s}</span>))}
               </div>
               <div className="mt-4 flex items-center justify-between text-sm">
-                <span className="inline-flex items-center gap-1 text-primary"><Zap className="h-3.5 w-3.5" />{l.xp} XP</span>
+                <span className="inline-flex items-center gap-1 text-blue-600"><Zap className="h-3.5 w-3.5" />Hands-on</span>
                 <span className="text-xs text-muted-foreground">{l.ind}</span>
               </div>
             </div>
@@ -396,17 +384,17 @@ function Reputation() {
     <section className="border-b border-border/50 py-20 bg-gradient-to-b from-transparent via-card/20 to-transparent">
       <div className="mx-auto max-w-7xl px-6 grid lg:grid-cols-2 gap-12 items-center">
         <div className="relative">
-          <div className="absolute -inset-6 bg-gradient-to-br from-ui/20 to-primary/20 rounded-3xl blur-2xl" />
+          <div className="absolute -inset-6 bg-gradient-to-br from-blue-500/20 to-blue-700/20 rounded-3xl blur-2xl" />
           <div className="relative rounded-2xl border border-border/80 bg-card/80 backdrop-blur-xl p-6 shadow-2xl">
             <div className="flex items-center gap-4 pb-4 border-b border-border/60">
-              <div className="grid h-14 w-14 place-items-center rounded-2xl bg-gradient-to-br from-primary to-ui text-primary-foreground text-xl font-semibold shadow-lg">AR</div>
+              <div className="grid h-14 w-14 place-items-center rounded-2xl bg-blue-600 text-white text-xl font-semibold shadow-lg">AR</div>
               <div>
                 <div className="font-semibold">Aarav Reddy</div>
-                <div className="text-xs text-muted-foreground">Senior Full-Stack · Lv 24</div>
+                <div className="text-xs text-muted-foreground">Senior Full-Stack Engineer</div>
               </div>
               <div className="ml-auto text-right">
-                <div className="text-2xl font-semibold text-primary">86</div>
-                <div className="text-[10px] text-muted-foreground uppercase tracking-wider">Engineering Score</div>
+                <div className="text-sm font-semibold text-blue-600">Verified</div>
+                <div className="text-[10px] text-muted-foreground uppercase tracking-wider">Engineering Profile</div>
               </div>
             </div>
             <div className="mt-5 space-y-3">
@@ -414,7 +402,7 @@ function Reputation() {
                 <div key={s.l}>
                   <div className="flex items-center justify-between text-xs mb-1">
                     <span className="text-muted-foreground">{s.l}</span>
-                    <span style={{ color: `var(--${s.c})` }} className="font-medium">{s.v}</span>
+                    <span style={{ color: `var(--${s.c})` }} className="font-medium">●</span>
                   </div>
                   <div className="h-1.5 rounded-full bg-muted/40 overflow-hidden">
                     <div className="h-full rounded-full" style={{ width: `${s.v}%`, background: `var(--${s.c})` }} />
@@ -495,14 +483,14 @@ function FinalCTA() {
   return (
     <section className="border-b border-border/50 py-24 relative overflow-hidden">
       <div className="absolute inset-0 -z-10">
-        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 h-[600px] w-[800px] rounded-full bg-primary/20 blur-3xl" />
+        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 h-[600px] w-[800px] rounded-full bg-blue-500/20 blur-3xl" />
       </div>
       <div className="mx-auto max-w-3xl px-6 text-center">
-        <Rocket className="h-10 w-10 text-primary mx-auto" />
+        <Rocket className="h-10 w-10 text-blue-600 mx-auto" />
         <h2 className="mt-5 text-4xl md:text-5xl font-semibold tracking-tight">Start Building Real Engineering Experience Today.</h2>
-        <p className="mt-4 text-lg text-muted-foreground">Join 15,000+ engineers proving their skill through real work.</p>
+        <p className="mt-4 text-lg text-muted-foreground">Join a growing community of engineers proving their skill through real work.</p>
         <div className="mt-8 flex flex-wrap justify-center gap-3">
-          <Link to="/auth" search={{ tab: "signup" }} className="inline-flex items-center gap-2 rounded-md bg-gradient-to-r from-primary to-ui px-6 py-3 text-sm font-medium text-primary-foreground shadow-lg shadow-primary/40 hover:shadow-primary/60 transition">
+          <Link to="/auth" search={{ tab: "signup" }} className="inline-flex items-center gap-2 rounded-md bg-blue-600 px-6 py-3 text-sm font-medium text-white shadow-lg shadow-blue-600/40 hover:bg-blue-700 hover:shadow-blue-600/60 transition">
             Create Account <ArrowRight className="h-4 w-4" />
           </Link>
           <Link to="/auth" search={{ tab: "signin" }} className="inline-flex items-center gap-2 rounded-md border border-border bg-card/50 px-6 py-3 text-sm hover:bg-accent transition">
