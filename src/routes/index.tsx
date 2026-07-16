@@ -9,7 +9,7 @@ export const Route = createFileRoute("/")({ component: Landing });
 
 function Landing() {
   return (
-    <div className="min-h-screen bg-background text-foreground antialiased">
+    <div className="min-h-screen bg-white text-neutral-900 antialiased">
       <LandingNav />
       <Hero />
       <Trust />
