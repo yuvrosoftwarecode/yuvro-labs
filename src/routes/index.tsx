@@ -109,7 +109,7 @@ function WorkspaceMockup() {
               { t: "Fix auth flow", s: "done", c: "success" },
               { t: "Payment webhook", s: "doing", c: "primary" },
               { t: "Refactor cache", s: "todo", c: "muted-foreground" },
-              { t: "DB indexes", s: "review", c: "ui" },
+              { t: "DB indexes", s: "review", c: "info" },
             ].map((tk) => (
               <div key={tk.t} className="mb-2 rounded-md border border-border/50 bg-card p-2 text-xs">
                 <div className="font-medium truncate">{tk.t}</div>
@@ -259,7 +259,7 @@ function HowItWorks() {
 function FeatureLabs() {
   const labs = [
     { name: "Java Backend Labs", icon: Server, color: "primary", diff: "Mid → Senior", skills: ["Spring", "JPA", "Kafka"], xp: 2400, ind: "FinTech, E-commerce" },
-    { name: "Frontend Engineering Labs", icon: Code2, color: "ui", diff: "Junior → Mid", skills: ["React", "TS", "Perf"], xp: 1800, ind: "SaaS, Consumer" },
+    { name: "Frontend Engineering Labs", icon: Code2, color: "info", diff: "Junior → Mid", skills: ["React", "TS", "Perf"], xp: 1800, ind: "SaaS, Consumer" },
     { name: "SQL & Database Labs", icon: Database, color: "warning", diff: "All levels", skills: ["Query plans", "Indexing"], xp: 1500, ind: "Data, Analytics" },
     { name: "DevOps Labs", icon: GitBranch, color: "success", diff: "Mid → Senior", skills: ["K8s", "CI/CD", "IaC"], xp: 2200, ind: "Platform, Cloud" },
     { name: "Security Labs", icon: ShieldCheck, color: "destructive", diff: "Senior", skills: ["OWASP", "Crypto"], xp: 2800, ind: "Security, FinTech" },
@@ -376,7 +376,7 @@ function Reputation() {
   const scores = [
     { l: "Reliability", v: 94, c: "success" },
     { l: "Collaboration", v: 88, c: "primary" },
-    { l: "Leadership", v: 76, c: "ui" },
+    { l: "Leadership", v: 76, c: "info" },
     { l: "Support", v: 82, c: "info" },
     { l: "Practical Skill", v: 91, c: "warning" },
   ];
@@ -453,7 +453,7 @@ function Recruiter() {
 function Testimonials() {
   const t = [
     { who: "Priya · CS Student", role: "Student", quote: "Got my first internship after 3 months on Yuvro. The recruiter literally walked through my sprint board in the interview.", c: "primary" },
-    { who: "Marcus · Job Seeker", role: "Job Seeker", quote: "Real tickets, real PRs, real reviews. My GitHub finally looks like a senior engineer's.", c: "ui" },
+    { who: "Marcus · Job Seeker", role: "Job Seeker", quote: "Real tickets, real PRs, real reviews. My GitHub finally looks like a senior engineer's.", c: "info" },
     { who: "Sana · Dev @ Stripe", role: "Developer", quote: "I use Yuvro to stay sharp on system design. The incident simulations are brutal — in the best way.", c: "success" },
   ];
   return (
