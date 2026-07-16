@@ -90,7 +90,6 @@ function Hero() {
 function WorkspaceMockup() {
   return (
     <div className="relative">
-      <div className="absolute -inset-4 bg-gradient-to-tr from-blue-600/30 via-blue-500/20 to-transparent rounded-3xl blur-2xl" />
       <div className="relative rounded-2xl border border-neutral-200 bg-white shadow-2xl overflow-hidden">
         <div className="flex items-center gap-2 px-4 py-2.5 border-b border-neutral-200 bg-white">
           <div className="flex gap-1.5">
@@ -340,7 +339,6 @@ function AIMentor() {
           </ul>
         </div>
         <div className="relative">
-          <div className="absolute -inset-6 bg-gradient-to-tr from-blue-600/20 via-blue-500/10 to-transparent rounded-3xl blur-2xl" />
           <div className="relative rounded-2xl border border-neutral-200 bg-white p-5 shadow-2xl">
             <div className="flex items-center gap-2 pb-3 border-b border-neutral-200">
               <div className="grid h-8 w-8 place-items-center rounded-lg bg-gradient-to-br from-blue-600 to-blue-500 text-white"><Bot className="h-4 w-4" /></div>
@@ -381,7 +379,6 @@ function Reputation() {
     <section className="border-b border-neutral-200 py-20 ">
       <div className="mx-auto max-w-7xl px-6 grid lg:grid-cols-2 gap-12 items-center">
         <div className="relative">
-          <div className="absolute -inset-6 bg-gradient-to-br from-blue-500/20 to-blue-700/20 rounded-3xl blur-2xl" />
           <div className="relative rounded-2xl border border-neutral-200 bg-white p-6 shadow-2xl">
             <div className="flex items-center gap-4 pb-4 border-b border-neutral-200">
               <div className="grid h-14 w-14 place-items-center rounded-2xl bg-blue-600 text-white text-xl font-semibold shadow-lg">AR</div>
@@ -480,7 +477,6 @@ function FinalCTA() {
   return (
     <section className="border-b border-neutral-200 py-24 relative overflow-hidden">
       <div className="absolute inset-0 -z-10">
-        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 h-[600px] w-[800px] rounded-full bg-blue-500/20 blur-3xl" />
       </div>
       <div className="mx-auto max-w-3xl px-6 text-center">
         <Rocket className="h-10 w-10 text-blue-600 mx-auto" />
