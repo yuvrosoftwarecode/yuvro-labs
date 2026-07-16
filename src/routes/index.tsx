@@ -229,8 +229,7 @@ function HowItWorks() {
                   </div>
 
                   <div className="relative grid place-items-center">
-                    <div className="absolute h-9 w-9 rounded-full bg-blue-500/20 blur-md" />
-                    <div className="relative h-7 w-7 rounded-full border border-blue-500/60 bg-background grid place-items-center text-[11px] font-mono text-blue-600 shadow-[0_0_12px_rgba(99,102,241,0.35)]">
+                    <div className="relative h-7 w-7 rounded-full border border-neutral-300 bg-white grid place-items-center text-[11px] font-mono text-neutral-700">
                       {i + 1}
                     </div>
                   </div>
