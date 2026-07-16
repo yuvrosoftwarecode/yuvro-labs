@@ -287,7 +287,7 @@ function FeatureLabs() {
                 {l.skills.map((s) => (<span key={s} className="rounded-md border border-border/60 bg-background/40 px-2 py-0.5 text-[10px] text-muted-foreground">{s}</span>))}
               </div>
               <div className="mt-4 flex items-center justify-between text-sm">
-                <span className="inline-flex items-center gap-1 text-primary"><Zap className="h-3.5 w-3.5" />{l.xp} XP</span>
+                <span className="inline-flex items-center gap-1 text-blue-600"><Zap className="h-3.5 w-3.5" />Hands-on</span>
                 <span className="text-xs text-muted-foreground">{l.ind}</span>
               </div>
             </div>
