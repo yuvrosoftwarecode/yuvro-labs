@@ -150,9 +150,10 @@ function WorkspaceMockup() {
           </div>
         </div>
       </div>
-      <div className="absolute -bottom-4 -right-4 rounded-xl border border-border bg-card/90 backdrop-blur p-3 shadow-xl animate-pulse">
-        <div className="text-[10px] text-muted-foreground">XP earned</div>
-        <div className="text-lg font-semibold text-primary">+250 XP</div>
+      <div className="absolute -bottom-4 -right-4 rounded-xl border border-border bg-card/90 backdrop-blur p-3 shadow-xl">
+        <div className="flex items-center gap-2 text-xs">
+          <CheckCircle2 className="h-3.5 w-3.5 text-blue-600" /> <span className="text-blue-600">PR merged</span>
+        </div>
       </div>
       <div className="absolute -top-4 -left-4 rounded-xl border border-border bg-card/90 backdrop-blur p-3 shadow-xl">
         <div className="flex items-center gap-2 text-xs">
