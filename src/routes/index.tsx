@@ -55,9 +55,7 @@ function Hero() {
   return (
     <section className="relative overflow-hidden border-b border-border/50">
       <div className="absolute inset-0 -z-10">
-        <div className="absolute top-0 left-1/4 h-[500px] w-[500px] rounded-full bg-blue-500/20 blur-3xl animate-pulse" />
-        <div className="absolute top-20 right-1/4 h-[400px] w-[400px] rounded-full bg-blue-500/20 blur-3xl" />
-        <div className="absolute inset-0 bg-[linear-gradient(to_right,oklch(0.5_0.2_260/0.06)_1px,transparent_1px),linear-gradient(to_bottom,oklch(0.5_0.2_260/0.06)_1px,transparent_1px)] bg-[size:48px_48px] [mask-image:radial-gradient(ellipse_80%_50%_at_50%_0%,#000_70%,transparent_110%)]" />
+        <div className="absolute inset-0 bg-[linear-gradient(to_right,rgb(0_0_0/0.04)_1px,transparent_1px),linear-gradient(to_bottom,rgb(0_0_0/0.04)_1px,transparent_1px)] bg-[size:48px_48px] [mask-image:radial-gradient(ellipse_80%_50%_at_50%_0%,#000_70%,transparent_110%)]" />
       </div>
       <div className="mx-auto max-w-7xl px-6 py-20 lg:py-28 grid lg:grid-cols-2 gap-12 items-center">
         <div>
