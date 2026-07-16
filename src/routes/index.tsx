@@ -72,7 +72,7 @@ function Hero() {
             Solve real engineering tickets, work in simulated software teams, collaborate with developers, debug production issues, and prove your practical skills through AI-powered labs.
           </p>
           <div className="mt-8 flex flex-wrap gap-3">
-            <Link to="/auth" search={{ tab: "signup" }} className="inline-flex items-center gap-2 rounded-md bg-gradient-to-r from-primary to-ui px-5 py-3 text-sm font-medium text-primary-foreground shadow-lg shadow-primary/30 hover:shadow-primary/50 transition">
+            <Link to="/auth" search={{ tab: "signup" }} className="inline-flex items-center gap-2 rounded-md bg-blue-600 px-5 py-3 text-sm font-medium text-white shadow-lg shadow-blue-600/30 hover:bg-blue-700 hover:shadow-blue-600/50 transition">
               Start Building <ArrowRight className="h-4 w-4" />
             </Link>
             <a href="#features" className="inline-flex items-center gap-2 rounded-md border border-border bg-card/50 px-5 py-3 text-sm hover:bg-accent transition">
@@ -81,19 +81,6 @@ function Hero() {
             <a href="#how" className="inline-flex items-center gap-2 rounded-md px-5 py-3 text-sm text-muted-foreground hover:text-foreground transition">
               <Play className="h-4 w-4" /> Watch Demo
             </a>
-          </div>
-          <div className="mt-10 grid grid-cols-2 sm:grid-cols-4 gap-4">
-            {[
-              { v: "120K+", l: "Tickets Solved" },
-              { v: "15K+", l: "Active Engineers" },
-              { v: "500+", l: "Practical Labs" },
-              { v: "95%", l: "Skill Improvement" },
-            ].map((s) => (
-              <div key={s.l} className="rounded-lg border border-border/50 bg-card/30 backdrop-blur p-3">
-                <div className="text-2xl font-semibold bg-gradient-to-br from-foreground to-muted-foreground bg-clip-text text-transparent">{s.v}</div>
-                <div className="text-xs text-muted-foreground mt-0.5">{s.l}</div>
-              </div>
-            ))}
           </div>
         </div>
         <WorkspaceMockup />
