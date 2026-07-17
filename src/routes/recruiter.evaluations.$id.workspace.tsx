@@ -674,7 +674,170 @@ function ExportItem({ children, onClick, icon }: { children: React.ReactNode; on
   return <button onClick={onClick} className="flex w-full items-center gap-2 px-3 py-2 text-left text-[12.5px] text-neutral-800 hover:bg-neutral-50">{icon}{children}</button>;
 }
 
-// -------------- Advanced Filters Drawer --------------
+// -------------- Candidate Table (light theme, column-aware) --------------
+
+function highlightText(text: string, q: string) {
+  if (!q) return text;
+  const i = text.toLowerCase().indexOf(q.toLowerCase());
+  if (i < 0) return text;
+  return (
+    <>
+      {text.slice(0, i)}
+      <mark className="rounded bg-yellow-100 px-0.5 text-neutral-900">{text.slice(i, i + q.length)}</mark>
+      {text.slice(i + q.length)}
+    </>
+  );
+}
+
+function CandidateTable({ rows, cols, selected, onToggle, onToggleAll, allChecked, onOpen, onPreview, onAction, highlight }: {
+  rows: Candidate[]; cols: Set<ColKey>; selected: Set<string>; onToggle: (id: string) => void; onToggleAll: () => void; allChecked: boolean;
+  onOpen: (c: Candidate) => void; onPreview: (c: Candidate) => void; onAction: (label: string) => void; highlight?: string;
+}) {
+  const show = (k: ColKey) => cols.has(k);
+  return (
+    <div className="overflow-hidden rounded-2xl border border-neutral-200 bg-white">
+      <div className="max-h-[70vh] overflow-auto">
+        <table className="w-full text-left text-[12.5px]">
+          <thead className="sticky top-0 z-10 bg-neutral-50/95 backdrop-blur">
+            <tr className="border-b border-neutral-200 text-[10.5px] uppercase tracking-widest text-neutral-500">
+              <Th className="w-8"><input type="checkbox" checked={allChecked} onChange={onToggleAll} /></Th>
+              {show("candidate") && <Th>Candidate</Th>}
+              {show("email") && <Th>Email</Th>}
+              {show("phone") && <Th>Phone</Th>}
+              {show("experience") && <Th>Experience</Th>}
+              {show("labs") && <Th>Labs</Th>}
+              {show("assessment") && <Th>Assessment</Th>}
+              {show("vitarka") && <Th>Vitarka</Th>}
+              {show("eci") && <Th>ECI</Th>}
+              {show("recommendation") && <Th>Recommendation</Th>}
+              {show("submitted") && <Th>Submitted</Th>}
+              {show("time") && <Th>Time</Th>}
+              {show("status") && <Th>Status</Th>}
+              <Th className="w-8"></Th>
+            </tr>
+          </thead>
+          <tbody>
+            {rows.map(c => (
+              <tr key={c.id} onClick={() => onPreview(c)}
+                className={`cursor-pointer border-b border-neutral-100 text-neutral-900 transition hover:bg-neutral-50 ${selected.has(c.id) ? "bg-neutral-50" : ""}`}>
+                <Td onClick={e => e.stopPropagation()}><input type="checkbox" checked={selected.has(c.id)} onChange={() => onToggle(c.id)} /></Td>
+                {show("candidate") && (
+                  <Td>
+                    <div className="flex items-center gap-2.5">
+                      <Avatar name={c.name} hue={c.avatarHue} />
+                      <div className="min-w-0">
+                        <div className="truncate font-medium text-neutral-900">{highlightText(c.name, highlight || "")}</div>
+                        {!show("email") && <div className="truncate text-[11px] text-neutral-500">{highlightText(c.email, highlight || "")}</div>}
+                      </div>
+                    </div>
+                  </Td>
+                )}
+                {show("email") && <Td className="text-neutral-700">{highlightText(c.email, highlight || "")}</Td>}
+                {show("phone") && <Td className="text-neutral-700">{c.phone}</Td>}
+                {show("experience") && <Td className="text-neutral-800">{experienceBucket(c.experience)}</Td>}
+                {show("labs") && <Td className="tabular-nums text-neutral-900">{c.labsScore}</Td>}
+                {show("assessment") && <Td className="tabular-nums text-neutral-900">{c.assessmentScore}</Td>}
+                {show("vitarka") && <Td className="text-neutral-800">{vitarkaLabel(c.vitarkaScore)}</Td>}
+                {show("eci") && <Td className="font-medium tabular-nums text-neutral-900">{c.eci}</Td>}
+                {show("recommendation") && <Td><RecBadge r={c.recommendation} /></Td>}
+                {show("submitted") && <Td className="text-neutral-700">{fmtRel(c.submittedAt)}</Td>}
+                {show("time") && <Td className="tabular-nums text-neutral-700">{c.completionMinutes}m</Td>}
+                {show("status") && <Td><StatusChip s={c.status} h={c.hiringStatus} /></Td>}
+                <Td onClick={e => e.stopPropagation()}><RowMenu onOpen={() => onOpen(c)} onAction={onAction} /></Td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+    </div>
+  );
+}
+
+function RowMenu({ onOpen, onAction }: { onOpen: () => void; onAction: (l: string) => void }) {
+  const [open, setOpen] = useState(false);
+  const items = [
+    { label: "View Details", fn: onOpen },
+    { label: "Open Resume", fn: () => onAction("Resume opened") },
+    { label: "Download Report", fn: () => onAction("Report downloaded") },
+    { label: "Move to Interview", fn: () => onAction("Moved to Interview") },
+    { label: "Shortlist", fn: () => onAction("Shortlisted") },
+    { label: "Reject", fn: () => onAction("Rejected") },
+    { label: "Email Candidate", fn: () => onAction("Email sent") },
+    { label: "Copy Candidate Link", fn: () => onAction("Link copied") },
+    { label: "Add Note", fn: () => onAction("Note added") },
+  ];
+  return (
+    <div className="relative">
+      <button onClick={e => { e.stopPropagation(); setOpen(v => !v); }} className="rounded p-1 text-neutral-500 hover:bg-neutral-100 hover:text-neutral-900"><MoreHorizontal className="h-3.5 w-3.5" /></button>
+      {open && (
+        <>
+          <div className="fixed inset-0 z-30" onClick={() => setOpen(false)} />
+          <div className="absolute right-0 top-full z-40 mt-1 w-48 overflow-hidden rounded-xl border border-neutral-200 bg-white shadow-lg">
+            {items.map(it => (
+              <button key={it.label} onClick={() => { it.fn(); setOpen(false); }} className="block w-full px-3 py-2 text-left text-[12.5px] text-neutral-800 hover:bg-neutral-50">{it.label}</button>
+            ))}
+          </div>
+        </>
+      )}
+    </div>
+  );
+}
+
+function CandidateCard({ c, selected, onToggle, onOpen, onPreview, onAction }: {
+  c: Candidate; selected: boolean; onToggle: () => void; onOpen: () => void; onPreview: () => void; onAction: (l: string) => void;
+}) {
+  return (
+    <div className={`group relative overflow-hidden rounded-2xl border bg-white transition ${selected ? "border-neutral-900" : "border-neutral-200 hover:border-neutral-300"}`}>
+      <div className="p-4">
+        <div className="flex items-start gap-3">
+          <input type="checkbox" checked={selected} onChange={onToggle} className="mt-1" />
+          <button onClick={onPreview} className="min-w-0 flex-1 text-left">
+            <div className="flex items-center gap-2.5">
+              <Avatar name={c.name} hue={c.avatarHue} size="lg" />
+              <div className="min-w-0">
+                <div className="truncate text-[14px] font-medium text-neutral-900">{c.name}</div>
+                <div className="truncate text-[11px] text-neutral-500">{c.company} · {experienceBucket(c.experience)}</div>
+              </div>
+            </div>
+          </button>
+          <RecBadge r={c.recommendation} />
+        </div>
+        <dl className="mt-4 grid grid-cols-2 gap-1 text-[11px] text-neutral-600">
+          <span className="truncate">{c.email}</span>
+          <span className="truncate text-right">{c.phone}</span>
+        </dl>
+        <div className="mt-4 grid grid-cols-4 gap-1.5">
+          <MiniScore label="Labs" v={c.labsScore} />
+          <MiniScore label="Assess" v={c.assessmentScore} />
+          <MiniScore label="Vitarka" v={c.vitarkaScore} />
+          <MiniScore label="ECI" v={c.eci} highlight />
+        </div>
+        <div className="mt-3 flex items-center justify-between text-[11px] text-neutral-600">
+          <span>{fmtRel(c.submittedAt)} · {c.completionMinutes}m</span>
+          <StatusChip s={c.status} h={c.hiringStatus} compact />
+        </div>
+      </div>
+      <div className="flex items-center justify-between border-t border-neutral-100 bg-neutral-50 px-3 py-2 text-[11px]">
+        <button onClick={() => onAction("Resume opened")} className="text-neutral-700 hover:text-neutral-900 hover:underline">Resume</button>
+        <div className="flex items-center gap-1.5">
+          <button onClick={onPreview} className="rounded-md border border-neutral-200 bg-white px-2 py-1 text-neutral-800 hover:bg-neutral-100">Preview</button>
+          <button onClick={onOpen} className="rounded-md bg-neutral-900 px-2 py-1 text-white hover:bg-neutral-800">View Details</button>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function MiniScore({ label, v, highlight }: { label: string; v: number; highlight?: boolean }) {
+  return (
+    <div className={`rounded-lg border p-2 ${highlight ? "border-neutral-900 bg-neutral-900 text-white" : "border-neutral-200 bg-neutral-50"}`}>
+      <div className={`text-[9px] uppercase tracking-widest ${highlight ? "text-white/70" : "text-neutral-500"}`}>{label}</div>
+      <div className={`mt-0.5 text-[14px] font-medium tabular-nums ${highlight ? "text-white" : "text-neutral-900"}`}>{v}</div>
+    </div>
+  );
+}
+
+
 
 type SectionId = "status" | "hiring" | "rec" | "perf" | "background" | "dates" | "tags";
 const DRAWER_OPEN_KEY = "yuvro-drawer-open-section";
