@@ -181,7 +181,7 @@ function CandidateWorkspace() {
   return (
     <div className="min-h-screen">
       {/* Top header */}
-      <header className="border-b border-white/5 bg-white backdrop-blur">
+      <header className="bg-white border-b border-white/5 backdrop-blur">
         <div className="px-8 pt-6 pb-5">
           <Link
             to="/recruiter/evaluations/$id/workspace"
