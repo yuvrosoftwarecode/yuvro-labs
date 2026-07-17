@@ -193,10 +193,10 @@ function CandidateWorkspace() {
           </Link>
 
           <div className="mt-5 flex flex-wrap items-start justify-between gap-6">
-            <div className="flex min-w-0 items-start gap-4">
-              <Avatar name={candidate.name} hue={candidate.avatarHue} size="xl" />
+            <div className="flex flex-col min-w-0 items-start gap-4">
               <div className="min-w-0">
                 <div className="flex flex-wrap items-center gap-2">
+                  <Avatar name={candidate.name} hue={candidate.avatarHue} size="xl" />
                   <h1 className="text-[26px] font-medium leading-tight text-white">{candidate.name}</h1>
                   <RecBadge r={candidate.recommendation} />
                   <StatusPill s={decision} />
