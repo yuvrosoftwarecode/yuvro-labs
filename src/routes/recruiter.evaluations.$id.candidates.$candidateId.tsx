@@ -205,7 +205,7 @@ function CandidateWorkspace() {
                   {candidate.company} · {candidate.experience === 0 ? "Fresher" : `${candidate.experience}y`} ·{" "}
                   {detail.location}
                 </div>
-                <div className="mt-3 flex flex-wrap items-center gap-x-4 gap-y-1 text-[12px] text-neutral-300">
+                <div className="mt-8 flex flex-wrap items-center gap-x-4 gap-y-1 text-[12px] text-neutral-300">
                   <button
                     onClick={() => copy(candidate.email, "Email")}
                     className="inline-flex items-center gap-1.5 hover:text-white"
