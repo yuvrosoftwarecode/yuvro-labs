@@ -257,12 +257,17 @@
 /* --- Text --- */
 .recruiter-theme .text-neutral-100,
 .recruiter-theme .text-neutral-200 { color: var(--rec-fg) !important; }
-/* Keep text-white readable when paired with a dark background pill/button */
+/* Default text-white to the theme foreground so values stay legible on white cards */
+.recruiter-theme .text-white { color: var(--rec-fg) !important; }
+/* Keep text-white white when paired with a dark background pill/button */
 .recruiter-theme .bg-neutral-900.text-white,
 .recruiter-theme .bg-neutral-900 .text-white,
+.recruiter-theme .bg-neutral-800 .text-white,
 .recruiter-theme .bg-black.text-white,
 .recruiter-theme .bg-black .text-white,
+.recruiter-theme .bg-\[\#111217\] .text-white,
 .recruiter-theme [style*="background"].text-white { color: #ffffff !important; }
+
 
 .recruiter-theme .text-neutral-300 { color: var(--rec-fg-soft) !important; }
 .recruiter-theme .text-neutral-400 { color: var(--rec-muted) !important; }
