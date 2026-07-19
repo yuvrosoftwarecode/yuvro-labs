@@ -245,15 +245,6 @@ function CandidateWorkspace() {
                 >
                   Reject
                 </SecondaryAction>
-                <SecondaryAction
-                  icon={<Mail className="h-3.5 w-3.5" />}
-                  onClick={() => {
-                    act("email", "Emailed candidate");
-                    notify("Email drafted");
-                  }}
-                >
-                  Email
-                </SecondaryAction>
                 <SecondaryAction icon={<Download className="h-3.5 w-3.5" />} onClick={downloadReport}>
                   Report
                 </SecondaryAction>
