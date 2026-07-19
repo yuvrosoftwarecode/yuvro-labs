@@ -361,7 +361,7 @@ function OverviewPane({
             </ul>
           </div>
         </div>
-        <div className="grid grid-cols-3 gap-px bg-white/5">
+        <div className="grid grid-cols-3 gap-px bg-white/5 divide-x divide-white/10">
           <SubMetric label="Engineering Labs" value={candidate.labsScore} onClick={onGotoLabs} />
           <SubMetric label="Knowledge Assessment" value={candidate.assessmentScore} />
           <SubMetric label="Vitarka Discussion" value={candidate.vitarkaScore} onClick={onGotoVit} />
