@@ -216,7 +216,7 @@ function CandidateWorkspace() {
                 </div>
               </div>
             </div>
-
+            <div className="flex flex-col items-end gap-3">
               <div className="flex flex-wrap items-center justify-end gap-2">
                 <SecondaryAction icon={<Star className="h-3.5 w-3.5" />} onClick={() => doDecision("Shortlisted")}>
                   Shortlist
