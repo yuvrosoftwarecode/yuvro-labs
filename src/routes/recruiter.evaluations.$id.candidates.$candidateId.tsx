@@ -1288,8 +1288,8 @@ function SubMetric({ label, value, onClick }: { label: string; value: number; on
   return (
     <button
       onClick={onClick}
-      disabled={!onClick}
-      className="bg-neutral-950/50 px-4 py-4 text-left transition hover:bg-neutral-950/80 disabled:cursor-default"
+      {/* disabled={!onClick} */}
+      className="bg-neutral-950/50 px-4 py-4 text-left transition"
     >
       <div className="text-[10px] uppercase tracking-widest text-neutral-500">{label}</div>
       <div className={`mt-1 text-[22px] font-medium ${eciColor(value)}`}>
