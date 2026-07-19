@@ -1289,10 +1289,10 @@ function SubMetric({ label, value, onClick }: { label: string; value: number; on
     <button
       onClick={onClick}
       {/* disabled={!onClick} */}
-      className="bg-neutral-950/50 px-4 py-4 text-left transition"
+      className=" px-4 py-4 text-left transition"
     >
-      <div className="text-[10px] uppercase tracking-widest text-neutral-500">{label}</div>
-      <div className={`mt-1 text-[22px] font-medium ${eciColor(value)}`}>
+      <div className="text-[10px] uppercase tracking-widest text-black-500">{label}</div>
+      <div className={`mt-1 text-[22px] font-medium text-black`}>
         {value}
         <span className="text-[11px] text-neutral-500">/100</span>
       </div>
