@@ -2,21 +2,71 @@ import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { useEffect, useMemo, useRef, useState } from "react";
 import { z } from "zod";
 import {
-  ChevronLeft, Copy as CopyIcon, Mail, Download, FileSpreadsheet, FileText, MoreHorizontal,
-  Archive, Trash2, Pencil, Eye, Users, Clock, Search, SlidersHorizontal, LayoutGrid, Table as TableIcon,
-  ChevronDown, X, Check, Star, TrendingUp, Activity, ArrowUpRight, CircleDot, Plus, Bookmark, ArrowUpDown, Filter, Sparkles, GitCompare,
+  ChevronLeft,
+  Copy as CopyIcon,
+  Mail,
+  Download,
+  FileSpreadsheet,
+  FileText,
+  MoreHorizontal,
+  Archive,
+  Trash2,
+  Pencil,
+  Eye,
+  Users,
+  Clock,
+  Search,
+  SlidersHorizontal,
+  LayoutGrid,
+  Table as TableIcon,
+  ChevronDown,
+  X,
+  Check,
+  Star,
+  TrendingUp,
+  Activity,
+  ArrowUpRight,
+  CircleDot,
+  Plus,
+  Bookmark,
+  ArrowUpDown,
+  Filter,
+  Sparkles,
+  GitCompare,
 } from "lucide-react";
-import { getEvaluation, evaluationTotals, saveEvaluation, duplicateEvaluation, deleteEvaluation, Evaluation } from "@/lib/recruiter";
 import {
-  getCandidates, applyFilters, emptyFilters, activeFilterCount, vitarkaLabel, experienceBucket, completionBucket,
-  Candidate, CandidateFilters, SortKey, CandStatus, HiringStatus, Recommendation, VitarkaLabel,
+  getEvaluation,
+  evaluationTotals,
+  saveEvaluation,
+  duplicateEvaluation,
+  deleteEvaluation,
+  Evaluation,
+} from "@/lib/recruiter";
+import {
+  getCandidates,
+  applyFilters,
+  emptyFilters,
+  activeFilterCount,
+  vitarkaLabel,
+  experienceBucket,
+  completionBucket,
+  Candidate,
+  CandidateFilters,
+  SortKey,
+  CandStatus,
+  HiringStatus,
+  Recommendation,
+  VitarkaLabel,
 } from "@/lib/recruiterCandidates";
 import { computeAttentionGroups, loadViewed, loadNotedSet, type AttentionGroup } from "@/lib/recruiterCandidateDetail";
 import { IntelligenceTab } from "@/components/recruiter/IntelligenceTab";
 import { SettingsTab } from "@/components/recruiter/SettingsTab";
 
 const searchSchema = z.object({
-  tab: z.enum(["overview", "candidates", "intelligence", "attention", "settings"]).default("overview").catch("overview"),
+  tab: z
+    .enum(["overview", "candidates", "intelligence", "attention", "settings"])
+    .default("overview")
+    .catch("overview"),
 });
 
 const TAB_LABELS: Record<"overview" | "candidates" | "intelligence" | "attention" | "settings", string> = {
@@ -47,76 +97,200 @@ function Workspace() {
     else setEv(e);
   }, [id, nav]);
 
-  useEffect(() => { if (!toast) return; const t = setTimeout(() => setToast(null), 2200); return () => clearTimeout(t); }, [toast]);
+  useEffect(() => {
+    if (!toast) return;
+    const t = setTimeout(() => setToast(null), 2200);
+    return () => clearTimeout(t);
+  }, [toast]);
 
   if (!ev) return null;
 
   const candidates = getCandidates(ev.id);
   const totals = evaluationTotals(ev);
-  const goto = (t: typeof tab) => nav({ to: "/recruiter/evaluations/$id/workspace", params: { id }, search: { tab: t } });
+  const goto = (t: typeof tab) =>
+    nav({ to: "/recruiter/evaluations/$id/workspace", params: { id }, search: { tab: t } });
 
   const notify = (m: string) => setToast(m);
 
   const copyLink = async () => {
-    try { await navigator.clipboard.writeText(`${location.origin}/evaluation/${ev.id}`); notify("Public link copied"); }
-    catch { notify("Copy failed"); }
+    try {
+      await navigator.clipboard.writeText(`${location.origin}/evaluation/${ev.id}`);
+      notify("Public link copied");
+    } catch {
+      notify("Copy failed");
+    }
   };
   const download = (kind: "csv" | "xlsx" | "reports") => {
-    const rows = [["Candidate","Email","Phone","ECI","Labs","Assessment","Vitarka","Status","Hiring","Submitted"]]
-      .concat(candidates.map(c => [c.name, c.email, c.phone, String(c.eci), String(c.labsScore), String(c.assessmentScore), String(c.vitarkaScore), c.status, c.hiringStatus, new Date(c.submittedAt).toISOString()]));
-    const csv = rows.map(r => r.map(v => `"${String(v).replace(/"/g, '""')}"`).join(",")).join("\n");
+    const rows = [
+      ["Candidate", "Email", "Phone", "ECI", "Labs", "Assessment", "Vitarka", "Status", "Hiring", "Submitted"],
+    ].concat(
+      candidates.map((c) => [
+        c.name,
+        c.email,
+        c.phone,
+        String(c.eci),
+        String(c.labsScore),
+        String(c.assessmentScore),
+        String(c.vitarkaScore),
+        c.status,
+        c.hiringStatus,
+        new Date(c.submittedAt).toISOString(),
+      ]),
+    );
+    const csv = rows.map((r) => r.map((v) => `"${String(v).replace(/"/g, '""')}"`).join(",")).join("\n");
     const blob = new Blob([csv], { type: kind === "xlsx" ? "application/vnd.ms-excel" : "text/csv" });
-    const url = URL.createObjectURL(blob); const a = document.createElement("a");
-    a.href = url; a.download = `${ev.title.replace(/\s+/g, "-")}-${kind}.${kind === "xlsx" ? "xls" : "csv"}`; a.click();
-    URL.revokeObjectURL(url); notify(`Downloaded ${kind.toUpperCase()}`);
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = `${ev.title.replace(/\s+/g, "-")}-${kind}.${kind === "xlsx" ? "xls" : "csv"}`;
+    a.click();
+    URL.revokeObjectURL(url);
+    notify(`Downloaded ${kind.toUpperCase()}`);
   };
   const emailAll = () => notify("Email queued to invited candidates");
-  const onDuplicate = () => { const c = duplicateEvaluation(ev.id); if (c) { notify("Evaluation duplicated"); nav({ to: "/recruiter/evaluations/$id/workspace", params: { id: c.id } }); } };
-  const onArchive = () => { const c = { ...ev, status: "draft" as const }; saveEvaluation(c); setEv(c); notify("Evaluation archived"); };
-  const onDelete = () => { if (confirm("Delete this evaluation? This cannot be undone.")) { deleteEvaluation(ev.id); nav({ to: "/recruiter/evaluations" }); } };
+  const onDuplicate = () => {
+    const c = duplicateEvaluation(ev.id);
+    if (c) {
+      notify("Evaluation duplicated");
+      nav({ to: "/recruiter/evaluations/$id/workspace", params: { id: c.id } });
+    }
+  };
+  const onArchive = () => {
+    const c = { ...ev, status: "draft" as const };
+    saveEvaluation(c);
+    setEv(c);
+    notify("Evaluation archived");
+  };
+  const onDelete = () => {
+    if (confirm("Delete this evaluation? This cannot be undone.")) {
+      deleteEvaluation(ev.id);
+      nav({ to: "/recruiter/evaluations" });
+    }
+  };
 
   return (
     <div className="min-h-screen">
       {/* Top header */}
       <header className="border-b border-white/5 bg-white">
         <div className="mx-auto max-w-[1440px] px-8 pt-6 pb-4">
-          <Link to="/recruiter/evaluations" className="inline-flex items-center gap-1.5 text-[12px] text-neutral-500 hover:text-white">
+          <Link
+            to="/recruiter/evaluations"
+            className="inline-flex items-center gap-1.5 text-[12px] text-neutral-500 hover:text-white"
+          >
             <ChevronLeft className="h-3.5 w-3.5" /> All evaluations
           </Link>
           <div className="mt-4 flex flex-wrap items-start justify-between gap-4">
             <div className="min-w-0">
               <div className="flex items-center gap-2">
                 <StatusBadge status={ev.status} />
-                <span className="text-[11px] uppercase tracking-widest text-neutral-500">{ev.domain || "Uncategorized"} · Domain</span>
+                <span className="text-[11px] uppercase tracking-widest text-neutral-500">
+                  {ev.domain || "Uncategorized"} · Domain
+                </span>
               </div>
               <h1 className="mt-2 text-[32px] font-medium leading-tight tracking-tight text-white">{ev.title}</h1>
               <dl className="mt-3 flex flex-wrap items-center gap-x-6 gap-y-1 text-[12px] text-neutral-500">
-                <span>Created <b className="font-normal text-neutral-300">{fmtDate(ev.createdAt)}</b></span>
-                <span>Last modified <b className="font-normal text-neutral-300">{fmtRel(ev.createdAt)}</b></span>
-                <span>Created by <b className="font-normal text-neutral-300">Riya Recruiter</b></span>
-                <span>Duration <b className="font-normal text-neutral-300">{totals.minutes} min</b></span>
-                <span>Marks <b className="font-normal text-neutral-300">{totals.marks}</b></span>
-                <span>Candidate limit <b className="font-normal text-neutral-300">∞</b></span>
+                <span>
+                  Created <b className="font-normal text-neutral-300">{fmtDate(ev.createdAt)}</b>
+                </span>
+                <span>
+                  Last modified <b className="font-normal text-neutral-300">{fmtRel(ev.createdAt)}</b>
+                </span>
+                <span>
+                  Created by <b className="font-normal text-neutral-300">Riya Recruiter</b>
+                </span>
+                <span>
+                  Duration <b className="font-normal text-neutral-300">{totals.minutes} min</b>
+                </span>
+                <span>
+                  Marks <b className="font-normal text-neutral-300">{totals.marks}</b>
+                </span>
+                <span>
+                  Candidate limit <b className="font-normal text-neutral-300">∞</b>
+                </span>
               </dl>
             </div>
             <div className="flex flex-wrap items-center gap-2">
-              <HeaderBtn onClick={copyLink} icon={<CopyIcon className="h-3.5 w-3.5" />}>Copy Link</HeaderBtn>
-              <HeaderBtn onClick={() => notify("Invite dialog opened")} icon={<Mail className="h-3.5 w-3.5" />}>Invite Candidates</HeaderBtn>
-              <HeaderBtn onClick={() => download("reports")} icon={<Download className="h-3.5 w-3.5" />}>Download</HeaderBtn>
+              <HeaderBtn onClick={copyLink} icon={<CopyIcon className="h-3.5 w-3.5" />}>
+                Copy Link
+              </HeaderBtn>
+              <HeaderBtn onClick={() => notify("Invite dialog opened")} icon={<Mail className="h-3.5 w-3.5" />}>
+                Invite Candidates
+              </HeaderBtn>
+              <HeaderBtn onClick={() => download("reports")} icon={<Download className="h-3.5 w-3.5" />}>
+                Download
+              </HeaderBtn>
               <div className="relative">
-                <HeaderBtn onClick={() => setMoreOpen(v => !v)} icon={<MoreHorizontal className="h-3.5 w-3.5" />}>More</HeaderBtn>
+                <HeaderBtn onClick={() => setMoreOpen((v) => !v)} icon={<MoreHorizontal className="h-3.5 w-3.5" />}>
+                  More
+                </HeaderBtn>
                 {moreOpen && (
                   <>
                     <div className="fixed inset-0 z-10" onClick={() => setMoreOpen(false)} />
                     <div className="absolute right-0 top-full z-20 mt-1 w-56 overflow-hidden rounded-lg border border-white/10 bg-neutral-950 shadow-2xl">
-                      <MenuItem onClick={() => { download("csv"); setMoreOpen(false); }} icon={<FileText className="h-3.5 w-3.5" />}>Export CSV</MenuItem>
-                      <MenuItem onClick={() => { download("xlsx"); setMoreOpen(false); }} icon={<FileSpreadsheet className="h-3.5 w-3.5" />}>Export Excel</MenuItem>
-                      <MenuItem onClick={() => { emailAll(); setMoreOpen(false); }} icon={<Mail className="h-3.5 w-3.5" />}>Email Candidates</MenuItem>
-                      <MenuItem onClick={() => { onDuplicate(); setMoreOpen(false); }} icon={<CopyIcon className="h-3.5 w-3.5" />}>Duplicate Evaluation</MenuItem>
-                      <MenuItem onClick={() => { nav({ to: "/recruiter/evaluations/$id", params: { id: ev.id } }); }} icon={<Pencil className="h-3.5 w-3.5" />}>Edit Evaluation</MenuItem>
+                      <MenuItem
+                        onClick={() => {
+                          download("csv");
+                          setMoreOpen(false);
+                        }}
+                        icon={<FileText className="h-3.5 w-3.5" />}
+                      >
+                        Export CSV
+                      </MenuItem>
+                      <MenuItem
+                        onClick={() => {
+                          download("xlsx");
+                          setMoreOpen(false);
+                        }}
+                        icon={<FileSpreadsheet className="h-3.5 w-3.5" />}
+                      >
+                        Export Excel
+                      </MenuItem>
+                      <MenuItem
+                        onClick={() => {
+                          emailAll();
+                          setMoreOpen(false);
+                        }}
+                        icon={<Mail className="h-3.5 w-3.5" />}
+                      >
+                        Email Candidates
+                      </MenuItem>
+                      <MenuItem
+                        onClick={() => {
+                          onDuplicate();
+                          setMoreOpen(false);
+                        }}
+                        icon={<CopyIcon className="h-3.5 w-3.5" />}
+                      >
+                        Duplicate Evaluation
+                      </MenuItem>
+                      <MenuItem
+                        onClick={() => {
+                          nav({ to: "/recruiter/evaluations/$id", params: { id: ev.id } });
+                        }}
+                        icon={<Pencil className="h-3.5 w-3.5" />}
+                      >
+                        Edit Evaluation
+                      </MenuItem>
                       <div className="h-px bg-white/5" />
-                      <MenuItem onClick={() => { onArchive(); setMoreOpen(false); }} icon={<Archive className="h-3.5 w-3.5" />}>Archive</MenuItem>
-                      <MenuItem onClick={() => { onDelete(); setMoreOpen(false); }} icon={<Trash2 className="h-3.5 w-3.5" />} danger>Delete</MenuItem>
+                      <MenuItem
+                        onClick={() => {
+                          onArchive();
+                          setMoreOpen(false);
+                        }}
+                        icon={<Archive className="h-3.5 w-3.5" />}
+                      >
+                        Archive
+                      </MenuItem>
+                      <MenuItem
+                        onClick={() => {
+                          onDelete();
+                          setMoreOpen(false);
+                        }}
+                        icon={<Trash2 className="h-3.5 w-3.5" />}
+                        danger
+                      >
+                        Delete
+                      </MenuItem>
                     </div>
                   </>
                 )}
@@ -126,7 +300,7 @@ function Workspace() {
 
           {/* Tabs */}
           <nav className="mt-6 flex items-center gap-1">
-            {(["overview","candidates","intelligence","attention","settings"] as const).map(t => (
+            {(["overview", "candidates", "intelligence", "attention", "settings"] as const).map((t) => (
               <button
                 key={t}
                 onClick={() => goto(t)}
@@ -159,23 +333,51 @@ function Workspace() {
 
 // ============================ OVERVIEW ============================
 
-function OverviewTab({ ev, candidates, onGoto, notify }: { ev: Evaluation; candidates: Candidate[]; onGoto: (t: "candidates" | "overview" | "insights" | "reports" | "settings") => void; notify: (m: string) => void }) {
+function OverviewTab({
+  ev,
+  candidates,
+  onGoto,
+  notify,
+}: {
+  ev: Evaluation;
+  candidates: Candidate[];
+  onGoto: (t: "candidates" | "overview" | "insights" | "reports" | "settings") => void;
+  notify: (m: string) => void;
+}) {
   const stats = useMemo(() => {
     const invited = candidates.length;
-    const submitted = candidates.filter(c => c.status === "Submitted").length;
-    const completed = candidates.filter(c => c.status === "Completed").length;
-    const inProgress = candidates.filter(c => c.status === "In Progress").length;
-    const notStarted = candidates.filter(c => c.status === "Not Started").length;
-    const expired = candidates.filter(c => c.status === "Expired").length;
-    const pending = candidates.filter(c => c.hiringStatus === "Pending Review").length;
-    const shortlisted = candidates.filter(c => c.hiringStatus === "Shortlisted").length;
-    const interview = candidates.filter(c => c.hiringStatus === "Interview Scheduled").length;
-    const selected = candidates.filter(c => c.hiringStatus === "Selected").length;
-    const rejected = candidates.filter(c => c.hiringStatus === "Rejected").length;
-    const submittedList = candidates.filter(c => c.status === "Submitted" || c.status === "Completed");
-    const avgEci = submittedList.length ? Math.round(submittedList.reduce((a, c) => a + c.eci, 0) / submittedList.length) : 0;
-    const avgTime = submittedList.length ? Math.round(submittedList.reduce((a, c) => a + c.completionMinutes, 0) / submittedList.length) : 0;
-    return { invited, submitted, completed, inProgress, notStarted, expired, pending, shortlisted, interview, selected, rejected, avgEci, avgTime };
+    const submitted = candidates.filter((c) => c.status === "Submitted").length;
+    const completed = candidates.filter((c) => c.status === "Completed").length;
+    const inProgress = candidates.filter((c) => c.status === "In Progress").length;
+    const notStarted = candidates.filter((c) => c.status === "Not Started").length;
+    const expired = candidates.filter((c) => c.status === "Expired").length;
+    const pending = candidates.filter((c) => c.hiringStatus === "Pending Review").length;
+    const shortlisted = candidates.filter((c) => c.hiringStatus === "Shortlisted").length;
+    const interview = candidates.filter((c) => c.hiringStatus === "Interview Scheduled").length;
+    const selected = candidates.filter((c) => c.hiringStatus === "Selected").length;
+    const rejected = candidates.filter((c) => c.hiringStatus === "Rejected").length;
+    const submittedList = candidates.filter((c) => c.status === "Submitted" || c.status === "Completed");
+    const avgEci = submittedList.length
+      ? Math.round(submittedList.reduce((a, c) => a + c.eci, 0) / submittedList.length)
+      : 0;
+    const avgTime = submittedList.length
+      ? Math.round(submittedList.reduce((a, c) => a + c.completionMinutes, 0) / submittedList.length)
+      : 0;
+    return {
+      invited,
+      submitted,
+      completed,
+      inProgress,
+      notStarted,
+      expired,
+      pending,
+      shortlisted,
+      interview,
+      selected,
+      rejected,
+      avgEci,
+      avgTime,
+    };
   }, [candidates]);
 
   const activity = useMemo(() => buildActivity(candidates), [candidates]);
@@ -186,11 +388,35 @@ function OverviewTab({ ev, candidates, onGoto, notify }: { ev: Evaluation; candi
       <section>
         <SectionTitle>Quick actions</SectionTitle>
         <div className="mt-3 grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-5">
-          <QuickAction label="Invite Candidates" icon={<Mail className="h-4 w-4" />} onClick={() => notify("Invite dialog opened")} />
-          <QuickAction label="Copy Public Link" icon={<CopyIcon className="h-4 w-4" />} onClick={() => { navigator.clipboard.writeText(`${location.origin}/evaluation/${ev.id}`); notify("Public link copied"); }} />
-          <QuickAction label="Email Candidates" icon={<Mail className="h-4 w-4" />} onClick={() => notify("Email queued")} />
-          <QuickAction label="Download Reports" icon={<Download className="h-4 w-4" />} onClick={() => notify("Report bundle prepared")} />
-          <QuickAction label="View Candidates" icon={<Users className="h-4 w-4" />} onClick={() => onGoto("candidates")} accent />
+          <QuickAction
+            label="Invite Candidates"
+            icon={<Mail className="h-4 w-4" />}
+            onClick={() => notify("Invite dialog opened")}
+          />
+          <QuickAction
+            label="Copy Public Link"
+            icon={<CopyIcon className="h-4 w-4" />}
+            onClick={() => {
+              navigator.clipboard.writeText(`${location.origin}/evaluation/${ev.id}`);
+              notify("Public link copied");
+            }}
+          />
+          <QuickAction
+            label="Email Candidates"
+            icon={<Mail className="h-4 w-4" />}
+            onClick={() => notify("Email queued")}
+          />
+          <QuickAction
+            label="Download Reports"
+            icon={<Download className="h-4 w-4" />}
+            onClick={() => notify("Report bundle prepared")}
+          />
+          <QuickAction
+            label="View Candidates"
+            icon={<Users className="h-4 w-4" />}
+            onClick={() => onGoto("candidates")}
+            accent
+          />
         </div>
       </section>
 
@@ -220,9 +446,24 @@ function OverviewTab({ ev, candidates, onGoto, notify }: { ev: Evaluation; candi
       <section>
         <SectionTitle>Signal</SectionTitle>
         <div className="mt-3 grid grid-cols-1 gap-3 md:grid-cols-3">
-          <BigStat label="Avg Engineering Capability Index" value={stats.avgEci} suffix="/100" icon={<TrendingUp className="h-3.5 w-3.5" />} />
-          <BigStat label="Avg Completion Time" value={stats.avgTime} suffix=" min" icon={<Clock className="h-3.5 w-3.5" />} />
-          <BigStat label="Avg Evaluation Duration" value={evaluationTotals(ev).minutes} suffix=" min" icon={<Activity className="h-3.5 w-3.5" />} />
+          <BigStat
+            label="Avg Engineering Capability Index"
+            value={stats.avgEci}
+            suffix="/100"
+            icon={<TrendingUp className="h-3.5 w-3.5" />}
+          />
+          <BigStat
+            label="Avg Completion Time"
+            value={stats.avgTime}
+            suffix=" min"
+            icon={<Clock className="h-3.5 w-3.5" />}
+          />
+          <BigStat
+            label="Avg Evaluation Duration"
+            value={evaluationTotals(ev).minutes}
+            suffix=" min"
+            icon={<Activity className="h-3.5 w-3.5" />}
+          />
         </div>
       </section>
 
@@ -230,9 +471,11 @@ function OverviewTab({ ev, candidates, onGoto, notify }: { ev: Evaluation; candi
         <div className="lg:col-span-2">
           <SectionTitle>Recent activity</SectionTitle>
           <div className="mt-3 divide-y divide-white/5 overflow-hidden rounded-xl border border-white/5">
-            {activity.slice(0, 10).map(a => (
+            {activity.slice(0, 10).map((a) => (
               <div key={a.id} className="flex items-center gap-3 px-4 py-3">
-                <CircleDot className={`h-3 w-3 ${a.tone === "good" ? "text-emerald-400" : a.tone === "warn" ? "text-amber-400" : a.tone === "bad" ? "text-red-400" : "text-neutral-500"}`} />
+                <CircleDot
+                  className={`h-3 w-3 ${a.tone === "good" ? "text-emerald-400" : a.tone === "warn" ? "text-amber-400" : a.tone === "bad" ? "text-red-400" : "text-neutral-500"}`}
+                />
                 <div className="flex-1 text-[13px] text-neutral-200">{a.text}</div>
                 <div className="text-[11px] text-neutral-500">{a.time}</div>
               </div>
@@ -243,8 +486,15 @@ function OverviewTab({ ev, candidates, onGoto, notify }: { ev: Evaluation; candi
           <SectionTitle>Next best action</SectionTitle>
           <div className="mt-3 rounded-xl border border-white/5 p-4">
             <div className="text-[13px] text-white">{stats.pending} candidates pending review</div>
-            <p className="mt-1 text-[12px] text-neutral-500">Review high-signal submissions first to shorten your time to shortlist.</p>
-            <button onClick={() => onGoto("candidates")} className="mt-4 inline-flex items-center gap-1.5 text-[12px] text-emerald-400 hover:underline">Review candidates <ArrowUpRight className="h-3.5 w-3.5" /></button>
+            <p className="mt-1 text-[12px] text-neutral-500">
+              Review high-signal submissions first to shorten your time to shortlist.
+            </p>
+            <button
+              onClick={() => onGoto("candidates")}
+              className="mt-4 inline-flex items-center gap-1.5 text-[12px] text-emerald-400 hover:underline"
+            >
+              Review candidates <ArrowUpRight className="h-3.5 w-3.5" />
+            </button>
           </div>
         </div>
       </section>
@@ -257,37 +507,93 @@ function OverviewTab({ ev, candidates, onGoto, notify }: { ev: Evaluation; candi
 const VIEW_KEY = "yuvro-cand-view";
 const SAVED_VIEWS_KEY = "yuvro-cand-saved-views";
 
-interface SavedView { id: string; name: string; filters: SerializedFilters; }
+interface SavedView {
+  id: string;
+  name: string;
+  filters: SerializedFilters;
+}
 interface SerializedFilters {
-  search: string; status: string[]; hiring: string[]; recommendation: string[];
-  eciMin: number | null; labsMin: number | null; assessMin: number | null;
-  vitarka: string[]; dateRange: string; completion: string[]; experience: string[];
-  colleges: string[]; companies: string[]; skills: string[]; tags: string[]; domains: string[];
+  search: string;
+  status: string[];
+  hiring: string[];
+  recommendation: string[];
+  eciMin: number | null;
+  labsMin: number | null;
+  assessMin: number | null;
+  vitarka: string[];
+  dateRange: string;
+  completion: string[];
+  experience: string[];
+  colleges: string[];
+  companies: string[];
+  skills: string[];
+  tags: string[];
+  domains: string[];
 }
 
 const DEFAULT_VIEWS: { id: string; name: string; build: () => CandidateFilters }[] = [
   { id: "default", name: "Default", build: () => emptyFilters() },
-  { id: "needs-review", name: "Needs Review", build: () => ({ ...emptyFilters(), hiring: new Set(["Pending Review" as HiringStatus]) }) },
-  { id: "strong", name: "Strong Candidates", build: () => ({ ...emptyFilters(), recommendation: new Set(["Strong Hire","Hire"] as Recommendation[]) }) },
-  { id: "pending", name: "Pending", build: () => ({ ...emptyFilters(), status: new Set(["In Progress","Not Started"] as CandStatus[]) }) },
-  { id: "selected", name: "Selected", build: () => ({ ...emptyFilters(), hiring: new Set(["Selected" as HiringStatus]) }) },
-  { id: "rejected", name: "Rejected", build: () => ({ ...emptyFilters(), hiring: new Set(["Rejected" as HiringStatus]) }) },
-  { id: "interview", name: "Interview", build: () => ({ ...emptyFilters(), hiring: new Set(["Interview Scheduled" as HiringStatus]) }) },
+  {
+    id: "needs-review",
+    name: "Needs Review",
+    build: () => ({ ...emptyFilters(), hiring: new Set(["Pending Review" as HiringStatus]) }),
+  },
+  {
+    id: "strong",
+    name: "Strong Candidates",
+    build: () => ({ ...emptyFilters(), recommendation: new Set(["Strong Hire", "Hire"] as Recommendation[]) }),
+  },
+  {
+    id: "pending",
+    name: "Pending",
+    build: () => ({ ...emptyFilters(), status: new Set(["In Progress", "Not Started"] as CandStatus[]) }),
+  },
+  {
+    id: "selected",
+    name: "Selected",
+    build: () => ({ ...emptyFilters(), hiring: new Set(["Selected" as HiringStatus]) }),
+  },
+  {
+    id: "rejected",
+    name: "Rejected",
+    build: () => ({ ...emptyFilters(), hiring: new Set(["Rejected" as HiringStatus]) }),
+  },
+  {
+    id: "interview",
+    name: "Interview",
+    build: () => ({ ...emptyFilters(), hiring: new Set(["Interview Scheduled" as HiringStatus]) }),
+  },
 ];
 
 // ------- Pipeline definition (Level 1) -------
 type PipelineId = "all" | "needs" | "strong" | "interview" | "selected" | "rejected";
 const PIPELINE: { id: PipelineId; label: string; match: (c: Candidate) => boolean }[] = [
-  { id: "all",       label: "All",           match: () => true },
-  { id: "needs",     label: "Needs Review",  match: c => c.hiringStatus === "Pending Review" && (c.status === "Submitted" || c.status === "Completed") },
-  { id: "strong",    label: "Strong Hire",   match: c => c.recommendation === "Strong Hire" },
-  { id: "interview", label: "Interview",     match: c => c.hiringStatus === "Interview Scheduled" },
-  { id: "selected",  label: "Selected",      match: c => c.hiringStatus === "Selected" },
-  { id: "rejected",  label: "Rejected",      match: c => c.hiringStatus === "Rejected" },
+  { id: "all", label: "All", match: () => true },
+  {
+    id: "needs",
+    label: "Needs Review",
+    match: (c) => c.hiringStatus === "Pending Review" && (c.status === "Submitted" || c.status === "Completed"),
+  },
+  { id: "strong", label: "Strong Hire", match: (c) => c.recommendation === "Strong Hire" },
+  { id: "interview", label: "Interview", match: (c) => c.hiringStatus === "Interview Scheduled" },
+  { id: "selected", label: "Selected", match: (c) => c.hiringStatus === "Selected" },
+  { id: "rejected", label: "Rejected", match: (c) => c.hiringStatus === "Rejected" },
 ];
 
 // ------- Column definitions -------
-type ColKey = "candidate" | "email" | "phone" | "experience" | "labs" | "assessment" | "vitarka" | "eci" | "recommendation" | "submitted" | "time" | "status";
+type ColKey =
+  | "candidate"
+  | "email"
+  | "phone"
+  | "experience"
+  | "labs"
+  | "assessment"
+  | "vitarka"
+  | "eci"
+  | "recommendation"
+  | "submitted"
+  | "time"
+  | "status";
 const ALL_COLS: { key: ColKey; label: string; always?: boolean }[] = [
   { key: "candidate", label: "Candidate", always: true },
   { key: "email", label: "Email" },
@@ -302,15 +608,36 @@ const ALL_COLS: { key: ColKey; label: string; always?: boolean }[] = [
   { key: "time", label: "Time" },
   { key: "status", label: "Status" },
 ];
-const DEFAULT_COLS: ColKey[] = ["candidate","experience","labs","assessment","vitarka","eci","recommendation","submitted","time","status"];
+const DEFAULT_COLS: ColKey[] = [
+  "candidate",
+  "experience",
+  "labs",
+  "assessment",
+  "vitarka",
+  "eci",
+  "recommendation",
+  "submitted",
+  "time",
+  "status",
+];
 const COLS_KEY = "yuvro-cand-cols";
 
-function CandidatesTab({ evId, candidates, notify }: { evId: string; candidates: Candidate[]; notify: (m: string) => void }) {
+function CandidatesTab({
+  evId,
+  candidates,
+  notify,
+}: {
+  evId: string;
+  candidates: Candidate[];
+  notify: (m: string) => void;
+}) {
   const nav = useNavigate();
   const [filters, setFilters] = useState<CandidateFilters>(emptyFilters());
   const [pipeline, setPipeline] = useState<PipelineId>("all");
   const [sort, setSort] = useState<SortKey>("newest");
-  const [view, setView] = useState<"card" | "table">(() => (typeof window !== "undefined" ? ((localStorage.getItem(VIEW_KEY) as any) || "table") : "table"));
+  const [view, setView] = useState<"card" | "table">(() =>
+    typeof window !== "undefined" ? (localStorage.getItem(VIEW_KEY) as any) || "table" : "table",
+  );
   const [page, setPage] = useState(1);
   const [perPage, setPerPage] = useState(50);
   const [selected, setSelected] = useState<Set<string>>(new Set());
@@ -322,54 +649,103 @@ function CandidatesTab({ evId, candidates, notify }: { evId: string; candidates:
   const [drawerOpen, setDrawerOpen] = useState(false);
   const [cols, setCols] = useState<Set<ColKey>>(() => {
     if (typeof window === "undefined") return new Set(DEFAULT_COLS);
-    try { const raw = localStorage.getItem(COLS_KEY); if (raw) return new Set(JSON.parse(raw)); } catch {}
+    try {
+      const raw = localStorage.getItem(COLS_KEY);
+      if (raw) return new Set(JSON.parse(raw));
+    } catch {}
     return new Set(DEFAULT_COLS);
   });
 
-  useEffect(() => { try { const raw = localStorage.getItem(SAVED_VIEWS_KEY); if (raw) setSavedViews(JSON.parse(raw)); } catch {} }, []);
-  useEffect(() => { try { localStorage.setItem(VIEW_KEY, view); } catch {} }, [view]);
-  useEffect(() => { try { localStorage.setItem(COLS_KEY, JSON.stringify([...cols])); } catch {} }, [cols]);
-  useEffect(() => { setViewed(loadViewed(evId)); setNoted(loadNotedSet(evId, candidates.map(c => c.id))); }, [evId, candidates]);
+  useEffect(() => {
+    try {
+      const raw = localStorage.getItem(SAVED_VIEWS_KEY);
+      if (raw) setSavedViews(JSON.parse(raw));
+    } catch {}
+  }, []);
+  useEffect(() => {
+    try {
+      localStorage.setItem(VIEW_KEY, view);
+    } catch {}
+  }, [view]);
+  useEffect(() => {
+    try {
+      localStorage.setItem(COLS_KEY, JSON.stringify([...cols]));
+    } catch {}
+  }, [cols]);
+  useEffect(() => {
+    setViewed(loadViewed(evId));
+    setNoted(
+      loadNotedSet(
+        evId,
+        candidates.map((c) => c.id),
+      ),
+    );
+  }, [evId, candidates]);
 
   // Apply pipeline first (as a lens over the full set), then filters + sort
-  const pipelineFn = PIPELINE.find(p => p.id === pipeline)!.match;
+  const pipelineFn = PIPELINE.find((p) => p.id === pipeline)!.match;
   const pipelineBase = useMemo(() => candidates.filter(pipelineFn), [candidates, pipeline]);
   const filtered = useMemo(() => applyFilters(pipelineBase, filters, sort), [pipelineBase, filters, sort]);
 
   const pipelineCounts = useMemo(() => {
     const withFilters = (c: Candidate) => applyFilters([c], filters, sort).length === 1;
-    return Object.fromEntries(PIPELINE.map(p => [
-      p.id,
-      candidates.filter(c => p.match(c) && withFilters(c)).length,
-    ])) as Record<PipelineId, number>;
+    return Object.fromEntries(
+      PIPELINE.map((p) => [p.id, candidates.filter((c) => p.match(c) && withFilters(c)).length]),
+    ) as Record<PipelineId, number>;
   }, [candidates, filters, sort]);
 
   const totalPages = Math.max(1, Math.ceil(filtered.length / perPage));
   const paged = filtered.slice((page - 1) * perPage, page * perPage);
-  useEffect(() => { setPage(1); }, [filters, sort, perPage, pipeline]);
+  useEffect(() => {
+    setPage(1);
+  }, [filters, sort, perPage, pipeline]);
 
   const applySavedView = (id: string) => {
-    const saved = savedViews.find(v => v.id === id);
-    if (saved) { setFilters(deserializeFilters(saved.filters)); setActiveSavedView(id); }
+    const saved = savedViews.find((v) => v.id === id);
+    if (saved) {
+      setFilters(deserializeFilters(saved.filters));
+      setActiveSavedView(id);
+    }
   };
   const saveCurrentView = () => {
-    const name = prompt("Name this view"); if (!name) return;
-    const v: SavedView = { id: "u-" + Math.random().toString(36).slice(2, 8), name, filters: serializeFilters(filters) };
-    const next = [...savedViews, v]; setSavedViews(next);
-    try { localStorage.setItem(SAVED_VIEWS_KEY, JSON.stringify(next)); } catch {}
-    setActiveSavedView(v.id); notify("View saved");
+    const name = prompt("Name this view");
+    if (!name) return;
+    const v: SavedView = {
+      id: "u-" + Math.random().toString(36).slice(2, 8),
+      name,
+      filters: serializeFilters(filters),
+    };
+    const next = [...savedViews, v];
+    setSavedViews(next);
+    try {
+      localStorage.setItem(SAVED_VIEWS_KEY, JSON.stringify(next));
+    } catch {}
+    setActiveSavedView(v.id);
+    notify("View saved");
   };
 
-  const toggleSelect = (id: string) => setSelected(s => { const n = new Set(s); n.has(id) ? n.delete(id) : n.add(id); return n; });
-  const toggleAll = () => setSelected(s => s.size === paged.length ? new Set() : new Set(paged.map(c => c.id)));
-  const openDetails = (c: Candidate) => nav({ to: "/recruiter/evaluations/$id/candidates/$candidateId", params: { id: evId, candidateId: c.id } });
-  const bulk = (label: string) => { notify(`${label} applied to ${selected.size} candidate${selected.size === 1 ? "" : "s"}`); setSelected(new Set()); };
+  const toggleSelect = (id: string) =>
+    setSelected((s) => {
+      const n = new Set(s);
+      n.has(id) ? n.delete(id) : n.add(id);
+      return n;
+    });
+  const toggleAll = () => setSelected((s) => (s.size === paged.length ? new Set() : new Set(paged.map((c) => c.id))));
+  const openDetails = (c: Candidate) =>
+    nav({ to: "/recruiter/evaluations/$id/candidates/$candidateId", params: { id: evId, candidateId: c.id } });
+  const bulk = (label: string) => {
+    notify(`${label} applied to ${selected.size} candidate${selected.size === 1 ? "" : "s"}`);
+    setSelected(new Set());
+  };
 
-  const colleges = useMemo(() => Array.from(new Set(candidates.map(c => c.college))).sort(), [candidates]);
-  const companies = useMemo(() => Array.from(new Set(candidates.map(c => c.company))).sort(), [candidates]);
+  const colleges = useMemo(() => Array.from(new Set(candidates.map((c) => c.college))).sort(), [candidates]);
+  const companies = useMemo(() => Array.from(new Set(candidates.map((c) => c.company))).sort(), [candidates]);
 
   const activeChips = useMemo(() => buildActiveChips(filters), [filters]);
-  const attention = useMemo(() => computeAttentionGroups(candidates, viewed, noted).slice(0, 4), [candidates, viewed, noted]);
+  const attention = useMemo(
+    () => computeAttentionGroups(candidates, viewed, noted).slice(0, 4),
+    [candidates, viewed, noted],
+  );
 
   return (
     <div className="space-y-6">
@@ -378,29 +754,42 @@ function CandidatesTab({ evId, candidates, notify }: { evId: string; candidates:
         <div className="flex flex-wrap items-end justify-between gap-4 px-6 pt-6">
           <div>
             <div className="text-[11px] uppercase tracking-widest text-neutral-500">Candidates</div>
-            <div className="mt-1 text-[22px] font-medium tracking-tight text-neutral-900">{candidates.length.toLocaleString()} Total Candidates</div>
+            <div className="mt-1 text-[22px] font-medium tracking-tight text-neutral-900">
+              {candidates.length.toLocaleString()} Total Candidates
+            </div>
           </div>
           {savedViews.length > 0 && (
             <div className="flex flex-wrap items-center gap-1.5">
               <span className="text-[11px] uppercase tracking-widest text-neutral-500">Saved views</span>
-              {savedViews.map(v => (
-                <button key={v.id} onClick={() => applySavedView(v.id)}
-                  className={`inline-flex items-center gap-1 rounded-md border px-2 py-1 text-[11px] transition ${activeSavedView === v.id ? "border-neutral-900 bg-neutral-900 text-white" : "border-neutral-200 text-neutral-700 hover:border-neutral-300"}`}>
-                  <Bookmark className="h-3 w-3" />{v.name}
+              {savedViews.map((v) => (
+                <button
+                  key={v.id}
+                  onClick={() => applySavedView(v.id)}
+                  className={`inline-flex items-center gap-1 rounded-md border px-2 py-1 text-[11px] transition ${activeSavedView === v.id ? "border-neutral-900 bg-neutral-900 text-white" : "border-neutral-200 text-neutral-700 hover:border-neutral-300"}`}
+                >
+                  <Bookmark className="h-3 w-3" />
+                  {v.name}
                 </button>
               ))}
             </div>
           )}
         </div>
         <nav className="mt-5 flex items-end gap-6 overflow-x-auto border-t border-neutral-100 px-6">
-          {PIPELINE.map(p => {
+          {PIPELINE.map((p) => {
             const active = pipeline === p.id;
             const count = pipelineCounts[p.id] ?? 0;
             return (
-              <button key={p.id} onClick={() => setPipeline(p.id)}
-                className={`relative -mb-px flex items-center gap-2 whitespace-nowrap py-3.5 text-[13px] transition ${active ? "text-neutral-900" : "text-neutral-500 hover:text-neutral-800"}`}>
+              <button
+                key={p.id}
+                onClick={() => setPipeline(p.id)}
+                className={`relative -mb-px flex items-center gap-2 whitespace-nowrap py-3.5 text-[13px] transition ${active ? "text-neutral-900" : "text-neutral-500 hover:text-neutral-800"}`}
+              >
                 <span className={active ? "font-medium" : ""}>{p.label}</span>
-                <span className={`rounded-full px-1.5 py-0.5 text-[10px] font-medium tabular-nums ${active ? "bg-neutral-900 text-white" : "bg-neutral-100 text-neutral-600"}`}>{count.toLocaleString()}</span>
+                <span
+                  className={`rounded-full px-1.5 py-0.5 text-[10px] font-medium tabular-nums ${active ? "bg-neutral-900 text-white" : "bg-neutral-100 text-neutral-600"}`}
+                >
+                  {count.toLocaleString()}
+                </span>
                 {active && <span className="absolute inset-x-0 -bottom-px h-[2px] bg-neutral-900" />}
               </button>
             );
@@ -414,13 +803,15 @@ function CandidatesTab({ evId, candidates, notify }: { evId: string; candidates:
           <Search className="pointer-events-none absolute left-4 top-1/2 h-4 w-4 -translate-y-1/2 text-neutral-400" />
           <input
             value={filters.search}
-            onChange={e => setFilters(f => ({ ...f, search: e.target.value }))}
+            onChange={(e) => setFilters((f) => ({ ...f, search: e.target.value }))}
             placeholder="Search candidates by name, email, phone, candidate ID, college or company…"
             className="w-full rounded-xl bg-transparent py-3 pl-11 pr-11 text-[14px] text-neutral-900 placeholder-neutral-400 outline-none"
           />
           {filters.search && (
-            <button onClick={() => setFilters(f => ({ ...f, search: "" }))}
-              className="absolute right-3 top-1/2 -translate-y-1/2 rounded-md p-1 text-neutral-400 hover:bg-neutral-100 hover:text-neutral-700">
+            <button
+              onClick={() => setFilters((f) => ({ ...f, search: "" }))}
+              className="absolute right-3 top-1/2 -translate-y-1/2 rounded-md p-1 text-neutral-400 hover:bg-neutral-100 hover:text-neutral-700"
+            >
               <X className="h-4 w-4" />
             </button>
           )}
@@ -431,20 +822,39 @@ function CandidatesTab({ evId, candidates, notify }: { evId: string; candidates:
       {activeChips.length > 0 && (
         <section className="rounded-2xl border border-neutral-200 bg-white px-5 py-4">
           <div className="flex flex-wrap items-center gap-2">
-            <span className="text-[12px] text-neutral-500">Showing <b className="text-neutral-900 tabular-nums">{filtered.length.toLocaleString()}</b> candidates</span>
+            <span className="text-[12px] text-neutral-500">
+              Showing <b className="text-neutral-900 tabular-nums">{filtered.length.toLocaleString()}</b> candidates
+            </span>
             <span className="mx-1 h-3 w-px bg-neutral-200" />
             <span className="text-[11px] uppercase tracking-widest text-neutral-500">Applied</span>
-            {activeChips.map(chip => (
-              <span key={chip.key} className="inline-flex items-center gap-1.5 rounded-full border border-neutral-200 bg-neutral-50 px-2.5 py-1 text-[11px] text-neutral-800">
+            {activeChips.map((chip) => (
+              <span
+                key={chip.key}
+                className="inline-flex items-center gap-1.5 rounded-full border border-neutral-200 bg-neutral-50 px-2.5 py-1 text-[11px] text-neutral-800"
+              >
                 <span className="text-neutral-500">{chip.group}</span>
                 <span className="font-medium">{chip.value}</span>
-                <button onClick={() => setFilters(f => chip.remove(f))} className="ml-0.5 rounded-full p-0.5 text-neutral-400 hover:bg-neutral-200 hover:text-neutral-700"><X className="h-3 w-3" /></button>
+                <button
+                  onClick={() => setFilters((f) => chip.remove(f))}
+                  className="ml-0.5 rounded-full p-0.5 text-neutral-400 hover:bg-neutral-200 hover:text-neutral-700"
+                >
+                  <X className="h-3 w-3" />
+                </button>
               </span>
             ))}
-            <button onClick={() => { setFilters(emptyFilters()); setActiveSavedView(null); }}
-              className="ml-1 text-[11px] font-medium text-neutral-700 hover:text-neutral-900 hover:underline">Clear all</button>
-            <button onClick={saveCurrentView}
-              className="ml-auto inline-flex items-center gap-1 rounded-md border border-dashed border-neutral-300 px-2.5 py-1 text-[11px] text-neutral-600 hover:border-neutral-400 hover:text-neutral-900">
+            <button
+              onClick={() => {
+                setFilters(emptyFilters());
+                setActiveSavedView(null);
+              }}
+              className="ml-1 text-[11px] font-medium text-neutral-700 hover:text-neutral-900 hover:underline"
+            >
+              Clear all
+            </button>
+            <button
+              onClick={saveCurrentView}
+              className="ml-auto inline-flex items-center gap-1 rounded-md border border-dashed border-neutral-300 px-2.5 py-1 text-[11px] text-neutral-600 hover:border-neutral-400 hover:text-neutral-900"
+            >
               <Plus className="h-3 w-3" /> Save as view
             </button>
           </div>
@@ -458,13 +868,21 @@ function CandidatesTab({ evId, candidates, notify }: { evId: string; candidates:
             <div className="flex items-center gap-2 text-[11px] uppercase tracking-widest text-neutral-500">
               <Sparkles className="h-3.5 w-3.5 text-neutral-700" /> Needs your attention
             </div>
-            <span className="text-[11px] text-neutral-500">{attention.length} signal{attention.length === 1 ? "" : "s"}</span>
+            <span className="text-[11px] text-neutral-500">
+              {attention.length} signal{attention.length === 1 ? "" : "s"}
+            </span>
           </div>
           <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 xl:grid-cols-4">
-            {attention.map(g => (
-              <button key={g.id}
-                onClick={() => { const f = emptyFilters(); setFilters(f); notify(g.title); }}
-                className="group relative overflow-hidden rounded-2xl border border-neutral-200 bg-white p-4 text-left transition hover:border-neutral-300">
+            {attention.map((g) => (
+              <button
+                key={g.id}
+                onClick={() => {
+                  const f = emptyFilters();
+                  setFilters(f);
+                  notify(g.title);
+                }}
+                className="group relative overflow-hidden rounded-2xl border border-neutral-200 bg-white p-4 text-left transition hover:border-neutral-300"
+              >
                 <div className="flex items-start justify-between">
                   <div className="text-[20px] leading-none">{g.emoji}</div>
                   <ArrowUpRight className="h-3.5 w-3.5 text-neutral-300 transition group-hover:text-neutral-700" />
@@ -483,19 +901,36 @@ function CandidatesTab({ evId, candidates, notify }: { evId: string; candidates:
       {/* ═════════ LEVEL 4 — Toolbar ═════════ */}
       <section className="flex flex-wrap items-center justify-between gap-3">
         <div className="text-[12px] text-neutral-500">
-          Showing <b className="text-neutral-900 tabular-nums">{filtered.length.toLocaleString()}</b> of <b className="text-neutral-900 tabular-nums">{candidates.length.toLocaleString()}</b> candidates
+          Showing <b className="text-neutral-900 tabular-nums">{filtered.length.toLocaleString()}</b> of{" "}
+          <b className="text-neutral-900 tabular-nums">{candidates.length.toLocaleString()}</b> candidates
         </div>
         <div className="flex flex-wrap items-center gap-2">
-          <ToolbarBtn onClick={() => setDrawerOpen(true)} icon={<SlidersHorizontal className="h-3.5 w-3.5" />} count={activeFilterCount(filters)}>
+          <ToolbarBtn
+            onClick={() => setDrawerOpen(true)}
+            icon={<SlidersHorizontal className="h-3.5 w-3.5" />}
+            count={activeFilterCount(filters)}
+          >
             Advanced Filters
           </ToolbarBtn>
           <SortMenu value={sort} onChange={setSort} />
           <ColumnsMenu cols={cols} setCols={setCols} />
-          <ExportMenu candidates={filtered} selected={candidates.filter(c => selected.has(c.id))} notify={notify} />
+          <ExportMenu candidates={filtered} selected={candidates.filter((c) => selected.has(c.id))} notify={notify} />
           <div className="mx-1 h-5 w-px bg-neutral-200" />
           <div className="flex items-center overflow-hidden rounded-lg border border-neutral-200 bg-white">
-            <button onClick={() => setView("table")} className={`px-2 py-1.5 text-[12px] ${view === "table" ? "bg-neutral-900 text-white" : "text-neutral-600 hover:bg-neutral-50"}`} title="Table view"><TableIcon className="h-3.5 w-3.5" /></button>
-            <button onClick={() => setView("card")} className={`px-2 py-1.5 text-[12px] ${view === "card" ? "bg-neutral-900 text-white" : "text-neutral-600 hover:bg-neutral-50"}`} title="Card view"><LayoutGrid className="h-3.5 w-3.5" /></button>
+            <button
+              onClick={() => setView("table")}
+              className={`px-2 py-1.5 text-[12px] ${view === "table" ? "bg-neutral-900 text-white" : "text-neutral-600 hover:bg-neutral-50"}`}
+              title="Table view"
+            >
+              <TableIcon className="h-3.5 w-3.5" />
+            </button>
+            <button
+              onClick={() => setView("card")}
+              className={`px-2 py-1.5 text-[12px] ${view === "card" ? "bg-neutral-900 text-white" : "text-neutral-600 hover:bg-neutral-50"}`}
+              title="Card view"
+            >
+              <LayoutGrid className="h-3.5 w-3.5" />
+            </button>
           </div>
         </div>
       </section>
@@ -505,10 +940,19 @@ function CandidatesTab({ evId, candidates, notify }: { evId: string; candidates:
         <div className="flex flex-wrap items-center gap-2 rounded-xl border border-neutral-200 bg-white px-3 py-2">
           <div className="text-[12px] font-medium text-neutral-900">{selected.size} selected</div>
           <div className="mx-2 h-4 w-px bg-neutral-200" />
-          <BulkBtn onClick={() => {
+          <BulkBtn
+            onClick={() => {
               if (selected.size < 2 || selected.size > 4) return notify("Select 2 to 4 candidates to compare");
-              nav({ to: "/recruiter/evaluations/$id/compare", params: { id: evId }, search: { ids: Array.from(selected).join(",") } });
-            }} accent>Compare {selected.size >= 2 && selected.size <= 4 ? `(${selected.size})` : ""}</BulkBtn>
+              nav({
+                to: "/recruiter/evaluations/$id/compare",
+                params: { id: evId },
+                search: { ids: Array.from(selected).join(",") },
+              });
+            }}
+            accent
+          >
+            Compare {selected.size >= 2 && selected.size <= 4 ? `(${selected.size})` : ""}
+          </BulkBtn>
           <BulkBtn onClick={() => bulk("Moved to Interview")}>Move to Interview</BulkBtn>
           <BulkBtn onClick={() => bulk("Shortlisted")}>Shortlist</BulkBtn>
           <BulkBtn onClick={() => bulk("Rejected")}>Reject</BulkBtn>
@@ -516,15 +960,28 @@ function CandidatesTab({ evId, candidates, notify }: { evId: string; candidates:
           <BulkBtn onClick={() => bulk("Reports downloaded")}>Download Reports</BulkBtn>
           <BulkBtn onClick={() => bulk("Tag added")}>Add Tags</BulkBtn>
           <BulkBtn onClick={() => bulk("Archived")}>Archive</BulkBtn>
-          <BulkBtn onClick={() => bulk("Deleted")} danger>Delete</BulkBtn>
-          <button onClick={() => setSelected(new Set())} className="ml-auto text-[11px] text-neutral-500 hover:text-neutral-900">Clear</button>
+          <BulkBtn onClick={() => bulk("Deleted")} danger>
+            Delete
+          </BulkBtn>
+          <button
+            onClick={() => setSelected(new Set())}
+            className="ml-auto text-[11px] text-neutral-500 hover:text-neutral-900"
+          >
+            Clear
+          </button>
         </div>
       )}
 
       {/* ═════════ LEVEL 5 — Results ═════════ */}
       <div>
         {filtered.length === 0 ? (
-          <EmptyState hasFilters={activeFilterCount(filters) > 0 || pipeline !== "all"} onReset={() => { setFilters(emptyFilters()); setPipeline("all"); }} />
+          <EmptyState
+            hasFilters={activeFilterCount(filters) > 0 || pipeline !== "all"}
+            onReset={() => {
+              setFilters(emptyFilters());
+              setPipeline("all");
+            }}
+          />
         ) : view === "table" ? (
           <CandidateTable
             rows={paged}
@@ -532,7 +989,7 @@ function CandidatesTab({ evId, candidates, notify }: { evId: string; candidates:
             selected={selected}
             onToggle={toggleSelect}
             onToggleAll={toggleAll}
-            allChecked={paged.length > 0 && paged.every(r => selected.has(r.id))}
+            allChecked={paged.length > 0 && paged.every((r) => selected.has(r.id))}
             onOpen={openDetails}
             onPreview={setPreview}
             onAction={(label) => notify(label)}
@@ -540,8 +997,16 @@ function CandidatesTab({ evId, candidates, notify }: { evId: string; candidates:
           />
         ) : (
           <div className="grid grid-cols-1 gap-3 md:grid-cols-2 xl:grid-cols-3">
-            {paged.map(c => (
-              <CandidateCard key={c.id} c={c} selected={selected.has(c.id)} onToggle={() => toggleSelect(c.id)} onOpen={() => openDetails(c)} onPreview={() => setPreview(c)} onAction={(l) => notify(l)} />
+            {paged.map((c) => (
+              <CandidateCard
+                key={c.id}
+                c={c}
+                selected={selected.has(c.id)}
+                onToggle={() => toggleSelect(c.id)}
+                onOpen={() => openDetails(c)}
+                onPreview={() => setPreview(c)}
+                onAction={(l) => notify(l)}
+              />
             ))}
           </div>
         )}
@@ -550,18 +1015,44 @@ function CandidatesTab({ evId, candidates, notify }: { evId: string; candidates:
       {/* Pagination */}
       {filtered.length > 0 && (
         <div className="flex flex-wrap items-center justify-between gap-3 rounded-xl border border-neutral-200 bg-white px-4 py-3 text-[12px] text-neutral-600">
-          <div>Showing <b className="text-neutral-900 tabular-nums">{(page - 1) * perPage + 1}</b>–<b className="text-neutral-900 tabular-nums">{Math.min(page * perPage, filtered.length)}</b> of <b className="text-neutral-900 tabular-nums">{filtered.length.toLocaleString()}</b></div>
+          <div>
+            Showing <b className="text-neutral-900 tabular-nums">{(page - 1) * perPage + 1}</b>–
+            <b className="text-neutral-900 tabular-nums">{Math.min(page * perPage, filtered.length)}</b> of{" "}
+            <b className="text-neutral-900 tabular-nums">{filtered.length.toLocaleString()}</b>
+          </div>
           <div className="flex items-center gap-4">
             <div className="flex items-center gap-1.5">
               <span className="text-neutral-500">Per page</span>
-              <select value={perPage} onChange={e => setPerPage(parseInt(e.target.value))} className="rounded-md border border-neutral-200 bg-white px-2 py-1 text-neutral-800 outline-none focus:border-neutral-400">
-                {[25,50,100,250,500].map(n => <option key={n} value={n}>{n}</option>)}
+              <select
+                value={perPage}
+                onChange={(e) => setPerPage(parseInt(e.target.value))}
+                className="rounded-md border border-neutral-200 bg-white px-2 py-1 text-neutral-800 outline-none focus:border-neutral-400"
+              >
+                {[25, 50, 100, 250, 500].map((n) => (
+                  <option key={n} value={n}>
+                    {n}
+                  </option>
+                ))}
               </select>
             </div>
             <div className="flex items-center gap-1">
-              <button disabled={page === 1} onClick={() => setPage(p => Math.max(1, p - 1))} className="rounded-md border border-neutral-200 px-2.5 py-1 text-neutral-800 disabled:opacity-30 hover:bg-neutral-50">Prev</button>
-              <div className="px-2 tabular-nums">Page {page} / {totalPages}</div>
-              <button disabled={page === totalPages} onClick={() => setPage(p => Math.min(totalPages, p + 1))} className="rounded-md border border-neutral-200 px-2.5 py-1 text-neutral-800 disabled:opacity-30 hover:bg-neutral-50">Next</button>
+              <button
+                disabled={page === 1}
+                onClick={() => setPage((p) => Math.max(1, p - 1))}
+                className="rounded-md border border-neutral-200 px-2.5 py-1 text-neutral-800 disabled:opacity-30 hover:bg-neutral-50"
+              >
+                Prev
+              </button>
+              <div className="px-2 tabular-nums">
+                Page {page} / {totalPages}
+              </div>
+              <button
+                disabled={page === totalPages}
+                onClick={() => setPage((p) => Math.min(totalPages, p + 1))}
+                className="rounded-md border border-neutral-200 px-2.5 py-1 text-neutral-800 disabled:opacity-30 hover:bg-neutral-50"
+              >
+                Next
+              </button>
             </div>
           </div>
         </div>
@@ -585,12 +1076,29 @@ function CandidatesTab({ evId, candidates, notify }: { evId: string; candidates:
 
 // -------------- Toolbar building blocks --------------
 
-function ToolbarBtn({ children, onClick, icon, count }: { children: React.ReactNode; onClick: () => void; icon?: React.ReactNode; count?: number }) {
+function ToolbarBtn({
+  children,
+  onClick,
+  icon,
+  count,
+}: {
+  children: React.ReactNode;
+  onClick: () => void;
+  icon?: React.ReactNode;
+  count?: number;
+}) {
   return (
-    <button onClick={onClick}
-      className="inline-flex items-center gap-1.5 rounded-lg border border-neutral-200 bg-white px-3 py-1.5 text-[12px] font-medium text-neutral-800 transition hover:border-neutral-300 hover:bg-neutral-50">
-      {icon}{children}
-      {count != null && count > 0 && <span className="ml-0.5 rounded-full bg-neutral-900 px-1.5 py-[1px] text-[10px] font-medium text-white tabular-nums">{count}</span>}
+    <button
+      onClick={onClick}
+      className="inline-flex items-center gap-1.5 rounded-lg border border-neutral-200 bg-white px-3 py-1.5 text-[12px] font-medium text-neutral-800 transition hover:border-neutral-300 hover:bg-neutral-50"
+    >
+      {icon}
+      {children}
+      {count != null && count > 0 && (
+        <span className="ml-0.5 rounded-full bg-neutral-900 px-1.5 py-[1px] text-[10px] font-medium text-white tabular-nums">
+          {count}
+        </span>
+      )}
     </button>
   );
 }
@@ -599,20 +1107,35 @@ function ColumnsMenu({ cols, setCols }: { cols: Set<ColKey>; setCols: (s: Set<Co
   const [open, setOpen] = useState(false);
   return (
     <div className="relative">
-      <ToolbarBtn onClick={() => setOpen(v => !v)} icon={<TableIcon className="h-3.5 w-3.5" />}>Columns</ToolbarBtn>
+      <ToolbarBtn onClick={() => setOpen((v) => !v)} icon={<TableIcon className="h-3.5 w-3.5" />}>
+        Columns
+      </ToolbarBtn>
       {open && (
         <>
           <div className="fixed inset-0 z-30" onClick={() => setOpen(false)} />
           <div className="absolute right-0 top-full z-40 mt-1 w-60 overflow-hidden rounded-xl border border-neutral-200 bg-white shadow-lg">
-            <div className="border-b border-neutral-100 px-3 py-2 text-[11px] uppercase tracking-widest text-neutral-500">Visible columns</div>
+            <div className="border-b border-neutral-100 px-3 py-2 text-[11px] uppercase tracking-widest text-neutral-500">
+              Visible columns
+            </div>
             <div className="max-h-80 overflow-auto py-1">
-              {ALL_COLS.map(c => {
+              {ALL_COLS.map((c) => {
                 const on = cols.has(c.key);
                 return (
-                  <button key={c.key} disabled={c.always}
-                    onClick={() => { const n = new Set(cols); on ? n.delete(c.key) : n.add(c.key); setCols(n); }}
-                    className={`flex w-full items-center gap-2 px-3 py-1.5 text-left text-[12.5px] ${c.always ? "text-neutral-400" : "text-neutral-800 hover:bg-neutral-50"}`}>
-                    <span className={`grid h-4 w-4 place-items-center rounded border ${on ? "border-neutral-900 bg-neutral-900 text-white" : "border-neutral-300"}`}>{on && <Check className="h-3 w-3" />}</span>
+                  <button
+                    key={c.key}
+                    disabled={c.always}
+                    onClick={() => {
+                      const n = new Set(cols);
+                      on ? n.delete(c.key) : n.add(c.key);
+                      setCols(n);
+                    }}
+                    className={`flex w-full items-center gap-2 px-3 py-1.5 text-left text-[12.5px] ${c.always ? "text-neutral-400" : "text-neutral-800 hover:bg-neutral-50"}`}
+                  >
+                    <span
+                      className={`grid h-4 w-4 place-items-center rounded border ${on ? "border-neutral-900 bg-neutral-900 text-white" : "border-neutral-300"}`}
+                    >
+                      {on && <Check className="h-3 w-3" />}
+                    </span>
                     <span>{c.label}</span>
                     {c.always && <span className="ml-auto text-[10px] text-neutral-400">required</span>}
                   </button>
@@ -620,8 +1143,15 @@ function ColumnsMenu({ cols, setCols }: { cols: Set<ColKey>; setCols: (s: Set<Co
               })}
             </div>
             <div className="flex items-center justify-between border-t border-neutral-100 px-3 py-2 text-[11px]">
-              <button onClick={() => setCols(new Set(DEFAULT_COLS))} className="text-neutral-600 hover:text-neutral-900">Reset</button>
-              <button onClick={() => setOpen(false)} className="font-medium text-neutral-900">Done</button>
+              <button
+                onClick={() => setCols(new Set(DEFAULT_COLS))}
+                className="text-neutral-600 hover:text-neutral-900"
+              >
+                Reset
+              </button>
+              <button onClick={() => setOpen(false)} className="font-medium text-neutral-900">
+                Done
+              </button>
             </div>
           </div>
         </>
@@ -630,39 +1160,124 @@ function ColumnsMenu({ cols, setCols }: { cols: Set<ColKey>; setCols: (s: Set<Co
   );
 }
 
-function ExportMenu({ candidates, selected, notify }: { candidates: Candidate[]; selected: Candidate[]; notify: (m: string) => void }) {
+function ExportMenu({
+  candidates,
+  selected,
+  notify,
+}: {
+  candidates: Candidate[];
+  selected: Candidate[];
+  notify: (m: string) => void;
+}) {
   const [open, setOpen] = useState(false);
   const scope = selected.length > 0 ? selected : candidates;
   const label = selected.length > 0 ? `${selected.length} selected` : `${candidates.length.toLocaleString()} in view`;
 
   const doCsv = (kind: "csv" | "xlsx") => {
-    const rows = [["Candidate","Email","Phone","ECI","Labs","Assessment","Vitarka","Status","Hiring","Submitted"]]
-      .concat(scope.map(c => [c.name, c.email, c.phone, String(c.eci), String(c.labsScore), String(c.assessmentScore), String(c.vitarkaScore), c.status, c.hiringStatus, new Date(c.submittedAt).toISOString()]));
-    const csv = rows.map(r => r.map(v => `"${String(v).replace(/"/g, '""')}"`).join(",")).join("\n");
+    const rows = [
+      ["Candidate", "Email", "Phone", "ECI", "Labs", "Assessment", "Vitarka", "Status", "Hiring", "Submitted"],
+    ].concat(
+      scope.map((c) => [
+        c.name,
+        c.email,
+        c.phone,
+        String(c.eci),
+        String(c.labsScore),
+        String(c.assessmentScore),
+        String(c.vitarkaScore),
+        c.status,
+        c.hiringStatus,
+        new Date(c.submittedAt).toISOString(),
+      ]),
+    );
+    const csv = rows.map((r) => r.map((v) => `"${String(v).replace(/"/g, '""')}"`).join(",")).join("\n");
     const blob = new Blob([csv], { type: kind === "xlsx" ? "application/vnd.ms-excel" : "text/csv" });
-    const url = URL.createObjectURL(blob); const a = document.createElement("a");
-    a.href = url; a.download = `candidates.${kind === "xlsx" ? "xls" : "csv"}`; a.click();
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = `candidates.${kind === "xlsx" ? "xls" : "csv"}`;
+    a.click();
     URL.revokeObjectURL(url);
     notify(`Exported ${scope.length} candidates (${kind.toUpperCase()})`);
   };
 
   return (
     <div className="relative">
-      <ToolbarBtn onClick={() => setOpen(v => !v)} icon={<Download className="h-3.5 w-3.5" />}>Export</ToolbarBtn>
+      <ToolbarBtn onClick={() => setOpen((v) => !v)} icon={<Download className="h-3.5 w-3.5" />}>
+        Export
+      </ToolbarBtn>
       {open && (
         <>
           <div className="fixed inset-0 z-30" onClick={() => setOpen(false)} />
           <div className="absolute right-0 top-full z-40 mt-1 w-64 overflow-hidden rounded-xl border border-neutral-200 bg-white shadow-lg">
-            <div className="border-b border-neutral-100 px-3 py-2 text-[11px] uppercase tracking-widest text-neutral-500">Export · {label}</div>
+            <div className="border-b border-neutral-100 px-3 py-2 text-[11px] uppercase tracking-widest text-neutral-500">
+              Export · {label}
+            </div>
             <div className="py-1">
-              <ExportItem onClick={() => { doCsv("csv"); setOpen(false); }} icon={<FileText className="h-3.5 w-3.5" />}>CSV</ExportItem>
-              <ExportItem onClick={() => { doCsv("xlsx"); setOpen(false); }} icon={<FileSpreadsheet className="h-3.5 w-3.5" />}>Excel</ExportItem>
-              <ExportItem onClick={() => { notify(`Combined PDF prepared (${scope.length})`); setOpen(false); }} icon={<FileText className="h-3.5 w-3.5" />}>Combined PDF</ExportItem>
+              <ExportItem
+                onClick={() => {
+                  doCsv("csv");
+                  setOpen(false);
+                }}
+                icon={<FileText className="h-3.5 w-3.5" />}
+              >
+                CSV
+              </ExportItem>
+              <ExportItem
+                onClick={() => {
+                  doCsv("xlsx");
+                  setOpen(false);
+                }}
+                icon={<FileSpreadsheet className="h-3.5 w-3.5" />}
+              >
+                Excel
+              </ExportItem>
+              <ExportItem
+                onClick={() => {
+                  notify(`Combined PDF prepared (${scope.length})`);
+                  setOpen(false);
+                }}
+                icon={<FileText className="h-3.5 w-3.5" />}
+              >
+                Combined PDF
+              </ExportItem>
               <div className="my-1 h-px bg-neutral-100" />
-              <ExportItem onClick={() => { notify("Resume bundle prepared"); setOpen(false); }} icon={<Download className="h-3.5 w-3.5" />}>Resume Bundle</ExportItem>
-              <ExportItem onClick={() => { notify("Engineering report prepared"); setOpen(false); }} icon={<Download className="h-3.5 w-3.5" />}>Engineering Report</ExportItem>
-              <ExportItem onClick={() => { notify("Assessment report prepared"); setOpen(false); }} icon={<Download className="h-3.5 w-3.5" />}>Assessment Report</ExportItem>
-              <ExportItem onClick={() => { notify("Vitarka report prepared"); setOpen(false); }} icon={<Download className="h-3.5 w-3.5" />}>Vitarka Report</ExportItem>
+              <ExportItem
+                onClick={() => {
+                  notify("Resume bundle prepared");
+                  setOpen(false);
+                }}
+                icon={<Download className="h-3.5 w-3.5" />}
+              >
+                Resume Bundle
+              </ExportItem>
+              <ExportItem
+                onClick={() => {
+                  notify("Engineering report prepared");
+                  setOpen(false);
+                }}
+                icon={<Download className="h-3.5 w-3.5" />}
+              >
+                Engineering Report
+              </ExportItem>
+              <ExportItem
+                onClick={() => {
+                  notify("Assessment report prepared");
+                  setOpen(false);
+                }}
+                icon={<Download className="h-3.5 w-3.5" />}
+              >
+                Assessment Report
+              </ExportItem>
+              <ExportItem
+                onClick={() => {
+                  notify("Vitarka report prepared");
+                  setOpen(false);
+                }}
+                icon={<Download className="h-3.5 w-3.5" />}
+              >
+                Vitarka Report
+              </ExportItem>
             </div>
           </div>
         </>
@@ -670,8 +1285,24 @@ function ExportMenu({ candidates, selected, notify }: { candidates: Candidate[];
     </div>
   );
 }
-function ExportItem({ children, onClick, icon }: { children: React.ReactNode; onClick: () => void; icon?: React.ReactNode }) {
-  return <button onClick={onClick} className="flex w-full items-center gap-2 px-3 py-2 text-left text-[12.5px] text-neutral-800 hover:bg-neutral-50">{icon}{children}</button>;
+function ExportItem({
+  children,
+  onClick,
+  icon,
+}: {
+  children: React.ReactNode;
+  onClick: () => void;
+  icon?: React.ReactNode;
+}) {
+  return (
+    <button
+      onClick={onClick}
+      className="flex w-full items-center gap-2 px-3 py-2 text-left text-[12.5px] text-neutral-800 hover:bg-neutral-50"
+    >
+      {icon}
+      {children}
+    </button>
+  );
 }
 
 // -------------- Candidate Table (light theme, column-aware) --------------
@@ -689,9 +1320,28 @@ function highlightText(text: string, q: string) {
   );
 }
 
-function CandidateTable({ rows, cols, selected, onToggle, onToggleAll, allChecked, onOpen, onPreview, onAction, highlight }: {
-  rows: Candidate[]; cols: Set<ColKey>; selected: Set<string>; onToggle: (id: string) => void; onToggleAll: () => void; allChecked: boolean;
-  onOpen: (c: Candidate) => void; onPreview: (c: Candidate) => void; onAction: (label: string) => void; highlight?: string;
+function CandidateTable({
+  rows,
+  cols,
+  selected,
+  onToggle,
+  onToggleAll,
+  allChecked,
+  onOpen,
+  onPreview,
+  onAction,
+  highlight,
+}: {
+  rows: Candidate[];
+  cols: Set<ColKey>;
+  selected: Set<string>;
+  onToggle: (id: string) => void;
+  onToggleAll: () => void;
+  allChecked: boolean;
+  onOpen: (c: Candidate) => void;
+  onPreview: (c: Candidate) => void;
+  onAction: (label: string) => void;
+  highlight?: string;
 }) {
   const show = (k: ColKey) => cols.has(k);
   return (
@@ -700,7 +1350,9 @@ function CandidateTable({ rows, cols, selected, onToggle, onToggleAll, allChecke
         <table className="w-full text-left text-[12.5px]">
           <thead className="sticky top-0 z-10 bg-neutral-50/95 backdrop-blur">
             <tr className="border-b border-neutral-200 text-[10.5px] uppercase tracking-widest text-neutral-500">
-              <Th className="w-8"><input type="checkbox" checked={allChecked} onChange={onToggleAll} /></Th>
+              <Th className="w-8">
+                <input type="checkbox" checked={allChecked} onChange={onToggleAll} />
+              </Th>
               {show("candidate") && <Th>Candidate</Th>}
               {show("email") && <Th>Email</Th>}
               {show("phone") && <Th>Phone</Th>}
@@ -717,17 +1369,28 @@ function CandidateTable({ rows, cols, selected, onToggle, onToggleAll, allChecke
             </tr>
           </thead>
           <tbody>
-            {rows.map(c => (
-              <tr key={c.id} onClick={() => onPreview(c)}
-                className={`cursor-pointer border-b border-neutral-100 text-neutral-900 transition hover:bg-neutral-50 ${selected.has(c.id) ? "bg-neutral-50" : ""}`}>
-                <Td onClick={e => e.stopPropagation()}><input type="checkbox" checked={selected.has(c.id)} onChange={() => onToggle(c.id)} /></Td>
+            {rows.map((c) => (
+              <tr
+                key={c.id}
+                onClick={onOpen}
+                className={`cursor-pointer border-b border-neutral-100 text-neutral-900 transition hover:bg-neutral-50 ${selected.has(c.id) ? "bg-neutral-50" : ""}`}
+              >
+                <Td onClick={(e) => e.stopPropagation()}>
+                  <input type="checkbox" checked={selected.has(c.id)} onChange={() => onToggle(c.id)} />
+                </Td>
                 {show("candidate") && (
                   <Td>
                     <div className="flex items-center gap-2.5">
                       <Avatar name={c.name} hue={c.avatarHue} />
                       <div className="min-w-0">
-                        <div className="truncate font-medium text-neutral-900">{highlightText(c.name, highlight || "")}</div>
-                        {!show("email") && <div className="truncate text-[11px] text-neutral-500">{highlightText(c.email, highlight || "")}</div>}
+                        <div className="truncate font-medium text-neutral-900">
+                          {highlightText(c.name, highlight || "")}
+                        </div>
+                        {!show("email") && (
+                          <div className="truncate text-[11px] text-neutral-500">
+                            {highlightText(c.email, highlight || "")}
+                          </div>
+                        )}
                       </div>
                     </div>
                   </Td>
@@ -739,11 +1402,21 @@ function CandidateTable({ rows, cols, selected, onToggle, onToggleAll, allChecke
                 {show("assessment") && <Td className="tabular-nums text-neutral-900">{c.assessmentScore}</Td>}
                 {show("vitarka") && <Td className="text-neutral-800">{vitarkaLabel(c.vitarkaScore)}</Td>}
                 {show("eci") && <Td className="font-medium tabular-nums text-neutral-900">{c.eci}</Td>}
-                {show("recommendation") && <Td><RecBadge r={c.recommendation} /></Td>}
+                {show("recommendation") && (
+                  <Td>
+                    <RecBadge r={c.recommendation} />
+                  </Td>
+                )}
                 {show("submitted") && <Td className="text-neutral-700">{fmtRel(c.submittedAt)}</Td>}
                 {show("time") && <Td className="tabular-nums text-neutral-700">{c.completionMinutes}m</Td>}
-                {show("status") && <Td><StatusChip s={c.status} h={c.hiringStatus} /></Td>}
-                <Td onClick={e => e.stopPropagation()}><RowMenu onOpen={() => onOpen(c)} onAction={onAction} /></Td>
+                {show("status") && (
+                  <Td>
+                    <StatusChip s={c.status} h={c.hiringStatus} />
+                  </Td>
+                )}
+                <Td onClick={(e) => e.stopPropagation()}>
+                  <RowMenu onOpen={() => onOpen(c)} onAction={onAction} />
+                </Td>
               </tr>
             ))}
           </tbody>
@@ -768,13 +1441,30 @@ function RowMenu({ onOpen, onAction }: { onOpen: () => void; onAction: (l: strin
   ];
   return (
     <div className="relative">
-      <button onClick={e => { e.stopPropagation(); setOpen(v => !v); }} className="rounded p-1 text-neutral-500 hover:bg-neutral-100 hover:text-neutral-900"><MoreHorizontal className="h-3.5 w-3.5" /></button>
+      <button
+        onClick={(e) => {
+          e.stopPropagation();
+          setOpen((v) => !v);
+        }}
+        className="rounded p-1 text-neutral-500 hover:bg-neutral-100 hover:text-neutral-900"
+      >
+        <MoreHorizontal className="h-3.5 w-3.5" />
+      </button>
       {open && (
         <>
           <div className="fixed inset-0 z-30" onClick={() => setOpen(false)} />
           <div className="absolute right-0 top-full z-40 mt-1 w-48 overflow-hidden rounded-xl border border-neutral-200 bg-white shadow-lg">
-            {items.map(it => (
-              <button key={it.label} onClick={() => { it.fn(); setOpen(false); }} className="block w-full px-3 py-2 text-left text-[12.5px] text-neutral-800 hover:bg-neutral-50">{it.label}</button>
+            {items.map((it) => (
+              <button
+                key={it.label}
+                onClick={() => {
+                  it.fn();
+                  setOpen(false);
+                }}
+                className="block w-full px-3 py-2 text-left text-[12.5px] text-neutral-800 hover:bg-neutral-50"
+              >
+                {it.label}
+              </button>
             ))}
           </div>
         </>
@@ -783,11 +1473,25 @@ function RowMenu({ onOpen, onAction }: { onOpen: () => void; onAction: (l: strin
   );
 }
 
-function CandidateCard({ c, selected, onToggle, onOpen, onPreview, onAction }: {
-  c: Candidate; selected: boolean; onToggle: () => void; onOpen: () => void; onPreview: () => void; onAction: (l: string) => void;
+function CandidateCard({
+  c,
+  selected,
+  onToggle,
+  onOpen,
+  onPreview,
+  onAction,
+}: {
+  c: Candidate;
+  selected: boolean;
+  onToggle: () => void;
+  onOpen: () => void;
+  onPreview: () => void;
+  onAction: (l: string) => void;
 }) {
   return (
-    <div className={`group relative overflow-hidden rounded-2xl border bg-white transition ${selected ? "border-neutral-900" : "border-neutral-200 hover:border-neutral-300"}`}>
+    <div
+      className={`group relative overflow-hidden rounded-2xl border bg-white transition ${selected ? "border-neutral-900" : "border-neutral-200 hover:border-neutral-300"}`}
+    >
       <div className="p-4">
         <div className="flex items-start gap-3">
           <input type="checkbox" checked={selected} onChange={onToggle} className="mt-1" />
@@ -796,7 +1500,9 @@ function CandidateCard({ c, selected, onToggle, onOpen, onPreview, onAction }: {
               <Avatar name={c.name} hue={c.avatarHue} size="lg" />
               <div className="min-w-0">
                 <div className="truncate text-[14px] font-medium text-neutral-900">{c.name}</div>
-                <div className="truncate text-[11px] text-neutral-500">{c.company} · {experienceBucket(c.experience)}</div>
+                <div className="truncate text-[11px] text-neutral-500">
+                  {c.company} · {experienceBucket(c.experience)}
+                </div>
               </div>
             </div>
           </button>
@@ -813,15 +1519,29 @@ function CandidateCard({ c, selected, onToggle, onOpen, onPreview, onAction }: {
           <MiniScore label="ECI" v={c.eci} highlight />
         </div>
         <div className="mt-3 flex items-center justify-between text-[11px] text-neutral-600">
-          <span>{fmtRel(c.submittedAt)} · {c.completionMinutes}m</span>
+          <span>
+            {fmtRel(c.submittedAt)} · {c.completionMinutes}m
+          </span>
           <StatusChip s={c.status} h={c.hiringStatus} compact />
         </div>
       </div>
       <div className="flex items-center justify-between border-t border-neutral-100 bg-neutral-50 px-3 py-2 text-[11px]">
-        <button onClick={() => onAction("Resume opened")} className="text-neutral-700 hover:text-neutral-900 hover:underline">Resume</button>
+        <button
+          onClick={() => onAction("Resume opened")}
+          className="text-neutral-700 hover:text-neutral-900 hover:underline"
+        >
+          Resume
+        </button>
         <div className="flex items-center gap-1.5">
-          <button onClick={onPreview} className="rounded-md border border-neutral-200 bg-white px-2 py-1 text-neutral-800 hover:bg-neutral-100">Preview</button>
-          <button onClick={onOpen} className="rounded-md bg-neutral-900 px-2 py-1 text-white hover:bg-neutral-800">View Details</button>
+          <button
+            onClick={onPreview}
+            className="rounded-md border border-neutral-200 bg-white px-2 py-1 text-neutral-800 hover:bg-neutral-100"
+          >
+            Preview
+          </button>
+          <button onClick={onOpen} className="rounded-md bg-neutral-900 px-2 py-1 text-white hover:bg-neutral-800">
+            View Details
+          </button>
         </div>
       </div>
     </div>
@@ -830,101 +1550,256 @@ function CandidateCard({ c, selected, onToggle, onOpen, onPreview, onAction }: {
 
 function MiniScore({ label, v, highlight }: { label: string; v: number; highlight?: boolean }) {
   return (
-    <div className={`rounded-lg border p-2 ${highlight ? "border-neutral-900 bg-neutral-900 text-white" : "border-neutral-200 bg-neutral-50"}`}>
-      <div className={`text-[9px] uppercase tracking-widest ${highlight ? "text-white/70" : "text-neutral-500"}`}>{label}</div>
-      <div className={`mt-0.5 text-[14px] font-medium tabular-nums ${highlight ? "text-white" : "text-neutral-900"}`}>{v}</div>
+    <div
+      className={`rounded-lg border p-2 ${highlight ? "border-neutral-900 bg-neutral-900 text-white" : "border-neutral-200 bg-neutral-50"}`}
+    >
+      <div className={`text-[9px] uppercase tracking-widest ${highlight ? "text-white/70" : "text-neutral-500"}`}>
+        {label}
+      </div>
+      <div className={`mt-0.5 text-[14px] font-medium tabular-nums ${highlight ? "text-white" : "text-neutral-900"}`}>
+        {v}
+      </div>
     </div>
   );
 }
 
-
-
 type SectionId = "status" | "hiring" | "rec" | "perf" | "background" | "dates" | "tags";
 const DRAWER_OPEN_KEY = "yuvro-drawer-open-section";
 
-function AdvancedFiltersDrawer({ open, onClose, filters, setFilters, matchCount, colleges, companies }: {
-  open: boolean; onClose: () => void; filters: CandidateFilters; setFilters: (f: CandidateFilters | ((p: CandidateFilters) => CandidateFilters)) => void;
-  matchCount: number; colleges: string[]; companies: string[];
+function AdvancedFiltersDrawer({
+  open,
+  onClose,
+  filters,
+  setFilters,
+  matchCount,
+  colleges,
+  companies,
+}: {
+  open: boolean;
+  onClose: () => void;
+  filters: CandidateFilters;
+  setFilters: (f: CandidateFilters | ((p: CandidateFilters) => CandidateFilters)) => void;
+  matchCount: number;
+  colleges: string[];
+  companies: string[];
 }) {
   const [openSection, setOpenSection] = useState<SectionId>(() => {
     if (typeof window === "undefined") return "status";
-    try { return (localStorage.getItem(DRAWER_OPEN_KEY) as SectionId) || "status"; } catch { return "status"; }
+    try {
+      return (localStorage.getItem(DRAWER_OPEN_KEY) as SectionId) || "status";
+    } catch {
+      return "status";
+    }
   });
-  useEffect(() => { try { localStorage.setItem(DRAWER_OPEN_KEY, openSection); } catch {} }, [openSection]);
+  useEffect(() => {
+    try {
+      localStorage.setItem(DRAWER_OPEN_KEY, openSection);
+    } catch {}
+  }, [openSection]);
 
   // Local staged copy for calm interaction; applies on Apply
   const [local, setLocal] = useState<CandidateFilters>(filters);
-  useEffect(() => { if (open) setLocal(filters); }, [open, filters]);
+  useEffect(() => {
+    if (open) setLocal(filters);
+  }, [open, filters]);
 
   const setL = (patch: Partial<CandidateFilters> | ((p: CandidateFilters) => CandidateFilters)) => {
-    setLocal(prev => typeof patch === "function" ? (patch as any)(prev) : { ...prev, ...patch });
+    setLocal((prev) => (typeof patch === "function" ? (patch as any)(prev) : { ...prev, ...patch }));
   };
 
   const reset = () => setLocal(emptyFilters());
-  const apply = () => { setFilters(local); onClose(); };
+  const apply = () => {
+    setFilters(local);
+    onClose();
+  };
 
   return (
     <>
-      <div className={`fixed inset-0 z-40 bg-neutral-900/30 transition-opacity ${open ? "opacity-100" : "pointer-events-none opacity-0"}`} onClick={onClose} />
-      <aside className={`fixed right-0 top-0 z-50 flex h-full w-full max-w-md flex-col border-l border-neutral-200 bg-white shadow-2xl transition-transform duration-300 ${open ? "translate-x-0" : "translate-x-full"}`}>
+      <div
+        className={`fixed inset-0 z-40 bg-neutral-900/30 transition-opacity ${open ? "opacity-100" : "pointer-events-none opacity-0"}`}
+        onClick={onClose}
+      />
+      <aside
+        className={`fixed right-0 top-0 z-50 flex h-full w-full max-w-md flex-col border-l border-neutral-200 bg-white shadow-2xl transition-transform duration-300 ${open ? "translate-x-0" : "translate-x-full"}`}
+      >
         <header className="flex items-center justify-between border-b border-neutral-100 px-6 py-4">
           <div>
             <div className="text-[11px] uppercase tracking-widest text-neutral-500">Refine</div>
             <div className="text-[16px] font-medium text-neutral-900">Advanced filters</div>
           </div>
-          <button onClick={onClose} className="rounded-md p-1.5 text-neutral-500 hover:bg-neutral-100 hover:text-neutral-900"><X className="h-4 w-4" /></button>
+          <button
+            onClick={onClose}
+            className="rounded-md p-1.5 text-neutral-500 hover:bg-neutral-100 hover:text-neutral-900"
+          >
+            <X className="h-4 w-4" />
+          </button>
         </header>
 
         <div className="flex-1 overflow-y-auto">
-          <DrawerSection id="status" title="Candidate Status" open={openSection === "status"} onToggle={setOpenSection} count={local.status.size}>
-            <CheckGrid options={["Submitted","Completed","In Progress","Not Started","Expired"]} value={local.status} onChange={v => setL({ status: v as any })} />
+          <DrawerSection
+            id="status"
+            title="Candidate Status"
+            open={openSection === "status"}
+            onToggle={setOpenSection}
+            count={local.status.size}
+          >
+            <CheckGrid
+              options={["Submitted", "Completed", "In Progress", "Not Started", "Expired"]}
+              value={local.status}
+              onChange={(v) => setL({ status: v as any })}
+            />
           </DrawerSection>
-          <DrawerSection id="hiring" title="Hiring Pipeline" open={openSection === "hiring"} onToggle={setOpenSection} count={local.hiring.size}>
-            <CheckGrid options={["Pending Review","Shortlisted","Interview Scheduled","Selected","Rejected","Hold"]} value={local.hiring} onChange={v => setL({ hiring: v as any })} />
+          <DrawerSection
+            id="hiring"
+            title="Hiring Pipeline"
+            open={openSection === "hiring"}
+            onToggle={setOpenSection}
+            count={local.hiring.size}
+          >
+            <CheckGrid
+              options={["Pending Review", "Shortlisted", "Interview Scheduled", "Selected", "Rejected", "Hold"]}
+              value={local.hiring}
+              onChange={(v) => setL({ hiring: v as any })}
+            />
           </DrawerSection>
-          <DrawerSection id="rec" title="AI Recommendation" open={openSection === "rec"} onToggle={setOpenSection} count={local.recommendation.size}>
-            <CheckGrid options={["Strong Hire","Hire","Maybe","Reject"]} value={local.recommendation} onChange={v => setL({ recommendation: v as any })} />
+          <DrawerSection
+            id="rec"
+            title="AI Recommendation"
+            open={openSection === "rec"}
+            onToggle={setOpenSection}
+            count={local.recommendation.size}
+          >
+            <CheckGrid
+              options={["Strong Hire", "Hire", "Maybe", "Reject"]}
+              value={local.recommendation}
+              onChange={(v) => setL({ recommendation: v as any })}
+            />
           </DrawerSection>
-          <DrawerSection id="perf" title="Performance"
-            open={openSection === "perf"} onToggle={setOpenSection}
-            count={(local.eciMin != null ? 1 : 0) + (local.labsMin != null ? 1 : 0) + (local.assessMin != null ? 1 : 0) + local.vitarka.size}>
-            <ScoreRow label="Engineering Capability Index" value={local.eciMin} onChange={v => setL({ eciMin: v })} />
-            <ScoreRow label="Engineering Labs" value={local.labsMin} onChange={v => setL({ labsMin: v })} />
-            <ScoreRow label="Knowledge Assessment" value={local.assessMin} onChange={v => setL({ assessMin: v })} />
+          <DrawerSection
+            id="perf"
+            title="Performance"
+            open={openSection === "perf"}
+            onToggle={setOpenSection}
+            count={
+              (local.eciMin != null ? 1 : 0) +
+              (local.labsMin != null ? 1 : 0) +
+              (local.assessMin != null ? 1 : 0) +
+              local.vitarka.size
+            }
+          >
+            <ScoreRow label="Engineering Capability Index" value={local.eciMin} onChange={(v) => setL({ eciMin: v })} />
+            <ScoreRow label="Engineering Labs" value={local.labsMin} onChange={(v) => setL({ labsMin: v })} />
+            <ScoreRow label="Knowledge Assessment" value={local.assessMin} onChange={(v) => setL({ assessMin: v })} />
             <div className="mt-3 text-[11px] uppercase tracking-widest text-neutral-500">Vitarka Discussion</div>
-            <div className="mt-1"><CheckGrid options={["Excellent","Good","Average","Poor"]} value={local.vitarka} onChange={v => setL({ vitarka: v as any })} /></div>
+            <div className="mt-1">
+              <CheckGrid
+                options={["Excellent", "Good", "Average", "Poor"]}
+                value={local.vitarka}
+                onChange={(v) => setL({ vitarka: v as any })}
+              />
+            </div>
           </DrawerSection>
-          <DrawerSection id="background" title="Background"
-            open={openSection === "background"} onToggle={setOpenSection}
-            count={local.experience.size + local.colleges.size + local.companies.size + local.skills.size + local.domains.size}>
+          <DrawerSection
+            id="background"
+            title="Background"
+            open={openSection === "background"}
+            onToggle={setOpenSection}
+            count={
+              local.experience.size +
+              local.colleges.size +
+              local.companies.size +
+              local.skills.size +
+              local.domains.size
+            }
+          >
             <SubLabel>Experience</SubLabel>
-            <CheckGrid options={["Fresher","1-3 Years","3-5 Years","5-8 Years","8+"]} value={local.experience} onChange={v => setL({ experience: v })} />
+            <CheckGrid
+              options={["Fresher", "1-3 Years", "3-5 Years", "5-8 Years", "8+"]}
+              value={local.experience}
+              onChange={(v) => setL({ experience: v })}
+            />
             <SubLabel>College</SubLabel>
-            <SearchableList options={colleges} value={local.colleges} onChange={v => setL({ colleges: v })} placeholder="Search colleges" />
+            <SearchableList
+              options={colleges}
+              value={local.colleges}
+              onChange={(v) => setL({ colleges: v })}
+              placeholder="Search colleges"
+            />
             <SubLabel>Company</SubLabel>
-            <SearchableList options={companies} value={local.companies} onChange={v => setL({ companies: v })} placeholder="Search companies" />
+            <SearchableList
+              options={companies}
+              value={local.companies}
+              onChange={(v) => setL({ companies: v })}
+              placeholder="Search companies"
+            />
             <SubLabel>Skills</SubLabel>
-            <CheckGrid options={["Java","Python","SQL","React","Node","AWS","Docker","Spring Boot","TypeScript","Go"]} value={local.skills} onChange={v => setL({ skills: v })} />
+            <CheckGrid
+              options={["Java", "Python", "SQL", "React", "Node", "AWS", "Docker", "Spring Boot", "TypeScript", "Go"]}
+              value={local.skills}
+              onChange={(v) => setL({ skills: v })}
+            />
             <SubLabel>Domain</SubLabel>
-            <CheckGrid options={["Finance","Insurance","Retail","Healthcare","EdTech","Supply Chain"]} value={local.domains} onChange={v => setL({ domains: v })} />
+            <CheckGrid
+              options={["Finance", "Insurance", "Retail", "Healthcare", "EdTech", "Supply Chain"]}
+              value={local.domains}
+              onChange={(v) => setL({ domains: v })}
+            />
           </DrawerSection>
-          <DrawerSection id="dates" title="Dates" open={openSection === "dates"} onToggle={setOpenSection} count={local.dateRange !== "any" ? 1 : 0}>
+          <DrawerSection
+            id="dates"
+            title="Dates"
+            open={openSection === "dates"}
+            onToggle={setOpenSection}
+            count={local.dateRange !== "any" ? 1 : 0}
+          >
             <SubLabel>Submission Date</SubLabel>
-            <CheckGrid single options={["any","today","yesterday","7d","30d"]} labels={{ any: "Any time", today: "Today", yesterday: "Yesterday", "7d": "Last 7 days", "30d": "Last 30 days" }}
-              value={new Set([local.dateRange])} onChange={s => setL({ dateRange: ([...s][0] as any) || "any" })} />
+            <CheckGrid
+              single
+              options={["any", "today", "yesterday", "7d", "30d"]}
+              labels={{
+                any: "Any time",
+                today: "Today",
+                yesterday: "Yesterday",
+                "7d": "Last 7 days",
+                "30d": "Last 30 days",
+              }}
+              value={new Set([local.dateRange])}
+              onChange={(s) => setL({ dateRange: ([...s][0] as any) || "any" })}
+            />
             <SubLabel>Completion Duration</SubLabel>
-            <CheckGrid options={["Below 45 mins","45-60 mins","60-90 mins","Above 90 mins"]} value={local.completion} onChange={v => setL({ completion: v })} />
+            <CheckGrid
+              options={["Below 45 mins", "45-60 mins", "60-90 mins", "Above 90 mins"]}
+              value={local.completion}
+              onChange={(v) => setL({ completion: v })}
+            />
           </DrawerSection>
-          <DrawerSection id="tags" title="Tags" open={openSection === "tags"} onToggle={setOpenSection} count={local.tags.size}>
-            <CheckGrid options={["Priority","Referral","Campus","Fast Track","Internal"]} value={local.tags} onChange={v => setL({ tags: v })} />
+          <DrawerSection
+            id="tags"
+            title="Tags"
+            open={openSection === "tags"}
+            onToggle={setOpenSection}
+            count={local.tags.size}
+          >
+            <CheckGrid
+              options={["Priority", "Referral", "Campus", "Fast Track", "Internal"]}
+              value={local.tags}
+              onChange={(v) => setL({ tags: v })}
+            />
           </DrawerSection>
         </div>
 
         <footer className="flex items-center justify-between gap-3 border-t border-neutral-100 bg-white px-6 py-4">
-          <button onClick={reset} className="text-[13px] text-neutral-600 hover:text-neutral-900 hover:underline">Reset filters</button>
-          <button onClick={apply} className="inline-flex items-center gap-2 rounded-lg bg-neutral-900 px-4 py-2 text-[13px] font-medium text-white hover:bg-neutral-800">
+          <button onClick={reset} className="text-[13px] text-neutral-600 hover:text-neutral-900 hover:underline">
+            Reset filters
+          </button>
+          <button
+            onClick={apply}
+            className="inline-flex items-center gap-2 rounded-lg bg-neutral-900 px-4 py-2 text-[13px] font-medium text-white hover:bg-neutral-800"
+          >
             Show {applyFilters(dryRunCandidates, local, "newest").length ? "matching" : ""} candidates
-            <span className="rounded-full bg-white/15 px-2 py-0.5 text-[11px] tabular-nums">{matchCount.toLocaleString()}</span>
+            <span className="rounded-full bg-white/15 px-2 py-0.5 text-[11px] tabular-nums">
+              {matchCount.toLocaleString()}
+            </span>
           </button>
         </footer>
       </aside>
@@ -935,16 +1810,34 @@ function AdvancedFiltersDrawer({ open, onClose, filters, setFilters, matchCount,
 // dryRunCandidates is only referenced to keep TS happy in the drawer button; the real count comes from parent.
 const dryRunCandidates: Candidate[] = [];
 
-function DrawerSection({ id, title, open, onToggle, count, children }: {
-  id: SectionId; title: string; open: boolean; onToggle: (s: SectionId) => void; count?: number; children: React.ReactNode;
+function DrawerSection({
+  id,
+  title,
+  open,
+  onToggle,
+  count,
+  children,
+}: {
+  id: SectionId;
+  title: string;
+  open: boolean;
+  onToggle: (s: SectionId) => void;
+  count?: number;
+  children: React.ReactNode;
 }) {
   return (
     <div className="border-b border-neutral-100">
-      <button onClick={() => onToggle(open ? ("" as any) : id)}
-        className="flex w-full items-center justify-between px-6 py-3.5 text-left transition hover:bg-neutral-50">
+      <button
+        onClick={() => onToggle(open ? ("" as any) : id)}
+        className="flex w-full items-center justify-between px-6 py-3.5 text-left transition hover:bg-neutral-50"
+      >
         <div className="flex items-center gap-2">
           <span className="text-[13.5px] font-medium text-neutral-900">{title}</span>
-          {count ? <span className="rounded-full bg-neutral-900 px-1.5 py-0.5 text-[10px] font-medium text-white tabular-nums">{count}</span> : null}
+          {count ? (
+            <span className="rounded-full bg-neutral-900 px-1.5 py-0.5 text-[10px] font-medium text-white tabular-nums">
+              {count}
+            </span>
+          ) : null}
         </div>
         <ChevronDown className={`h-4 w-4 text-neutral-400 transition ${open ? "rotate-180" : ""}`} />
       </button>
@@ -953,19 +1846,40 @@ function DrawerSection({ id, title, open, onToggle, count, children }: {
   );
 }
 function SubLabel({ children }: { children: React.ReactNode }) {
-  return <div className="mt-3 mb-1.5 text-[10.5px] font-medium uppercase tracking-widest text-neutral-500 first:mt-0">{children}</div>;
+  return (
+    <div className="mt-3 mb-1.5 text-[10.5px] font-medium uppercase tracking-widest text-neutral-500 first:mt-0">
+      {children}
+    </div>
+  );
 }
-function CheckGrid({ options, value, onChange, single, labels }: { options: string[]; value: Set<string>; onChange: (v: Set<string>) => void; single?: boolean; labels?: Record<string, string> }) {
+function CheckGrid({
+  options,
+  value,
+  onChange,
+  single,
+  labels,
+}: {
+  options: string[];
+  value: Set<string>;
+  onChange: (v: Set<string>) => void;
+  single?: boolean;
+  labels?: Record<string, string>;
+}) {
   return (
     <div className="flex flex-wrap gap-1.5">
-      {options.map(o => {
+      {options.map((o) => {
         const on = value.has(o);
         return (
-          <button key={o} onClick={() => {
+          <button
+            key={o}
+            onClick={() => {
               if (single) return onChange(new Set([o]));
-              const n = new Set(value); on ? n.delete(o) : n.add(o); onChange(n);
+              const n = new Set(value);
+              on ? n.delete(o) : n.add(o);
+              onChange(n);
             }}
-            className={`inline-flex items-center gap-1.5 rounded-full border px-3 py-1 text-[12px] transition ${on ? "border-neutral-900 bg-neutral-900 text-white" : "border-neutral-200 bg-white text-neutral-700 hover:border-neutral-300"}`}>
+            className={`inline-flex items-center gap-1.5 rounded-full border px-3 py-1 text-[12px] transition ${on ? "border-neutral-900 bg-neutral-900 text-white" : "border-neutral-200 bg-white text-neutral-700 hover:border-neutral-300"}`}
+          >
             {on && <Check className="h-3 w-3" />}
             {labels?.[o] || o}
           </button>
@@ -974,7 +1888,15 @@ function CheckGrid({ options, value, onChange, single, labels }: { options: stri
     </div>
   );
 }
-function ScoreRow({ label, value, onChange }: { label: string; value: number | null; onChange: (v: number | null) => void }) {
+function ScoreRow({
+  label,
+  value,
+  onChange,
+}: {
+  label: string;
+  value: number | null;
+  onChange: (v: number | null) => void;
+}) {
   const opts: (number | null)[] = [null, 60, 70, 80, 90];
   return (
     <div className="mb-3">
@@ -984,8 +1906,11 @@ function ScoreRow({ label, value, onChange }: { label: string; value: number | n
       </div>
       <div className="flex gap-1">
         {opts.map((v, i) => (
-          <button key={i} onClick={() => onChange(v)}
-            className={`flex-1 rounded-md border px-2 py-1 text-[11px] transition ${value === v ? "border-neutral-900 bg-neutral-900 text-white" : "border-neutral-200 bg-white text-neutral-700 hover:border-neutral-300"}`}>
+          <button
+            key={i}
+            onClick={() => onChange(v)}
+            className={`flex-1 rounded-md border px-2 py-1 text-[11px] transition ${value === v ? "border-neutral-900 bg-neutral-900 text-white" : "border-neutral-200 bg-white text-neutral-700 hover:border-neutral-300"}`}
+          >
             {v == null ? "Any" : `${v}+`}
           </button>
         ))}
@@ -993,23 +1918,48 @@ function ScoreRow({ label, value, onChange }: { label: string; value: number | n
     </div>
   );
 }
-function SearchableList({ options, value, onChange, placeholder }: { options: string[]; value: Set<string>; onChange: (v: Set<string>) => void; placeholder: string }) {
+function SearchableList({
+  options,
+  value,
+  onChange,
+  placeholder,
+}: {
+  options: string[];
+  value: Set<string>;
+  onChange: (v: Set<string>) => void;
+  placeholder: string;
+}) {
   const [q, setQ] = useState("");
-  const list = q ? options.filter(o => o.toLowerCase().includes(q.toLowerCase())) : options;
+  const list = q ? options.filter((o) => o.toLowerCase().includes(q.toLowerCase())) : options;
   return (
     <div className="rounded-lg border border-neutral-200">
       <div className="relative border-b border-neutral-100">
         <Search className="pointer-events-none absolute left-2.5 top-1/2 h-3.5 w-3.5 -translate-y-1/2 text-neutral-400" />
-        <input value={q} onChange={e => setQ(e.target.value)} placeholder={placeholder}
-          className="w-full rounded-t-lg bg-transparent py-2 pl-8 pr-2 text-[12.5px] text-neutral-900 placeholder-neutral-400 outline-none" />
+        <input
+          value={q}
+          onChange={(e) => setQ(e.target.value)}
+          placeholder={placeholder}
+          className="w-full rounded-t-lg bg-transparent py-2 pl-8 pr-2 text-[12.5px] text-neutral-900 placeholder-neutral-400 outline-none"
+        />
       </div>
       <div className="max-h-40 overflow-auto py-1">
-        {list.slice(0, 50).map(o => {
+        {list.slice(0, 50).map((o) => {
           const on = value.has(o);
           return (
-            <button key={o} onClick={() => { const n = new Set(value); on ? n.delete(o) : n.add(o); onChange(n); }}
-              className="flex w-full items-center gap-2 px-2.5 py-1.5 text-left text-[12px] text-neutral-800 hover:bg-neutral-50">
-              <span className={`grid h-3.5 w-3.5 place-items-center rounded border ${on ? "border-neutral-900 bg-neutral-900 text-white" : "border-neutral-300"}`}>{on && <Check className="h-2.5 w-2.5" />}</span>
+            <button
+              key={o}
+              onClick={() => {
+                const n = new Set(value);
+                on ? n.delete(o) : n.add(o);
+                onChange(n);
+              }}
+              className="flex w-full items-center gap-2 px-2.5 py-1.5 text-left text-[12px] text-neutral-800 hover:bg-neutral-50"
+            >
+              <span
+                className={`grid h-3.5 w-3.5 place-items-center rounded border ${on ? "border-neutral-900 bg-neutral-900 text-white" : "border-neutral-300"}`}
+              >
+                {on && <Check className="h-2.5 w-2.5" />}
+              </span>
               <span className="truncate">{o}</span>
             </button>
           );
@@ -1018,7 +1968,9 @@ function SearchableList({ options, value, onChange, placeholder }: { options: st
       </div>
       {value.size > 0 && (
         <div className="border-t border-neutral-100 px-2.5 py-1.5 text-right">
-          <button onClick={() => onChange(new Set())} className="text-[11px] text-neutral-600 hover:text-neutral-900">Clear ({value.size})</button>
+          <button onClick={() => onChange(new Set())} className="text-[11px] text-neutral-600 hover:text-neutral-900">
+            Clear ({value.size})
+          </button>
         </div>
       )}
     </div>
@@ -1026,26 +1978,64 @@ function SearchableList({ options, value, onChange, placeholder }: { options: st
 }
 
 // -------------- Active filter chips helper --------------
-interface ActiveChip { key: string; group: string; value: string; remove: (f: CandidateFilters) => CandidateFilters; }
+interface ActiveChip {
+  key: string;
+  group: string;
+  value: string;
+  remove: (f: CandidateFilters) => CandidateFilters;
+}
 function buildActiveChips(f: CandidateFilters): ActiveChip[] {
   const chips: ActiveChip[] = [];
   const addSet = (group: string, key: keyof CandidateFilters) => {
     const s = f[key] as Set<string>;
-    s.forEach(v => chips.push({
-      key: `${key}:${v}`, group, value: v,
-      remove: (cur) => { const n = new Set(cur[key] as Set<string>); n.delete(v); return { ...cur, [key]: n } as CandidateFilters; },
-    }));
+    s.forEach((v) =>
+      chips.push({
+        key: `${key}:${v}`,
+        group,
+        value: v,
+        remove: (cur) => {
+          const n = new Set(cur[key] as Set<string>);
+          n.delete(v);
+          return { ...cur, [key]: n } as CandidateFilters;
+        },
+      }),
+    );
   };
-  addSet("Status", "status"); addSet("Hiring", "hiring"); addSet("Recommendation", "recommendation");
-  addSet("Vitarka", "vitarka"); addSet("Experience", "experience"); addSet("Completion", "completion");
-  addSet("College", "colleges"); addSet("Company", "companies"); addSet("Skill", "skills");
-  addSet("Tag", "tags"); addSet("Domain", "domains");
-  if (f.eciMin != null) chips.push({ key: "eci", group: "ECI", value: `≥ ${f.eciMin}`, remove: c => ({ ...c, eciMin: null }) });
-  if (f.labsMin != null) chips.push({ key: "labs", group: "Labs", value: `≥ ${f.labsMin}`, remove: c => ({ ...c, labsMin: null }) });
-  if (f.assessMin != null) chips.push({ key: "assess", group: "Assessment", value: `≥ ${f.assessMin}`, remove: c => ({ ...c, assessMin: null }) });
+  addSet("Status", "status");
+  addSet("Hiring", "hiring");
+  addSet("Recommendation", "recommendation");
+  addSet("Vitarka", "vitarka");
+  addSet("Experience", "experience");
+  addSet("Completion", "completion");
+  addSet("College", "colleges");
+  addSet("Company", "companies");
+  addSet("Skill", "skills");
+  addSet("Tag", "tags");
+  addSet("Domain", "domains");
+  if (f.eciMin != null)
+    chips.push({ key: "eci", group: "ECI", value: `≥ ${f.eciMin}`, remove: (c) => ({ ...c, eciMin: null }) });
+  if (f.labsMin != null)
+    chips.push({ key: "labs", group: "Labs", value: `≥ ${f.labsMin}`, remove: (c) => ({ ...c, labsMin: null }) });
+  if (f.assessMin != null)
+    chips.push({
+      key: "assess",
+      group: "Assessment",
+      value: `≥ ${f.assessMin}`,
+      remove: (c) => ({ ...c, assessMin: null }),
+    });
   if (f.dateRange !== "any") {
-    const labels: Record<string, string> = { today: "Today", yesterday: "Yesterday", "7d": "Last 7 days", "30d": "Last 30 days" };
-    chips.push({ key: "date", group: "Submitted", value: labels[f.dateRange] || f.dateRange, remove: c => ({ ...c, dateRange: "any" }) });
+    const labels: Record<string, string> = {
+      today: "Today",
+      yesterday: "Yesterday",
+      "7d": "Last 7 days",
+      "30d": "Last 30 days",
+    };
+    chips.push({
+      key: "date",
+      group: "Submitted",
+      value: labels[f.dateRange] || f.dateRange,
+      remove: (c) => ({ ...c, dateRange: "any" }),
+    });
   }
   return chips;
 }
@@ -1055,16 +2045,25 @@ function buildActiveChips(f: CandidateFilters): ActiveChip[] {
 function SortMenu({ value, onChange }: { value: SortKey; onChange: (v: SortKey) => void }) {
   const [open, setOpen] = useState(false);
   const opts: [SortKey, string][] = [
-    ["newest","Newest submission"],["oldest","Oldest submission"],
-    ["eci_desc","Highest ECI"],["eci_asc","Lowest ECI"],
-    ["labs_desc","Highest Labs"],["assess_desc","Highest Assessment"],["vit_desc","Highest Vitarka"],
-    ["fastest","Fastest completion"],["slowest","Slowest completion"],
-    ["name_asc","A → Z"],["name_desc","Z → A"],
+    ["newest", "Newest submission"],
+    ["oldest", "Oldest submission"],
+    ["eci_desc", "Highest ECI"],
+    ["eci_asc", "Lowest ECI"],
+    ["labs_desc", "Highest Labs"],
+    ["assess_desc", "Highest Assessment"],
+    ["vit_desc", "Highest Vitarka"],
+    ["fastest", "Fastest completion"],
+    ["slowest", "Slowest completion"],
+    ["name_asc", "A → Z"],
+    ["name_desc", "Z → A"],
   ];
   return (
     <div className="relative">
-      <button onClick={() => setOpen(v => !v)} className="inline-flex items-center gap-1.5 rounded-md border border-white/10 px-2.5 py-1.5 text-[12px] text-neutral-300 hover:border-white/20">
-        <ArrowUpDown className="h-3.5 w-3.5" /> {opts.find(o => o[0] === value)?.[1]}
+      <button
+        onClick={() => setOpen((v) => !v)}
+        className="inline-flex items-center gap-1.5 rounded-md border border-white/10 px-2.5 py-1.5 text-[12px] text-neutral-300 hover:border-white/20"
+      >
+        <ArrowUpDown className="h-3.5 w-3.5" /> {opts.find((o) => o[0] === value)?.[1]}
         <ChevronDown className="h-3 w-3" />
       </button>
       {open && (
@@ -1072,7 +2071,16 @@ function SortMenu({ value, onChange }: { value: SortKey; onChange: (v: SortKey) 
           <div className="fixed inset-0 z-30" onClick={() => setOpen(false)} />
           <div className="absolute right-0 top-full z-40 mt-1 w-52 overflow-hidden rounded-lg border border-white/10 bg-neutral-950 shadow-2xl">
             {opts.map(([k, l]) => (
-              <button key={k} onClick={() => { onChange(k); setOpen(false); }} className={`block w-full px-3 py-1.5 text-left text-[12px] hover:bg-white/5 ${value === k ? "text-white" : "text-neutral-300"}`}>{l}</button>
+              <button
+                key={k}
+                onClick={() => {
+                  onChange(k);
+                  setOpen(false);
+                }}
+                className={`block w-full px-3 py-1.5 text-left text-[12px] hover:bg-white/5 ${value === k ? "text-white" : "text-neutral-300"}`}
+              >
+                {l}
+              </button>
             ))}
           </div>
         </>
@@ -1090,22 +2098,44 @@ function PreviewPanel({ c, onClose, onOpen }: { c: Candidate; onClose: () => voi
       <aside className="fixed right-0 top-0 z-50 h-full w-full max-w-md overflow-y-auto border-l border-white/10 bg-neutral-950 p-6">
         <div className="flex items-center justify-between">
           <div className="text-[11px] uppercase tracking-wider text-neutral-500">Candidate preview</div>
-          <button onClick={onClose} className="rounded p-1 text-neutral-400 hover:bg-white/5 hover:text-white"><X className="h-4 w-4" /></button>
+          <button onClick={onClose} className="rounded p-1 text-neutral-400 hover:bg-white/5 hover:text-white">
+            <X className="h-4 w-4" />
+          </button>
         </div>
         <div className="mt-4 flex items-center gap-3">
           <Avatar name={c.name} hue={c.avatarHue} size="lg" />
           <div>
             <div className="text-[18px] font-medium text-white">{c.name}</div>
-            <div className="text-[12px] text-neutral-500">{c.company} · {experienceBucket(c.experience)}</div>
+            <div className="text-[12px] text-neutral-500">
+              {c.company} · {experienceBucket(c.experience)}
+            </div>
           </div>
         </div>
         <dl className="mt-4 space-y-2 text-[12px]">
-          <div className="flex justify-between"><dt className="text-neutral-500">Email</dt><dd className="text-neutral-200">{c.email}</dd></div>
-          <div className="flex justify-between"><dt className="text-neutral-500">Phone</dt><dd className="text-neutral-200">{c.phone}</dd></div>
-          <div className="flex justify-between"><dt className="text-neutral-500">College</dt><dd className="max-w-[60%] truncate text-neutral-200">{c.college}</dd></div>
-          <div className="flex justify-between"><dt className="text-neutral-500">Domain</dt><dd className="text-neutral-200">{c.domain}</dd></div>
-          <div className="flex justify-between"><dt className="text-neutral-500">Submitted</dt><dd className="text-neutral-200">{fmtDate(c.submittedAt)}</dd></div>
-          <div className="flex justify-between"><dt className="text-neutral-500">Completion</dt><dd className="text-neutral-200">{c.completionMinutes} min</dd></div>
+          <div className="flex justify-between">
+            <dt className="text-neutral-500">Email</dt>
+            <dd className="text-neutral-200">{c.email}</dd>
+          </div>
+          <div className="flex justify-between">
+            <dt className="text-neutral-500">Phone</dt>
+            <dd className="text-neutral-200">{c.phone}</dd>
+          </div>
+          <div className="flex justify-between">
+            <dt className="text-neutral-500">College</dt>
+            <dd className="max-w-[60%] truncate text-neutral-200">{c.college}</dd>
+          </div>
+          <div className="flex justify-between">
+            <dt className="text-neutral-500">Domain</dt>
+            <dd className="text-neutral-200">{c.domain}</dd>
+          </div>
+          <div className="flex justify-between">
+            <dt className="text-neutral-500">Submitted</dt>
+            <dd className="text-neutral-200">{fmtDate(c.submittedAt)}</dd>
+          </div>
+          <div className="flex justify-between">
+            <dt className="text-neutral-500">Completion</dt>
+            <dd className="text-neutral-200">{c.completionMinutes} min</dd>
+          </div>
         </dl>
 
         <div className="mt-6">
@@ -1113,7 +2143,9 @@ function PreviewPanel({ c, onClose, onOpen }: { c: Candidate; onClose: () => voi
           <div className="mt-2 flex items-baseline gap-2">
             <div className="text-[36px] font-medium text-white">{c.eci}</div>
             <div className="text-[12px] text-neutral-500">/100</div>
-            <div className="ml-auto"><RecBadge r={c.recommendation} /></div>
+            <div className="ml-auto">
+              <RecBadge r={c.recommendation} />
+            </div>
           </div>
         </div>
 
@@ -1126,13 +2158,27 @@ function PreviewPanel({ c, onClose, onOpen }: { c: Candidate; onClose: () => voi
         <div className="mt-6">
           <div className="text-[11px] uppercase tracking-wider text-neutral-500">Skills</div>
           <div className="mt-2 flex flex-wrap gap-1.5">
-            {c.skills.map(s => <span key={s} className="rounded-full border border-white/10 px-2 py-0.5 text-[11px] text-neutral-300">{s}</span>)}
+            {c.skills.map((s) => (
+              <span key={s} className="rounded-full border border-white/10 px-2 py-0.5 text-[11px] text-neutral-300">
+                {s}
+              </span>
+            ))}
           </div>
         </div>
 
         <div className="mt-8 flex gap-2">
-          <button onClick={onOpen} className="flex-1 rounded-lg bg-white text-black px-3 py-2 text-[13px] font-medium hover:bg-white/90">View full profile</button>
-          <button onClick={onClose} className="rounded-lg border border-white/10 px-3 py-2 text-[13px] text-neutral-300 hover:bg-white/5">Close</button>
+          <button
+            onClick={onOpen}
+            className="flex-1 rounded-lg bg-white text-black px-3 py-2 text-[13px] font-medium hover:bg-white/90"
+          >
+            View full profile
+          </button>
+          <button
+            onClick={onClose}
+            className="rounded-lg border border-white/10 px-3 py-2 text-[13px] text-neutral-300 hover:bg-white/5"
+          >
+            Close
+          </button>
         </div>
       </aside>
     </>
@@ -1141,20 +2187,72 @@ function PreviewPanel({ c, onClose, onOpen }: { c: Candidate; onClose: () => voi
 
 // -------------- Small building blocks --------------
 
-function SectionTitle({ children }: { children: React.ReactNode }) { return <h2 className="text-[11px] uppercase tracking-widest text-neutral-500">{children}</h2>; }
-function HeaderBtn({ children, onClick, icon }: { children: React.ReactNode; onClick: () => void; icon?: React.ReactNode }) {
-  return <button onClick={onClick} className="inline-flex items-center gap-1.5 rounded-lg border border-white/10 px-3 py-1.5 text-[12px] text-neutral-200 transition hover:bg-white/5 hover:border-white/20">{icon}{children}</button>;
+function SectionTitle({ children }: { children: React.ReactNode }) {
+  return <h2 className="text-[11px] uppercase tracking-widest text-neutral-500">{children}</h2>;
 }
-function MenuItem({ children, onClick, icon, danger }: { children: React.ReactNode; onClick: () => void; icon?: React.ReactNode; danger?: boolean }) {
-  return <button onClick={onClick} className={`flex w-full items-center gap-2 px-3 py-2 text-left text-[12px] ${danger ? "text-red-400 hover:bg-red-500/10" : "text-neutral-200 hover:bg-white/5"}`}>{icon}{children}</button>;
+function HeaderBtn({
+  children,
+  onClick,
+  icon,
+}: {
+  children: React.ReactNode;
+  onClick: () => void;
+  icon?: React.ReactNode;
+}) {
+  return (
+    <button
+      onClick={onClick}
+      className="inline-flex items-center gap-1.5 rounded-lg border border-white/10 px-3 py-1.5 text-[12px] text-neutral-200 transition hover:bg-white/5 hover:border-white/20"
+    >
+      {icon}
+      {children}
+    </button>
+  );
 }
-function QuickAction({ label, onClick, accent, icon }: { label: string; onClick: () => void; accent?: boolean; icon?: React.ReactNode }) {
+function MenuItem({
+  children,
+  onClick,
+  icon,
+  danger,
+}: {
+  children: React.ReactNode;
+  onClick: () => void;
+  icon?: React.ReactNode;
+  danger?: boolean;
+}) {
+  return (
+    <button
+      onClick={onClick}
+      className={`flex w-full items-center gap-2 px-3 py-2 text-left text-[12px] ${danger ? "text-red-400 hover:bg-red-500/10" : "text-neutral-200 hover:bg-white/5"}`}
+    >
+      {icon}
+      {children}
+    </button>
+  );
+}
+function QuickAction({
+  label,
+  onClick,
+  accent,
+  icon,
+}: {
+  label: string;
+  onClick: () => void;
+  accent?: boolean;
+  icon?: React.ReactNode;
+}) {
   return (
     <button
       onClick={onClick}
       className={`group flex items-center gap-2.5 rounded-xl border bg-white px-4 py-3.5 text-left text-[13px] transition hover:-translate-y-0.5 hover:shadow-sm ${accent ? "border-emerald-400/40 text-emerald-700" : "border-black/10 text-neutral-800 hover:border-black/20"}`}
     >
-      {icon && <span className={`grid h-7 w-7 flex-shrink-0 place-items-center rounded-lg ${accent ? "bg-emerald-400/10 text-emerald-700" : "bg-black/[0.04] text-neutral-700"}`}>{icon}</span>}
+      {icon && (
+        <span
+          className={`grid h-7 w-7 flex-shrink-0 place-items-center rounded-lg ${accent ? "bg-emerald-400/10 text-emerald-700" : "bg-black/[0.04] text-neutral-700"}`}
+        >
+          {icon}
+        </span>
+      )}
       <span className="flex-1 font-medium">{label}</span>
       <ArrowUpRight className="h-3.5 w-3.5 opacity-40 transition group-hover:opacity-100" />
     </button>
@@ -1164,36 +2262,110 @@ function MiniStat({ label, value, tone }: { label: string; value: number; tone?:
   return (
     <div className="bg-neutral-950 px-4 py-3">
       <div className="text-[10px] uppercase tracking-widest text-neutral-500">{label}</div>
-      <div className={`mt-1 text-[22px] font-medium ${tone === "good" ? "text-emerald-300" : tone === "muted" ? "text-neutral-400" : "text-white"}`}>{value.toLocaleString()}</div>
+      <div
+        className={`mt-1 text-[22px] font-medium ${tone === "good" ? "text-emerald-300" : tone === "muted" ? "text-neutral-400" : "text-white"}`}
+      >
+        {value.toLocaleString()}
+      </div>
     </div>
   );
 }
-function BigStat({ label, value, suffix, icon }: { label: string; value: number; suffix?: string; icon?: React.ReactNode }) {
+function BigStat({
+  label,
+  value,
+  suffix,
+  icon,
+}: {
+  label: string;
+  value: number;
+  suffix?: string;
+  icon?: React.ReactNode;
+}) {
   return (
     <div className="rounded-xl border border-white/5 p-4">
-      <div className="flex items-center gap-1.5 text-[11px] uppercase tracking-widest text-neutral-500">{icon}{label}</div>
-      <div className="mt-2 text-[30px] font-medium text-white">{value}<span className="text-[14px] text-neutral-500">{suffix}</span></div>
+      <div className="flex items-center gap-1.5 text-[11px] uppercase tracking-widest text-neutral-500">
+        {icon}
+        {label}
+      </div>
+      <div className="mt-2 text-[30px] font-medium text-white">
+        {value}
+        <span className="text-[14px] text-neutral-500">{suffix}</span>
+      </div>
     </div>
   );
 }
 function StatusBadge({ status }: { status: "draft" | "published" }) {
-  return status === "published"
-    ? <span className="inline-flex items-center gap-1 rounded-full border border-emerald-400/25 bg-emerald-400/10 px-2 py-0.5 text-[10px] font-medium text-emerald-300"><span className="h-1 w-1 rounded-full bg-emerald-400" /> Published</span>
-    : <span className="inline-flex items-center gap-1 rounded-full border border-amber-400/25 bg-amber-400/10 px-2 py-0.5 text-[10px] font-medium text-amber-300"><span className="h-1 w-1 rounded-full bg-amber-400" /> Draft</span>;
+  return status === "published" ? (
+    <span className="inline-flex items-center gap-1 rounded-full border border-emerald-400/25 bg-emerald-400/10 px-2 py-0.5 text-[10px] font-medium text-emerald-300">
+      <span className="h-1 w-1 rounded-full bg-emerald-400" /> Published
+    </span>
+  ) : (
+    <span className="inline-flex items-center gap-1 rounded-full border border-amber-400/25 bg-amber-400/10 px-2 py-0.5 text-[10px] font-medium text-amber-300">
+      <span className="h-1 w-1 rounded-full bg-amber-400" /> Draft
+    </span>
+  );
 }
-function ViewChip({ active, onClick, children }: { active?: boolean; onClick?: () => void; children: React.ReactNode }) {
-  return <button onClick={onClick} className={`rounded-full px-2.5 py-1 text-[11px] transition ${active ? "bg-white text-black" : "border border-white/10 text-neutral-300 hover:border-white/20 hover:text-white"}`}>{children}</button>;
+function ViewChip({
+  active,
+  onClick,
+  children,
+}: {
+  active?: boolean;
+  onClick?: () => void;
+  children: React.ReactNode;
+}) {
+  return (
+    <button
+      onClick={onClick}
+      className={`rounded-full px-2.5 py-1 text-[11px] transition ${active ? "bg-white text-black" : "border border-white/10 text-neutral-300 hover:border-white/20 hover:text-white"}`}
+    >
+      {children}
+    </button>
+  );
 }
-function BulkBtn({ children, onClick, danger, accent }: { children: React.ReactNode; onClick: () => void; danger?: boolean; accent?: boolean }) {
+function BulkBtn({
+  children,
+  onClick,
+  danger,
+  accent,
+}: {
+  children: React.ReactNode;
+  onClick: () => void;
+  danger?: boolean;
+  accent?: boolean;
+}) {
   const cls = danger
     ? "border-red-500/30 text-red-300 hover:bg-red-500/10"
     : accent
       ? "border-emerald-400/40 bg-emerald-400/10 text-emerald-300 hover:bg-emerald-400/20"
       : "border-white/10 text-neutral-200 hover:bg-white/5";
-  return <button onClick={onClick} className={`inline-flex items-center gap-1.5 rounded-md border px-2 py-1 text-[11px] ${cls}`}>{children}</button>;
+  return (
+    <button
+      onClick={onClick}
+      className={`inline-flex items-center gap-1.5 rounded-md border px-2 py-1 text-[11px] ${cls}`}
+    >
+      {children}
+    </button>
+  );
 }
-function Th({ children, className = "" }: { children?: React.ReactNode; className?: string }) { return <th className={`px-3 py-2 font-medium ${className}`}>{children}</th>; }
-function Td({ children, className = "", onClick }: { children?: React.ReactNode; className?: string; onClick?: (e: React.MouseEvent) => void }) { return <td onClick={onClick} className={`px-3 py-2 align-middle ${className}`}>{children}</td>; }
+function Th({ children, className = "" }: { children?: React.ReactNode; className?: string }) {
+  return <th className={`px-3 py-2 font-medium ${className}`}>{children}</th>;
+}
+function Td({
+  children,
+  className = "",
+  onClick,
+}: {
+  children?: React.ReactNode;
+  className?: string;
+  onClick?: (e: React.MouseEvent) => void;
+}) {
+  return (
+    <td onClick={onClick} className={`px-3 py-2 align-middle ${className}`}>
+      {children}
+    </td>
+  );
+}
 function ScorePill({ v, bold }: { v: number; bold?: boolean }) {
   return <span className={`text-neutral-900 ${bold ? "font-medium" : ""}`}>{v}</span>;
 }
@@ -1201,12 +2373,18 @@ function ScoreBlock({ label, v, highlight, big }: { label: string; v: number; hi
   return (
     <div className={`rounded-lg border border-white/5 ${highlight ? "bg-emerald-400/[0.05]" : "bg-black/20"} p-2`}>
       <div className="text-[9px] uppercase tracking-widest text-neutral-500">{label}</div>
-      <div className={`mt-0.5 ${big ? "text-[20px]" : "text-[14px]"} font-medium text-white`}><ScorePill v={v} /></div>
+      <div className={`mt-0.5 ${big ? "text-[20px]" : "text-[14px]"} font-medium text-white`}>
+        <ScorePill v={v} />
+      </div>
     </div>
   );
 }
 function RecBadge({ r }: { r: Recommendation }) {
-  return <span className="inline-flex rounded-full border border-neutral-200 bg-neutral-100 px-1.5 py-0.5 text-[10px] font-medium text-neutral-900">{r}</span>;
+  return (
+    <span className="inline-flex rounded-full border border-neutral-200 bg-neutral-100 px-1.5 py-0.5 text-[10px] font-medium text-neutral-900">
+      {r}
+    </span>
+  );
 }
 function StatusChip({ s, h, compact }: { s: CandStatus; h: HiringStatus; compact?: boolean }) {
   return (
@@ -1218,17 +2396,43 @@ function StatusChip({ s, h, compact }: { s: CandStatus; h: HiringStatus; compact
   );
 }
 function Avatar({ name, hue, size = "md" }: { name: string; hue: number; size?: "md" | "lg" }) {
-  const initials = name.split(" ").map(w => w[0]).slice(0, 2).join("");
+  const initials = name
+    .split(" ")
+    .map((w) => w[0])
+    .slice(0, 2)
+    .join("");
   const cls = size === "lg" ? "h-9 w-9 text-[13px]" : "h-7 w-7 text-[11px]";
-  return <span className={`grid ${cls} flex-shrink-0 place-items-center rounded-full font-medium text-white`} style={{ background: `linear-gradient(135deg, hsl(${hue} 60% 40%), hsl(${(hue + 60) % 360} 55% 30%))` }}>{initials}</span>;
+  return (
+    <span
+      className={`grid ${cls} flex-shrink-0 place-items-center rounded-full font-medium text-white`}
+      style={{ background: `linear-gradient(135deg, hsl(${hue} 60% 40%), hsl(${(hue + 60) % 360} 55% 30%))` }}
+    >
+      {initials}
+    </span>
+  );
 }
 function EmptyState({ hasFilters, onReset }: { hasFilters: boolean; onReset: () => void }) {
   return (
     <div className="rounded-2xl border border-dashed border-white/10 p-16 text-center">
-      <div className="mx-auto grid h-12 w-12 place-items-center rounded-full border border-white/10 text-neutral-500"><Users className="h-5 w-5" /></div>
-      <div className="mt-4 text-[15px] text-white">{hasFilters ? "No candidates match these filters" : "No candidates yet"}</div>
-      <div className="mt-1 text-[12px] text-neutral-500">{hasFilters ? "Try loosening a filter or clearing your search." : "Invite candidates from the header to get started."}</div>
-      {hasFilters && <button onClick={onReset} className="mt-4 rounded-lg border border-white/10 px-3 py-1.5 text-[12px] text-neutral-200 hover:bg-white/5">Reset filters</button>}
+      <div className="mx-auto grid h-12 w-12 place-items-center rounded-full border border-white/10 text-neutral-500">
+        <Users className="h-5 w-5" />
+      </div>
+      <div className="mt-4 text-[15px] text-white">
+        {hasFilters ? "No candidates match these filters" : "No candidates yet"}
+      </div>
+      <div className="mt-1 text-[12px] text-neutral-500">
+        {hasFilters
+          ? "Try loosening a filter or clearing your search."
+          : "Invite candidates from the header to get started."}
+      </div>
+      {hasFilters && (
+        <button
+          onClick={onReset}
+          className="mt-4 rounded-lg border border-white/10 px-3 py-1.5 text-[12px] text-neutral-200 hover:bg-white/5"
+        >
+          Reset filters
+        </button>
+      )}
     </div>
   );
 }
@@ -1244,8 +2448,12 @@ function SimplePane({ title, desc }: { title: string; desc: string }) {
 
 // -------------- Helpers --------------
 
-function cap(s: string) { return s[0].toUpperCase() + s.slice(1); }
-function fmtDate(t: number) { return new Date(t).toLocaleDateString(undefined, { day: "numeric", month: "short", year: "numeric" }); }
+function cap(s: string) {
+  return s[0].toUpperCase() + s.slice(1);
+}
+function fmtDate(t: number) {
+  return new Date(t).toLocaleDateString(undefined, { day: "numeric", month: "short", year: "numeric" });
+}
 function fmtRel(t: number) {
   const d = Date.now() - t;
   const m = Math.floor(d / 60000);
@@ -1260,35 +2468,88 @@ function fmtRel(t: number) {
 function serializeFilters(f: CandidateFilters): SerializedFilters {
   return {
     search: f.search,
-    status: [...f.status], hiring: [...f.hiring], recommendation: [...f.recommendation],
-    eciMin: f.eciMin, labsMin: f.labsMin, assessMin: f.assessMin,
-    vitarka: [...f.vitarka], dateRange: f.dateRange,
-    completion: [...f.completion], experience: [...f.experience],
-    colleges: [...f.colleges], companies: [...f.companies],
-    skills: [...f.skills], tags: [...f.tags], domains: [...f.domains],
+    status: [...f.status],
+    hiring: [...f.hiring],
+    recommendation: [...f.recommendation],
+    eciMin: f.eciMin,
+    labsMin: f.labsMin,
+    assessMin: f.assessMin,
+    vitarka: [...f.vitarka],
+    dateRange: f.dateRange,
+    completion: [...f.completion],
+    experience: [...f.experience],
+    colleges: [...f.colleges],
+    companies: [...f.companies],
+    skills: [...f.skills],
+    tags: [...f.tags],
+    domains: [...f.domains],
   };
 }
 function deserializeFilters(s: SerializedFilters): CandidateFilters {
   return {
     search: s.search,
-    status: new Set(s.status as CandStatus[]), hiring: new Set(s.hiring as HiringStatus[]),
+    status: new Set(s.status as CandStatus[]),
+    hiring: new Set(s.hiring as HiringStatus[]),
     recommendation: new Set(s.recommendation as Recommendation[]),
-    eciMin: s.eciMin, labsMin: s.labsMin, assessMin: s.assessMin,
-    vitarka: new Set(s.vitarka as VitarkaLabel[]), dateRange: s.dateRange as any,
-    completion: new Set(s.completion), experience: new Set(s.experience),
-    colleges: new Set(s.colleges), companies: new Set(s.companies),
-    skills: new Set(s.skills), tags: new Set(s.tags), domains: new Set(s.domains),
+    eciMin: s.eciMin,
+    labsMin: s.labsMin,
+    assessMin: s.assessMin,
+    vitarka: new Set(s.vitarka as VitarkaLabel[]),
+    dateRange: s.dateRange as any,
+    completion: new Set(s.completion),
+    experience: new Set(s.experience),
+    colleges: new Set(s.colleges),
+    companies: new Set(s.companies),
+    skills: new Set(s.skills),
+    tags: new Set(s.tags),
+    domains: new Set(s.domains),
   };
 }
 function buildActivity(candidates: Candidate[]) {
-  const items: { id: string; text: string; time: string; tone: "good"|"warn"|"bad"|"neutral"; when: number }[] = [];
+  const items: { id: string; text: string; time: string; tone: "good" | "warn" | "bad" | "neutral"; when: number }[] =
+    [];
   const recent = [...candidates].sort((a, b) => b.submittedAt - a.submittedAt).slice(0, 40);
   for (const c of recent) {
-    if (c.status === "Submitted") items.push({ id: c.id + "s", text: `${c.name} submitted the evaluation`, time: fmtRel(c.submittedAt), tone: "neutral", when: c.submittedAt });
-    if (c.hiringStatus === "Shortlisted") items.push({ id: c.id + "sh", text: `${c.name} was shortlisted`, time: fmtRel(c.submittedAt - 5 * 60000), tone: "good", when: c.submittedAt - 5 * 60000 });
-    if (c.hiringStatus === "Interview Scheduled") items.push({ id: c.id + "iv", text: `${c.name} moved to interview`, time: fmtRel(c.submittedAt - 15 * 60000), tone: "good", when: c.submittedAt - 15 * 60000 });
-    if (c.status === "Expired") items.push({ id: c.id + "e", text: `${c.name}'s invitation expired`, time: fmtRel(c.submittedAt), tone: "warn", when: c.submittedAt });
-    if (c.hiringStatus === "Selected") items.push({ id: c.id + "sel", text: `${c.name} was selected`, time: fmtRel(c.submittedAt - 3600000), tone: "good", when: c.submittedAt - 3600000 });
+    if (c.status === "Submitted")
+      items.push({
+        id: c.id + "s",
+        text: `${c.name} submitted the evaluation`,
+        time: fmtRel(c.submittedAt),
+        tone: "neutral",
+        when: c.submittedAt,
+      });
+    if (c.hiringStatus === "Shortlisted")
+      items.push({
+        id: c.id + "sh",
+        text: `${c.name} was shortlisted`,
+        time: fmtRel(c.submittedAt - 5 * 60000),
+        tone: "good",
+        when: c.submittedAt - 5 * 60000,
+      });
+    if (c.hiringStatus === "Interview Scheduled")
+      items.push({
+        id: c.id + "iv",
+        text: `${c.name} moved to interview`,
+        time: fmtRel(c.submittedAt - 15 * 60000),
+        tone: "good",
+        when: c.submittedAt - 15 * 60000,
+      });
+    if (c.status === "Expired")
+      items.push({
+        id: c.id + "e",
+        text: `${c.name}'s invitation expired`,
+        time: fmtRel(c.submittedAt),
+        tone: "warn",
+        when: c.submittedAt,
+      });
+    if (c.hiringStatus === "Selected")
+      items.push({
+        id: c.id + "sel",
+        text: `${c.name} was selected`,
+        time: fmtRel(c.submittedAt - 3600000),
+        tone: "good",
+        when: c.submittedAt - 3600000,
+      });
   }
   return items.sort((a, b) => b.when - a.when);
 }
@@ -1296,14 +2557,51 @@ function buildActivity(candidates: Candidate[]) {
 // ============================ ATTENTION ============================
 
 const TONE_MAP: Record<AttentionGroup["tone"], { ring: string; dot: string; btn: string; glow: string }> = {
-  red: { ring: "border-red-400/25 hover:border-red-400/50", dot: "bg-red-400", btn: "bg-red-400/10 text-red-300 hover:bg-red-400/20", glow: "from-red-500/10" },
-  green: { ring: "border-emerald-400/25 hover:border-emerald-400/50", dot: "bg-emerald-400", btn: "bg-emerald-400/10 text-emerald-300 hover:bg-emerald-400/20", glow: "from-emerald-500/10" },
-  amber: { ring: "border-amber-400/25 hover:border-amber-400/50", dot: "bg-amber-400", btn: "bg-amber-400/10 text-amber-300 hover:bg-amber-400/20", glow: "from-amber-500/10" },
-  blue: { ring: "border-cyan-400/25 hover:border-cyan-400/50", dot: "bg-cyan-400", btn: "bg-cyan-400/10 text-cyan-300 hover:bg-cyan-400/20", glow: "from-cyan-500/10" },
-  violet: { ring: "border-violet-400/25 hover:border-violet-400/50", dot: "bg-violet-400", btn: "bg-violet-400/10 text-violet-300 hover:bg-violet-400/20", glow: "from-violet-500/10" },
+  red: {
+    ring: "border-red-400/25 hover:border-red-400/50",
+    dot: "bg-red-400",
+    btn: "bg-red-400/10 text-red-300 hover:bg-red-400/20",
+    glow: "from-red-500/10",
+  },
+  green: {
+    ring: "border-emerald-400/25 hover:border-emerald-400/50",
+    dot: "bg-emerald-400",
+    btn: "bg-emerald-400/10 text-emerald-300 hover:bg-emerald-400/20",
+    glow: "from-emerald-500/10",
+  },
+  amber: {
+    ring: "border-amber-400/25 hover:border-amber-400/50",
+    dot: "bg-amber-400",
+    btn: "bg-amber-400/10 text-amber-300 hover:bg-amber-400/20",
+    glow: "from-amber-500/10",
+  },
+  blue: {
+    ring: "border-cyan-400/25 hover:border-cyan-400/50",
+    dot: "bg-cyan-400",
+    btn: "bg-cyan-400/10 text-cyan-300 hover:bg-cyan-400/20",
+    glow: "from-cyan-500/10",
+  },
+  violet: {
+    ring: "border-violet-400/25 hover:border-violet-400/50",
+    dot: "bg-violet-400",
+    btn: "bg-violet-400/10 text-violet-300 hover:bg-violet-400/20",
+    glow: "from-violet-500/10",
+  },
 };
 
-function AttentionSection({ candidates, viewed, noted, onApply, onOpen }: { candidates: Candidate[]; viewed: Set<string>; noted: Set<string>; onApply: (f: CandidateFilters) => void; onOpen: (c: Candidate) => void }) {
+function AttentionSection({
+  candidates,
+  viewed,
+  noted,
+  onApply,
+  onOpen,
+}: {
+  candidates: Candidate[];
+  viewed: Set<string>;
+  noted: Set<string>;
+  onApply: (f: CandidateFilters) => void;
+  onOpen: (c: Candidate) => void;
+}) {
   const groups = useMemo(() => computeAttentionGroups(candidates, viewed, noted), [candidates, viewed, noted]);
   if (groups.length === 0) return null;
 
@@ -1312,14 +2610,25 @@ function AttentionSection({ candidates, viewed, noted, onApply, onOpen }: { cand
     if (matches.length === 1) return onOpen(matches[0]);
     const f = emptyFilters();
     if (g.id === "awaiting") f.hiring = new Set(["Pending Review"]);
-    else if (g.id === "strong") { f.recommendation = new Set(["Strong Hire"]); f.eciMin = 90; }
-    else if (g.id === "gems") { f.eciMin = 66; f.labsMin = 82; }
-    else if (g.id === "expiring") f.status = new Set(["Not Started"]);
-    else if (g.id === "comm-code") { f.vitarka = new Set(["Excellent"]); f.labsMin = null; }
-    else if (g.id === "debug") { f.labsMin = 90; }
-    else if (g.id === "labs-perfect") { f.labsMin = 88; f.status = new Set(["Submitted","Completed"]); }
-    else if (g.id === "fastest") { f.completion = new Set(["Below 45 mins"]); f.status = new Set(["Submitted","Completed"]); }
-    else if (g.id === "abandoned") f.status = new Set(["In Progress"]);
+    else if (g.id === "strong") {
+      f.recommendation = new Set(["Strong Hire"]);
+      f.eciMin = 90;
+    } else if (g.id === "gems") {
+      f.eciMin = 66;
+      f.labsMin = 82;
+    } else if (g.id === "expiring") f.status = new Set(["Not Started"]);
+    else if (g.id === "comm-code") {
+      f.vitarka = new Set(["Excellent"]);
+      f.labsMin = null;
+    } else if (g.id === "debug") {
+      f.labsMin = 90;
+    } else if (g.id === "labs-perfect") {
+      f.labsMin = 88;
+      f.status = new Set(["Submitted", "Completed"]);
+    } else if (g.id === "fastest") {
+      f.completion = new Set(["Below 45 mins"]);
+      f.status = new Set(["Submitted", "Completed"]);
+    } else if (g.id === "abandoned") f.status = new Set(["In Progress"]);
     onApply(f);
   };
 
@@ -1330,14 +2639,20 @@ function AttentionSection({ candidates, viewed, noted, onApply, onOpen }: { cand
           <div className="flex items-center gap-2 text-[11px] uppercase tracking-widest text-neutral-500">
             <Sparkles className="h-3.5 w-3.5 text-emerald-400" /> Needs your attention
           </div>
-          <div className="mt-1 text-[12px] text-neutral-500">{groups.length} actionable signal{groups.length === 1 ? "" : "s"} across {candidates.length.toLocaleString()} candidates</div>
+          <div className="mt-1 text-[12px] text-neutral-500">
+            {groups.length} actionable signal{groups.length === 1 ? "" : "s"} across{" "}
+            {candidates.length.toLocaleString()} candidates
+          </div>
         </div>
       </div>
       <div className="mt-3 grid grid-cols-1 gap-3 sm:grid-cols-2 xl:grid-cols-3">
-        {groups.map(g => {
+        {groups.map((g) => {
           const t = TONE_MAP[g.tone];
           return (
-            <div key={g.id} className={`group relative overflow-hidden rounded-2xl border ${t.ring} bg-white p-5 transition hover:shadow-sm`}>
+            <div
+              key={g.id}
+              className={`group relative overflow-hidden rounded-2xl border ${t.ring} bg-white p-5 transition hover:shadow-sm`}
+            >
               <div className="relative">
                 <div className="flex items-start justify-between gap-3">
                   <div className="text-[24px] leading-none">{g.emoji}</div>
@@ -1348,7 +2663,10 @@ function AttentionSection({ candidates, viewed, noted, onApply, onOpen }: { cand
                   <div className="text-[12px] text-neutral-400">{g.title}</div>
                 </div>
                 <p className="mt-2 text-[12px] leading-relaxed text-neutral-500">{g.description}</p>
-                <button onClick={() => applyGroup(g)} className={`mt-4 inline-flex items-center gap-1.5 rounded-md px-2.5 py-1 text-[11px] font-medium transition ${t.btn}`}>
+                <button
+                  onClick={() => applyGroup(g)}
+                  className={`mt-4 inline-flex items-center gap-1.5 rounded-md px-2.5 py-1 text-[11px] font-medium transition ${t.btn}`}
+                >
                   {g.cta} <ArrowUpRight className="h-3 w-3" />
                 </button>
               </div>
@@ -1360,12 +2678,29 @@ function AttentionSection({ candidates, viewed, noted, onApply, onOpen }: { cand
   );
 }
 
-function AttentionTab({ evId, candidates, onGoto }: { evId: string; candidates: Candidate[]; onGoto: (t: "overview" | "candidates" | "intelligence" | "attention" | "settings") => void }) {
+function AttentionTab({
+  evId,
+  candidates,
+  onGoto,
+}: {
+  evId: string;
+  candidates: Candidate[];
+  onGoto: (t: "overview" | "candidates" | "intelligence" | "attention" | "settings") => void;
+}) {
   const nav = useNavigate();
   const [viewed, setViewed] = useState<Set<string>>(new Set());
   const [noted, setNoted] = useState<Set<string>>(new Set());
-  useEffect(() => { setViewed(loadViewed(evId)); setNoted(loadNotedSet(evId, candidates.map(c => c.id))); }, [evId, candidates]);
-  const openDetails = (c: Candidate) => nav({ to: "/recruiter/evaluations/$id/candidates/$candidateId", params: { id: evId, candidateId: c.id } });
+  useEffect(() => {
+    setViewed(loadViewed(evId));
+    setNoted(
+      loadNotedSet(
+        evId,
+        candidates.map((c) => c.id),
+      ),
+    );
+  }, [evId, candidates]);
+  const openDetails = (c: Candidate) =>
+    nav({ to: "/recruiter/evaluations/$id/candidates/$candidateId", params: { id: evId, candidateId: c.id } });
   return (
     <div>
       <AttentionSection
@@ -1378,4 +2713,3 @@ function AttentionTab({ evId, candidates, onGoto }: { evId: string; candidates: 
     </div>
   );
 }
-
