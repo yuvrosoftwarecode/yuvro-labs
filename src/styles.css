@@ -255,9 +255,15 @@
 .recruiter-theme .divide-white\/5 > :not([hidden]) ~ :not([hidden]) { border-color: var(--rec-border) !important; }
 
 /* --- Text --- */
-.recruiter-theme .text-white,
 .recruiter-theme .text-neutral-100,
 .recruiter-theme .text-neutral-200 { color: var(--rec-fg) !important; }
+/* Keep text-white readable when paired with a dark background pill/button */
+.recruiter-theme .bg-neutral-900.text-white,
+.recruiter-theme .bg-neutral-900 .text-white,
+.recruiter-theme .bg-black.text-white,
+.recruiter-theme .bg-black .text-white,
+.recruiter-theme [style*="background"].text-white { color: #ffffff !important; }
+
 .recruiter-theme .text-neutral-300 { color: var(--rec-fg-soft) !important; }
 .recruiter-theme .text-neutral-400 { color: var(--rec-muted) !important; }
 .recruiter-theme .text-neutral-500,
