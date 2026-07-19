@@ -1286,10 +1286,7 @@ function ListBlock({ title, items, tone }: { title: string; items: string[]; ton
 }
 function SubMetric({ label, value, onClick }: { label: string; value: number; onClick?: () => void }) {
   return (
-    <button
-      onClick={onClick}
-      className="px-4 py-4 text-left transition"
-    >
+    <button onClick={onClick} className="px-4 py-4 text-left transition">
       <div className="text-[10px] uppercase tracking-widest text-black-500">{label}</div>
       <div className="mt-1 text-[22px] font-medium text-black">
         {value}
