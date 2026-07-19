@@ -1372,7 +1372,7 @@ function CandidateTable({
             {rows.map((c) => (
               <tr
                 key={c.id}
-                onClick={() => onOpen(c.id)}
+                onClick={() => onOpen(c)}
                 className={`cursor-pointer border-b border-neutral-100 text-neutral-900 transition hover:bg-neutral-50 ${selected.has(c.id) ? "bg-neutral-50" : ""}`}
               >
                 <Td onClick={(e) => e.stopPropagation()}>
