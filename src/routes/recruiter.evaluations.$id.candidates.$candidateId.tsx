@@ -201,10 +201,6 @@ function CandidateWorkspace() {
                   <RecBadge r={candidate.recommendation} />
                   <StatusPill s={decision} />
                 </div>
-                <div className="mt-1 text-[12px] text-neutral-500">
-                  {candidate.company} · {candidate.experience === 0 ? "Fresher" : `${candidate.experience}y`} ·{" "}
-                  {detail.location}
-                </div>
                 <div className="mt-8 flex flex-wrap items-center gap-x-4 gap-y-1 text-[12px] text-neutral-300">
                   <button
                     onClick={() => copy(candidate.email, "Email")}
@@ -217,9 +213,6 @@ function CandidateWorkspace() {
                     className="inline-flex items-center gap-1.5 hover:text-white"
                   >
                     <Phone className="h-3.5 w-3.5 text-neutral-500" /> {candidate.phone}
-                  </button>
-                  <button onClick={downloadResume} className="inline-flex items-center gap-1.5 hover:text-white">
-                    <FileText className="h-3.5 w-3.5 text-neutral-500" /> Resume
                   </button>
                 </div>
               </div>
@@ -239,14 +232,6 @@ function CandidateWorkspace() {
                 </div>
               </div>
               <div className="flex flex-wrap items-center justify-end gap-2">
-                <PrimaryAction
-                  icon={<CalendarPlus className="h-3.5 w-3.5" />}
-                  onClick={() => {
-                    doDecision("Interview Scheduled");
-                  }}
-                >
-                  Move to Interview
-                </PrimaryAction>
                 <SecondaryAction icon={<Star className="h-3.5 w-3.5" />} onClick={() => doDecision("Shortlisted")}>
                   Shortlist
                 </SecondaryAction>
@@ -274,9 +259,6 @@ function CandidateWorkspace() {
                 </SecondaryAction>
                 <SecondaryAction icon={<StickyNote className="h-3.5 w-3.5" />} onClick={() => setTab("notes")}>
                   Add Note
-                </SecondaryAction>
-                <SecondaryAction icon={<Share2 className="h-3.5 w-3.5" />} onClick={() => copy(location.href, "Link")}>
-                  Share
                 </SecondaryAction>
               </div>
             </div>
