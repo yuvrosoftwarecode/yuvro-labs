@@ -798,19 +798,19 @@ function CandidatesTab({
       </section>
 
       {/* ═════════ LEVEL 2 — Universal Search ═════════ */}
-      <section className="rounded-2xl border border-neutral-200 bg-white p-2">
-        <div className="relative">
-          <Search className="pointer-events-none absolute left-4 top-1/2 h-4 w-4 -translate-y-1/2 text-neutral-400" />
+      <section className="rounded-2xl border border-neutral-200 bg-white">
+        <div className="relative flex items-center">
+          <Search className="pointer-events-none absolute left-4 h-4 w-4 text-neutral-400" />
           <input
             value={filters.search}
             onChange={(e) => setFilters((f) => ({ ...f, search: e.target.value }))}
             placeholder="Search candidates by name, email, phone, candidate ID, college or company…"
-            className="w-full rounded-xl bg-transparent py-3 pl-11 pr-11 text-[14px] text-neutral-900 placeholder-neutral-400 outline-none"
+            className="w-full rounded-2xl bg-transparent py-3.5 pl-11 pr-11 text-[13.5px] text-neutral-900 placeholder-neutral-400 outline-none"
           />
           {filters.search && (
             <button
               onClick={() => setFilters((f) => ({ ...f, search: "" }))}
-              className="absolute right-3 top-1/2 -translate-y-1/2 rounded-md p-1 text-neutral-400 hover:bg-neutral-100 hover:text-neutral-700"
+              className="absolute right-3 rounded-md p-1 text-neutral-400 hover:bg-neutral-100 hover:text-neutral-700"
             >
               <X className="h-4 w-4" />
             </button>
@@ -861,42 +861,7 @@ function CandidatesTab({
         </section>
       )}
 
-      {/* ═════════ NEEDS YOUR ATTENTION strip ═════════ */}
-      {attention.length > 0 && (
-        <section>
-          <div className="mb-2 flex items-center justify-between">
-            <div className="flex items-center gap-2 text-[11px] uppercase tracking-widest text-neutral-500">
-              <Sparkles className="h-3.5 w-3.5 text-neutral-700" /> Needs your attention
-            </div>
-            <span className="text-[11px] text-neutral-500">
-              {attention.length} signal{attention.length === 1 ? "" : "s"}
-            </span>
-          </div>
-          <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 xl:grid-cols-4">
-            {attention.map((g) => (
-              <button
-                key={g.id}
-                onClick={() => {
-                  const f = emptyFilters();
-                  setFilters(f);
-                  notify(g.title);
-                }}
-                className="group relative overflow-hidden rounded-2xl border border-neutral-200 bg-white p-4 text-left transition hover:border-neutral-300"
-              >
-                <div className="flex items-start justify-between">
-                  <div className="text-[20px] leading-none">{g.emoji}</div>
-                  <ArrowUpRight className="h-3.5 w-3.5 text-neutral-300 transition group-hover:text-neutral-700" />
-                </div>
-                <div className="mt-3 flex items-baseline gap-2">
-                  <div className="text-[24px] font-medium leading-none text-neutral-900 tabular-nums">{g.count}</div>
-                  <div className="text-[12px] text-neutral-500">{g.title}</div>
-                </div>
-                <p className="mt-2 line-clamp-2 text-[11.5px] leading-relaxed text-neutral-500">{g.description}</p>
-              </button>
-            ))}
-          </div>
-        </section>
-      )}
+
 
       {/* ═════════ LEVEL 4 — Toolbar ═════════ */}
       <section className="flex flex-wrap items-center justify-between gap-3">
