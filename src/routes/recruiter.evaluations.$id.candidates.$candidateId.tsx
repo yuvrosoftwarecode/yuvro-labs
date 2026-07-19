@@ -1288,7 +1288,7 @@ function SubMetric({ label, value, onClick }: { label: string; value: number; on
   return (
     <button onClick={onClick} className="px-4 py-4 text-left transition">
       <div className="text-[10px] uppercase tracking-widest text-black-500">{label}</div>
-      <div className="mt-1 text-[22px] font-medium text-black">
+      <div className="mt-1 text-[22px] font-medium text-black-300">
         {value}
         <span className="text-[11px] text-neutral-500">/100</span>
       </div>
