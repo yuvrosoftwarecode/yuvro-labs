@@ -198,7 +198,6 @@ function CandidateWorkspace() {
                 <div className="flex flex-wrap items-center gap-2">
                   <Avatar name={candidate.name} hue={candidate.avatarHue} size="xl" />
                   <h1 className="text-[26px] font-medium leading-tight text-white">{candidate.name}</h1>
-                  <RecBadge r={candidate.recommendation} />
                   <StatusPill s={decision} />
                 </div>
                 <div className="mt-8 flex flex-wrap items-center gap-x-4 gap-y-1 text-[12px] text-neutral-300">
