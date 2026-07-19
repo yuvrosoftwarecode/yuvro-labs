@@ -217,19 +217,6 @@ function CandidateWorkspace() {
               </div>
             </div>
 
-            <div className="flex flex-col items-end gap-3">
-              <div className="rounded-2xl border border-white/10 bg-white/[0.03] px-5 py-3 text-right">
-                <div className="text-[10px] uppercase tracking-widest text-neutral-500">Engineering Capability</div>
-                <div className="mt-0.5 flex items-baseline justify-end gap-1">
-                  <div className={`text-[38px] font-medium leading-none ${eciColor(candidate.eci)}`}>
-                    {candidate.eci}
-                  </div>
-                  <div className="text-[12px] text-neutral-500">/100</div>
-                </div>
-                <div className="mt-1 text-[11px] text-neutral-500">
-                  {ecIVerdict(candidate.eci)} · {detail.confidence}% confidence
-                </div>
-              </div>
               <div className="flex flex-wrap items-center justify-end gap-2">
                 <SecondaryAction icon={<Star className="h-3.5 w-3.5" />} onClick={() => doDecision("Shortlisted")}>
                   Shortlist
