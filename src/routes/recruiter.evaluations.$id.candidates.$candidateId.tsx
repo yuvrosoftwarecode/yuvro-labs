@@ -256,6 +256,7 @@ function CandidateWorkspace() {
           ),
         )}
       </nav>
+      <hr />
       <main className="mx-auto grid max-w-[1440px] grid-cols-1 gap-8 px-8 py-8 lg:grid-cols-[1fr_320px]">
         <div className="min-w-0">
           {tab === "overview" && (
