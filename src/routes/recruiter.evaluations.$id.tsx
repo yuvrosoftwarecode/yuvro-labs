@@ -65,7 +65,7 @@ function EvaluationWorkspace() {
             <div className="flex items-center gap-2">
               <button onClick={() => setView("preview")} className="inline-flex items-center gap-1.5 rounded-lg border border-white/10 px-3 py-1.5 text-[12px] text-neutral-300 hover:bg-white/5"><Eye className="h-3.5 w-3.5" /> Preview</button>
               <button onClick={() => saveEvaluation(ev)} className="inline-flex items-center gap-1.5 rounded-lg border border-white/10 px-3 py-1.5 text-[12px] text-neutral-300 hover:bg-white/5">Save Draft</button>
-              <button onClick={() => setView("publish")} disabled={ev.sections.length === 0} className="inline-flex items-center gap-1.5 rounded-lg bg-gradient-to-r from-emerald-400 to-cyan-400 px-3 py-1.5 text-[12px] font-medium text-black disabled:opacity-40"><Rocket className="h-3.5 w-3.5" /> Publish</button>
+              <button onClick={() => setView("publish")} disabled={ev.sections.length === 0} className="inline-flex items-center gap-1.5 rounded-lg bg-gradient-to-r from-orange-500 to-amber-500 px-3 py-1.5 text-[12px] font-medium text-white disabled:opacity-40"><Rocket className="h-3.5 w-3.5" /> Publish</button>
             </div>
           </div>
 
@@ -184,7 +184,7 @@ function SectionBlock({ section, index, total, onChange, onDelete, onDuplicate, 
   const [renaming, setRenaming] = useState(false);
 
   const icon = section.kind === "labs" ? Beaker : section.kind === "assessment" ? BookOpen : MessageSquare;
-  const tone = section.kind === "labs" ? "from-emerald-400 to-cyan-400" : section.kind === "assessment" ? "from-violet-400 to-fuchsia-400" : "from-amber-400 to-orange-400";
+  const tone = section.kind === "labs" ? "from-emerald-400 to-emerald-500" : section.kind === "assessment" ? "from-amber-400 to-orange-400" : "from-amber-400 to-orange-400";
 
   return (
     <div className="group overflow-hidden rounded-2xl border border-white/5 bg-white/[0.02]">
@@ -302,13 +302,13 @@ function AssessmentSectionBody({ section, onChange, onAddSubsection, onAddQuesti
                     ))}
                   </ul>
                 )}
-                <button onClick={() => onAddQuestions(sub.id)} className="mt-2 inline-flex items-center gap-1.5 rounded-md border border-dashed border-white/10 px-2.5 py-1 text-[11px] text-neutral-400 hover:border-violet-400/40 hover:text-white"><Plus className="h-3 w-3" /> Add Questions</button>
+                <button onClick={() => onAddQuestions(sub.id)} className="mt-2 inline-flex items-center gap-1.5 rounded-md border border-dashed border-white/10 px-2.5 py-1 text-[11px] text-neutral-400 hover:border-amber-400/40 hover:text-white"><Plus className="h-3 w-3" /> Add Questions</button>
               </div>
             );
           })}
         </div>
       )}
-      <button onClick={onAddSubsection} className="mt-3 inline-flex items-center gap-2 rounded-lg border border-dashed border-white/10 px-3 py-2 text-[12px] text-neutral-400 hover:border-violet-400/40 hover:text-white"><Plus className="h-3.5 w-3.5" /> Add Subsection</button>
+      <button onClick={onAddSubsection} className="mt-3 inline-flex items-center gap-2 rounded-lg border border-dashed border-white/10 px-3 py-2 text-[12px] text-neutral-400 hover:border-amber-400/40 hover:text-white"><Plus className="h-3.5 w-3.5" /> Add Subsection</button>
     </div>
   );
 }
