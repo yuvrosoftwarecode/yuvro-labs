@@ -24,10 +24,10 @@ function RecruiterDashboard() {
   };
 
   const metrics = [
-    { label: "Total Evaluations", value: total, icon: ClipboardList, tone: "from-emerald-400 to-cyan-400" },
-    { label: "Active Evaluations", value: active, icon: Activity, tone: "from-cyan-400 to-blue-400" },
-    { label: "Candidates Invited", value: invited, icon: Users, tone: "from-violet-400 to-fuchsia-400" },
-    { label: "Candidates Completed", value: completed, icon: CheckCircle2, tone: "from-amber-400 to-orange-400" },
+    { label: "Total Evaluations", value: total, icon: ClipboardList, tone: "from-emerald-400 to-emerald-500" },
+    { label: "Active Evaluations", value: active, icon: Activity, tone: "from-amber-400 to-orange-400" },
+    { label: "Candidates Invited", value: invited, icon: Users, tone: "from-amber-400 to-orange-400" },
+    { label: "Candidates Completed", value: completed, icon: CheckCircle2, tone: "from-emerald-400 to-emerald-500" },
   ];
 
   return (
@@ -40,7 +40,7 @@ function RecruiterDashboard() {
           <h1 className="mt-4 text-[34px] font-semibold tracking-tight">Good to see you back.</h1>
           <p className="mt-1 text-[14px] text-neutral-400">Design engineering evaluations that feel like real work.</p>
         </div>
-        <button onClick={onCreate} className="group inline-flex items-center gap-2 rounded-lg bg-gradient-to-r from-emerald-400 to-cyan-400 px-4 py-2.5 text-[13px] font-medium text-black transition hover:brightness-110">
+        <button onClick={onCreate} className="group inline-flex items-center gap-2 rounded-lg bg-gradient-to-r from-orange-500 to-amber-500 px-4 py-2.5 text-[13px] font-medium text-white transition hover:brightness-110">
           <Plus className="h-4 w-4" /> Create Evaluation
         </button>
       </div>
