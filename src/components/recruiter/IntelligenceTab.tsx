@@ -637,7 +637,7 @@ function CompanyAnalytics({ candidates }: { candidates: Candidate[] }) {
             <div key={e.k} className="flex items-center gap-3">
               <div className="w-24 text-[12px] text-neutral-300">{e.k}</div>
               <div className="flex-1 rounded-md bg-white/[0.03]">
-                <div className="h-5 rounded-md bg-gradient-to-r from-violet-400/60 to-violet-400/10" style={{ width: `${(e.v / emax) * 100}%` }} />
+                <div className="h-5 rounded-md bg-gradient-to-r from-amber-400/60 to-amber-400/10" style={{ width: `${(e.v / emax) * 100}%` }} />
               </div>
               <div className="w-8 text-right text-[11px] text-neutral-400">{e.v}</div>
             </div>
