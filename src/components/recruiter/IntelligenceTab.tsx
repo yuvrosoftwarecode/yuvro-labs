@@ -328,7 +328,7 @@ function FunnelChart({ stages, onStage }: { stages: { key: string; label: string
       <div className="space-y-2">
         {stages.map(s => {
           const pct = Math.round((s.count / max) * 100);
-          const bar = s.tone === "good" ? "from-emerald-400/60 to-emerald-400/20" : s.tone === "muted" ? "from-neutral-600/50 to-neutral-600/10" : "from-cyan-400/60 to-cyan-400/10";
+          const bar = s.tone === "good" ? "from-emerald-400/60 to-emerald-400/20" : s.tone === "muted" ? "from-neutral-600/50 to-neutral-600/10" : "from-amber-400/60 to-amber-400/10";
           return (
             <button key={s.key} onClick={() => onStage(s)} className="group flex w-full items-center gap-3 text-left">
               <div className="w-24 text-[11px] uppercase tracking-widest text-neutral-500">{s.label}</div>
@@ -591,8 +591,8 @@ function CollegeAnalytics({ submitted, allCount }: { submitted: Candidate[]; all
               <td className="px-3 py-2 text-neutral-200">{r.college}</td>
               <td className="px-3 py-2 text-neutral-300">{r.count}</td>
               <td className="px-3 py-2"><BarInline value={r.avgEci} /></td>
-              <td className="px-3 py-2 text-cyan-300">{r.interview}</td>
-              <td className="px-3 py-2 text-cyan-300">{r.shortlisted}</td>
+              <td className="px-3 py-2 text-amber-300">{r.interview}</td>
+              <td className="px-3 py-2 text-emerald-300">{r.shortlisted}</td>
               <td className="px-3 py-2 text-emerald-300">{r.selected}</td>
             </tr>
           ))}
@@ -623,7 +623,7 @@ function CompanyAnalytics({ candidates }: { candidates: Candidate[] }) {
             <div key={n} className="flex items-center gap-3">
               <div className="w-40 truncate text-[12px] text-neutral-300">{n}</div>
               <div className="flex-1 rounded-md bg-white/[0.03]">
-                <div className="h-5 rounded-md bg-gradient-to-r from-cyan-400/60 to-cyan-400/10" style={{ width: `${(v / max) * 100}%` }} />
+                <div className="h-5 rounded-md bg-gradient-to-r from-amber-400/60 to-amber-400/10" style={{ width: `${(v / max) * 100}%` }} />
               </div>
               <div className="w-8 text-right text-[11px] text-neutral-400">{v}</div>
             </div>
@@ -724,7 +724,7 @@ function DiffBadge({ d }: { d: string }) {
   return <span className={`rounded-full border px-1.5 py-0.5 text-[10px] ${map[d] || ""}`}>{d}</span>;
 }
 function BarInline({ value }: { value: number }) {
-  const t = value >= 80 ? "from-emerald-400 to-emerald-400/30" : value >= 60 ? "from-cyan-400 to-cyan-400/30" : value >= 40 ? "from-amber-400 to-amber-400/30" : "from-red-400 to-red-400/30";
+  const t = value >= 80 ? "from-emerald-400 to-emerald-400/30" : value >= 60 ? "from-amber-400 to-amber-400/30" : value >= 40 ? "from-amber-400 to-amber-400/30" : "from-red-400 to-red-400/30";
   return (
     <div className="flex items-center gap-2">
       <div className="relative h-1.5 flex-1 overflow-hidden rounded-full bg-white/[0.05]">
