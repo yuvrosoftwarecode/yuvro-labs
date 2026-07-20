@@ -567,19 +567,19 @@ const DEFAULT_VIEWS: { id: string; name: string; build: () => CandidateFilters }
 ];
 
 // ------- Pipeline definition (Level 1) -------
-type PipelineId = "all" | "needs" | "strong" | "selected" | "rejected" | "hold";
+type PipelineId = "all" | "pending" | "shortlisted" | "rejected" | "hold";
 const PIPELINE: { id: PipelineId; label: string; match: (c: Candidate) => boolean }[] = [
   { id: "all", label: "All", match: () => true },
   {
-    id: "needs",
-    label: "Needs Review",
+    id: "pending",
+    label: "Pending Review",
     match: (c) => c.hiringStatus === "Pending Review" && (c.status === "Submitted" || c.status === "Completed"),
   },
-  { id: "strong", label: "Strong Hire", match: (c) => c.recommendation === "Strong Hire" },
-  { id: "hold", label: "Hold", match: (c) => c.hiringStatus === "Hold" },
-  { id: "selected", label: "Selected", match: (c) => c.hiringStatus === "Selected" },
+  { id: "shortlisted", label: "Shortlisted", match: (c) => c.hiringStatus === "Shortlisted" },
   { id: "rejected", label: "Rejected", match: (c) => c.hiringStatus === "Rejected" },
+  { id: "hold", label: "Hold", match: (c) => c.hiringStatus === "Hold" },
 ];
+
 
 // ------- Column definitions -------
 type ColKey =
