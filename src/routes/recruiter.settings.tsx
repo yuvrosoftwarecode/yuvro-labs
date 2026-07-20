@@ -42,7 +42,7 @@ function SettingsPage() {
       </div>
 
       <div className="mt-8 flex items-center gap-3">
-        <button onClick={save} className="inline-flex items-center gap-2 rounded-lg bg-gradient-to-r from-emerald-400 to-cyan-400 px-5 py-2.5 text-[13px] font-medium text-black transition hover:brightness-110">
+        <button onClick={save} className="inline-flex items-center gap-2 rounded-lg bg-gradient-to-r from-orange-500 to-amber-500 px-5 py-2.5 text-[13px] font-medium text-white transition hover:brightness-110">
           {saved ? <><Check className="h-4 w-4" /> Saved</> : "Save changes"}
         </button>
         <button className="rounded-lg border border-white/10 px-5 py-2.5 text-[13px] text-neutral-300 hover:bg-white/5">Cancel</button>
