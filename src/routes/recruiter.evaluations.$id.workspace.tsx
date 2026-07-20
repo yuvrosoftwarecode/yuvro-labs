@@ -2478,18 +2478,6 @@ const TONE_MAP: Record<AttentionGroup["tone"], { ring: string; dot: string; btn:
     btn: "bg-amber-400/10 text-amber-300 hover:bg-amber-400/20",
     glow: "from-amber-500/10",
   },
-  blue: {
-    ring: "border-amber-400/25 hover:border-amber-400/50",
-    dot: "bg-amber-400",
-    btn: "bg-amber-400/10 text-amber-300 hover:bg-amber-400/20",
-    glow: "from-amber-500/10",
-  },
-  violet: {
-    ring: "border-emerald-400/25 hover:border-emerald-400/50",
-    dot: "bg-emerald-400",
-    btn: "bg-emerald-400/10 text-emerald-300 hover:bg-emerald-400/20",
-    glow: "from-emerald-500/10",
-  },
 };
 
 function AttentionSection({
