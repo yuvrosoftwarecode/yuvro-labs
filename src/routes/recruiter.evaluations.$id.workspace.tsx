@@ -171,7 +171,7 @@ function Workspace() {
   return (
     <div className="min-h-screen">
       {/* Top header */}
-      <header className="border-b border-white/5 bg-white">
+      <header className="sticky top-0 z-30 border-b border-neutral-200 bg-white/95 backdrop-blur">
         <div className="mx-auto max-w-[1440px] px-8 pt-6 pb-4">
           <Link
             to="/recruiter/evaluations"
@@ -179,7 +179,7 @@ function Workspace() {
           >
             <ChevronLeft className="h-3.5 w-3.5" /> All evaluations
           </Link>
-          <div className="mt-4 flex flex-wrap items-start justify-between gap-4">
+          <div className="mt-4 flex flex-nowrap items-start justify-between gap-6">
             <div className="min-w-0">
               <div className="flex items-center gap-2">
                 <StatusBadge status={ev.status} />
@@ -209,7 +209,8 @@ function Workspace() {
                 </span>
               </dl>
             </div>
-            <div className="flex flex-wrap items-center gap-2">
+            <div className="flex flex-shrink-0 flex-nowrap items-center gap-2">
+
               <HeaderBtn onClick={copyLink} icon={<CopyIcon className="h-3.5 w-3.5" />}>
                 Copy Link
               </HeaderBtn>
@@ -566,7 +567,7 @@ const DEFAULT_VIEWS: { id: string; name: string; build: () => CandidateFilters }
 ];
 
 // ------- Pipeline definition (Level 1) -------
-type PipelineId = "all" | "needs" | "strong" | "interview" | "selected" | "rejected";
+type PipelineId = "all" | "needs" | "strong" | "selected" | "rejected" | "hold";
 const PIPELINE: { id: PipelineId; label: string; match: (c: Candidate) => boolean }[] = [
   { id: "all", label: "All", match: () => true },
   {
@@ -575,7 +576,7 @@ const PIPELINE: { id: PipelineId; label: string; match: (c: Candidate) => boolea
     match: (c) => c.hiringStatus === "Pending Review" && (c.status === "Submitted" || c.status === "Completed"),
   },
   { id: "strong", label: "Strong Hire", match: (c) => c.recommendation === "Strong Hire" },
-  { id: "interview", label: "Interview", match: (c) => c.hiringStatus === "Interview Scheduled" },
+  { id: "hold", label: "Hold", match: (c) => c.hiringStatus === "Hold" },
   { id: "selected", label: "Selected", match: (c) => c.hiringStatus === "Selected" },
   { id: "rejected", label: "Rejected", match: (c) => c.hiringStatus === "Rejected" },
 ];
@@ -585,39 +586,33 @@ type ColKey =
   | "candidate"
   | "email"
   | "phone"
-  | "experience"
   | "labs"
   | "assessment"
   | "vitarka"
   | "eci"
   | "recommendation"
   | "submitted"
-  | "time"
   | "status";
 const ALL_COLS: { key: ColKey; label: string; always?: boolean }[] = [
   { key: "candidate", label: "Candidate", always: true },
   { key: "email", label: "Email" },
   { key: "phone", label: "Phone" },
-  { key: "experience", label: "Experience" },
-  { key: "labs", label: "Labs" },
-  { key: "assessment", label: "Assessment" },
+  { key: "labs", label: "Engineering Labs" },
+  { key: "assessment", label: "Knowledge Assessment" },
   { key: "vitarka", label: "Vitarka" },
-  { key: "eci", label: "ECI" },
-  { key: "recommendation", label: "Recommendation" },
-  { key: "submitted", label: "Submitted" },
-  { key: "time", label: "Time" },
-  { key: "status", label: "Status" },
+  { key: "eci", label: "Engineering Capability Index" },
+  { key: "recommendation", label: "AI Recommendation" },
+  { key: "submitted", label: "Submitted On" },
+  { key: "status", label: "Review Status" },
 ];
 const DEFAULT_COLS: ColKey[] = [
   "candidate",
-  "experience",
   "labs",
   "assessment",
   "vitarka",
   "eci",
   "recommendation",
   "submitted",
-  "time",
   "status",
 ];
 const COLS_KEY = "yuvro-cand-cols";
@@ -918,7 +913,7 @@ function CandidatesTab({
           >
             Compare {selected.size >= 2 && selected.size <= 4 ? `(${selected.size})` : ""}
           </BulkBtn>
-          <BulkBtn onClick={() => bulk("Moved to Interview")}>Move to Interview</BulkBtn>
+          <BulkBtn onClick={() => bulk("Moved to Hold")}>Hold</BulkBtn>
           <BulkBtn onClick={() => bulk("Shortlisted")}>Shortlist</BulkBtn>
           <BulkBtn onClick={() => bulk("Rejected")}>Reject</BulkBtn>
           <BulkBtn onClick={() => bulk("Email sent")}>Send Email</BulkBtn>
@@ -1318,19 +1313,17 @@ function CandidateTable({
               <Th className="w-8">
                 <input type="checkbox" checked={allChecked} onChange={onToggleAll} />
               </Th>
-              {show("candidate") && <Th>Candidate</Th>}
+              {show("candidate") && <Th className="min-w-[260px]">Candidate</Th>}
               {show("email") && <Th>Email</Th>}
               {show("phone") && <Th>Phone</Th>}
-              {show("experience") && <Th>Experience</Th>}
-              {show("labs") && <Th>Labs</Th>}
-              {show("assessment") && <Th>Assessment</Th>}
-              {show("vitarka") && <Th>Vitarka</Th>}
-              {show("eci") && <Th>ECI</Th>}
-              {show("recommendation") && <Th>Recommendation</Th>}
-              {show("submitted") && <Th>Submitted</Th>}
-              {show("time") && <Th>Time</Th>}
-              {show("status") && <Th>Status</Th>}
-              <Th className="w-8"></Th>
+              {show("labs") && <Th className="w-[96px] text-right">Eng. Labs</Th>}
+              {show("assessment") && <Th className="w-[132px] text-right">Knowledge</Th>}
+              {show("vitarka") && <Th className="w-[96px] text-right">Vitarka</Th>}
+              {show("eci") && <Th className="w-[104px] text-right">ECI</Th>}
+              {show("recommendation") && <Th className="w-[160px]">AI Recommendation</Th>}
+              {show("submitted") && <Th className="w-[128px]">Submitted On</Th>}
+              {show("status") && <Th className="w-[140px]">Review Status</Th>}
+              <Th className="w-10"></Th>
             </tr>
           </thead>
           <tbody>
@@ -1351,32 +1344,38 @@ function CandidateTable({
                         <div className="truncate font-medium text-neutral-900">
                           {highlightText(c.name, highlight || "")}
                         </div>
-                        {!show("email") && (
-                          <div className="truncate text-[11px] text-neutral-500">
-                            {highlightText(c.email, highlight || "")}
-                          </div>
-                        )}
+                        <div className="truncate text-[11px] text-neutral-500">
+                          {highlightText(c.email, highlight || "")}
+                        </div>
                       </div>
                     </div>
                   </Td>
                 )}
                 {show("email") && <Td className="text-neutral-700">{highlightText(c.email, highlight || "")}</Td>}
                 {show("phone") && <Td className="text-neutral-700">{c.phone}</Td>}
-                {show("experience") && <Td className="text-neutral-800">{experienceBucket(c.experience)}</Td>}
-                {show("labs") && <Td className="tabular-nums text-neutral-900">{c.labsScore}</Td>}
-                {show("assessment") && <Td className="tabular-nums text-neutral-900">{c.assessmentScore}</Td>}
-                {show("vitarka") && <Td className="text-neutral-800">{vitarkaLabel(c.vitarkaScore)}</Td>}
-                {show("eci") && <Td className="font-medium tabular-nums text-neutral-900">{c.eci}</Td>}
+                {show("labs") && <Td className="text-right tabular-nums text-neutral-900">{c.labsScore}</Td>}
+                {show("assessment") && <Td className="text-right tabular-nums text-neutral-900">{c.assessmentScore}</Td>}
+                {show("vitarka") && (
+                  <Td className="text-right tabular-nums text-neutral-900">
+                    <div>{c.vitarkaScore}</div>
+                    <div className="text-[10.5px] text-neutral-500">{vitarkaLabel(c.vitarkaScore)}</div>
+                  </Td>
+                )}
+                {show("eci") && (
+                  <Td className="text-right tabular-nums text-neutral-900">
+                    <div className="font-medium">{c.eci}</div>
+                    <div className="text-[10.5px] text-neutral-500">{eciLabel(c.eci)}</div>
+                  </Td>
+                )}
                 {show("recommendation") && (
                   <Td>
-                    <RecBadge r={c.recommendation} />
+                    <NeutralBadge>{c.recommendation}</NeutralBadge>
                   </Td>
                 )}
                 {show("submitted") && <Td className="text-neutral-700">{fmtRel(c.submittedAt)}</Td>}
-                {show("time") && <Td className="tabular-nums text-neutral-700">{c.completionMinutes}m</Td>}
                 {show("status") && (
                   <Td>
-                    <StatusChip s={c.status} h={c.hiringStatus} />
+                    <NeutralBadge>{c.hiringStatus === "Interview Scheduled" ? "Pending Review" : c.hiringStatus}</NeutralBadge>
                   </Td>
                 )}
                 <Td onClick={(e) => e.stopPropagation()}>
@@ -1394,15 +1393,14 @@ function CandidateTable({
 function RowMenu({ onOpen, onAction }: { onOpen: () => void; onAction: (l: string) => void }) {
   const [open, setOpen] = useState(false);
   const items = [
-    { label: "View Details", fn: onOpen },
+    { label: "View Candidate", fn: onOpen },
     { label: "Open Resume", fn: () => onAction("Resume opened") },
     { label: "Download Report", fn: () => onAction("Report downloaded") },
-    { label: "Move to Interview", fn: () => onAction("Moved to Interview") },
     { label: "Shortlist", fn: () => onAction("Shortlisted") },
     { label: "Reject", fn: () => onAction("Rejected") },
-    { label: "Email Candidate", fn: () => onAction("Email sent") },
+    { label: "Hold", fn: () => onAction("Moved to Hold") },
     { label: "Copy Candidate Link", fn: () => onAction("Link copied") },
-    { label: "Add Note", fn: () => onAction("Note added") },
+    { label: "Add Notes", fn: () => onAction("Note added") },
   ];
   return (
     <div className="relative">
@@ -1484,10 +1482,8 @@ function CandidateCard({
           <MiniScore label="ECI" v={c.eci} highlight />
         </div>
         <div className="mt-3 flex items-center justify-between text-[11px] text-neutral-600">
-          <span>
-            {fmtRel(c.submittedAt)} · {c.completionMinutes}m
-          </span>
-          <StatusChip s={c.status} h={c.hiringStatus} compact />
+          <span>{fmtRel(c.submittedAt)}</span>
+          <StatusChip h={c.hiringStatus} compact />
         </div>
       </div>
       <div className="flex items-center justify-between border-t border-neutral-100 bg-neutral-50 px-3 py-2 text-[11px]">
@@ -2344,21 +2340,24 @@ function ScoreBlock({ label, v, highlight, big }: { label: string; v: number; hi
     </div>
   );
 }
-function RecBadge({ r }: { r: Recommendation }) {
+function NeutralBadge({ children }: { children: React.ReactNode }) {
   return (
-    <span className="inline-flex rounded-full border border-neutral-200 bg-neutral-100 px-1.5 py-0.5 text-[10px] font-medium text-neutral-900">
-      {r}
+    <span className="inline-flex items-center rounded-full border border-neutral-200 bg-white px-2 py-0.5 text-[11px] font-medium text-neutral-900">
+      {children}
     </span>
   );
 }
-function StatusChip({ s, h, compact }: { s: CandStatus; h: HiringStatus; compact?: boolean }) {
-  return (
-    <div className={`inline-flex items-center gap-1.5 text-neutral-900 ${compact ? "text-[10px]" : "text-[11px]"}`}>
-      <span>{s}</span>
-      <span>·</span>
-      <span>{h}</span>
-    </div>
-  );
+function RecBadge({ r }: { r: Recommendation }) {
+  return <NeutralBadge>{r}</NeutralBadge>;
+}
+function StatusChip({ h }: { s?: CandStatus; h: HiringStatus; compact?: boolean }) {
+  return <NeutralBadge>{h === "Interview Scheduled" ? "Pending Review" : h}</NeutralBadge>;
+}
+function eciLabel(v: number): string {
+  if (v >= 85) return "Excellent";
+  if (v >= 70) return "Good";
+  if (v >= 55) return "Average";
+  return "Weak";
 }
 function Avatar({ name, hue, size = "md" }: { name: string; hue: number; size?: "md" | "lg" }) {
   const initials = name
@@ -2378,11 +2377,11 @@ function Avatar({ name, hue, size = "md" }: { name: string; hue: number; size?: 
 }
 function EmptyState({ hasFilters, onReset }: { hasFilters: boolean; onReset: () => void }) {
   return (
-    <div className="rounded-2xl border border-dashed border-white/10 p-16 text-center">
-      <div className="mx-auto grid h-12 w-12 place-items-center rounded-full border border-white/10 text-neutral-500">
+    <div className="rounded-2xl border border-dashed border-neutral-200 bg-white p-16 text-center">
+      <div className="mx-auto grid h-12 w-12 place-items-center rounded-full border border-neutral-200 text-neutral-500">
         <Users className="h-5 w-5" />
       </div>
-      <div className="mt-4 text-[15px] text-white">
+      <div className="mt-4 text-[15px] font-medium text-neutral-900">
         {hasFilters ? "No candidates match these filters" : "No candidates yet"}
       </div>
       <div className="mt-1 text-[12px] text-neutral-500">
@@ -2393,7 +2392,7 @@ function EmptyState({ hasFilters, onReset }: { hasFilters: boolean; onReset: () 
       {hasFilters && (
         <button
           onClick={onReset}
-          className="mt-4 rounded-lg border border-white/10 px-3 py-1.5 text-[12px] text-neutral-200 hover:bg-white/5"
+          className="mt-4 rounded-lg border border-neutral-200 bg-white px-3 py-1.5 text-[12px] text-neutral-800 hover:bg-neutral-50"
         >
           Reset filters
         </button>
