@@ -1120,7 +1120,7 @@ function LabDrawer({ lab, onClose }: { lab: LabAttempt; onClose: () => void }) {
               {lab.files.map((f, i) => (
                 <div key={i} className="flex items-center gap-2 bg-white/[0.02] px-3 py-2 text-[12px]">
                   <span
-                    className={`inline-flex h-4 w-4 items-center justify-center rounded text-[9px] font-bold ${f.kind === "created" ? "bg-emerald-400/20 text-emerald-300" : f.kind === "deleted" ? "bg-red-400/20 text-red-300" : "bg-cyan-400/20 text-cyan-300"}`}
+                    className={`inline-flex h-4 w-4 items-center justify-center rounded text-[9px] font-bold ${f.kind === "created" ? "bg-emerald-400/20 text-emerald-300" : f.kind === "deleted" ? "bg-red-400/20 text-red-300" : "bg-amber-400/20 text-amber-300"}`}
                   >
                     {f.kind[0].toUpperCase()}
                   </span>
@@ -1298,7 +1298,7 @@ function SubMetric({ label, value, onClick }: { label: string; value: number; on
 function RadialScore({ value }: { value: number }) {
   const c = 2 * Math.PI * 42;
   const off = c - (value / 100) * c;
-  const stroke = value >= 85 ? "#34d399" : value >= 70 ? "#22d3ee" : value >= 55 ? "#fbbf24" : "#f87171";
+  const stroke = value >= 70 ? "#34d399" : value >= 55 ? "#f59e0b" : "#ef4444";
   return (
     <div className="relative grid h-[112px] w-[112px] shrink-0 place-items-center">
       <svg viewBox="0 0 100 100" className="h-full w-full -rotate-90">
@@ -1332,7 +1332,7 @@ function MiniBar({ label, v }: { label: string; v: number }) {
       </div>
       <div className="mt-1 h-1 overflow-hidden rounded-full bg-white/5">
         <div
-          className={`h-full ${v >= 85 ? "bg-emerald-400" : v >= 70 ? "bg-cyan-400" : v >= 55 ? "bg-amber-400" : "bg-red-400"}`}
+          className={`h-full ${v >= 70 ? "bg-emerald-400" : v >= 55 ? "bg-amber-400" : "bg-red-400"}`}
           style={{ width: `${v}%` }}
         />
       </div>
@@ -1373,9 +1373,11 @@ function EmptyBlock({ icon, title, desc }: { icon: React.ReactNode; title: strin
 function RecBadge({ r }: { r: string }) {
   const map: Record<string, string> = {
     "Strong Hire": "border-emerald-400/30 bg-emerald-400/10 text-emerald-300",
-    Hire: "border-cyan-400/30 bg-cyan-400/10 text-cyan-300",
+    Hire: "border-emerald-400/30 bg-emerald-400/10 text-emerald-300",
     Maybe: "border-amber-400/30 bg-amber-400/10 text-amber-300",
     Reject: "border-red-400/30 bg-red-400/10 text-red-300",
+    "Hidden Gem": "border-amber-400/30 bg-amber-400/10 text-amber-300",
+    "Needs Review": "border-amber-400/30 bg-amber-400/10 text-amber-300",
   };
   return (
     <span
