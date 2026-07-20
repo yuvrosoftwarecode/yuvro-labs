@@ -463,7 +463,7 @@ function LabsPane({
           </div>
           <div className="mt-4 h-1.5 overflow-hidden rounded-full bg-white/5">
             <div
-              className={`h-full ${lab.score >= 85 ? "bg-emerald-400" : lab.score >= 70 ? "bg-cyan-400" : lab.score >= 55 ? "bg-amber-400" : "bg-red-400"}`}
+              className={`h-full ${lab.score >= 70 ? "bg-emerald-400" : lab.score >= 55 ? "bg-amber-400" : "bg-red-400"}`}
               style={{ width: `${lab.score}%` }}
             />
           </div>
@@ -496,7 +496,7 @@ function AssessmentPane({ detail }: { detail: ReturnType<typeof getCandidateDeta
               <div className="hidden w-40 sm:block">
                 <div className="h-1.5 overflow-hidden rounded-full bg-white/5">
                   <div
-                    className={`h-full ${pct >= 85 ? "bg-emerald-400" : pct >= 70 ? "bg-cyan-400" : pct >= 55 ? "bg-amber-400" : "bg-red-400"}`}
+                    className={`h-full ${pct >= 70 ? "bg-emerald-400" : pct >= 55 ? "bg-amber-400" : "bg-red-400"}`}
                     style={{ width: `${pct}%` }}
                   />
                 </div>
@@ -583,7 +583,7 @@ function VitarkaPane({
               </div>
               <div className="mt-2 h-1 overflow-hidden rounded-full bg-white/5">
                 <div
-                  className={`h-full ${s.score >= 80 ? "bg-emerald-400" : s.score >= 65 ? "bg-cyan-400" : s.score >= 50 ? "bg-amber-400" : "bg-red-400"}`}
+                  className={`h-full ${s.score >= 70 ? "bg-emerald-400" : s.score >= 55 ? "bg-amber-400" : "bg-red-400"}`}
                   style={{ width: `${s.score}%` }}
                 />
               </div>
@@ -636,7 +636,7 @@ function VitarkaPane({
             {detail.vitarka.transcript.map((l, i) => (
               <div key={i} className="flex items-start gap-3">
                 <div
-                  className={`mt-0.5 grid h-7 w-7 place-items-center rounded-full text-[10px] font-medium ${l.speaker === "AI" ? "bg-emerald-400/15 text-emerald-300" : "bg-violet-400/15 text-violet-300"}`}
+                  className={`mt-0.5 grid h-7 w-7 place-items-center rounded-full text-[10px] font-medium ${l.speaker === "AI" ? "bg-emerald-400/15 text-emerald-300" : "bg-amber-400/15 text-amber-300"}`}
                 >
                   {l.speaker === "AI" ? "AI" : "You"}
                 </div>
