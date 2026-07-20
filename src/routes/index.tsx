@@ -1,31 +1,41 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
-import {
-  ArrowRight, Sparkles, Code2, Users, Brain, ShieldCheck, BarChart3, Trophy,
-  GitBranch, Bug, Database, Server, Cpu, Layers, Zap, CheckCircle2, Play, Bot,
-  Star, Activity, Award, Briefcase, Rocket, Quote
-} from "lucide-react";
+import { ArrowRight, ArrowUpRight, Check, X, Play, GitBranch, GitPullRequest, GitCommit, Bug, Database, Cpu, Server, Terminal, FileCode2, Download, ChevronRight, Circle } from "lucide-react";
 
-export const Route = createFileRoute("/")({ component: Landing });
+export const Route = createFileRoute("/")({
+  head: () => ({
+    meta: [
+      { title: "Yuvro Labs — Verify Engineering Capability Before You Hire" },
+      { name: "description", content: "Yuvro Labs is an Engineering Capability Verification Platform. Evaluate real engineering ability through Engineering Simulation Labs, Knowledge Assessments and Vitarka AI Interviews." },
+      { property: "og:title", content: "Yuvro Labs — Verify Engineering Capability Before You Hire" },
+      { property: "og:description", content: "Stop hiring developers. Start verifying engineers. Evidence-based hiring for modern engineering teams." },
+      { property: "og:type", content: "website" },
+      { name: "twitter:card", content: "summary_large_image" },
+    ],
+  }),
+  component: Landing,
+});
 
 function Landing() {
   return (
-    <div className="min-h-screen bg-white text-neutral-900 antialiased">
+    <div className="min-h-screen bg-white text-neutral-900 antialiased selection:bg-neutral-900 selection:text-white">
       <LandingNav />
       <Hero />
-      <Trust />
-      <HowItWorks />
-      <FeatureLabs />
-      <Collaboration />
-      <AIMentor />
-      <Reputation />
-      <Recruiter />
-      <Testimonials />
+      <VersusSection />
+      <ReportSplit />
+      <EvaluationFlow />
+      <SimulationLabs />
+      <CapabilityMetrics />
+      <ReportPreview />
+      <ProcessStrip />
       <FinalCTA />
       <Footer />
     </div>
   );
 }
 
+/* ================================================================
+   HEADER — LOCKED. Do not modify.
+   ================================================================ */
 function LandingNav() {
   return (
     <header className="sticky top-0 z-50 backdrop-blur-xl bg-white/80 border-b border-neutral-200">
@@ -35,10 +45,10 @@ function LandingNav() {
           <span className="text-base">Yuvro Labs</span>
         </Link>
         <nav className="ml-10 hidden md:flex items-center gap-7 text-sm text-muted-foreground">
-          <a href="#features" className="hover:text-foreground transition">Labs</a>
-          <a href="#how" className="hover:text-foreground transition">How it works</a>
-          <a href="#mentor" className="hover:text-foreground transition">AI Mentor</a>
-          <a href="#recruiter" className="hover:text-foreground transition">For Recruiters</a>
+          <a href="#labs" className="hover:text-foreground transition">Labs</a>
+          <a href="#process" className="hover:text-foreground transition">How it works</a>
+          <a href="#report" className="hover:text-foreground transition">Report</a>
+          <Link to="/recruiter" className="hover:text-foreground transition">Recruiter Login</Link>
         </nav>
         <div className="ml-auto flex items-center gap-3">
           <Link to="/auth" search={{ tab: "signin" }} className="text-sm text-muted-foreground hover:text-foreground transition">Sign In</Link>
@@ -51,315 +61,363 @@ function LandingNav() {
   );
 }
 
+/* ================================================================
+   SECTION 1 — HERO
+   ================================================================ */
 function Hero() {
   return (
-    <section className="relative overflow-hidden border-b border-neutral-200">
-      <div className="absolute inset-0 -z-10">
-        <div className="absolute inset-0 bg-[linear-gradient(to_right,rgb(0_0_0/0.04)_1px,transparent_1px),linear-gradient(to_bottom,rgb(0_0_0/0.04)_1px,transparent_1px)] bg-[size:48px_48px] [mask-image:radial-gradient(ellipse_80%_50%_at_50%_0%,#000_70%,transparent_110%)]" />
-      </div>
-      <div className="mx-auto max-w-7xl px-6 py-20 lg:py-28 grid lg:grid-cols-2 gap-12 items-center">
+    <section className="relative overflow-hidden">
+      <div className="mx-auto max-w-7xl px-6 pt-20 pb-24 lg:pt-28 lg:pb-32 grid lg:grid-cols-[minmax(0,1.05fr)_minmax(0,1fr)] gap-16 items-center">
         <div>
-          <span className="inline-flex items-center gap-1.5 rounded-full border border-blue-500/30 bg-blue-500/10 px-3 py-1 text-xs font-medium text-blue-600">
-            <Sparkles className="h-3 w-3" /> AI-powered engineering simulation
-          </span>
-          <h1 className="mt-5 text-5xl lg:text-6xl font-semibold tracking-tight leading-[1.05]">
-            Build Real Engineering Experience.<br />
-            <span className="bg-gradient-to-r from-blue-600 via-blue-500 to-blue-700 bg-clip-text text-transparent">Not Just Coding Skills.</span>
+          <div className="inline-flex items-center gap-2 text-[11px] font-medium tracking-[0.18em] uppercase text-neutral-500">
+            <span className="h-px w-8 bg-neutral-300" />
+            Engineering Capability Verification
+          </div>
+          <h1 className="mt-6 text-[52px] lg:text-[68px] leading-[0.98] tracking-[-0.03em] font-semibold">
+            Stop Hiring<br />
+            <span className="text-neutral-400">Developers.</span><br />
+            Start Verifying<br />
+            <span className="relative inline-block">
+              Engineers.
+              <span className="absolute -bottom-1 left-0 right-0 h-[6px] bg-blue-600/90" />
+            </span>
           </h1>
-          <p className="mt-6 text-lg text-muted-foreground max-w-xl leading-relaxed">
-            Solve real engineering tickets, work in simulated software teams, collaborate with developers, debug production issues, and prove your practical skills through AI-powered labs.
+          <p className="mt-8 max-w-xl text-[17px] leading-relaxed text-neutral-600">
+            Yuvro Labs evaluates real engineering capability using Engineering Simulation Labs, Knowledge Assessments and Vitarka AI Interviews. Know how candidates think, debug, collaborate and solve production problems — before making hiring decisions.
           </p>
-          <div className="mt-8 flex flex-wrap gap-3">
-            <Link to="/auth" search={{ tab: "signup" }} className="inline-flex items-center gap-2 rounded-md bg-blue-600 px-5 py-3 text-sm font-medium text-white shadow-lg shadow-blue-600/30 hover:bg-blue-700 hover:shadow-blue-600/50 transition">
-              Start Building <ArrowRight className="h-4 w-4" />
+          <div className="mt-10 flex flex-wrap items-center gap-4">
+            <Link to="/auth" search={{ tab: "signup" }} className="inline-flex items-center gap-2 rounded-md bg-neutral-900 px-5 py-3 text-[14px] font-medium text-white hover:bg-neutral-800 transition">
+              Get Started <ArrowRight className="h-4 w-4" />
             </Link>
-            <a href="#features" className="inline-flex items-center gap-2 rounded-md border border-neutral-200 bg-white px-5 py-3 text-sm hover:bg-accent transition">
-              Explore Labs
-            </a>
-            <a href="#how" className="inline-flex items-center gap-2 rounded-md px-5 py-3 text-sm text-muted-foreground hover:text-foreground transition">
-              <Play className="h-4 w-4" /> Watch Demo
+            <a href="#process" className="inline-flex items-center gap-2 rounded-md border border-neutral-300 bg-white px-5 py-3 text-[14px] font-medium text-neutral-900 hover:border-neutral-900 transition">
+              <Play className="h-3.5 w-3.5" /> Book Demo
             </a>
           </div>
+          <div className="mt-12 flex items-center gap-8 text-[11px] uppercase tracking-[0.18em] text-neutral-400">
+            <span>Engineering Labs</span>
+            <span className="h-1 w-1 rounded-full bg-neutral-300" />
+            <span>Knowledge Assessment</span>
+            <span className="h-1 w-1 rounded-full bg-neutral-300" />
+            <span>Vitarka AI</span>
+          </div>
         </div>
-        <WorkspaceMockup />
+
+        <HeroWorkspace />
       </div>
     </section>
   );
 }
 
-function WorkspaceMockup() {
+function HeroWorkspace() {
   return (
     <div className="relative">
-      <div className="relative rounded-2xl border border-neutral-200 bg-white shadow-2xl overflow-hidden">
-        <div className="flex items-center gap-2 px-4 py-2.5 border-b border-neutral-200 bg-white">
-          <div className="flex gap-1.5">
-            <div className="h-2.5 w-2.5 rounded-full bg-destructive/60" />
-            <div className="h-2.5 w-2.5 rounded-full bg-warning/60" />
-            <div className="h-2.5 w-2.5 rounded-full bg-success/60" />
+      {/* Ambient grid backdrop */}
+      <div className="absolute -inset-8 -z-10 opacity-[0.4] [mask-image:radial-gradient(circle_at_center,black,transparent_70%)]">
+        <div className="h-full w-full bg-[linear-gradient(to_right,rgb(0_0_0/0.06)_1px,transparent_1px),linear-gradient(to_bottom,rgb(0_0_0/0.06)_1px,transparent_1px)] bg-[size:24px_24px]" />
+      </div>
+
+      {/* Main evaluation card */}
+      <div className="relative rounded-xl border border-neutral-200 bg-white shadow-[0_1px_0_rgba(0,0,0,0.03),0_20px_60px_-20px_rgba(0,0,0,0.15)]">
+        <div className="flex items-center justify-between border-b border-neutral-200 px-4 py-2.5">
+          <div className="flex items-center gap-2 text-[11px] font-mono text-neutral-500">
+            <div className="flex gap-1">
+              <div className="h-2 w-2 rounded-full bg-neutral-300" />
+              <div className="h-2 w-2 rounded-full bg-neutral-300" />
+              <div className="h-2 w-2 rounded-full bg-neutral-300" />
+            </div>
+            <span className="ml-2">evaluation / EVAL-2847</span>
           </div>
-          <div className="ml-3 text-xs text-muted-foreground font-mono">yuvro-labs / sprint-12 / TICKET-247</div>
+          <span className="text-[10px] uppercase tracking-widest text-neutral-400">Live</span>
         </div>
-        <div className="grid grid-cols-12 gap-0 h-[420px]">
-          <div className="col-span-3 border-r border-neutral-200 p-3 bg-neutral-50">
-            <div className="text-[10px] uppercase tracking-wider text-muted-foreground mb-2">Sprint Board</div>
+
+        <div className="grid grid-cols-[1fr_1.4fr]">
+          {/* Left rail: evaluation stages */}
+          <div className="border-r border-neutral-200 p-4 space-y-3 bg-neutral-50/40">
+            <div className="text-[10px] uppercase tracking-widest text-neutral-400 mb-2">Stages</div>
             {[
-              { t: "Fix auth flow", s: "done", c: "success" },
-              { t: "Payment webhook", s: "doing", c: "primary" },
-              { t: "Refactor cache", s: "todo", c: "muted-foreground" },
-              { t: "DB indexes", s: "review", c: "info" },
-            ].map((tk) => (
-              <div key={tk.t} className="mb-2 rounded-md border border-neutral-200 bg-white p-2 text-xs">
-                <div className="font-medium truncate">{tk.t}</div>
-                <div className="mt-1 flex items-center justify-between">
-                  <span className="text-[10px] capitalize" style={{ color: `var(--${tk.c})` }}>{tk.s}</span>
-                  <div className="h-4 w-4 rounded-full bg-blue-500/30" />
+              { t: "Engineering Labs", s: "Passed", v: 92, d: true },
+              { t: "Knowledge Assessment", s: "Passed", v: 84, d: true },
+              { t: "Vitarka AI Interview", s: "In Review", v: 76, d: false },
+              { t: "Recruiter Evaluation", s: "Pending", v: 0, d: false },
+            ].map((r, i) => (
+              <div key={i} className="group">
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center gap-2 text-[12px] font-medium text-neutral-900">
+                    <span className={`grid h-4 w-4 place-items-center rounded-full border ${r.d ? "border-neutral-900 bg-neutral-900" : "border-neutral-300 bg-white"}`}>
+                      {r.d ? <Check className="h-2.5 w-2.5 text-white" /> : <Circle className="h-1.5 w-1.5 fill-neutral-300 text-neutral-300" />}
+                    </span>
+                    {r.t}
+                  </div>
+                  <span className="text-[10px] text-neutral-500">{r.s}</span>
+                </div>
+                <div className="mt-2 ml-6 h-1 rounded-full bg-neutral-200 overflow-hidden">
+                  <div className="h-full bg-neutral-900" style={{ width: `${r.v}%` }} />
                 </div>
               </div>
             ))}
           </div>
-          <div className="col-span-6 border-r border-neutral-200 bg-[oklch(0.13_0.02_260)] p-4 font-mono text-[11px] leading-relaxed">
-            <div className="text-muted-foreground">// src/api/webhook.ts</div>
-            <div><span className="text-blue-500">export async function</span> <span className="text-blue-600">handlePayment</span>(req: <span className="text-blue-500">Request</span>) {'{'}</div>
-            <div className="pl-4"><span className="text-blue-500">const</span> sig = req.headers.get(<span className="text-success">'x-signature'</span>);</div>
-            <div className="pl-4"><span className="text-blue-500">if</span> (!verify(sig, body)) {'{'}</div>
-            <div className="pl-8"><span className="text-blue-500">throw new</span> <span className="text-warning">AuthError</span>();</div>
-            <div className="pl-4">{'}'}</div>
-            <div className="pl-4 bg-success/10 border-l-2 border-success">+ <span className="text-blue-500">await</span> db.transaction(<span className="text-blue-500">async</span> (tx) =&gt; {'{'} </div>
-            <div className="pl-8 bg-success/10">+   <span className="text-blue-500">await</span> processOrder(tx, body);</div>
-            <div className="pl-4 bg-success/10">+ {'}'});</div>
-            <div>{'}'}</div>
-            <div className="mt-4 rounded-md border border-success/40 bg-success/10 p-2 text-success">✓ All tests passing</div>
-          </div>
-          <div className="col-span-3 p-3 bg-neutral-50">
-            <div className="text-[10px] uppercase tracking-wider text-muted-foreground mb-2 flex items-center gap-1"><Bot className="h-3 w-3" /> AI Mentor</div>
-            <div className="rounded-lg bg-blue-500/10 border border-blue-500/30 p-2.5 text-[11px] leading-relaxed">
-              Wrap your DB calls in a transaction so partial failures rollback. Nice catch on signature verification!
-            </div>
-            <div className="mt-4 text-[10px] uppercase tracking-wider text-muted-foreground mb-2">Team</div>
-            <div className="space-y-1.5">
-              {["MR", "SK", "AJ"].map((u, i) => (
-                <div key={u} className="flex items-center gap-2 text-[11px]">
-                  <div className="h-5 w-5 rounded-full grid place-items-center bg-blue-500/20 text-blue-600 text-[9px] font-semibold">{u}</div>
-                  <span className="text-muted-foreground">{["reviewing", "online", "coding"][i]}</span>
+
+          {/* Right: ECI + activity */}
+          <div className="p-5">
+            <div className="flex items-start justify-between">
+              <div>
+                <div className="text-[10px] uppercase tracking-widest text-neutral-400">Engineering Capability Index</div>
+                <div className="mt-2 flex items-baseline gap-2">
+                  <span className="text-[52px] leading-none font-semibold tracking-tight">84</span>
+                  <span className="text-[13px] text-neutral-500">/ 100</span>
                 </div>
-              ))}
+                <div className="mt-2 inline-flex items-center gap-1.5 rounded-full bg-neutral-900 px-2 py-0.5 text-[10px] font-medium text-white">
+                  <span className="h-1.5 w-1.5 rounded-full bg-blue-400" /> Strong Fit
+                </div>
+              </div>
+              <div className="grid grid-cols-2 gap-1.5">
+                {[92, 84, 76, 88, 71, 90].map((v, i) => (
+                  <div key={i} className="h-8 w-8 rounded-md border border-neutral-200 grid place-items-center text-[10px] font-mono text-neutral-700">
+                    {v}
+                  </div>
+                ))}
+              </div>
+            </div>
+
+            <div className="mt-5 border-t border-neutral-100 pt-4">
+              <div className="text-[10px] uppercase tracking-widest text-neutral-400 mb-3">Recent Signals</div>
+              <div className="space-y-2.5 text-[12px]">
+                <Signal icon={<GitPullRequest className="h-3 w-3" />} label="Fixed payment webhook race condition" meta="Lab · Debugging" />
+                <Signal icon={<Terminal className="h-3 w-3" />} label="Explained JWT rotation trade-offs" meta="Vitarka · 4m clip" />
+                <Signal icon={<Database className="h-3 w-3" />} label="Optimized N+1 query (−340ms)" meta="Lab · Performance" />
+                <Signal icon={<Bug className="h-3 w-3" />} label="Identified missing idempotency key" meta="Lab · Production Incident" />
+              </div>
             </div>
           </div>
         </div>
       </div>
-      <div className="absolute -bottom-4 -right-4 rounded-xl border border-neutral-200 bg-white p-3 shadow-xl">
-        <div className="flex items-center gap-2 text-xs">
-          <CheckCircle2 className="h-3.5 w-3.5 text-blue-600" /> <span className="text-blue-600">PR merged</span>
+
+      {/* Floating badge */}
+      <div className="absolute -bottom-5 -left-5 rotate-[-2deg] rounded-md border border-neutral-200 bg-white px-3 py-2 shadow-[0_10px_30px_-10px_rgba(0,0,0,0.2)]">
+        <div className="text-[9px] uppercase tracking-widest text-neutral-400">Recommendation</div>
+        <div className="text-[13px] font-semibold">Shortlist for onsite</div>
+      </div>
+    </div>
+  );
+}
+
+function Signal({ icon, label, meta }: { icon: React.ReactNode; label: string; meta: string }) {
+  return (
+    <div className="flex items-start gap-2.5">
+      <div className="mt-0.5 grid h-5 w-5 place-items-center rounded border border-neutral-200 bg-white text-neutral-500">{icon}</div>
+      <div className="min-w-0 flex-1">
+        <div className="text-neutral-900 truncate">{label}</div>
+        <div className="text-[10px] text-neutral-400 font-mono">{meta}</div>
+      </div>
+    </div>
+  );
+}
+
+/* ================================================================
+   SECTION 2 — Traditional Hiring vs Yuvro Labs
+   ================================================================ */
+function VersusSection() {
+  const traditional = ["Resume", "MCQ", "Interview", "Guesswork", "Hire"];
+  const yuvro = ["Engineering Labs", "Knowledge Assessment", "Vitarka AI", "Engineering Capability Index", "Evidence Based Hiring"];
+  return (
+    <section className="border-t border-neutral-200 bg-neutral-50/60">
+      <div className="mx-auto max-w-7xl px-6 py-24">
+        <div className="max-w-2xl">
+          <div className="text-[11px] uppercase tracking-[0.18em] text-neutral-500">The Shift</div>
+          <h2 className="mt-3 text-[40px] leading-[1.05] tracking-[-0.02em] font-semibold">
+            Recruiters don't hire resumes.<br />
+            <span className="text-neutral-400">They hire engineering capability.</span>
+          </h2>
+        </div>
+
+        <div className="mt-16 grid md:grid-cols-2 gap-10 lg:gap-16">
+          <FlowColumn
+            eyebrow="Traditional Hiring"
+            tone="muted"
+            steps={traditional}
+            trailingIcon={<X className="h-3.5 w-3.5" />}
+            trailingLabel="Guesswork based"
+          />
+          <FlowColumn
+            eyebrow="Yuvro Labs"
+            tone="brand"
+            steps={yuvro}
+            trailingIcon={<Check className="h-3.5 w-3.5" />}
+            trailingLabel="Evidence based"
+          />
         </div>
       </div>
-      <div className="absolute -top-4 -left-4 rounded-xl border border-neutral-200 bg-white p-3 shadow-xl">
-        <div className="flex items-center gap-2 text-xs">
-          <Activity className="h-3.5 w-3.5 text-success" /> <span className="text-success">Build passed</span>
+    </section>
+  );
+}
+
+function FlowColumn({ eyebrow, tone, steps, trailingIcon, trailingLabel }: { eyebrow: string; tone: "muted" | "brand"; steps: string[]; trailingIcon: React.ReactNode; trailingLabel: string }) {
+  const brand = tone === "brand";
+  return (
+    <div className={`relative rounded-lg p-8 ${brand ? "bg-white border border-neutral-900" : "bg-white/60 border border-dashed border-neutral-300"}`}>
+      <div className="flex items-center justify-between">
+        <div className="text-[11px] uppercase tracking-[0.18em] text-neutral-500">{eyebrow}</div>
+        <div className={`inline-flex items-center gap-1.5 rounded-full px-2 py-0.5 text-[10px] ${brand ? "bg-neutral-900 text-white" : "bg-neutral-100 text-neutral-500"}`}>
+          {trailingIcon}
+          {trailingLabel}
+        </div>
+      </div>
+      <div className="mt-6 space-y-0">
+        {steps.map((s, i) => (
+          <div key={s} className="group">
+            <div className="flex items-center gap-4 py-3">
+              <span className={`grid h-8 w-8 place-items-center rounded-full border font-mono text-[11px] ${brand ? "border-neutral-900 bg-neutral-900 text-white" : "border-neutral-300 bg-white text-neutral-500"}`}>
+                {String(i + 1).padStart(2, "0")}
+              </span>
+              <span className={`text-[16px] tracking-tight ${brand ? "text-neutral-900 font-medium" : "text-neutral-500 line-through decoration-neutral-300"}`}>{s}</span>
+            </div>
+            {i < steps.length - 1 && (
+              <div className="ml-4 h-4 border-l border-dashed border-neutral-300" />
+            )}
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+}
+
+/* ================================================================
+   SECTION 3 — Report split (left preview, right explanations)
+   ================================================================ */
+function ReportSplit() {
+  const items = [
+    { t: "Engineering Labs", d: "Evaluate practical engineering capability through debugging, feature development, optimization and production-style tasks." },
+    { t: "Knowledge Assessment", d: "Measure conceptual understanding across programming languages, databases, frameworks and engineering fundamentals." },
+    { t: "Vitarka AI Interview", d: "Understand communication, reasoning, architecture decisions and technical depth through adaptive AI conversations." },
+    { t: "Engineering Capability Index", d: "One unified engineering score backed by practical evidence." },
+    { t: "Recruiter Report", d: "Everything available in one downloadable, shareable report." },
+  ];
+  return (
+    <section id="report" className="border-t border-neutral-200">
+      <div className="mx-auto max-w-7xl px-6 py-28 grid lg:grid-cols-[minmax(0,1.1fr)_minmax(0,1fr)] gap-16">
+        <MiniReportPreview />
+        <div>
+          <div className="text-[11px] uppercase tracking-[0.18em] text-neutral-500">The Recruiter Report</div>
+          <h2 className="mt-3 text-[40px] leading-[1.05] tracking-[-0.02em] font-semibold">
+            Everything recruiters<br />actually need.
+          </h2>
+          <p className="mt-5 text-[15px] text-neutral-600 max-w-lg">
+            One report. Four layers of evidence. Zero guesswork. Every claim traceable back to a real engineering artifact.
+          </p>
+          <div className="mt-10 divide-y divide-neutral-200 border-y border-neutral-200">
+            {items.map((it, i) => (
+              <div key={it.t} className="grid grid-cols-[auto_1fr] gap-6 py-6">
+                <div className="text-[11px] font-mono text-neutral-400 pt-1">0{i + 1}</div>
+                <div>
+                  <h3 className="text-[17px] font-semibold tracking-tight">{it.t}</h3>
+                  <p className="mt-1.5 text-[14px] text-neutral-600 leading-relaxed">{it.d}</p>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      </div>
+    </section>
+  );
+}
+
+function MiniReportPreview() {
+  return (
+    <div className="relative">
+      <div className="rounded-xl border border-neutral-200 bg-white overflow-hidden shadow-[0_20px_60px_-20px_rgba(0,0,0,0.15)]">
+        <div className="border-b border-neutral-200 px-6 py-5 flex items-center justify-between">
+          <div>
+            <div className="text-[10px] uppercase tracking-widest text-neutral-400">Candidate Report · CR-2847</div>
+            <div className="mt-1 text-[18px] font-semibold tracking-tight">Priya Nair — Senior Backend Engineer</div>
+          </div>
+          <div className="inline-flex items-center gap-1.5 rounded-md border border-neutral-200 px-2 py-1 text-[11px] text-neutral-600">
+            <Download className="h-3 w-3" /> PDF
+          </div>
+        </div>
+        <div className="grid grid-cols-3 divide-x divide-neutral-200 border-b border-neutral-200">
+          {[
+            { k: "Labs", v: "92" },
+            { k: "Assessment", v: "84" },
+            { k: "Vitarka", v: "76" },
+          ].map(x => (
+            <div key={x.k} className="px-6 py-5">
+              <div className="text-[10px] uppercase tracking-widest text-neutral-400">{x.k}</div>
+              <div className="mt-1 text-[28px] font-semibold tracking-tight">{x.v}</div>
+              <div className="mt-2 h-1 rounded-full bg-neutral-100 overflow-hidden">
+                <div className="h-full bg-neutral-900" style={{ width: `${x.v}%` }} />
+              </div>
+            </div>
+          ))}
+        </div>
+        <div className="px-6 py-5">
+          <div className="flex items-center justify-between">
+            <div className="text-[10px] uppercase tracking-widest text-neutral-400">Engineering Capability Index</div>
+            <div className="text-[11px] text-neutral-500 font-mono">weighted composite</div>
+          </div>
+          <div className="mt-2 flex items-baseline gap-2">
+            <span className="text-[56px] leading-none font-semibold tracking-tight">84</span>
+            <span className="text-[13px] text-neutral-500">/ 100 · Strong Fit</span>
+          </div>
+          <div className="mt-4 grid grid-cols-6 gap-1 h-2">
+            {Array.from({ length: 60 }).map((_, i) => (
+              <div key={i} className={`h-full rounded-sm ${i < 50 ? "bg-neutral-900" : "bg-neutral-200"}`} />
+            ))}
+          </div>
+        </div>
+        <div className="border-t border-neutral-200 px-6 py-4 grid grid-cols-2 gap-4">
+          <div>
+            <div className="text-[10px] uppercase tracking-widest text-neutral-400">Strengths</div>
+            <ul className="mt-2 space-y-1 text-[12px] text-neutral-700">
+              <li>· Systems debugging under time pressure</li>
+              <li>· API design & idempotency reasoning</li>
+              <li>· Clear technical communication</li>
+            </ul>
+          </div>
+          <div>
+            <div className="text-[10px] uppercase tracking-widest text-neutral-400">Gaps</div>
+            <ul className="mt-2 space-y-1 text-[12px] text-neutral-700">
+              <li>· Distributed cache invalidation depth</li>
+              <li>· Cost/perf trade-off articulation</li>
+            </ul>
+          </div>
         </div>
       </div>
     </div>
   );
 }
 
-function Trust() {
-  const items = [
-    { icon: Code2, t: "Real Engineering Experience", d: "Production-grade tickets from real engineering teams." },
-    { icon: Users, t: "Team Collaboration", d: "Pair, review and ship in simulated software squads." },
-    { icon: Brain, t: "AI Mentor Guidance", d: "Senior-engineer-style reviews on every PR." },
-    { icon: Server, t: "Production Simulations", d: "Incident rooms, on-call, and live debugging." },
-    { icon: ShieldCheck, t: "Skill Verification", d: "Proof-of-work badges recruiters can trust." },
-    { icon: BarChart3, t: "Recruiter Analytics", d: "Show what you can actually build, not just memorize." },
+/* ================================================================
+   SECTION 4 — Inside Every Evaluation (flow)
+   ================================================================ */
+function EvaluationFlow() {
+  const nodes = [
+    "Invite Candidate", "Engineering Labs", "Knowledge Assessment", "Vitarka AI Interview", "AI Evaluation", "Engineering Capability Report", "Recruiter Decision"
   ];
   return (
-    <section className="border-b border-neutral-200 py-20">
-      <div className="mx-auto max-w-7xl px-6">
-        <div className="text-center max-w-2xl mx-auto">
-          <h2 className="text-3xl md:text-4xl font-semibold tracking-tight">Everything Recruiters Want To See.</h2>
-          <p className="mt-3 text-muted-foreground">Hard evidence of practical engineering skill — not certificates.</p>
-        </div>
-        <div className="mt-12 grid sm:grid-cols-2 lg:grid-cols-3 gap-4">
-          {items.map(({ icon: Icon, t, d }) => (
-            <div key={t} className="group relative rounded-xl border border-neutral-200 bg-white p-6 hover:border-blue-500/40 transition">
-              <div className="grid h-10 w-10 place-items-center rounded-lg bg-gradient-to-br from-blue-600/20 to-blue-500/20 text-blue-600"><Icon className="h-5 w-5" /></div>
-              <h3 className="mt-4 font-semibold">{t}</h3>
-              <p className="mt-1.5 text-sm text-muted-foreground leading-relaxed">{d}</p>
-            </div>
-          ))}
-        </div>
-      </div>
-    </section>
-  );
-}
-
-function HowItWorks() {
-  const steps = [
-    { t: "Choose Practical Lab", d: "Pick a stack: backend, frontend, SQL, DevOps, security, or system design." },
-    { t: "Solve Real Engineering Tickets", d: "Work production-style tickets in a full in-browser IDE." },
-    { t: "Collaborate With Teams", d: "Pair, review and merge with engineers across the world." },
-    { t: "Receive AI Reviews", d: "Get senior-engineer-quality feedback on every PR." },
-    { t: "Build Engineering Reputation", d: "Earn reliability, collaboration and leadership scores." },
-    { t: "Showcase Practical Skills", d: "Share a recruiter-ready portfolio of real engineering work." },
-  ];
-  return (
-    <section id="how" className="border-b border-neutral-200 py-20 ">
-      <div className="mx-auto max-w-5xl px-6">
-        <div className="text-center max-w-2xl mx-auto mb-14">
-          <span className="text-xs font-medium text-blue-600 uppercase tracking-wider">How it works</span>
-          <h2 className="mt-2 text-3xl md:text-4xl font-semibold tracking-tight">From learner to shipped engineer in 6 steps.</h2>
+    <section className="border-t border-neutral-200 bg-neutral-900 text-white">
+      <div className="mx-auto max-w-7xl px-6 py-24">
+        <div className="max-w-2xl">
+          <div className="text-[11px] uppercase tracking-[0.18em] text-neutral-400">Inside Every Evaluation</div>
+          <h2 className="mt-3 text-[40px] leading-[1.05] tracking-[-0.02em] font-semibold text-white">
+            A single connected flow.<br />
+            <span className="text-neutral-500">Every step produces evidence.</span>
+          </h2>
         </div>
 
-        <div className="relative">
-          <div className="absolute left-1/2 -translate-x-1/2 top-0 bottom-0 w-px bg-gradient-to-b from-transparent via-blue-500/30 to-transparent" />
-
-          <div className="space-y-12 md:space-y-14">
-            {steps.map((s, i) => {
-              const left = i % 2 === 0;
-              const num = String(i + 1).padStart(2, "0");
-              return (
-                <div key={i} className="relative grid grid-cols-[1fr_auto_1fr] items-center gap-4 md:gap-6">
-                  <div className={`${left ? "text-right pr-2 md:pr-6" : ""}`}>
-                    {left && (
-                      <>
-                        <div className="text-[10px] font-medium text-blue-600 uppercase tracking-[0.2em]">Step {num}</div>
-                        <h3 className="mt-1.5 text-base md:text-lg font-semibold tracking-tight text-foreground">{s.t}</h3>
-                        <p className="mt-1.5 text-sm text-muted-foreground leading-relaxed">{s.d}</p>
-                      </>
-                    )}
-                  </div>
-
-                  <div className="relative grid place-items-center">
-                    <div className="relative h-7 w-7 rounded-full border border-neutral-300 bg-white grid place-items-center text-[11px] font-mono text-neutral-700">
-                      {i + 1}
-                    </div>
-                  </div>
-
-                  <div className={`${!left ? "text-left pl-2 md:pl-6" : ""}`}>
-                    {!left && (
-                      <>
-                        <div className="text-[10px] font-medium text-blue-600 uppercase tracking-[0.2em]">Step {num}</div>
-                        <h3 className="mt-1.5 text-base md:text-lg font-semibold tracking-tight text-foreground">{s.t}</h3>
-                        <p className="mt-1.5 text-sm text-muted-foreground leading-relaxed">{s.d}</p>
-                      </>
-                    )}
-                  </div>
+        <div className="mt-16 relative">
+          <div className="absolute left-0 right-0 top-6 h-px bg-gradient-to-r from-transparent via-neutral-700 to-transparent hidden md:block" />
+          <div className="grid md:grid-cols-7 gap-6 md:gap-0">
+            {nodes.map((n, i) => (
+              <div key={n} className="relative flex md:flex-col items-center md:items-start gap-4 md:gap-3">
+                <div className="relative z-10 grid h-12 w-12 shrink-0 place-items-center rounded-full border border-neutral-700 bg-neutral-900">
+                  <span className="font-mono text-[11px] text-neutral-400">{String(i + 1).padStart(2, "0")}</span>
                 </div>
-              );
-            })}
-          </div>
-        </div>
-      </div>
-    </section>
-  );
-}
-
-function FeatureLabs() {
-  const labs = [
-    { name: "Java Backend Labs", icon: Server, color: "primary", diff: "Mid → Senior", skills: ["Spring", "JPA", "Kafka"], xp: 2400, ind: "FinTech, E-commerce" },
-    { name: "Frontend Engineering Labs", icon: Code2, color: "info", diff: "Junior → Mid", skills: ["React", "TS", "Perf"], xp: 1800, ind: "SaaS, Consumer" },
-    { name: "SQL & Database Labs", icon: Database, color: "warning", diff: "All levels", skills: ["Query plans", "Indexing"], xp: 1500, ind: "Data, Analytics" },
-    { name: "DevOps Labs", icon: GitBranch, color: "success", diff: "Mid → Senior", skills: ["K8s", "CI/CD", "IaC"], xp: 2200, ind: "Platform, Cloud" },
-    { name: "Security Labs", icon: ShieldCheck, color: "destructive", diff: "Senior", skills: ["OWASP", "Crypto"], xp: 2800, ind: "Security, FinTech" },
-    { name: "System Design Labs", icon: Cpu, color: "info", diff: "Senior", skills: ["Scale", "Tradeoffs"], xp: 3000, ind: "Big Tech" },
-  ];
-  return (
-    <section id="features" className="border-b border-neutral-200 py-20">
-      <div className="mx-auto max-w-7xl px-6">
-        <div className="text-center max-w-2xl mx-auto">
-          <h2 className="text-3xl md:text-4xl font-semibold tracking-tight">Practical labs across the full stack.</h2>
-          <p className="mt-3 text-muted-foreground">Each lab is a curated set of real engineering challenges.</p>
-        </div>
-        <div className="mt-12 grid sm:grid-cols-2 lg:grid-cols-3 gap-4">
-          {labs.map((l) => (
-            <div key={l.name} className="group relative overflow-hidden rounded-xl border border-neutral-200 bg-white p-6 hover:border-blue-500/50 transition">
-              <div className="absolute inset-x-0 top-0 h-1" style={{ background: `var(--${l.color})` }} />
-              <div className="flex items-start justify-between">
-                <div className="grid h-10 w-10 place-items-center rounded-lg" style={{ background: `color-mix(in oklab, var(--${l.color}) 18%, transparent)`, color: `var(--${l.color})` }}>
-                  <l.icon className="h-5 w-5" />
+                <div>
+                  <div className="text-[13px] font-medium tracking-tight text-white leading-tight max-w-[120px]">{n}</div>
+                  <div className="mt-1 text-[10px] uppercase tracking-widest text-neutral-500">stage</div>
                 </div>
-                <span className="text-xs text-muted-foreground">{l.diff}</span>
               </div>
-              <h3 className="mt-4 font-semibold">{l.name}</h3>
-              <div className="mt-3 flex flex-wrap gap-1.5">
-                {l.skills.map((s) => (<span key={s} className="rounded-md border border-neutral-200 bg-white px-2 py-0.5 text-[10px] text-muted-foreground">{s}</span>))}
-              </div>
-              <div className="mt-4 flex items-center justify-between text-sm">
-                <span className="inline-flex items-center gap-1 text-blue-600"><Zap className="h-3.5 w-3.5" />Hands-on</span>
-                <span className="text-xs text-muted-foreground">{l.ind}</span>
-              </div>
-            </div>
-          ))}
-        </div>
-      </div>
-    </section>
-  );
-}
-
-function Collaboration() {
-  const items = [
-    { icon: Layers, t: "Sprint Boards", d: "Jira-style sprints with real ticket lifecycles." },
-    { icon: GitBranch, t: "Team Tickets", d: "Cross-functional tickets across roles & dependencies." },
-    { icon: Code2, t: "Pull Requests", d: "Real diff reviews, inline comments, merge checks." },
-    { icon: CheckCircle2, t: "QA Validation", d: "Tests run against your code on every commit." },
-    { icon: Bug, t: "Incident Rooms", d: "Live war-rooms when production breaks." },
-    { icon: Bot, t: "AI Teammates", d: "Pair with AI engineers when humans aren't online." },
-  ];
-  return (
-    <section className="border-b border-neutral-200 py-20 ">
-      <div className="mx-auto max-w-7xl px-6">
-        <div className="text-center max-w-2xl mx-auto">
-          <h2 className="text-3xl md:text-4xl font-semibold tracking-tight">Work Like Real Software Engineers.</h2>
-          <p className="mt-3 text-muted-foreground">Every artifact you produce here mirrors a real engineering workflow.</p>
-        </div>
-        <div className="mt-12 grid md:grid-cols-2 lg:grid-cols-3 gap-4">
-          {items.map(({ icon: I, t, d }) => (
-            <div key={t} className="rounded-xl border border-neutral-200 bg-white p-6 hover:border-blue-500/40 transition">
-              <I className="h-6 w-6 text-blue-500" />
-              <h3 className="mt-3 font-semibold">{t}</h3>
-              <p className="mt-1.5 text-sm text-muted-foreground">{d}</p>
-            </div>
-          ))}
-        </div>
-      </div>
-    </section>
-  );
-}
-
-function AIMentor() {
-  return (
-    <section id="mentor" className="border-b border-neutral-200 py-20">
-      <div className="mx-auto max-w-7xl px-6 grid lg:grid-cols-2 gap-12 items-center">
-        <div>
-          <span className="text-xs font-medium text-blue-600 uppercase tracking-wider">AI Mentor</span>
-          <h2 className="mt-2 text-3xl md:text-4xl font-semibold tracking-tight">Your AI Senior Engineer.</h2>
-          <p className="mt-4 text-muted-foreground leading-relaxed">Always-on, context-aware, and reviews your code like a real principal engineer would.</p>
-          <ul className="mt-6 space-y-2.5">
-            {["Debugging help", "Architecture guidance", "Code reviews", "Performance optimization", "Security analysis"].map((x) => (
-              <li key={x} className="flex items-center gap-2.5 text-sm"><CheckCircle2 className="h-4 w-4 text-success" />{x}</li>
             ))}
-          </ul>
-        </div>
-        <div className="relative">
-          <div className="relative rounded-2xl border border-neutral-200 bg-white p-5 shadow-2xl">
-            <div className="flex items-center gap-2 pb-3 border-b border-neutral-200">
-              <div className="grid h-8 w-8 place-items-center rounded-lg bg-gradient-to-br from-blue-600 to-blue-500 text-white"><Bot className="h-4 w-4" /></div>
-              <div>
-                <div className="text-sm font-medium">Yuvro AI Mentor</div>
-                <div className="text-[10px] text-success">● online · senior tier</div>
-              </div>
-            </div>
-            <div className="mt-4 space-y-3 text-sm">
-              <div className="rounded-lg bg-muted/30 p-3 max-w-[85%]">My API endpoint times out on large payloads. Any ideas?</div>
-              <div className="rounded-lg bg-blue-500/10 border border-blue-500/30 p-3 max-w-[90%] ml-auto">
-                Likely synchronous DB I/O. Three things to check:
-                <ol className="mt-1.5 list-decimal pl-4 text-xs space-y-0.5">
-                  <li>Add an index on <code className="text-blue-600">orders.user_id</code></li>
-                  <li>Stream the response instead of buffering</li>
-                  <li>Use a connection pool size matching CPU cores</li>
-                </ol>
-              </div>
-              <div className="rounded-lg bg-muted/30 p-3 max-w-[85%]">Can you draft the index migration?</div>
-              <div className="rounded-lg bg-blue-500/10 border border-blue-500/30 p-3 max-w-[90%] ml-auto font-mono text-xs">CREATE INDEX CONCURRENTLY idx_orders_user_id<br/>ON orders(user_id);</div>
-            </div>
           </div>
         </div>
       </div>
@@ -367,104 +425,234 @@ function AIMentor() {
   );
 }
 
-function Reputation() {
-  const scores = [
-    { l: "Reliability", v: 94, c: "success" },
-    { l: "Collaboration", v: 88, c: "primary" },
-    { l: "Leadership", v: 76, c: "info" },
-    { l: "Support", v: 82, c: "info" },
-    { l: "Practical Skill", v: 91, c: "warning" },
+/* ================================================================
+   SECTION 5 — Engineering Simulation Labs (repo-style)
+   ================================================================ */
+function SimulationLabs() {
+  const tasks = [
+    { id: "PAY-142", t: "Broken Payment API", diff: "Hard", time: "45m", domain: "FinTech", skills: ["Debugging", "Idempotency", "Webhooks"] },
+    { id: "API-089", t: "REST API Development", diff: "Mid", time: "60m", domain: "SaaS", skills: ["Design", "REST", "Validation"] },
+    { id: "SQL-217", t: "SQL Query Optimization", diff: "Mid", time: "30m", domain: "Data", skills: ["Indexing", "Query plans"] },
+    { id: "BOOT-058", t: "Spring Boot Debugging", diff: "Hard", time: "50m", domain: "Enterprise", skills: ["JVM", "Spring", "Traces"] },
+    { id: "RCT-311", t: "React Performance Issue", diff: "Mid", time: "40m", domain: "Consumer", skills: ["Rendering", "Memoization"] },
+    { id: "MS-402", t: "Microservice Failure", diff: "Hard", time: "55m", domain: "Platform", skills: ["Retries", "Circuit breakers"] },
+    { id: "AUTH-076", t: "Authentication Flow", diff: "Mid", time: "35m", domain: "Security", skills: ["JWT", "OAuth", "Sessions"] },
+    { id: "CACHE-129", t: "Redis Cache Issue", diff: "Mid", time: "30m", domain: "Backend", skills: ["Caching", "TTL"] },
+    { id: "MQ-215", t: "Message Queue Processing", diff: "Hard", time: "50m", domain: "Distributed", skills: ["Kafka", "Ordering", "DLQ"] },
   ];
   return (
-    <section className="border-b border-neutral-200 py-20 ">
-      <div className="mx-auto max-w-7xl px-6 grid lg:grid-cols-2 gap-12 items-center">
-        <div className="relative">
-          <div className="relative rounded-2xl border border-neutral-200 bg-white p-6 shadow-2xl">
-            <div className="flex items-center gap-4 pb-4 border-b border-neutral-200">
-              <div className="grid h-14 w-14 place-items-center rounded-2xl bg-blue-600 text-white text-xl font-semibold shadow-lg">AR</div>
+    <section id="labs" className="border-t border-neutral-200">
+      <div className="mx-auto max-w-7xl px-6 py-28">
+        <div className="flex items-end justify-between gap-8 flex-wrap">
+          <div className="max-w-2xl">
+            <div className="text-[11px] uppercase tracking-[0.18em] text-neutral-500">Engineering Simulation Labs</div>
+            <h2 className="mt-3 text-[40px] leading-[1.05] tracking-[-0.02em] font-semibold">
+              Real engineering tickets.<br />
+              <span className="text-neutral-400">Not toy problems.</span>
+            </h2>
+          </div>
+          <div className="text-[12px] font-mono text-neutral-500 flex items-center gap-2">
+            <GitBranch className="h-3.5 w-3.5" /> yuvro-labs/simulation-catalog · main
+          </div>
+        </div>
+
+        <div className="mt-12 rounded-lg border border-neutral-200 overflow-hidden">
+          <div className="grid grid-cols-[auto_1fr_auto_auto_auto] items-center gap-6 border-b border-neutral-200 bg-neutral-50 px-5 py-2.5 text-[10px] uppercase tracking-widest text-neutral-500">
+            <div>ID</div>
+            <div>Task</div>
+            <div>Domain</div>
+            <div>Difficulty</div>
+            <div>Est. Time</div>
+          </div>
+          {tasks.map((task, i) => (
+            <div key={task.id} className={`group grid grid-cols-[auto_1fr_auto_auto_auto] items-center gap-6 px-5 py-4 transition hover:bg-neutral-50 ${i < tasks.length - 1 ? "border-b border-neutral-100" : ""}`}>
+              <div className="font-mono text-[11px] text-neutral-400 w-20">{task.id}</div>
               <div>
-                <div className="font-semibold">Aarav Reddy</div>
-                <div className="text-xs text-muted-foreground">Senior Full-Stack Engineer</div>
-              </div>
-              <div className="ml-auto text-right">
-                <div className="text-sm font-semibold text-blue-600">Verified</div>
-                <div className="text-[10px] text-muted-foreground uppercase tracking-wider">Engineering Profile</div>
-              </div>
-            </div>
-            <div className="mt-5 space-y-3">
-              {scores.map((s) => (
-                <div key={s.l}>
-                  <div className="flex items-center justify-between text-xs mb-1">
-                    <span className="text-muted-foreground">{s.l}</span>
-                    <span style={{ color: `var(--${s.c})` }} className="font-medium">●</span>
-                  </div>
-                  <div className="h-1.5 rounded-full bg-muted/40 overflow-hidden">
-                    <div className="h-full rounded-full" style={{ width: `${s.v}%`, background: `var(--${s.c})` }} />
-                  </div>
+                <div className="flex items-center gap-2">
+                  <FileCode2 className="h-3.5 w-3.5 text-neutral-400" />
+                  <span className="text-[15px] font-medium tracking-tight">{task.t}</span>
                 </div>
-              ))}
+                <div className="mt-1.5 flex flex-wrap gap-1.5">
+                  {task.skills.map(s => (
+                    <span key={s} className="rounded-sm bg-neutral-100 px-1.5 py-0.5 text-[10px] font-mono text-neutral-600">{s}</span>
+                  ))}
+                </div>
+              </div>
+              <div className="text-[12px] text-neutral-500">{task.domain}</div>
+              <div>
+                <span className={`inline-flex items-center rounded-full px-2 py-0.5 text-[10px] font-medium ${task.diff === "Hard" ? "bg-neutral-900 text-white" : "bg-neutral-100 text-neutral-700"}`}>{task.diff}</span>
+              </div>
+              <div className="font-mono text-[11px] text-neutral-500 w-12 text-right">{task.time}</div>
+            </div>
+          ))}
+        </div>
+      </div>
+    </section>
+  );
+}
+
+/* ================================================================
+   SECTION 6 — Capability metrics (measurement bars)
+   ================================================================ */
+function CapabilityMetrics() {
+  const metrics = [
+    { t: "Debugging", v: 92 },
+    { t: "Problem Solving", v: 88 },
+    { t: "Architecture", v: 74 },
+    { t: "API Development", v: 90 },
+    { t: "Database Design", v: 71 },
+    { t: "Performance Optimization", v: 82 },
+    { t: "System Thinking", v: 78 },
+    { t: "Communication", v: 85 },
+    { t: "Collaboration", v: 80 },
+    { t: "Code Quality", v: 87 },
+    { t: "Learning Ability", v: 76 },
+    { t: "Engineering Ownership", v: 89 },
+  ];
+  return (
+    <section className="border-t border-neutral-200 bg-neutral-50/60">
+      <div className="mx-auto max-w-7xl px-6 py-28">
+        <div className="max-w-2xl">
+          <div className="text-[11px] uppercase tracking-[0.18em] text-neutral-500">What we measure</div>
+          <h2 className="mt-3 text-[40px] leading-[1.05] tracking-[-0.02em] font-semibold">
+            Twelve engineering dimensions.<br />
+            <span className="text-neutral-400">Measured as evidence, not opinion.</span>
+          </h2>
+        </div>
+
+        <div className="mt-14 grid md:grid-cols-2 gap-x-16 gap-y-3">
+          {metrics.map((m, i) => (
+            <div key={m.t} className="grid grid-cols-[auto_1fr_auto_auto] items-center gap-4 py-3 border-b border-neutral-200">
+              <div className="font-mono text-[11px] text-neutral-400 w-6">{String(i + 1).padStart(2, "0")}</div>
+              <div className="text-[14px] tracking-tight font-medium">{m.t}</div>
+              <div className="w-40 h-[3px] rounded-full bg-neutral-200 overflow-hidden">
+                <div className="h-full bg-neutral-900" style={{ width: `${m.v}%` }} />
+              </div>
+              <div className="w-8 text-right font-mono text-[11px] text-neutral-700">{m.v}</div>
+            </div>
+          ))}
+        </div>
+      </div>
+    </section>
+  );
+}
+
+/* ================================================================
+   SECTION 7 — Candidate Evaluation Report (full)
+   ================================================================ */
+function ReportPreview() {
+  return (
+    <section className="border-t border-neutral-200">
+      <div className="mx-auto max-w-6xl px-6 py-28">
+        <div className="max-w-2xl mb-14">
+          <div className="text-[11px] uppercase tracking-[0.18em] text-neutral-500">Candidate Evaluation Report</div>
+          <h2 className="mt-3 text-[40px] leading-[1.05] tracking-[-0.02em] font-semibold">
+            One report.<br />
+            <span className="text-neutral-400">Every piece of evidence.</span>
+          </h2>
+        </div>
+
+        <div className="rounded-xl border border-neutral-200 bg-white overflow-hidden shadow-[0_20px_60px_-20px_rgba(0,0,0,0.12)]">
+          {/* Report header */}
+          <div className="border-b border-neutral-200 px-8 py-6 flex items-start justify-between">
+            <div>
+              <div className="text-[10px] uppercase tracking-widest text-neutral-400">Report · CR-2847 · Confidential</div>
+              <div className="mt-2 text-[22px] font-semibold tracking-tight">Priya Nair</div>
+              <div className="text-[13px] text-neutral-500">Senior Backend Engineer · Evaluated for FinTech Platform Team</div>
+            </div>
+            <button className="inline-flex items-center gap-1.5 rounded-md bg-neutral-900 text-white px-3 py-1.5 text-[12px] hover:bg-neutral-800 transition">
+              <Download className="h-3.5 w-3.5" /> Download PDF
+            </button>
+          </div>
+
+          {/* Scores grid */}
+          <div className="grid md:grid-cols-4 divide-x divide-neutral-200 border-b border-neutral-200">
+            {[
+              { k: "Engineering Labs", v: 92, sub: "8 of 9 tasks" },
+              { k: "Assessment", v: 84, sub: "42 of 50" },
+              { k: "Vitarka AI", v: 76, sub: "4 dimensions" },
+              { k: "ECI", v: 84, sub: "Strong Fit" },
+            ].map(x => (
+              <div key={x.k} className="p-6">
+                <div className="text-[10px] uppercase tracking-widest text-neutral-400">{x.k}</div>
+                <div className="mt-2 text-[36px] font-semibold tracking-tight">{x.v}</div>
+                <div className="text-[11px] text-neutral-500">{x.sub}</div>
+              </div>
+            ))}
+          </div>
+
+          {/* AI Recommendation */}
+          <div className="border-b border-neutral-200 px-8 py-6 flex items-center justify-between gap-6">
+            <div>
+              <div className="text-[10px] uppercase tracking-widest text-neutral-400">AI Recommendation</div>
+              <div className="mt-1 text-[17px] font-medium tracking-tight">Shortlist for onsite. Strong debugging, thoughtful trade-offs, clean communication.</div>
+            </div>
+            <span className="shrink-0 inline-flex items-center gap-1.5 rounded-full bg-neutral-900 text-white px-3 py-1 text-[11px] font-medium">Strong Fit · 84 ECI</span>
+          </div>
+
+          {/* Sections */}
+          <div className="grid md:grid-cols-3 divide-x divide-neutral-200">
+            <div className="p-8">
+              <div className="text-[10px] uppercase tracking-widest text-neutral-400 mb-3">Strengths</div>
+              <ul className="space-y-3 text-[13px]">
+                {[
+                  "Debugged race condition in under 12 minutes",
+                  "Correctly identified missing idempotency key",
+                  "Explained JWT rotation trade-offs clearly",
+                  "Optimized N+1 query, cut latency by 340ms",
+                ].map(s => (
+                  <li key={s} className="flex gap-2 items-start"><Check className="h-3.5 w-3.5 mt-0.5 text-neutral-900" /><span className="text-neutral-700">{s}</span></li>
+                ))}
+              </ul>
+            </div>
+            <div className="p-8">
+              <div className="text-[10px] uppercase tracking-widest text-neutral-400 mb-3">Weaknesses</div>
+              <ul className="space-y-3 text-[13px]">
+                {[
+                  "Distributed cache invalidation depth",
+                  "Cost/performance trade-off articulation",
+                  "Limited exposure to event sourcing",
+                ].map(s => (
+                  <li key={s} className="flex gap-2 items-start"><X className="h-3.5 w-3.5 mt-0.5 text-neutral-400" /><span className="text-neutral-700">{s}</span></li>
+                ))}
+              </ul>
+            </div>
+            <div className="p-8 bg-neutral-50/60">
+              <div className="text-[10px] uppercase tracking-widest text-neutral-400 mb-3">Recruiter Notes</div>
+              <div className="rounded-md border border-neutral-200 bg-white p-3 text-[12px] text-neutral-700 leading-relaxed">
+                Rare candidate — actually reasons about failure modes. Recommend routing to platform team round with distributed systems focus. Pair with senior on cache design in first sprint.
+              </div>
+              <div className="mt-3 text-[10px] font-mono text-neutral-400">— M. Rao · Head of Engineering</div>
             </div>
           </div>
         </div>
-        <div>
-          <span className="text-xs font-medium text-blue-500 uppercase tracking-wider">Engineering Reputation</span>
-          <h2 className="mt-2 text-3xl md:text-4xl font-semibold tracking-tight">Build Your Engineering Identity.</h2>
-          <p className="mt-4 text-muted-foreground leading-relaxed">Every ticket, review, and collaboration shapes your verifiable engineering profile — the resume of the future.</p>
-        </div>
       </div>
     </section>
   );
 }
 
-function Recruiter() {
-  const items = [
-    { i: Activity, t: "Sprint history" },
-    { i: CheckCircle2, t: "Ticket completion" },
-    { i: Star, t: "Review quality" },
-    { i: Users, t: "Team collaboration" },
-    { i: BarChart3, t: "Engineering analytics" },
-  ];
+/* ================================================================
+   SECTION 8 — Process strip
+   ================================================================ */
+function ProcessStrip() {
+  const steps = ["Invite", "Evaluate", "Review", "Hire"];
   return (
-    <section id="recruiter" className="border-b border-neutral-200 py-20">
-      <div className="mx-auto max-w-7xl px-6">
-        <div className="text-center max-w-2xl mx-auto">
-          <h2 className="text-3xl md:text-4xl font-semibold tracking-tight">Show What You Can Actually Build.</h2>
-          <p className="mt-3 text-muted-foreground">Recruiters see your engineering work the way teammates would.</p>
+    <section id="process" className="border-t border-neutral-200">
+      <div className="mx-auto max-w-5xl px-6 py-24">
+        <div className="text-center max-w-xl mx-auto">
+          <div className="text-[11px] uppercase tracking-[0.18em] text-neutral-500">Evaluation Process</div>
+          <h2 className="mt-3 text-[36px] leading-[1.05] tracking-[-0.02em] font-semibold">
+            Four steps. Zero guesswork.
+          </h2>
         </div>
-        <div className="mt-12 grid md:grid-cols-5 gap-4">
-          {items.map(({ i: I, t }) => (
-            <div key={t} className="rounded-xl border border-neutral-200 bg-white p-6 text-center hover:border-blue-500/40 transition">
-              <I className="h-6 w-6 text-blue-600 mx-auto" />
-              <div className="mt-3 text-sm font-medium">{t}</div>
-            </div>
-          ))}
-        </div>
-      </div>
-    </section>
-  );
-}
-
-function Testimonials() {
-  const t = [
-    { who: "Priya · CS Student", role: "Student", quote: "Got my first internship after 3 months on Yuvro. The recruiter literally walked through my sprint board in the interview.", c: "primary" },
-    { who: "Marcus · Job Seeker", role: "Job Seeker", quote: "Real tickets, real PRs, real reviews. My GitHub finally looks like a senior engineer's.", c: "info" },
-    { who: "Sana · Dev @ Stripe", role: "Developer", quote: "I use Yuvro to stay sharp on system design. The incident simulations are brutal — in the best way.", c: "success" },
-  ];
-  return (
-    <section className="border-b border-neutral-200 py-20 ">
-      <div className="mx-auto max-w-7xl px-6">
-        <div className="text-center max-w-2xl mx-auto">
-          <h2 className="text-3xl md:text-4xl font-semibold tracking-tight">Engineers who proved it on Yuvro.</h2>
-        </div>
-        <div className="mt-12 grid md:grid-cols-3 gap-4">
-          {t.map((x) => (
-            <div key={x.who} className="rounded-xl border border-neutral-200 bg-white p-6">
-              <Quote className="h-6 w-6" style={{ color: `var(--${x.c})` }} />
-              <p className="mt-3 text-sm leading-relaxed">{x.quote}</p>
-              <div className="mt-5 pt-4 border-t border-neutral-200 flex items-center justify-between">
-                <div className="text-sm font-medium">{x.who}</div>
-                <span className="rounded-full border border-neutral-200 px-2 py-0.5 text-[10px] text-muted-foreground">{x.role}</span>
+        <div className="mt-14 flex items-center justify-between gap-6">
+          {steps.map((s, i) => (
+            <div key={s} className="flex items-center gap-6 flex-1">
+              <div className="flex-1 text-center">
+                <div className="text-[11px] font-mono text-neutral-400">0{i + 1}</div>
+                <div className="mt-2 text-[20px] tracking-tight font-medium">{s}</div>
               </div>
+              {i < steps.length - 1 && <ChevronRight className="h-4 w-4 text-neutral-300 shrink-0" />}
             </div>
           ))}
         </div>
@@ -473,40 +661,54 @@ function Testimonials() {
   );
 }
 
+/* ================================================================
+   SECTION 9 — Final CTA
+   ================================================================ */
 function FinalCTA() {
   return (
-    <section className="border-b border-neutral-200 py-24 relative overflow-hidden">
-      <div className="absolute inset-0 -z-10">
-      </div>
-      <div className="mx-auto max-w-3xl px-6 text-center">
-        <Rocket className="h-10 w-10 text-blue-600 mx-auto" />
-        <h2 className="mt-5 text-4xl md:text-5xl font-semibold tracking-tight">Start Building Real Engineering Experience Today.</h2>
-        <p className="mt-4 text-lg text-muted-foreground">Join a growing community of engineers proving their skill through real work.</p>
-        <div className="mt-8 flex flex-wrap justify-center gap-3">
-          <Link to="/auth" search={{ tab: "signup" }} className="inline-flex items-center gap-2 rounded-md bg-blue-600 px-6 py-3 text-sm font-medium text-white shadow-lg shadow-blue-600/40 hover:bg-blue-700 hover:shadow-blue-600/60 transition">
-            Create Account <ArrowRight className="h-4 w-4" />
-          </Link>
-          <Link to="/auth" search={{ tab: "signin" }} className="inline-flex items-center gap-2 rounded-md border border-neutral-200 bg-white px-6 py-3 text-sm hover:bg-accent transition">
-            Sign In
-          </Link>
+    <section className="border-t border-neutral-200 bg-neutral-900 text-white">
+      <div className="mx-auto max-w-6xl px-6 py-28 grid lg:grid-cols-[1.2fr_1fr] gap-12 items-end">
+        <div>
+          <div className="text-[11px] uppercase tracking-[0.18em] text-neutral-400">The bottom line</div>
+          <h2 className="mt-4 text-[56px] lg:text-[72px] leading-[0.98] tracking-[-0.03em] font-semibold">
+            Hire Engineers.<br />
+            <span className="text-neutral-500">Not Interview Performers.</span>
+          </h2>
+        </div>
+        <div>
+          <p className="text-[16px] text-neutral-300 leading-relaxed max-w-md">
+            Verify engineering capability before making hiring decisions. Bring evidence into every hiring conversation.
+          </p>
+          <div className="mt-8 flex flex-wrap items-center gap-3">
+            <a href="#" className="inline-flex items-center gap-2 rounded-md bg-white px-5 py-3 text-[14px] font-medium text-neutral-900 hover:bg-neutral-100 transition">
+              Book Demo <ArrowUpRight className="h-4 w-4" />
+            </a>
+            <Link to="/auth" search={{ tab: "signup" }} className="inline-flex items-center gap-2 rounded-md border border-neutral-700 px-5 py-3 text-[14px] font-medium text-white hover:border-white transition">
+              Get Started
+            </Link>
+          </div>
         </div>
       </div>
     </section>
   );
 }
 
+/* ================================================================
+   Footer
+   ================================================================ */
 function Footer() {
   return (
-    <footer className="py-10">
-      <div className="mx-auto max-w-7xl px-6 flex flex-wrap items-center justify-between gap-4">
-        <div className="flex items-center gap-2 text-sm text-muted-foreground">
-          <div className="grid h-6 w-6 place-items-center rounded-md bg-gradient-to-br from-blue-600 to-blue-500 text-white font-mono text-xs">Y</div>
-          <span>© 2026 Yuvro Labs — Build real engineering experience.</span>
+    <footer className="border-t border-neutral-200 bg-white">
+      <div className="mx-auto max-w-7xl px-6 py-10 flex flex-wrap items-center justify-between gap-4 text-[12px] text-neutral-500">
+        <div className="flex items-center gap-2">
+          <GitCommit className="h-3.5 w-3.5" />
+          <span className="font-mono">© {new Date().getFullYear()} Yuvro Labs · Engineering Capability Verification</span>
         </div>
-        <div className="flex items-center gap-5 text-xs text-muted-foreground">
-          <a href="#" className="hover:text-foreground">Privacy</a>
-          <a href="#" className="hover:text-foreground">Terms</a>
-          <a href="#" className="hover:text-foreground">Contact</a>
+        <div className="flex items-center gap-6">
+          <a href="#" className="hover:text-neutral-900">Privacy</a>
+          <a href="#" className="hover:text-neutral-900">Terms</a>
+          <a href="#" className="hover:text-neutral-900">Security</a>
+          <a href="#" className="hover:text-neutral-900">Contact</a>
         </div>
       </div>
     </footer>
