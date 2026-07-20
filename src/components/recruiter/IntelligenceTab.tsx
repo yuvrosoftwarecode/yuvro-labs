@@ -275,7 +275,7 @@ function HealthCard({ label, value, suffix, delta, good, icon }: { label: string
 }
 
 // ---- Insights ----
-interface Insight { title: string; body: string; tone: "green" | "amber" | "blue" | "violet" | "red"; cta: string; }
+interface Insight { title: string; body: string; tone: "green" | "amber" | "red"; cta: string; }
 
 function buildInsights(s: ReturnType<typeof computeStats>, submitted: Candidate[]): Insight[] {
   const strong = submitted.filter(c => c.recommendation === "Strong Hire").length;
@@ -285,8 +285,8 @@ function buildInsights(s: ReturnType<typeof computeStats>, submitted: Candidate[
     { title: "SQL Optimisation Lab is your hardest filter", body: `Only ${Math.max(28, Math.min(46, 40 - (s.avgLabs % 12)))}% of candidates solved it end-to-end. It's separating strong engineers from average ones.`, tone: "amber", cta: "Open SQL Lab Report" },
     { title: "Highest scoring competency: Communication", body: "Vitarka discussion shows this cohort articulates trade-offs clearly, especially on system design.", tone: "green", cta: "See top communicators" },
     { title: "Lowest scoring competency: Architecture", body: "Median Architecture score is 61/100. Consider a targeted follow-up round for shortlisted candidates.", tone: "red", cta: "Filter Architecture <70" },
-    { title: "Labs are filtering better than MCQs", body: "Assessment scores compress around 70-78 while labs spread 45-95. Weight labs 1.5x in your hiring decision.", tone: "blue", cta: "Reweight ECI" },
-    { title: `${gems} hidden gems demonstrated exceptional debugging`, body: "These candidates scored in labs but were pulled down by MCQs. Recommend manual review.", tone: "violet", cta: "Review hidden gems" },
+    { title: "Labs are filtering better than MCQs", body: "Assessment scores compress around 70-78 while labs spread 45-95. Weight labs 1.5x in your hiring decision.", tone: "amber", cta: "Reweight ECI" },
+    { title: `${gems} hidden gems demonstrated exceptional debugging`, body: "These candidates scored in labs but were pulled down by MCQs. Recommend manual review.", tone: "green", cta: "Review hidden gems" },
     { title: `${backend} candidates are excellent fits for Backend Engineer`, body: "Strong on Java/Node + high Vitarka technical depth. Prioritize these for interviews this week.", tone: "green", cta: "View backend shortlist" },
     { title: `${strong} Strong Hire candidates awaiting your decision`, body: "Average recruiter response time is 3.4 days. Faster decisions win offers.", tone: "amber", cta: "Review pending" },
   ];
@@ -296,12 +296,10 @@ function InsightCard({ insight, onAct }: { insight: Insight; onAct: () => void }
   const tone: Record<Insight["tone"], string> = {
     green: "border-emerald-400/25 from-emerald-500/10",
     amber: "border-amber-400/25 from-amber-500/10",
-    blue: "border-cyan-400/25 from-cyan-500/10",
-    violet: "border-violet-400/25 from-violet-500/10",
     red: "border-red-400/25 from-red-500/10",
   };
   const dot: Record<Insight["tone"], string> = {
-    green: "bg-emerald-400", amber: "bg-amber-400", blue: "bg-cyan-400", violet: "bg-violet-400", red: "bg-red-400",
+    green: "bg-emerald-400", amber: "bg-amber-400", red: "bg-red-400",
   };
   return (
     <div className={`group relative overflow-hidden rounded-2xl border ${tone[insight.tone]} bg-white/[0.02] p-5`}>
