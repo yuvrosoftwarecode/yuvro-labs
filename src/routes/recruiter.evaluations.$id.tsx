@@ -558,7 +558,7 @@ function QuestionDrawer({ existing, onClose, onAdd }: { existing: string[]; onCl
                 <div className="text-[11px] text-neutral-500">{it.marks} marks · {it.seconds}s</div>
                 <div className="flex items-center gap-1">
                   <button className="rounded-md border border-white/10 px-2 py-1 text-[11px] text-neutral-300 hover:bg-white/5">Preview</button>
-                  <button disabled={added} onClick={() => onAdd(it)} className="inline-flex items-center gap-1 rounded-md bg-violet-400 px-2 py-1 text-[11px] font-medium text-black disabled:bg-white/10 disabled:text-neutral-500">
+                  <button disabled={added} onClick={() => onAdd(it)} className="inline-flex items-center gap-1 rounded-md bg-amber-500 px-2 py-1 text-[11px] font-medium text-white disabled:bg-white/10 disabled:text-neutral-500">
                     {added ? <><Check className="h-3 w-3" /> Added</> : <><Plus className="h-3 w-3" /> Add</>}
                   </button>
                 </div>
@@ -739,7 +739,7 @@ function PublishScreen({ ev, onBack, onPublish }: { ev: Evaluation; onBack: () =
 
         <div className="mt-8 flex items-center justify-end gap-2">
           <button onClick={onBack} className="rounded-lg border border-white/10 px-4 py-2 text-[12px] text-neutral-300 hover:bg-white/5">Cancel</button>
-          <button onClick={submit} className="inline-flex items-center gap-2 rounded-lg bg-gradient-to-r from-emerald-400 to-cyan-400 px-5 py-2 text-[13px] font-medium text-black hover:brightness-110"><Rocket className="h-4 w-4" /> Publish Evaluation</button>
+          <button onClick={submit} className="inline-flex items-center gap-2 rounded-lg bg-gradient-to-r from-orange-500 to-amber-500 px-5 py-2 text-[13px] font-medium text-white hover:brightness-110"><Rocket className="h-4 w-4" /> Publish Evaluation</button>
         </div>
       </div>
     </div>
@@ -761,7 +761,7 @@ function PublishedScreen({ ev, onBack }: { ev: Evaluation; onBack: () => void })
         )}
         <div className="mt-8 flex items-center justify-center gap-2">
           <button onClick={onBack} className="rounded-lg border border-white/10 px-4 py-2 text-[12px] text-neutral-300 hover:bg-white/5">Back to workspace</button>
-          <Link to="/recruiter/evaluations" className="rounded-lg bg-gradient-to-r from-emerald-400 to-cyan-400 px-4 py-2 text-[12px] font-medium text-black">View all evaluations</Link>
+          <Link to="/recruiter/evaluations" className="rounded-lg bg-gradient-to-r from-orange-500 to-amber-500 px-4 py-2 text-[12px] font-medium text-white">View all evaluations</Link>
         </div>
       </div>
     </div>
