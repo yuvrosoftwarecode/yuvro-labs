@@ -3,7 +3,7 @@
 
 export type CandStatus = "Submitted" | "Completed" | "In Progress" | "Not Started" | "Expired";
 export type HiringStatus = "Pending Review" | "Shortlisted" | "Interview Scheduled" | "Selected" | "Rejected" | "Hold";
-export type Recommendation = "Strong Hire" | "Hire" | "Maybe" | "Reject";
+export type Recommendation = "Strong Hire" | "Hire" | "Maybe" | "Needs Review" | "Hidden Gem" | "Reject";
 export type VitarkaLabel = "Excellent" | "Good" | "Average" | "Poor";
 
 export interface Candidate {
@@ -73,7 +73,10 @@ export function getCandidates(evaluationId: string, count = 1000): Candidate[] {
     const assess = Math.round(35 + r() * 65);
     const vit = Math.round(35 + r() * 65);
     const eci = Math.round(labs * 0.45 + assess * 0.3 + vit * 0.25);
-    const rec: Recommendation = eci >= 85 ? "Strong Hire" : eci >= 72 ? "Hire" : eci >= 60 ? "Maybe" : "Reject";
+    // Base recommendation from ECI, with occasional "Hidden Gem" (high labs, mid ECI) and "Needs Review" (borderline).
+    let rec: Recommendation = eci >= 85 ? "Strong Hire" : eci >= 72 ? "Hire" : eci >= 60 ? "Maybe" : "Reject";
+    if (rec === "Maybe" && labs >= 82 && r() < 0.35) rec = "Hidden Gem";
+    else if ((eci >= 58 && eci <= 74) && r() < 0.18) rec = "Needs Review";
     const statusRoll = r();
     const status: CandStatus =
       statusRoll < 0.55 ? "Submitted" :
