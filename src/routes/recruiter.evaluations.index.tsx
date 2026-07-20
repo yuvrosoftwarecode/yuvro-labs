@@ -33,7 +33,7 @@ function EvaluationsList() {
           <h1 className="text-[28px] font-semibold tracking-tight">Evaluations</h1>
           <p className="mt-1 text-[13px] text-neutral-400">{evals.length} total · {evals.filter(e => e.status === "published").length} live</p>
         </div>
-        <button onClick={onCreate} className="inline-flex items-center gap-2 rounded-lg bg-gradient-to-r from-emerald-400 to-cyan-400 px-4 py-2.5 text-[13px] font-medium text-black transition hover:brightness-110">
+        <button onClick={onCreate} className="inline-flex items-center gap-2 rounded-lg bg-gradient-to-r from-orange-500 to-amber-500 px-4 py-2.5 text-[13px] font-medium text-white transition hover:brightness-110">
           <Plus className="h-4 w-4" /> Create Evaluation
         </button>
       </div>

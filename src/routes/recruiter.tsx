@@ -25,12 +25,12 @@ function RecruiterLayout() {
       <div className="pointer-events-none fixed inset-0 -z-10 opacity-40 recruiter-glow">
 
         <div className="absolute -top-40 -left-40 h-[520px] w-[520px] rounded-full bg-emerald-500/10 blur-[160px]" />
-        <div className="absolute -bottom-40 -right-20 h-[520px] w-[520px] rounded-full bg-violet-500/10 blur-[160px]" />
+        <div className="absolute -bottom-40 -right-20 h-[520px] w-[520px] rounded-full bg-orange-500/10 blur-[160px]" />
       </div>
       <div className="flex min-h-screen">
         <aside className="fixed inset-y-0 left-0 z-20 flex w-[240px] flex-col border-r border-white/5 bg-black/40 backdrop-blur-xl">
           <Link to="/recruiter" className="flex items-center gap-2.5 px-6 py-5">
-            <div className="grid h-8 w-8 place-items-center rounded-lg bg-gradient-to-br from-emerald-400 to-cyan-400 text-black font-mono text-sm font-bold">Y</div>
+            <div className="grid h-8 w-8 place-items-center rounded-lg bg-gradient-to-br from-orange-500 to-amber-500 text-white font-mono text-sm font-bold">Y</div>
             <div className="leading-tight">
               <div className="text-[13px] font-semibold">Yuvro Labs</div>
               <div className="text-[10px] uppercase tracking-widest text-neutral-500">Recruiter</div>
@@ -55,7 +55,7 @@ function RecruiterLayout() {
               <div className="mt-1 text-[11px] text-neutral-500">Auto-generates candidate discussions from lab & assessment context.</div>
             </div>
             <div className="flex items-center gap-2 rounded-lg px-2 py-2">
-              <div className="grid h-8 w-8 place-items-center rounded-full bg-gradient-to-br from-violet-400 to-fuchsia-400 text-[11px] font-semibold text-black">{(user?.name ?? "R")[0]}</div>
+              <div className="grid h-8 w-8 place-items-center rounded-full bg-gradient-to-br from-orange-500 to-amber-500 text-[11px] font-semibold text-white">{(user?.name ?? "R")[0]}</div>
               <div className="min-w-0 flex-1 leading-tight">
                 <div className="truncate text-[12px] text-white">{user?.name ?? "Recruiter"}</div>
                 <div className="truncate text-[10px] text-neutral-500">{user?.email ?? "recruiter@yuvrolabs.com"}</div>

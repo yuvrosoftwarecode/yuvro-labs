@@ -275,7 +275,7 @@ function HealthCard({ label, value, suffix, delta, good, icon }: { label: string
 }
 
 // ---- Insights ----
-interface Insight { title: string; body: string; tone: "green" | "amber" | "blue" | "violet" | "red"; cta: string; }
+interface Insight { title: string; body: string; tone: "green" | "amber" | "red"; cta: string; }
 
 function buildInsights(s: ReturnType<typeof computeStats>, submitted: Candidate[]): Insight[] {
   const strong = submitted.filter(c => c.recommendation === "Strong Hire").length;
@@ -285,8 +285,8 @@ function buildInsights(s: ReturnType<typeof computeStats>, submitted: Candidate[
     { title: "SQL Optimisation Lab is your hardest filter", body: `Only ${Math.max(28, Math.min(46, 40 - (s.avgLabs % 12)))}% of candidates solved it end-to-end. It's separating strong engineers from average ones.`, tone: "amber", cta: "Open SQL Lab Report" },
     { title: "Highest scoring competency: Communication", body: "Vitarka discussion shows this cohort articulates trade-offs clearly, especially on system design.", tone: "green", cta: "See top communicators" },
     { title: "Lowest scoring competency: Architecture", body: "Median Architecture score is 61/100. Consider a targeted follow-up round for shortlisted candidates.", tone: "red", cta: "Filter Architecture <70" },
-    { title: "Labs are filtering better than MCQs", body: "Assessment scores compress around 70-78 while labs spread 45-95. Weight labs 1.5x in your hiring decision.", tone: "blue", cta: "Reweight ECI" },
-    { title: `${gems} hidden gems demonstrated exceptional debugging`, body: "These candidates scored in labs but were pulled down by MCQs. Recommend manual review.", tone: "violet", cta: "Review hidden gems" },
+    { title: "Labs are filtering better than MCQs", body: "Assessment scores compress around 70-78 while labs spread 45-95. Weight labs 1.5x in your hiring decision.", tone: "amber", cta: "Reweight ECI" },
+    { title: `${gems} hidden gems demonstrated exceptional debugging`, body: "These candidates scored in labs but were pulled down by MCQs. Recommend manual review.", tone: "green", cta: "Review hidden gems" },
     { title: `${backend} candidates are excellent fits for Backend Engineer`, body: "Strong on Java/Node + high Vitarka technical depth. Prioritize these for interviews this week.", tone: "green", cta: "View backend shortlist" },
     { title: `${strong} Strong Hire candidates awaiting your decision`, body: "Average recruiter response time is 3.4 days. Faster decisions win offers.", tone: "amber", cta: "Review pending" },
   ];
@@ -296,12 +296,10 @@ function InsightCard({ insight, onAct }: { insight: Insight; onAct: () => void }
   const tone: Record<Insight["tone"], string> = {
     green: "border-emerald-400/25 from-emerald-500/10",
     amber: "border-amber-400/25 from-amber-500/10",
-    blue: "border-cyan-400/25 from-cyan-500/10",
-    violet: "border-violet-400/25 from-violet-500/10",
     red: "border-red-400/25 from-red-500/10",
   };
   const dot: Record<Insight["tone"], string> = {
-    green: "bg-emerald-400", amber: "bg-amber-400", blue: "bg-cyan-400", violet: "bg-violet-400", red: "bg-red-400",
+    green: "bg-emerald-400", amber: "bg-amber-400", red: "bg-red-400",
   };
   return (
     <div className={`group relative overflow-hidden rounded-2xl border ${tone[insight.tone]} bg-white/[0.02] p-5`}>
@@ -330,7 +328,7 @@ function FunnelChart({ stages, onStage }: { stages: { key: string; label: string
       <div className="space-y-2">
         {stages.map(s => {
           const pct = Math.round((s.count / max) * 100);
-          const bar = s.tone === "good" ? "from-emerald-400/60 to-emerald-400/20" : s.tone === "muted" ? "from-neutral-600/50 to-neutral-600/10" : "from-cyan-400/60 to-cyan-400/10";
+          const bar = s.tone === "good" ? "from-emerald-400/60 to-emerald-400/20" : s.tone === "muted" ? "from-neutral-600/50 to-neutral-600/10" : "from-amber-400/60 to-amber-400/10";
           return (
             <button key={s.key} onClick={() => onStage(s)} className="group flex w-full items-center gap-3 text-left">
               <div className="w-24 text-[11px] uppercase tracking-widest text-neutral-500">{s.label}</div>
@@ -593,8 +591,8 @@ function CollegeAnalytics({ submitted, allCount }: { submitted: Candidate[]; all
               <td className="px-3 py-2 text-neutral-200">{r.college}</td>
               <td className="px-3 py-2 text-neutral-300">{r.count}</td>
               <td className="px-3 py-2"><BarInline value={r.avgEci} /></td>
-              <td className="px-3 py-2 text-cyan-300">{r.interview}</td>
-              <td className="px-3 py-2 text-cyan-300">{r.shortlisted}</td>
+              <td className="px-3 py-2 text-amber-300">{r.interview}</td>
+              <td className="px-3 py-2 text-emerald-300">{r.shortlisted}</td>
               <td className="px-3 py-2 text-emerald-300">{r.selected}</td>
             </tr>
           ))}
@@ -625,7 +623,7 @@ function CompanyAnalytics({ candidates }: { candidates: Candidate[] }) {
             <div key={n} className="flex items-center gap-3">
               <div className="w-40 truncate text-[12px] text-neutral-300">{n}</div>
               <div className="flex-1 rounded-md bg-white/[0.03]">
-                <div className="h-5 rounded-md bg-gradient-to-r from-cyan-400/60 to-cyan-400/10" style={{ width: `${(v / max) * 100}%` }} />
+                <div className="h-5 rounded-md bg-gradient-to-r from-amber-400/60 to-amber-400/10" style={{ width: `${(v / max) * 100}%` }} />
               </div>
               <div className="w-8 text-right text-[11px] text-neutral-400">{v}</div>
             </div>
@@ -639,7 +637,7 @@ function CompanyAnalytics({ candidates }: { candidates: Candidate[] }) {
             <div key={e.k} className="flex items-center gap-3">
               <div className="w-24 text-[12px] text-neutral-300">{e.k}</div>
               <div className="flex-1 rounded-md bg-white/[0.03]">
-                <div className="h-5 rounded-md bg-gradient-to-r from-violet-400/60 to-violet-400/10" style={{ width: `${(e.v / emax) * 100}%` }} />
+                <div className="h-5 rounded-md bg-gradient-to-r from-amber-400/60 to-amber-400/10" style={{ width: `${(e.v / emax) * 100}%` }} />
               </div>
               <div className="w-8 text-right text-[11px] text-neutral-400">{e.v}</div>
             </div>
@@ -726,7 +724,7 @@ function DiffBadge({ d }: { d: string }) {
   return <span className={`rounded-full border px-1.5 py-0.5 text-[10px] ${map[d] || ""}`}>{d}</span>;
 }
 function BarInline({ value }: { value: number }) {
-  const t = value >= 80 ? "from-emerald-400 to-emerald-400/30" : value >= 60 ? "from-cyan-400 to-cyan-400/30" : value >= 40 ? "from-amber-400 to-amber-400/30" : "from-red-400 to-red-400/30";
+  const t = value >= 80 ? "from-emerald-400 to-emerald-400/30" : value >= 60 ? "from-amber-400 to-amber-400/30" : value >= 40 ? "from-amber-400 to-amber-400/30" : "from-red-400 to-red-400/30";
   return (
     <div className="flex items-center gap-2">
       <div className="relative h-1.5 flex-1 overflow-hidden rounded-full bg-white/[0.05]">

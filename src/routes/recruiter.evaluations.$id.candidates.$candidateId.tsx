@@ -463,7 +463,7 @@ function LabsPane({
           </div>
           <div className="mt-4 h-1.5 overflow-hidden rounded-full bg-white/5">
             <div
-              className={`h-full ${lab.score >= 85 ? "bg-emerald-400" : lab.score >= 70 ? "bg-cyan-400" : lab.score >= 55 ? "bg-amber-400" : "bg-red-400"}`}
+              className={`h-full ${lab.score >= 70 ? "bg-emerald-400" : lab.score >= 55 ? "bg-amber-400" : "bg-red-400"}`}
               style={{ width: `${lab.score}%` }}
             />
           </div>
@@ -496,7 +496,7 @@ function AssessmentPane({ detail }: { detail: ReturnType<typeof getCandidateDeta
               <div className="hidden w-40 sm:block">
                 <div className="h-1.5 overflow-hidden rounded-full bg-white/5">
                   <div
-                    className={`h-full ${pct >= 85 ? "bg-emerald-400" : pct >= 70 ? "bg-cyan-400" : pct >= 55 ? "bg-amber-400" : "bg-red-400"}`}
+                    className={`h-full ${pct >= 70 ? "bg-emerald-400" : pct >= 55 ? "bg-amber-400" : "bg-red-400"}`}
                     style={{ width: `${pct}%` }}
                   />
                 </div>
@@ -583,7 +583,7 @@ function VitarkaPane({
               </div>
               <div className="mt-2 h-1 overflow-hidden rounded-full bg-white/5">
                 <div
-                  className={`h-full ${s.score >= 80 ? "bg-emerald-400" : s.score >= 65 ? "bg-cyan-400" : s.score >= 50 ? "bg-amber-400" : "bg-red-400"}`}
+                  className={`h-full ${s.score >= 70 ? "bg-emerald-400" : s.score >= 55 ? "bg-amber-400" : "bg-red-400"}`}
                   style={{ width: `${s.score}%` }}
                 />
               </div>
@@ -636,7 +636,7 @@ function VitarkaPane({
             {detail.vitarka.transcript.map((l, i) => (
               <div key={i} className="flex items-start gap-3">
                 <div
-                  className={`mt-0.5 grid h-7 w-7 place-items-center rounded-full text-[10px] font-medium ${l.speaker === "AI" ? "bg-emerald-400/15 text-emerald-300" : "bg-violet-400/15 text-violet-300"}`}
+                  className={`mt-0.5 grid h-7 w-7 place-items-center rounded-full text-[10px] font-medium ${l.speaker === "AI" ? "bg-emerald-400/15 text-emerald-300" : "bg-amber-400/15 text-amber-300"}`}
                 >
                   {l.speaker === "AI" ? "AI" : "You"}
                 </div>
@@ -1120,7 +1120,7 @@ function LabDrawer({ lab, onClose }: { lab: LabAttempt; onClose: () => void }) {
               {lab.files.map((f, i) => (
                 <div key={i} className="flex items-center gap-2 bg-white/[0.02] px-3 py-2 text-[12px]">
                   <span
-                    className={`inline-flex h-4 w-4 items-center justify-center rounded text-[9px] font-bold ${f.kind === "created" ? "bg-emerald-400/20 text-emerald-300" : f.kind === "deleted" ? "bg-red-400/20 text-red-300" : "bg-cyan-400/20 text-cyan-300"}`}
+                    className={`inline-flex h-4 w-4 items-center justify-center rounded text-[9px] font-bold ${f.kind === "created" ? "bg-emerald-400/20 text-emerald-300" : f.kind === "deleted" ? "bg-red-400/20 text-red-300" : "bg-amber-400/20 text-amber-300"}`}
                   >
                     {f.kind[0].toUpperCase()}
                   </span>
@@ -1298,7 +1298,7 @@ function SubMetric({ label, value, onClick }: { label: string; value: number; on
 function RadialScore({ value }: { value: number }) {
   const c = 2 * Math.PI * 42;
   const off = c - (value / 100) * c;
-  const stroke = value >= 85 ? "#34d399" : value >= 70 ? "#22d3ee" : value >= 55 ? "#fbbf24" : "#f87171";
+  const stroke = value >= 70 ? "#34d399" : value >= 55 ? "#f59e0b" : "#ef4444";
   return (
     <div className="relative grid h-[112px] w-[112px] shrink-0 place-items-center">
       <svg viewBox="0 0 100 100" className="h-full w-full -rotate-90">
@@ -1332,7 +1332,7 @@ function MiniBar({ label, v }: { label: string; v: number }) {
       </div>
       <div className="mt-1 h-1 overflow-hidden rounded-full bg-white/5">
         <div
-          className={`h-full ${v >= 85 ? "bg-emerald-400" : v >= 70 ? "bg-cyan-400" : v >= 55 ? "bg-amber-400" : "bg-red-400"}`}
+          className={`h-full ${v >= 70 ? "bg-emerald-400" : v >= 55 ? "bg-amber-400" : "bg-red-400"}`}
           style={{ width: `${v}%` }}
         />
       </div>
@@ -1373,9 +1373,11 @@ function EmptyBlock({ icon, title, desc }: { icon: React.ReactNode; title: strin
 function RecBadge({ r }: { r: string }) {
   const map: Record<string, string> = {
     "Strong Hire": "border-emerald-400/30 bg-emerald-400/10 text-emerald-300",
-    Hire: "border-cyan-400/30 bg-cyan-400/10 text-cyan-300",
+    Hire: "border-emerald-400/30 bg-emerald-400/10 text-emerald-300",
     Maybe: "border-amber-400/30 bg-amber-400/10 text-amber-300",
     Reject: "border-red-400/30 bg-red-400/10 text-red-300",
+    "Hidden Gem": "border-amber-400/30 bg-amber-400/10 text-amber-300",
+    "Needs Review": "border-amber-400/30 bg-amber-400/10 text-amber-300",
   };
   return (
     <span
@@ -1387,9 +1389,9 @@ function RecBadge({ r }: { r: string }) {
 }
 function StatusPill({ s }: { s: HiringDecision }) {
   const map: Record<HiringDecision, string> = {
-    "Pending Review": "border-white/10 bg-white/[0.03] text-neutral-300",
-    Shortlisted: "border-cyan-400/30 bg-cyan-400/10 text-cyan-300",
-    "Interview Scheduled": "border-violet-400/30 bg-violet-400/10 text-violet-300",
+    "Pending Review": "border-amber-400/30 bg-amber-400/10 text-amber-300",
+    Shortlisted: "border-emerald-400/30 bg-emerald-400/10 text-emerald-300",
+    "Interview Scheduled": "border-amber-400/30 bg-amber-400/10 text-amber-300",
     Selected: "border-emerald-400/30 bg-emerald-400/10 text-emerald-300",
     Rejected: "border-red-400/30 bg-red-400/10 text-red-300",
     Hold: "border-amber-400/30 bg-amber-400/10 text-amber-300",
@@ -1429,7 +1431,7 @@ function tabLabel(t: Tab) {
         : t[0].toUpperCase() + t.slice(1);
 }
 function eciColor(v: number) {
-  return v >= 85 ? "text-emerald-300" : v >= 70 ? "text-cyan-300" : v >= 55 ? "text-amber-300" : "text-red-300";
+  return v >= 70 ? "text-emerald-300" : v >= 55 ? "text-amber-300" : "text-red-300";
 }
 function ecIVerdict(v: number) {
   return v >= 85 ? "Excellent" : v >= 70 ? "Strong" : v >= 55 ? "Average" : "Below bar";
