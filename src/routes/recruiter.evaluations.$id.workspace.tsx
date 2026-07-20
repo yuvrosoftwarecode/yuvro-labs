@@ -597,13 +597,13 @@ const ALL_COLS: { key: ColKey; label: string; always?: boolean }[] = [
   { key: "candidate", label: "Candidate", always: true },
   { key: "email", label: "Email" },
   { key: "phone", label: "Phone" },
-  { key: "labs", label: "Engineering Labs" },
-  { key: "assessment", label: "Knowledge Assessment" },
-  { key: "vitarka", label: "Vitarka" },
-  { key: "eci", label: "Engineering Capability Index" },
-  { key: "recommendation", label: "AI Recommendation" },
-  { key: "submitted", label: "Submitted On" },
-  { key: "status", label: "Review Status" },
+  { key: "labs", label: "Engineering Labs", always: true },
+  { key: "assessment", label: "Knowledge Assessment", always: true },
+  { key: "vitarka", label: "Vitarka", always: true },
+  { key: "eci", label: "Engineering Capability Index", always: true },
+  { key: "recommendation", label: "AI Recommendation", always: true },
+  { key: "submitted", label: "Submitted On", always: true },
+  { key: "status", label: "Review Status", always: true },
 ];
 const DEFAULT_COLS: ColKey[] = [
   "candidate",
@@ -615,7 +615,8 @@ const DEFAULT_COLS: ColKey[] = [
   "submitted",
   "status",
 ];
-const COLS_KEY = "yuvro-cand-cols";
+const COLS_KEY = "yuvro-cand-cols-v2";
+
 
 function CandidatesTab({
   evId,
@@ -1305,90 +1306,89 @@ function CandidateTable({
 }) {
   const show = (k: ColKey) => cols.has(k);
   return (
-    <div className="overflow-hidden rounded-2xl border border-neutral-200 bg-white">
-      <div className="max-h-[70vh] overflow-auto">
-        <table className="w-full text-left text-[12.5px]">
-          <thead className="sticky top-0 z-10 bg-neutral-50/95 backdrop-blur">
-            <tr className="border-b border-neutral-200 text-[10.5px] uppercase tracking-widest text-neutral-500">
-              <Th className="w-8">
-                <input type="checkbox" checked={allChecked} onChange={onToggleAll} />
-              </Th>
-              {show("candidate") && <Th className="min-w-[260px]">Candidate</Th>}
-              {show("email") && <Th>Email</Th>}
-              {show("phone") && <Th>Phone</Th>}
-              {show("labs") && <Th className="w-[96px] text-right">Eng. Labs</Th>}
-              {show("assessment") && <Th className="w-[132px] text-right">Knowledge</Th>}
-              {show("vitarka") && <Th className="w-[96px] text-right">Vitarka</Th>}
-              {show("eci") && <Th className="w-[104px] text-right">ECI</Th>}
-              {show("recommendation") && <Th className="w-[160px]">AI Recommendation</Th>}
-              {show("submitted") && <Th className="w-[128px]">Submitted On</Th>}
-              {show("status") && <Th className="w-[140px]">Review Status</Th>}
-              <Th className="w-10"></Th>
-            </tr>
-          </thead>
-          <tbody>
-            {rows.map((c) => (
-              <tr
-                key={c.id}
-                onClick={() => onOpen(c)}
-                className={`cursor-pointer border-b border-neutral-100 text-neutral-900 transition hover:bg-neutral-50 ${selected.has(c.id) ? "bg-neutral-50" : ""}`}
-              >
-                <Td onClick={(e) => e.stopPropagation()}>
-                  <input type="checkbox" checked={selected.has(c.id)} onChange={() => onToggle(c.id)} />
-                </Td>
-                {show("candidate") && (
-                  <Td>
-                    <div className="flex items-center gap-2.5">
-                      <Avatar name={c.name} hue={c.avatarHue} />
-                      <div className="min-w-0">
-                        <div className="truncate font-medium text-neutral-900">
-                          {highlightText(c.name, highlight || "")}
-                        </div>
-                        <div className="truncate text-[11px] text-neutral-500">
-                          {highlightText(c.email, highlight || "")}
-                        </div>
+    <div className="-mx-1 overflow-x-auto">
+      <table className="w-full min-w-[960px] border-collapse text-left text-[12.5px]">
+        <thead className="sticky top-0 z-10 bg-white">
+          <tr className="border-b border-neutral-200 text-[10.5px] uppercase tracking-widest text-neutral-500">
+            <Th className="w-8">
+              <input type="checkbox" checked={allChecked} onChange={onToggleAll} />
+            </Th>
+            {show("candidate") && <Th className="min-w-[280px]">Candidate</Th>}
+            {show("email") && <Th>Email</Th>}
+            {show("phone") && <Th>Phone</Th>}
+            {show("labs") && <Th className="w-[84px] text-right">Eng. Labs</Th>}
+            {show("assessment") && <Th className="w-[104px] text-right">Knowledge</Th>}
+            {show("vitarka") && <Th className="w-[84px] text-right">Vitarka</Th>}
+            {show("eci") && <Th className="w-[84px] text-right">ECI</Th>}
+            {show("recommendation") && <Th className="w-[150px]">AI Recommendation</Th>}
+            {show("submitted") && <Th className="w-[120px]">Submitted</Th>}
+            {show("status") && <Th className="w-[130px]">Review Status</Th>}
+            <Th className="w-8"></Th>
+          </tr>
+        </thead>
+        <tbody>
+          {rows.map((c) => (
+            <tr
+              key={c.id}
+              onClick={() => onOpen(c)}
+              className={`cursor-pointer border-b border-neutral-100 text-neutral-900 transition hover:bg-neutral-50 ${selected.has(c.id) ? "bg-neutral-50" : ""}`}
+            >
+              <Td onClick={(e) => e.stopPropagation()}>
+                <input type="checkbox" checked={selected.has(c.id)} onChange={() => onToggle(c.id)} />
+              </Td>
+              {show("candidate") && (
+                <Td>
+                  <div className="flex items-center gap-2.5">
+                    <Avatar name={c.name} hue={c.avatarHue} />
+                    <div className="min-w-0">
+                      <div className="truncate font-medium text-neutral-900">
+                        {highlightText(c.name, highlight || "")}
+                      </div>
+                      <div className="truncate text-[11px] text-neutral-500">
+                        {highlightText(c.email, highlight || "")}
                       </div>
                     </div>
-                  </Td>
-                )}
-                {show("email") && <Td className="text-neutral-700">{highlightText(c.email, highlight || "")}</Td>}
-                {show("phone") && <Td className="text-neutral-700">{c.phone}</Td>}
-                {show("labs") && <Td className="text-right tabular-nums text-neutral-900">{c.labsScore}</Td>}
-                {show("assessment") && <Td className="text-right tabular-nums text-neutral-900">{c.assessmentScore}</Td>}
-                {show("vitarka") && (
-                  <Td className="text-right tabular-nums text-neutral-900">
-                    <div>{c.vitarkaScore}</div>
-                    <div className="text-[10.5px] text-neutral-500">{vitarkaLabel(c.vitarkaScore)}</div>
-                  </Td>
-                )}
-                {show("eci") && (
-                  <Td className="text-right tabular-nums text-neutral-900">
-                    <div className="font-medium">{c.eci}</div>
-                    <div className="text-[10.5px] text-neutral-500">{eciLabel(c.eci)}</div>
-                  </Td>
-                )}
-                {show("recommendation") && (
-                  <Td>
-                    <NeutralBadge>{c.recommendation}</NeutralBadge>
-                  </Td>
-                )}
-                {show("submitted") && <Td className="text-neutral-700">{fmtRel(c.submittedAt)}</Td>}
-                {show("status") && (
-                  <Td>
-                    <NeutralBadge>{c.hiringStatus === "Interview Scheduled" ? "Pending Review" : c.hiringStatus}</NeutralBadge>
-                  </Td>
-                )}
-                <Td onClick={(e) => e.stopPropagation()}>
-                  <RowMenu onOpen={() => onOpen(c)} onAction={onAction} />
+                  </div>
                 </Td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
-      </div>
+              )}
+              {show("email") && <Td className="text-neutral-700">{highlightText(c.email, highlight || "")}</Td>}
+              {show("phone") && <Td className="text-neutral-700">{c.phone}</Td>}
+              {show("labs") && <Td className="text-right tabular-nums text-neutral-900">{c.labsScore}</Td>}
+              {show("assessment") && <Td className="text-right tabular-nums text-neutral-900">{c.assessmentScore}</Td>}
+              {show("vitarka") && (
+                <Td className="text-right tabular-nums text-neutral-900">
+                  <div>{c.vitarkaScore}</div>
+                  <div className="text-[10.5px] text-neutral-500">{vitarkaLabel(c.vitarkaScore)}</div>
+                </Td>
+              )}
+              {show("eci") && (
+                <Td className="text-right tabular-nums text-neutral-900">
+                  <div className="font-medium">{c.eci}</div>
+                  <div className="text-[10.5px] text-neutral-500">{eciLabel(c.eci)}</div>
+                </Td>
+              )}
+              {show("recommendation") && (
+                <Td>
+                  <NeutralBadge>{c.recommendation}</NeutralBadge>
+                </Td>
+              )}
+              {show("submitted") && <Td className="text-neutral-700">{fmtRel(c.submittedAt)}</Td>}
+              {show("status") && (
+                <Td>
+                  <NeutralBadge>{c.hiringStatus === "Interview Scheduled" ? "Pending Review" : c.hiringStatus}</NeutralBadge>
+                </Td>
+              )}
+              <Td onClick={(e) => e.stopPropagation()}>
+                <RowMenu onOpen={() => onOpen(c)} onAction={onAction} />
+              </Td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
     </div>
   );
 }
+
 
 function RowMenu({ onOpen, onAction }: { onOpen: () => void; onAction: (l: string) => void }) {
   const [open, setOpen] = useState(false);
