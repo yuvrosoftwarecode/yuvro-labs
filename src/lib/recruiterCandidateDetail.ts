@@ -339,7 +339,7 @@ function rel(t: number) {
 export interface AttentionGroup {
   id: string;
   emoji: string;
-  tone: "red" | "green" | "amber" | "blue" | "violet";
+  tone: "red" | "green" | "amber";
   title: string;
   count: number;
   description: string;
