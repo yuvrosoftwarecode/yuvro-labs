@@ -567,19 +567,19 @@ const DEFAULT_VIEWS: { id: string; name: string; build: () => CandidateFilters }
 ];
 
 // ------- Pipeline definition (Level 1) -------
-type PipelineId = "all" | "needs" | "strong" | "selected" | "rejected" | "hold";
+type PipelineId = "all" | "pending" | "shortlisted" | "rejected" | "hold";
 const PIPELINE: { id: PipelineId; label: string; match: (c: Candidate) => boolean }[] = [
   { id: "all", label: "All", match: () => true },
   {
-    id: "needs",
-    label: "Needs Review",
+    id: "pending",
+    label: "Pending Review",
     match: (c) => c.hiringStatus === "Pending Review" && (c.status === "Submitted" || c.status === "Completed"),
   },
-  { id: "strong", label: "Strong Hire", match: (c) => c.recommendation === "Strong Hire" },
-  { id: "hold", label: "Hold", match: (c) => c.hiringStatus === "Hold" },
-  { id: "selected", label: "Selected", match: (c) => c.hiringStatus === "Selected" },
+  { id: "shortlisted", label: "Shortlisted", match: (c) => c.hiringStatus === "Shortlisted" },
   { id: "rejected", label: "Rejected", match: (c) => c.hiringStatus === "Rejected" },
+  { id: "hold", label: "Hold", match: (c) => c.hiringStatus === "Hold" },
 ];
+
 
 // ------- Column definitions -------
 type ColKey =
@@ -744,33 +744,29 @@ function CandidatesTab({
   );
 
   return (
-    <div className="space-y-6">
-      {/* ═════════ LEVEL 1 — Pipeline ═════════ */}
-      <section className="rounded-2xl border border-neutral-200 bg-white">
-        <div className="flex flex-wrap items-end justify-between gap-4 px-6 pt-6">
-          <div>
-            <div className="text-[11px] uppercase tracking-widest text-neutral-500">Candidates</div>
-            <div className="mt-1 text-[22px] font-medium tracking-tight text-neutral-900">
-              {candidates.length.toLocaleString()} Total Candidates
-            </div>
-          </div>
-          {savedViews.length > 0 && (
-            <div className="flex flex-wrap items-center gap-1.5">
-              <span className="text-[11px] uppercase tracking-widest text-neutral-500">Saved views</span>
-              {savedViews.map((v) => (
-                <button
-                  key={v.id}
-                  onClick={() => applySavedView(v.id)}
-                  className={`inline-flex items-center gap-1 rounded-md border px-2 py-1 text-[11px] transition ${activeSavedView === v.id ? "border-neutral-900 bg-neutral-900 text-white" : "border-neutral-200 text-neutral-700 hover:border-neutral-300"}`}
-                >
-                  <Bookmark className="h-3 w-3" />
-                  {v.name}
-                </button>
-              ))}
-            </div>
-          )}
-        </div>
-        <nav className="mt-5 flex items-end gap-6 overflow-x-auto border-t border-neutral-100 px-6">
+    <div className="space-y-3">
+      {/* Row 1 — Full-width search */}
+      <div className="relative flex items-center">
+        <Search className="pointer-events-none absolute left-3 h-4 w-4 text-neutral-400" />
+        <input
+          value={filters.search}
+          onChange={(e) => setFilters((f) => ({ ...f, search: e.target.value }))}
+          placeholder="Search candidates by name, email, phone, company, college or candidate ID..."
+          className="w-full rounded-lg border border-neutral-200 bg-white py-2 pl-9 pr-9 text-[13px] text-neutral-900 placeholder-neutral-400 outline-none focus:border-neutral-400"
+        />
+        {filters.search && (
+          <button
+            onClick={() => setFilters((f) => ({ ...f, search: "" }))}
+            className="absolute right-2 rounded-md p-1 text-neutral-400 hover:bg-neutral-100 hover:text-neutral-700"
+          >
+            <X className="h-3.5 w-3.5" />
+          </button>
+        )}
+      </div>
+
+      {/* Row 2 — Pipeline nav (left) + toolbar actions (right) on a single row */}
+      <div className="flex items-center justify-between gap-4 overflow-x-auto">
+        <nav className="flex items-center gap-1">
           {PIPELINE.map((p) => {
             const active = pipeline === p.id;
             const count = pipelineCounts[p.id] ?? 0;
@@ -778,94 +774,19 @@ function CandidatesTab({
               <button
                 key={p.id}
                 onClick={() => setPipeline(p.id)}
-                className={`relative -mb-px flex items-center gap-2 whitespace-nowrap py-3.5 text-[13px] transition ${active ? "text-neutral-900" : "text-neutral-500 hover:text-neutral-800"}`}
+                className={`inline-flex items-center gap-1.5 whitespace-nowrap rounded-md px-2.5 py-1.5 text-[12.5px] transition ${active ? "bg-neutral-900 text-white" : "text-neutral-600 hover:bg-neutral-100 hover:text-neutral-900"}`}
               >
                 <span className={active ? "font-medium" : ""}>{p.label}</span>
                 <span
-                  className={`rounded-full px-1.5 py-0.5 text-[10px] font-medium tabular-nums ${active ? "bg-neutral-900 text-white" : "bg-neutral-100 text-neutral-600"}`}
+                  className={`rounded-full px-1.5 py-0.5 text-[10px] font-medium tabular-nums ${active ? "bg-white/20 text-white" : "bg-neutral-100 text-neutral-600"}`}
                 >
                   {count.toLocaleString()}
                 </span>
-                {active && <span className="absolute inset-x-0 -bottom-px h-[2px] bg-neutral-900" />}
               </button>
             );
           })}
         </nav>
-      </section>
-
-      {/* ═════════ LEVEL 2 — Universal Search ═════════ */}
-      <section className="rounded-2xl border border-neutral-200 bg-white">
-        <div className="relative flex items-center">
-          <Search className="pointer-events-none absolute left-4 h-4 w-4 text-neutral-400" />
-          <input
-            value={filters.search}
-            onChange={(e) => setFilters((f) => ({ ...f, search: e.target.value }))}
-            placeholder="Search candidates by name, email, phone, candidate ID, college or company…"
-            className="w-full rounded-2xl bg-transparent py-3.5 pl-11 pr-11 text-[13.5px] text-neutral-900 placeholder-neutral-400 outline-none"
-          />
-          {filters.search && (
-            <button
-              onClick={() => setFilters((f) => ({ ...f, search: "" }))}
-              className="absolute right-3 rounded-md p-1 text-neutral-400 hover:bg-neutral-100 hover:text-neutral-700"
-            >
-              <X className="h-4 w-4" />
-            </button>
-          )}
-        </div>
-      </section>
-
-      {/* ═════════ LEVEL 3 — Applied Filter Summary ═════════ */}
-      {activeChips.length > 0 && (
-        <section className="rounded-2xl border border-neutral-200 bg-white px-5 py-4">
-          <div className="flex flex-wrap items-center gap-2">
-            <span className="text-[12px] text-neutral-500">
-              Showing <b className="text-neutral-900 tabular-nums">{filtered.length.toLocaleString()}</b> candidates
-            </span>
-            <span className="mx-1 h-3 w-px bg-neutral-200" />
-            <span className="text-[11px] uppercase tracking-widest text-neutral-500">Applied</span>
-            {activeChips.map((chip) => (
-              <span
-                key={chip.key}
-                className="inline-flex items-center gap-1.5 rounded-full border border-neutral-200 bg-neutral-50 px-2.5 py-1 text-[11px] text-neutral-800"
-              >
-                <span className="text-neutral-500">{chip.group}</span>
-                <span className="font-medium">{chip.value}</span>
-                <button
-                  onClick={() => setFilters((f) => chip.remove(f))}
-                  className="ml-0.5 rounded-full p-0.5 text-neutral-400 hover:bg-neutral-200 hover:text-neutral-700"
-                >
-                  <X className="h-3 w-3" />
-                </button>
-              </span>
-            ))}
-            <button
-              onClick={() => {
-                setFilters(emptyFilters());
-                setActiveSavedView(null);
-              }}
-              className="ml-1 text-[11px] font-medium text-neutral-700 hover:text-neutral-900 hover:underline"
-            >
-              Clear all
-            </button>
-            <button
-              onClick={saveCurrentView}
-              className="ml-auto inline-flex items-center gap-1 rounded-md border border-dashed border-neutral-300 px-2.5 py-1 text-[11px] text-neutral-600 hover:border-neutral-400 hover:text-neutral-900"
-            >
-              <Plus className="h-3 w-3" /> Save as view
-            </button>
-          </div>
-        </section>
-      )}
-
-
-
-      {/* ═════════ LEVEL 4 — Toolbar ═════════ */}
-      <section className="flex flex-wrap items-center justify-between gap-3">
-        <div className="text-[12px] text-neutral-500">
-          Showing <b className="text-neutral-900 tabular-nums">{filtered.length.toLocaleString()}</b> of{" "}
-          <b className="text-neutral-900 tabular-nums">{candidates.length.toLocaleString()}</b> candidates
-        </div>
-        <div className="flex flex-wrap items-center gap-2">
+        <div className="flex items-center gap-2">
           <ToolbarBtn
             onClick={() => setDrawerOpen(true)}
             icon={<SlidersHorizontal className="h-3.5 w-3.5" />}
@@ -876,25 +797,43 @@ function CandidatesTab({
           <SortMenu value={sort} onChange={setSort} />
           <ColumnsMenu cols={cols} setCols={setCols} />
           <ExportMenu candidates={filtered} selected={candidates.filter((c) => selected.has(c.id))} notify={notify} />
-          <div className="mx-1 h-5 w-px bg-neutral-200" />
-          <div className="flex items-center overflow-hidden rounded-lg border border-neutral-200 bg-white">
-            <button
-              onClick={() => setView("table")}
-              className={`px-2 py-1.5 text-[12px] ${view === "table" ? "bg-neutral-900 text-white" : "text-neutral-600 hover:bg-neutral-50"}`}
-              title="Table view"
-            >
-              <TableIcon className="h-3.5 w-3.5" />
-            </button>
-            <button
-              onClick={() => setView("card")}
-              className={`px-2 py-1.5 text-[12px] ${view === "card" ? "bg-neutral-900 text-white" : "text-neutral-600 hover:bg-neutral-50"}`}
-              title="Card view"
-            >
-              <LayoutGrid className="h-3.5 w-3.5" />
-            </button>
-          </div>
         </div>
-      </section>
+      </div>
+
+      {/* Active filter chips (only when applied) */}
+      {activeChips.length > 0 && (
+        <div className="flex flex-wrap items-center gap-2 pt-1">
+          <span className="text-[11px] uppercase tracking-widest text-neutral-500">Applied</span>
+          {activeChips.map((chip) => (
+            <span
+              key={chip.key}
+              className="inline-flex items-center gap-1.5 rounded-full border border-neutral-200 bg-neutral-50 px-2.5 py-0.5 text-[11px] text-neutral-800"
+            >
+              <span className="text-neutral-500">{chip.group}</span>
+              <span className="font-medium">{chip.value}</span>
+              <button
+                onClick={() => setFilters((f) => chip.remove(f))}
+                className="ml-0.5 rounded-full p-0.5 text-neutral-400 hover:bg-neutral-200 hover:text-neutral-700"
+              >
+                <X className="h-3 w-3" />
+              </button>
+            </span>
+          ))}
+          <button
+            onClick={() => {
+              setFilters(emptyFilters());
+              setActiveSavedView(null);
+            }}
+            className="text-[11px] font-medium text-neutral-700 hover:text-neutral-900 hover:underline"
+          >
+            Clear all
+          </button>
+        </div>
+      )}
+
+      {/* Subtle divider before table */}
+      <div className="border-t border-neutral-200" />
+
 
       {/* Bulk actions */}
       {selected.size > 0 && (
