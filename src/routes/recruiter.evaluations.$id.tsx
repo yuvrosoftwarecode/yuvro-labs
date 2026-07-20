@@ -401,7 +401,7 @@ function SummarySidebar({ ev, onPublish, onPreview }: { ev: Evaluation; onPublis
       </div>
       <div className="mt-6 space-y-2">
         <button onClick={onPreview} className="w-full rounded-lg border border-white/10 py-2 text-[12px] text-neutral-300 hover:bg-white/5">Preview Candidate Experience</button>
-        <button onClick={onPublish} disabled={ev.sections.length === 0} className="w-full rounded-lg bg-gradient-to-r from-emerald-400 to-cyan-400 py-2 text-[12px] font-medium text-black disabled:opacity-40">Publish Evaluation</button>
+        <button onClick={onPublish} disabled={ev.sections.length === 0} className="w-full rounded-lg bg-gradient-to-r from-orange-500 to-amber-500 py-2 text-[12px] font-medium text-white disabled:opacity-40">Publish Evaluation</button>
       </div>
     </aside>
   );
@@ -414,8 +414,8 @@ function SumRow({ label, value, strong }: { label: string; value: any; strong?: 
 
 function AddSectionModal({ onClose, onPick }: { onClose: () => void; onPick: (k: "labs" | "assessment" | "discussion") => void }) {
   const options = [
-    { key: "labs", title: "Engineering Labs", desc: "Real workspaces with terminal, editor and tasks.", icon: Beaker, tone: "from-emerald-400 to-cyan-400" },
-    { key: "assessment", title: "Knowledge Assessment", desc: "MCQ, multi-select and scenario questions.", icon: BookOpen, tone: "from-violet-400 to-fuchsia-400" },
+    { key: "labs", title: "Engineering Labs", desc: "Real workspaces with terminal, editor and tasks.", icon: Beaker, tone: "from-emerald-400 to-emerald-500" },
+    { key: "assessment", title: "Knowledge Assessment", desc: "MCQ, multi-select and scenario questions.", icon: BookOpen, tone: "from-amber-400 to-orange-400" },
     { key: "discussion", title: "Vitarka AI Discussion", desc: "AI-led engineering discussion, contextual to work.", icon: MessageSquare, tone: "from-amber-400 to-orange-400" },
   ] as const;
   const later = ["Coding Challenge", "Take Home Assignment", "System Design"];
@@ -452,7 +452,7 @@ function SubsectionModal({ onClose, onPick }: { onClose: () => void; onPick: (n:
         <div className="mt-1 text-[18px] font-semibold text-white">Pick a topic</div>
         <div className="mt-5 grid grid-cols-3 gap-2">
           {SUBSECTION_NAMES.map(n => (
-            <button key={n} onClick={() => onPick(n)} className="rounded-lg border border-white/5 bg-white/[0.02] px-3 py-3 text-[13px] text-neutral-200 transition hover:border-violet-400/40 hover:text-white">{n}</button>
+            <button key={n} onClick={() => onPick(n)} className="rounded-lg border border-white/5 bg-white/[0.02] px-3 py-3 text-[13px] text-neutral-200 transition hover:border-amber-400/40 hover:text-white">{n}</button>
           ))}
         </div>
       </div>
@@ -538,7 +538,7 @@ function QuestionDrawer({ existing, onClose, onAdd }: { existing: string[]; onCl
       <div className="grid gap-2 border-b border-white/5 pb-4">
         <div className="relative">
           <Search className="pointer-events-none absolute left-2.5 top-1/2 h-3.5 w-3.5 -translate-y-1/2 text-neutral-500" />
-          <input value={q} onChange={e => setQ(e.target.value)} placeholder="Search questions…" className="w-full rounded-md border border-white/10 bg-black/30 py-2 pl-8 pr-3 text-[12px] outline-none focus:border-violet-400/60" />
+          <input value={q} onChange={e => setQ(e.target.value)} placeholder="Search questions…" className="w-full rounded-md border border-white/10 bg-black/30 py-2 pl-8 pr-3 text-[12px] outline-none focus:border-amber-400/60" />
         </div>
         <FilterRow label="Technology" value={tech} setValue={setTech} options={["All", "Java", "SQL", "Python", "React", "Node", "JavaScript", "Security"]} />
         <FilterRow label="Difficulty" value={diff} setValue={setDiff} options={["All", "Easy", "Medium", "Hard"]} />
