@@ -597,13 +597,13 @@ const ALL_COLS: { key: ColKey; label: string; always?: boolean }[] = [
   { key: "candidate", label: "Candidate", always: true },
   { key: "email", label: "Email" },
   { key: "phone", label: "Phone" },
-  { key: "labs", label: "Engineering Labs" },
-  { key: "assessment", label: "Knowledge Assessment" },
-  { key: "vitarka", label: "Vitarka" },
-  { key: "eci", label: "Engineering Capability Index" },
-  { key: "recommendation", label: "AI Recommendation" },
-  { key: "submitted", label: "Submitted On" },
-  { key: "status", label: "Review Status" },
+  { key: "labs", label: "Engineering Labs", always: true },
+  { key: "assessment", label: "Knowledge Assessment", always: true },
+  { key: "vitarka", label: "Vitarka", always: true },
+  { key: "eci", label: "Engineering Capability Index", always: true },
+  { key: "recommendation", label: "AI Recommendation", always: true },
+  { key: "submitted", label: "Submitted On", always: true },
+  { key: "status", label: "Review Status", always: true },
 ];
 const DEFAULT_COLS: ColKey[] = [
   "candidate",
@@ -615,7 +615,8 @@ const DEFAULT_COLS: ColKey[] = [
   "submitted",
   "status",
 ];
-const COLS_KEY = "yuvro-cand-cols";
+const COLS_KEY = "yuvro-cand-cols-v2";
+
 
 function CandidatesTab({
   evId,
