@@ -60,7 +60,7 @@ function LandingStyles() {
 }
 
 /* ---------- Reveal + stagger helpers ---------- */
-function useInView<T extends HTMLElement>(opts: IntersectionObserverInit = { threshold: 0.15 }) {
+function useInView<T extends Element>(opts: IntersectionObserverInit = { threshold: 0.15 }) {
   const ref = useRef<T | null>(null);
   const [inView, setInView] = useState(false);
   useEffect(() => {
