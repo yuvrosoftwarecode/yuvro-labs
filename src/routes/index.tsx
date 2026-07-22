@@ -123,7 +123,7 @@ function LandingNav() {
           <a href="#labs" className="hover:text-foreground transition">Labs</a>
           <a href="#process" className="hover:text-foreground transition">How it works</a>
           <a href="#report" className="hover:text-foreground transition">Report</a>
-          <Link to="/recruiter" className="hover:text-foreground transition">Recruiter Login</Link>
+          <Link to="/recruiter-login" className="hover:text-foreground transition">Recruiter Login</Link>
         </nav>
         <div className="ml-auto flex items-center gap-3">
           <Link to="/auth" search={{ tab: "signin" }} className="text-sm text-muted-foreground hover:text-foreground transition">Sign In</Link>
