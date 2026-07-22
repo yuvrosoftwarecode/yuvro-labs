@@ -9,6 +9,7 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
+import { Route as RecruiterLoginRouteImport } from './routes/recruiter-login'
 import { Route as RecruiterRouteImport } from './routes/recruiter'
 import { Route as ProfileRouteImport } from './routes/profile'
 import { Route as LeaderboardRouteImport } from './routes/leaderboard'
@@ -74,6 +75,11 @@ import { Route as CollaborationSprintIdReportTeamRouteImport } from './routes/co
 import { Route as CollaborationSprintIdReportIndividualRouteImport } from './routes/collaboration.sprint.$id.report.individual'
 import { Route as AdminLabsIdSprintsSprintIdRouteImport } from './routes/admin.labs.$id.sprints.$sprintId'
 
+const RecruiterLoginRoute = RecruiterLoginRouteImport.update({
+  id: '/recruiter-login',
+  path: '/recruiter-login',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const RecruiterRoute = RecruiterRouteImport.update({
   id: '/recruiter',
   path: '/recruiter',
@@ -420,6 +426,7 @@ export interface FileRoutesByFullPath {
   '/leaderboard': typeof LeaderboardRoute
   '/profile': typeof ProfileRoute
   '/recruiter': typeof RecruiterRouteWithChildren
+  '/recruiter-login': typeof RecruiterLoginRoute
   '/admin/ai-mentor': typeof AdminAiMentorRoute
   '/admin/collaboration': typeof AdminCollaborationRoute
   '/admin/hackathons': typeof AdminHackathonsRouteWithChildren
@@ -482,6 +489,7 @@ export interface FileRoutesByTo {
   '/hackathons': typeof HackathonsRouteWithChildren
   '/leaderboard': typeof LeaderboardRoute
   '/profile': typeof ProfileRoute
+  '/recruiter-login': typeof RecruiterLoginRoute
   '/admin/ai-mentor': typeof AdminAiMentorRoute
   '/admin/collaboration': typeof AdminCollaborationRoute
   '/admin/incidents': typeof AdminIncidentsRoute
@@ -547,6 +555,7 @@ export interface FileRoutesById {
   '/leaderboard': typeof LeaderboardRoute
   '/profile': typeof ProfileRoute
   '/recruiter': typeof RecruiterRouteWithChildren
+  '/recruiter-login': typeof RecruiterLoginRoute
   '/admin/ai-mentor': typeof AdminAiMentorRoute
   '/admin/collaboration': typeof AdminCollaborationRoute
   '/admin/hackathons': typeof AdminHackathonsRouteWithChildren
@@ -615,6 +624,7 @@ export interface FileRouteTypes {
     | '/leaderboard'
     | '/profile'
     | '/recruiter'
+    | '/recruiter-login'
     | '/admin/ai-mentor'
     | '/admin/collaboration'
     | '/admin/hackathons'
@@ -677,6 +687,7 @@ export interface FileRouteTypes {
     | '/hackathons'
     | '/leaderboard'
     | '/profile'
+    | '/recruiter-login'
     | '/admin/ai-mentor'
     | '/admin/collaboration'
     | '/admin/incidents'
@@ -741,6 +752,7 @@ export interface FileRouteTypes {
     | '/leaderboard'
     | '/profile'
     | '/recruiter'
+    | '/recruiter-login'
     | '/admin/ai-mentor'
     | '/admin/collaboration'
     | '/admin/hackathons'
@@ -808,11 +820,19 @@ export interface RootRouteChildren {
   LeaderboardRoute: typeof LeaderboardRoute
   ProfileRoute: typeof ProfileRoute
   RecruiterRoute: typeof RecruiterRouteWithChildren
+  RecruiterLoginRoute: typeof RecruiterLoginRoute
   LabSlugRoute: typeof LabSlugRouteWithChildren
 }
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
+    '/recruiter-login': {
+      id: '/recruiter-login'
+      path: '/recruiter-login'
+      fullPath: '/recruiter-login'
+      preLoaderRoute: typeof RecruiterLoginRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/recruiter': {
       id: '/recruiter'
       path: '/recruiter'
@@ -1511,18 +1531,9 @@ const rootRouteChildren: RootRouteChildren = {
   LeaderboardRoute: LeaderboardRoute,
   ProfileRoute: ProfileRoute,
   RecruiterRoute: RecruiterRouteWithChildren,
+  RecruiterLoginRoute: RecruiterLoginRoute,
   LabSlugRoute: LabSlugRouteWithChildren,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
   ._addFileTypes<FileRouteTypes>()
-
-import type { getRouter } from './router.tsx'
-import type { startInstance } from './start.ts'
-declare module '@tanstack/react-start' {
-  interface Register {
-    ssr: true
-    router: Awaited<ReturnType<typeof getRouter>>
-    config: Awaited<ReturnType<typeof startInstance.getOptions>>
-  }
-}
