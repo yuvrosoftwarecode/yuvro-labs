@@ -385,42 +385,6 @@ function OverviewTab({
 
   return (
     <div className="space-y-8">
-      {/* Quick actions strip */}
-      <section>
-        <SectionTitle>Quick actions</SectionTitle>
-        <div className="mt-3 grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-5">
-          <QuickAction
-            label="Invite Candidates"
-            icon={<Mail className="h-4 w-4" />}
-            onClick={() => notify("Invite dialog opened")}
-          />
-          <QuickAction
-            label="Copy Public Link"
-            icon={<CopyIcon className="h-4 w-4" />}
-            onClick={() => {
-              navigator.clipboard.writeText(`${location.origin}/evaluation/${ev.id}`);
-              notify("Public link copied");
-            }}
-          />
-          <QuickAction
-            label="Email Candidates"
-            icon={<Mail className="h-4 w-4" />}
-            onClick={() => notify("Email queued")}
-          />
-          <QuickAction
-            label="Download Reports"
-            icon={<Download className="h-4 w-4" />}
-            onClick={() => notify("Report bundle prepared")}
-          />
-          <QuickAction
-            label="View Candidates"
-            icon={<Users className="h-4 w-4" />}
-            onClick={() => onGoto("candidates")}
-            accent
-          />
-        </div>
-      </section>
-
       <section>
         <SectionTitle>Funnel</SectionTitle>
         <div className="mt-3 grid grid-cols-2 gap-px overflow-hidden rounded-xl border border-white/5 bg-white/5 sm:grid-cols-3 lg:grid-cols-6">
