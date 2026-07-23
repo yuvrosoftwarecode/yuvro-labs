@@ -1,6 +1,6 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useEffect, useRef, useState } from "react";
-import { ArrowRight, ArrowUpRight, Check, X, Play, GitBranch, GitPullRequest, GitCommit, Bug, Database, Terminal, FileCode2, Download, ChevronRight, Circle } from "lucide-react";
+import { ArrowRight, ArrowUpRight, Check, X, Play, GitBranch, GitCommit, FileCode2, Download, ChevronRight } from "lucide-react";
 
 export const Route = createFileRoute("/")({
   head: () => ({
