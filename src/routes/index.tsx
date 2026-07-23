@@ -116,21 +116,22 @@ function LandingNav() {
     <header className="sticky top-0 z-50 backdrop-blur-xl bg-white/80 border-b border-neutral-200">
       <div className="mx-auto flex h-16 max-w-7xl items-center px-6">
         <Link to="/" className="flex items-center gap-2 font-semibold tracking-tight">
-          <div className="grid h-8 w-8 place-items-center rounded-lg bg-gradient-to-br from-blue-600 via-blue-500 to-blue-600 text-white font-mono text-sm shadow-lg shadow-blue-500/30">Y</div>
+          <div className="grid h-8 w-8 place-items-center rounded-lg text-white font-mono text-sm" style={{ background: "#0A0A0A" }}>Y</div>
           <span className="text-base">Yuvro Labs</span>
         </Link>
-        <nav className="ml-10 hidden md:flex items-center gap-7 text-sm text-muted-foreground">
-          <a href="#labs" className="hover:text-foreground transition">Labs</a>
-          <a href="#process" className="hover:text-foreground transition">How it works</a>
-          <a href="#report" className="hover:text-foreground transition">Report</a>
-          <Link to="/recruiter-login" className="hover:text-foreground transition">Recruiter Login</Link>
+        <nav className="ml-10 hidden md:flex items-center gap-7 text-sm text-[#6B6B6B]">
+          <a href="#labs" className="hover:text-[#0A0A0A] transition">Labs</a>
+          <a href="#process" className="hover:text-[#0A0A0A] transition">How it works</a>
+          <a href="#report" className="hover:text-[#0A0A0A] transition">Report</a>
+          <Link to="/recruiter-login" className="hover:text-[#0A0A0A] transition">Recruiter Login</Link>
         </nav>
         <div className="ml-auto flex items-center gap-3">
-          <Link to="/auth" search={{ tab: "signin" }} className="text-sm text-muted-foreground hover:text-foreground transition">Sign In</Link>
-          <Link to="/auth" search={{ tab: "signup" }} className="inline-flex items-center gap-1.5 rounded-md bg-blue-600 px-4 py-2 text-sm font-medium text-white shadow-lg shadow-blue-600/20 hover:bg-blue-700 hover:shadow-blue-600/40 transition">
+          <Link to="/auth" search={{ tab: "signin" }} className="text-sm text-[#6B6B6B] hover:text-[#0A0A0A] transition">Sign In</Link>
+          <Link to="/auth" search={{ tab: "signup" }} className="inline-flex items-center gap-1.5 rounded-md px-4 py-2 text-sm font-medium text-white transition hover:brightness-95" style={{ background: "#F5A623" }}>
             Get Started <ArrowRight className="h-3.5 w-3.5" />
           </Link>
         </div>
+
       </div>
     </header>
   );
@@ -140,161 +141,53 @@ function LandingNav() {
    1 — HERO
    ================================================================ */
 function Hero() {
+  const logos = ["Acme", "Northwind", "Globex", "Initech", "Umbrella", "Hooli"];
   return (
-    <section className="relative overflow-hidden">
-      <div className="mx-auto max-w-7xl px-6 pt-24 pb-28 lg:pt-28 lg:pb-32 grid lg:grid-cols-[minmax(0,1.15fr)_minmax(0,1fr)] gap-16 items-center">
+    <section className="relative overflow-hidden border-b border-[#E8E6E1]">
+      <div className="mx-auto max-w-5xl px-6 pt-24 pb-24 lg:pt-32 lg:pb-28 text-center">
         <Reveal>
-          <div className="inline-flex items-center gap-2 font-mono text-[12px] font-medium tracking-[0.08em] uppercase text-[#6B6B6B]">
-            <span className="h-px w-8 bg-[#E8E6E1]" />
-            Engineering Capability Verification
+          <div className="inline-flex items-center gap-2 rounded-full border border-[#E8E6E1] bg-white px-3 py-1 font-mono text-[11px] font-medium tracking-[0.08em] uppercase text-[#6B6B6B]">
+            <span className="h-1.5 w-1.5 rounded-full" style={{ background: "#F5A623" }} />
+            Engineering Capability Verification Platform
           </div>
-          <h1 className="mt-6 text-[56px] lg:text-[72px] leading-[1.05] tracking-[-0.02em] font-bold">
-            Stop Hiring<br />
-            <span className="text-[#6B6B6B]">Developers.</span><br />
-            Start Verifying<br />
+          <h1 className="mt-8 text-[52px] lg:text-[76px] leading-[1.02] tracking-[-0.025em] font-bold">
+            Hire engineers with<br />
             <span className="relative inline-block">
-              Engineers.
+              verified capability.
               <span className="absolute -bottom-1 left-0 right-0 h-[6px]" style={{ background: "#F5A623" }} />
             </span>
           </h1>
-          <p className="mt-8 max-w-xl text-[18px] leading-relaxed text-[#6B6B6B]">
-            Yuvro Labs evaluates real engineering capability using Engineering Simulation Labs, Knowledge Assessments and Vitarka AI Interviews. Know how candidates think, debug, collaborate and solve production problems — before making hiring decisions.
+          <p className="mx-auto mt-8 max-w-2xl text-[18px] leading-relaxed text-[#6B6B6B]">
+            Yuvro Labs replaces resumes and guesswork with evidence. Evaluate how candidates think, debug, collaborate and ship — through Engineering Simulation Labs, Knowledge Assessments and Vitarka AI Interviews.
           </p>
-          <div className="mt-10 flex flex-wrap items-center gap-3">
-            <Link to="/auth" search={{ tab: "signup" }} className="inline-flex items-center gap-2 rounded-md bg-[#0A0A0A] px-5 py-3 text-[14px] font-medium text-white hover:bg-black transition">
-              Get Started <ArrowRight className="h-4 w-4" />
+          <div className="mt-10 flex flex-wrap items-center justify-center gap-3">
+            <Link to="/auth" search={{ tab: "signup" }} className="inline-flex items-center gap-2 rounded-md px-5 py-3 text-[14px] font-medium text-white transition hover:brightness-95" style={{ background: "#F5A623" }}>
+              Start Free Trial <ArrowRight className="h-4 w-4" />
             </Link>
-            <a href="#process" className="inline-flex items-center gap-2 rounded-md border border-[#E8E6E1] bg-transparent px-5 py-3 text-[14px] font-medium text-[#0A0A0A] hover:border-[#0A0A0A] transition">
-              <Play className="h-3.5 w-3.5" /> Book Demo
+            <a href="#process" className="inline-flex items-center gap-2 rounded-md border border-[#E8E6E1] bg-white px-5 py-3 text-[14px] font-medium text-[#0A0A0A] hover:border-[#0A0A0A] transition">
+              <Play className="h-3.5 w-3.5" /> Book a Demo
             </a>
           </div>
-          <div className="mt-12 flex items-center gap-8 font-mono text-[12px] uppercase tracking-[0.08em] text-[#6B6B6B]">
-            <span>Engineering Labs</span>
-            <span className="h-1 w-1 rounded-full bg-[#E8E6E1]" />
-            <span>Knowledge Assessment</span>
-            <span className="h-1 w-1 rounded-full bg-[#E8E6E1]" />
-            <span>Vitarka AI</span>
+          <div className="mt-6 font-mono text-[11px] uppercase tracking-[0.08em] text-[#6B6B6B]">
+            No credit card required · 14-day trial · SOC 2 ready
           </div>
         </Reveal>
 
-        <Reveal delay={120}><HeroWorkspace /></Reveal>
+        <Reveal delay={160}>
+          <div className="mt-20">
+            <div className="font-mono text-[11px] uppercase tracking-[0.12em] text-[#6B6B6B]">Trusted by engineering teams at</div>
+            <div className="mt-6 flex flex-wrap items-center justify-center gap-x-10 gap-y-4 opacity-70">
+              {logos.map((l) => (
+                <span key={l} className="text-[15px] font-semibold tracking-tight text-[#0A0A0A]">{l}</span>
+              ))}
+            </div>
+          </div>
+        </Reveal>
       </div>
     </section>
   );
 }
 
-function HeroWorkspace() {
-  return (
-    <div className="relative">
-      <div className="absolute -inset-8 -z-10 opacity-[0.35] [mask-image:radial-gradient(circle_at_center,black,transparent_70%)]">
-        <div className="h-full w-full bg-[linear-gradient(to_right,rgb(0_0_0/0.06)_1px,transparent_1px),linear-gradient(to_bottom,rgb(0_0_0/0.06)_1px,transparent_1px)] bg-[size:24px_24px]" />
-      </div>
-
-      {/* OS-window chrome — border + subtle inner top highlight, no shadow */}
-      <div className="relative rounded-[4px] border border-[#E8E6E1] bg-white" style={{ boxShadow: "inset 0 1px 0 rgba(255,255,255,0.9)" }}>
-        <div className="flex items-center justify-between border-b border-[#E8E6E1] px-4 py-2.5">
-          <div className="flex items-center gap-2 font-mono text-[12px] text-[#6B6B6B]">
-            <div className="flex gap-1">
-              <div className="h-2 w-2 rounded-full bg-[#E8E6E1]" />
-              <div className="h-2 w-2 rounded-full bg-[#E8E6E1]" />
-              <div className="h-2 w-2 rounded-full bg-[#E8E6E1]" />
-            </div>
-            <span className="ml-2 uppercase tracking-[0.08em]">evaluation / EVAL-2847</span>
-          </div>
-          <span className="inline-flex items-center gap-1.5 font-mono text-[11px] uppercase tracking-[0.1em] text-[#0A0A0A]">
-            <span className="h-1.5 w-1.5 rounded-full yvr-pulse" style={{ background: "#F5A623" }} />
-            LIVE
-          </span>
-        </div>
-
-        <div className="grid grid-cols-[1fr_1.4fr]">
-          {/* Stages */}
-          <div className="border-r border-[#E8E6E1] p-4 space-y-3" style={{ background: "#FAFAF8" }}>
-            <div className="font-mono text-[11px] uppercase tracking-[0.08em] text-[#6B6B6B] mb-2">Stages</div>
-            {[
-              { t: "Engineering Labs", s: "PASSED", v: 92, d: true, active: false },
-              { t: "Knowledge Assessment", s: "PASSED", v: 84, d: true, active: false },
-              { t: "Vitarka AI Interview", s: "IN REVIEW", v: 76, d: false, active: true },
-              { t: "Recruiter Evaluation", s: "PENDING", v: 0, d: false, active: false },
-            ].map((r, i) => (
-              <Reveal key={i} delay={i * 60}>
-                <div>
-                  <div className="flex items-center justify-between">
-                    <div className="flex items-center gap-2 text-[13px] font-medium text-[#0A0A0A]">
-                      <span className={`grid h-4 w-4 place-items-center rounded-full border ${r.d ? "border-[#0A0A0A] bg-[#0A0A0A]" : r.active ? "border-[#F5A623] bg-white" : "border-[#E8E6E1] bg-white"}`}>
-                        {r.d ? <Check className="h-2.5 w-2.5 text-white" /> : r.active ? <span className="h-1.5 w-1.5 rounded-full" style={{ background: "#F5A623" }} /> : <Circle className="h-1.5 w-1.5 fill-[#E8E6E1] text-[#E8E6E1]" />}
-                      </span>
-                      {r.t}
-                      {r.active && <span className="yvr-caret font-mono text-[#F5A623]">▍</span>}
-                    </div>
-                    <span className="font-mono text-[10px] uppercase tracking-[0.08em] text-[#6B6B6B]">{r.s}</span>
-                  </div>
-                  <div className="mt-2 ml-6 h-[3px] rounded-full bg-[#E8E6E1] overflow-hidden">
-                    <div className="h-full bg-[#0A0A0A]" style={{ width: `${r.v}%` }} />
-                  </div>
-                </div>
-              </Reveal>
-            ))}
-          </div>
-
-          {/* ECI + activity */}
-          <div className="p-5">
-            <div className="flex items-start justify-between">
-              <div>
-                <div className="font-mono text-[11px] uppercase tracking-[0.08em] text-[#6B6B6B]">Engineering Capability Index</div>
-                <div className="mt-2 flex items-baseline gap-2">
-                  <span className="text-[52px] leading-none font-semibold tracking-tight"><CountUp to={84} /></span>
-                  <span className="font-mono text-[12px] text-[#6B6B6B]">/ 100</span>
-                </div>
-                <div className="mt-3 h-[6px] w-40 rounded-full bg-[#E8E6E1] overflow-hidden">
-                  <div className="h-full" style={{ width: "84%", background: "#F5A623" }} />
-                </div>
-                <div className="mt-3 inline-flex items-center gap-1.5 rounded-full border border-[#E8E6E1] px-2 py-0.5 font-mono text-[11px] uppercase tracking-[0.08em] text-[#0A0A0A]">
-                  <span className="h-1.5 w-1.5 rounded-full" style={{ background: "#1A8F5C" }} /> Strong Fit
-                </div>
-              </div>
-              <div className="grid grid-cols-2 gap-1.5">
-                {[92, 84, 76, 88, 71, 90].map((v, i) => (
-                  <div key={i} className="h-8 w-8 rounded-[4px] border border-[#E8E6E1] grid place-items-center font-mono text-[11px] text-[#0A0A0A]">
-                    {v}
-                  </div>
-                ))}
-              </div>
-            </div>
-
-            <div className="mt-5 border-t border-[#E8E6E1] pt-4">
-              <div className="font-mono text-[11px] uppercase tracking-[0.08em] text-[#6B6B6B] mb-3">Recent Signals</div>
-              <div className="space-y-2.5 text-[13px]">
-                <Signal icon={<GitPullRequest className="h-3 w-3" />} label="Fixed payment webhook race condition" meta="LAB · DEBUGGING" />
-                <Signal icon={<Terminal className="h-3 w-3" />} label="Explained JWT rotation trade-offs" meta="VITARKA · 4M CLIP" />
-                <Signal icon={<Database className="h-3 w-3" />} label="Optimized N+1 query (−340ms)" meta="LAB · PERFORMANCE" />
-                <Signal icon={<Bug className="h-3 w-3" />} label="Identified missing idempotency key" meta="LAB · INCIDENT" />
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      {/* Floating recommendation — border only, no drop shadow */}
-      <div className="absolute -bottom-5 -left-5 rotate-[-2deg] rounded-[4px] border border-[#E8E6E1] bg-white px-3 py-2">
-        <div className="font-mono text-[10px] uppercase tracking-[0.1em] text-[#6B6B6B]">Recommendation</div>
-        <div className="text-[13px] font-semibold text-[#0A0A0A]">Shortlist for onsite</div>
-      </div>
-    </div>
-  );
-}
-
-function Signal({ icon, label, meta }: { icon: React.ReactNode; label: string; meta: string }) {
-  return (
-    <div className="flex items-start gap-2.5">
-      <div className="mt-0.5 grid h-5 w-5 place-items-center rounded-[4px] border border-[#E8E6E1] bg-white text-[#6B6B6B]">{icon}</div>
-      <div className="min-w-0 flex-1">
-        <div className="text-[#0A0A0A] truncate">{label}</div>
-        <div className="font-mono text-[10px] tracking-[0.08em] text-[#6B6B6B]">{meta}</div>
-      </div>
-    </div>
-  );
-}
 
 /* ================================================================
    2 — Traditional vs Yuvro Labs
