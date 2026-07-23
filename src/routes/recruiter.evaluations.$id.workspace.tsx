@@ -303,7 +303,7 @@ function Workspace() {
 
           {/* Tabs */}
           <nav className="mt-6 flex items-center gap-1">
-            {(["overview", "candidates", "intelligence", "attention", "settings"] as const).map((t) => (
+            {(["overview", "candidates", "followups", "intelligence", "attention", "settings"] as const).map((t) => (
               <button
                 key={t}
                 onClick={() => goto(t)}
@@ -320,6 +320,7 @@ function Workspace() {
       <main className="mx-auto max-w-[1440px] px-8 py-8">
         {tab === "overview" && <OverviewTab ev={ev} candidates={candidates} onGoto={goto} notify={notify} />}
         {tab === "candidates" && <CandidatesTab evId={ev.id} candidates={candidates} notify={notify} />}
+        {tab === "followups" && <FollowUpsTab ev={ev} notify={notify} />}
         {tab === "intelligence" && <IntelligenceTab ev={ev} candidates={candidates} notify={notify} />}
         {tab === "attention" && <AttentionTab evId={ev.id} candidates={candidates} onGoto={goto} />}
         {tab === "settings" && <SettingsTab ev={ev} notify={notify} />}
