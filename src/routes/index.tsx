@@ -167,9 +167,6 @@ function Hero() {
               <Play className="h-3.5 w-3.5" /> Book a Demo
             </a>
           </div>
-          <div className="mt-5 font-mono text-[11px] uppercase tracking-[0.08em] text-[#6B6B6B]">
-            No credit card required · 14-day trial · SOC 2 ready
-          </div>
         </Reveal>
       </div>
     </section>
