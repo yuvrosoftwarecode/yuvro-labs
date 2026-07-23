@@ -483,10 +483,10 @@ function SimulationLabs() {
    ================================================================ */
 function CapabilityMetrics() {
   const metrics = [
-    { t: "Debugging", v: 92 }, { t: "Problem Solving", v: 88 }, { t: "Architecture", v: 74 },
-    { t: "API Development", v: 90 }, { t: "Database Design", v: 71 }, { t: "Performance Optimization", v: 82 },
-    { t: "System Thinking", v: 78 }, { t: "Communication", v: 85 }, { t: "Collaboration", v: 80 },
-    { t: "Code Quality", v: 87 }, { t: "Learning Ability", v: 76 }, { t: "Engineering Ownership", v: 89 },
+    "Debugging", "Problem Solving", "Architecture",
+    "API Development", "Database Design", "Performance Optimization",
+    "System Thinking", "Communication", "Collaboration",
+    "Code Quality", "Learning Ability", "Engineering Ownership",
   ];
   return (
     <section className="border-t border-[#E8E6E1]">
@@ -502,14 +502,10 @@ function CapabilityMetrics() {
 
         <div className="mt-14 grid md:grid-cols-2 gap-x-16 gap-y-3">
           {metrics.map((m, i) => (
-            <Reveal key={m.t} delay={i * 40}>
-              <div className="grid grid-cols-[auto_1fr_auto_auto] items-center gap-4 py-3 border-b border-[#E8E6E1]">
+            <Reveal key={m} delay={i * 40}>
+              <div className="grid grid-cols-[auto_1fr] items-center gap-4 py-3 border-b border-[#E8E6E1]">
                 <div className="font-mono text-[11px] text-[#6B6B6B] w-6">{String(i + 1).padStart(2, "0")}</div>
-                <div className="text-[14px] tracking-tight font-medium">{m.t}</div>
-                <div className="w-40 h-[3px] rounded-full bg-[#E8E6E1] overflow-hidden">
-                  <div className="h-full bg-[#0A0A0A]" style={{ width: `${m.v}%` }} />
-                </div>
-                <div className="w-8 text-right font-mono text-[11px] text-[#0A0A0A]">{m.v}</div>
+                <div className="text-[15px] tracking-tight font-medium">{m}</div>
               </div>
             </Reveal>
           ))}
@@ -518,6 +514,7 @@ function CapabilityMetrics() {
     </section>
   );
 }
+
 
 /* ================================================================
    7 — Full report preview
