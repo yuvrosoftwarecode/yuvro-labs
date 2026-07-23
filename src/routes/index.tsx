@@ -144,22 +144,22 @@ function Hero() {
   const logos = ["Acme", "Northwind", "Globex", "Initech", "Umbrella", "Hooli"];
   return (
     <section className="relative overflow-hidden border-b border-[#E8E6E1]">
-      <div className="mx-auto max-w-5xl px-6 pt-24 pb-24 lg:pt-32 lg:pb-28 text-center">
+      <div className="mx-auto max-w-5xl px-6 pt-12 pb-20 lg:pt-16 lg:pb-24 text-center">
         <Reveal>
           <div className="inline-flex items-center gap-2 rounded-full border border-[#E8E6E1] bg-white px-3 py-1 font-mono text-[11px] font-medium tracking-[0.08em] uppercase text-[#6B6B6B]">
             <span className="h-1.5 w-1.5 rounded-full" style={{ background: "#F5A623" }} />
             Engineering Capability Verification Platform
           </div>
-          <h1 className="mt-8 text-[52px] lg:text-[76px] leading-[1.02] tracking-[-0.025em] font-bold">
+          <h1 className="mt-6 text-[52px] lg:text-[76px] leading-[1.02] tracking-[-0.025em] font-bold">
             Hire engineers with<br />
             <span className="inline-block">
               verified capability.
             </span>
           </h1>
-          <p className="mx-auto mt-8 max-w-2xl text-[18px] leading-relaxed text-[#6B6B6B]">
-            Yuvro Labs replaces resumes and guesswork with evidence. Evaluate how candidates think, debug, collaborate and ship — through Engineering Simulation Labs, Knowledge Assessments and Vitarka AI Interviews.
+          <p className="mx-auto mt-6 max-w-2xl text-[18px] leading-relaxed text-[#6B6B6B]">
+            Yuvro Labs replaces resumes and guesswork with evidence. Evaluate how candidates think, debug, collaborate and execute through Engineering Simulation Labs, Knowledge Assessments and Vitarka AI Interviews.
           </p>
-          <div className="mt-10 flex flex-wrap items-center justify-center gap-3">
+          <div className="mt-8 flex flex-wrap items-center justify-center gap-3">
             <Link to="/auth" search={{ tab: "signup" }} className="inline-flex items-center gap-2 rounded-md px-5 py-3 text-[14px] font-medium text-white transition hover:brightness-95" style={{ background: "#F5A623" }}>
               Start Free Trial <ArrowRight className="h-4 w-4" />
             </Link>
@@ -167,25 +167,15 @@ function Hero() {
               <Play className="h-3.5 w-3.5" /> Book a Demo
             </a>
           </div>
-          <div className="mt-6 font-mono text-[11px] uppercase tracking-[0.08em] text-[#6B6B6B]">
+          <div className="mt-5 font-mono text-[11px] uppercase tracking-[0.08em] text-[#6B6B6B]">
             No credit card required · 14-day trial · SOC 2 ready
-          </div>
-        </Reveal>
-
-        <Reveal delay={160}>
-          <div className="mt-20">
-            <div className="font-mono text-[11px] uppercase tracking-[0.12em] text-[#6B6B6B]">Trusted by engineering teams at</div>
-            <div className="mt-6 flex flex-wrap items-center justify-center gap-x-10 gap-y-4 opacity-70">
-              {logos.map((l) => (
-                <span key={l} className="text-[15px] font-semibold tracking-tight text-[#0A0A0A]">{l}</span>
-              ))}
-            </div>
           </div>
         </Reveal>
       </div>
     </section>
   );
 }
+
 
 
 /* ================================================================
