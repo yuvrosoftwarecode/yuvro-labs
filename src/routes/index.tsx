@@ -152,9 +152,8 @@ function Hero() {
           </div>
           <h1 className="mt-8 text-[52px] lg:text-[76px] leading-[1.02] tracking-[-0.025em] font-bold">
             Hire engineers with<br />
-            <span className="relative inline-block">
+            <span className="inline-block">
               verified capability.
-              <span className="absolute -bottom-1 left-0 right-0 h-[6px]" style={{ background: "#F5A623" }} />
             </span>
           </h1>
           <p className="mx-auto mt-8 max-w-2xl text-[18px] leading-relaxed text-[#6B6B6B]">
