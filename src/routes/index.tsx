@@ -549,15 +549,15 @@ function ReportPreview() {
 
             <div className="grid md:grid-cols-4 divide-x divide-[#E8E6E1] border-b border-[#E8E6E1]">
               {[
-                { k: "Engineering Labs", v: 92, sub: "8 of 9 tasks" },
-                { k: "Assessment", v: 84, sub: "42 of 50" },
-                { k: "Vitarka AI", v: 76, sub: "4 dimensions" },
-                { k: "ECI", v: 84, sub: "STRONG FIT" },
+                { k: "Engineering Labs", sub: "Practical simulation tasks" },
+                { k: "Assessment", sub: "Concept coverage" },
+                { k: "Vitarka AI", sub: "Interview evidence" },
+                { k: "ECI", sub: "Unified signal" },
               ].map(x => (
                 <div key={x.k} className="p-6">
                   <div className="font-mono text-[11px] uppercase tracking-[0.08em] text-[#6B6B6B]">{x.k}</div>
-                  <div className="mt-2 text-[36px] font-semibold tracking-tight font-mono"><CountUp to={x.v} /></div>
-                  <div className="font-mono text-[11px] text-[#6B6B6B]">{x.sub}</div>
+                  <div className="mt-2 text-[18px] font-semibold tracking-tight text-[#0A0A0A]">Evidence layer</div>
+                  <div className="mt-1 font-mono text-[11px] text-[#6B6B6B]">{x.sub}</div>
                 </div>
               ))}
             </div>
@@ -569,9 +569,10 @@ function ReportPreview() {
               </div>
               <span className="shrink-0 inline-flex items-center gap-1.5 rounded-full border border-[#E8E6E1] px-3 py-1 font-mono text-[11px] uppercase tracking-[0.08em]">
                 <span className="h-1.5 w-1.5 rounded-full" style={{ background: "#1A8F5C" }} />
-                Strong Fit · 84 ECI
+                Strong Fit
               </span>
             </div>
+
 
             <div className="grid md:grid-cols-3 divide-x divide-[#E8E6E1]">
               <div className="p-8">
