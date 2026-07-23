@@ -1,6 +1,6 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useEffect, useRef, useState } from "react";
-import { ArrowRight, ArrowUpRight, Check, X, Play, GitBranch, GitPullRequest, GitCommit, Bug, Database, Terminal, FileCode2, Download, ChevronRight, Circle } from "lucide-react";
+import { ArrowRight, ArrowUpRight, Check, X, Play, GitBranch, GitCommit, FileCode2, Download, ChevronRight } from "lucide-react";
 
 export const Route = createFileRoute("/")({
   head: () => ({
@@ -142,8 +142,7 @@ function LandingNav() {
 function Hero() {
   return (
     <section className="relative border-b border-[#E8E6E1] bg-white">
-      <div className="mx-auto max-w-7xl px-6 pt-20 pb-16 lg:pt-24 lg:pb-20 grid lg:grid-cols-[minmax(0,1fr)_minmax(0,1.05fr)] gap-14 items-start">
-        {/* Left — corporate copy block */}
+      <div className="mx-auto max-w-4xl px-6 pt-24 pb-20 lg:pt-32 lg:pb-24 text-center">
         <Reveal>
           <div className="inline-flex items-center gap-2 rounded-full border border-[#E8E6E1] bg-[#FAFAF8] px-3 py-1 text-[12px] text-[#4A4A4A]">
             <span className="h-1.5 w-1.5 rounded-full bg-[#1A8F5C]" />
@@ -152,45 +151,29 @@ function Hero() {
             <span>Vitarka AI Interview 2.0 is now available</span>
           </div>
 
-          <h1 className="mt-6 text-[44px] lg:text-[56px] leading-[1.08] tracking-[-0.02em] font-semibold text-[#0A0A0A]">
-            The engineering hiring platform for evidence‑based decisions.
+          <h1 className="mt-8 text-[44px] lg:text-[64px] leading-[1.05] tracking-[-0.02em] font-semibold text-[#0A0A0A]">
+            The engineering hiring platform<br className="hidden sm:block" /> for evidence‑based decisions.
           </h1>
 
-          <p className="mt-6 max-w-xl text-[17px] leading-[1.6] text-[#4A4A4A]">
-            Yuvro Labs helps engineering leaders evaluate real‑world capability through simulation labs, structured knowledge assessments and AI‑led technical interviews — all consolidated into a single hiring signal your team can trust.
+          <p className="mt-6 mx-auto max-w-2xl text-[17px] leading-[1.6] text-[#4A4A4A]">
+            Yuvro Labs helps engineering leaders evaluate real‑world capability through simulation labs, structured knowledge assessments and AI‑led technical interviews — consolidated into a single hiring signal your team can trust.
           </p>
 
-          <ul className="mt-8 space-y-2.5 text-[14px] text-[#0A0A0A]">
-            {[
-              "Production‑grade simulation labs across 40+ engineering scenarios",
-              "Structured knowledge assessments mapped to your role rubric",
-              "Vitarka AI interviews with verbatim transcripts and rationale",
-              "Unified Engineering Capability Index for every candidate",
-            ].map((t) => (
-              <li key={t} className="flex items-start gap-2.5">
-                <span className="mt-[3px] grid h-4 w-4 flex-shrink-0 place-items-center rounded-full border border-[#0A0A0A] bg-[#0A0A0A]">
-                  <Check className="h-2.5 w-2.5 text-white" />
-                </span>
-                <span>{t}</span>
-              </li>
-            ))}
-          </ul>
-
-          <div className="mt-9 flex flex-wrap items-center gap-3">
+          <div className="mt-10 flex flex-wrap items-center justify-center gap-3">
             <Link to="/auth" search={{ tab: "signup" }} className="inline-flex items-center gap-2 rounded-md bg-[#0A0A0A] px-5 py-3 text-[14px] font-medium text-white hover:bg-black transition">
               Start free trial <ArrowRight className="h-4 w-4" />
             </Link>
             <a href="#process" className="inline-flex items-center gap-2 rounded-md border border-[#E8E6E1] bg-white px-5 py-3 text-[14px] font-medium text-[#0A0A0A] hover:border-[#0A0A0A] transition">
               <Play className="h-3.5 w-3.5" /> Request a demo
             </a>
-            <span className="text-[12px] text-[#6B6B6B]">No credit card · 14‑day trial</span>
           </div>
+          <div className="mt-4 text-[12px] text-[#6B6B6B]">No credit card · 14‑day trial</div>
 
-          <div className="mt-12 border-t border-[#E8E6E1] pt-6">
+          <div className="mt-16 border-t border-[#E8E6E1] pt-8">
             <div className="text-[11px] font-medium uppercase tracking-[0.12em] text-[#6B6B6B]">
               Trusted by engineering teams at
             </div>
-            <div className="mt-4 flex flex-wrap items-center gap-x-9 gap-y-3 text-[15px] font-semibold tracking-tight text-[#0A0A0A]/70">
+            <div className="mt-5 flex flex-wrap items-center justify-center gap-x-9 gap-y-3 text-[15px] font-semibold tracking-tight text-[#0A0A0A]/70">
               <span style={{ fontFamily: "Georgia, serif" }}>Northwind</span>
               <span className="uppercase tracking-[0.16em] text-[12px]">Halcyon</span>
               <span className="italic">Meridian&nbsp;Labs</span>
@@ -200,167 +183,11 @@ function Hero() {
             </div>
           </div>
         </Reveal>
-
-        {/* Right — corporate product panel */}
-        <Reveal delay={120}><HeroWorkspace /></Reveal>
       </div>
     </section>
   );
 }
 
-function HeroWorkspace() {
-  return (
-    <div className="relative">
-      {/* App window */}
-      <div className="relative overflow-hidden rounded-lg border border-[#E8E6E1] bg-white">
-        {/* Title bar */}
-        <div className="flex items-center justify-between border-b border-[#E8E6E1] bg-[#FAFAF8] px-4 py-2.5">
-          <div className="flex items-center gap-3">
-            <div className="flex gap-1.5">
-              <div className="h-2.5 w-2.5 rounded-full bg-[#E8E6E1]" />
-              <div className="h-2.5 w-2.5 rounded-full bg-[#E8E6E1]" />
-              <div className="h-2.5 w-2.5 rounded-full bg-[#E8E6E1]" />
-            </div>
-            <div className="font-mono text-[11px] uppercase tracking-[0.1em] text-[#6B6B6B]">
-              yuvrolabs.app / evaluations / EVAL‑2847
-            </div>
-          </div>
-          <span className="inline-flex items-center gap-1.5 rounded-full border border-[#E8E6E1] bg-white px-2 py-0.5 font-mono text-[10px] uppercase tracking-[0.1em] text-[#0A0A0A]">
-            <span className="h-1.5 w-1.5 rounded-full yvr-pulse" style={{ background: "#1A8F5C" }} />
-            Live
-          </span>
-        </div>
-
-        {/* Sub-header (breadcrumb + tabs) */}
-        <div className="flex items-center justify-between border-b border-[#E8E6E1] px-5 py-3">
-          <div>
-            <div className="font-mono text-[10px] uppercase tracking-[0.12em] text-[#6B6B6B]">Senior Backend Engineer · Q2 Cohort</div>
-            <div className="mt-0.5 text-[15px] font-semibold text-[#0A0A0A]">Candidate · A. Ramesh</div>
-          </div>
-          <div className="hidden sm:flex items-center gap-1 rounded-md border border-[#E8E6E1] p-0.5 text-[11px] font-medium">
-            <span className="rounded bg-[#0A0A0A] px-2.5 py-1 text-white">Overview</span>
-            <span className="px-2.5 py-1 text-[#6B6B6B]">Labs</span>
-            <span className="px-2.5 py-1 text-[#6B6B6B]">Vitarka</span>
-            <span className="px-2.5 py-1 text-[#6B6B6B]">Report</span>
-          </div>
-        </div>
-
-        {/* KPI tiles */}
-        <div className="grid grid-cols-3 divide-x divide-[#E8E6E1] border-b border-[#E8E6E1]">
-          {[
-            { l: "ECI Score", v: <><CountUp to={84} /><span className="text-[13px] font-normal text-[#6B6B6B]"> / 100</span></>, sub: "Strong fit" },
-            { l: "Labs Passed", v: <><CountUp to={9} />/10</>, sub: "92% coverage" },
-            { l: "Interview", v: "76", sub: "In review" },
-          ].map((k, i) => (
-            <div key={i} className="px-5 py-4">
-              <div className="font-mono text-[10px] uppercase tracking-[0.12em] text-[#6B6B6B]">{k.l}</div>
-              <div className="mt-1 text-[26px] font-semibold tracking-tight text-[#0A0A0A]">{k.v}</div>
-              <div className="mt-1 text-[11px] text-[#6B6B6B]">{k.sub}</div>
-            </div>
-          ))}
-        </div>
-
-        {/* Body: stages + signals */}
-        <div className="grid grid-cols-[1.05fr_1fr]">
-          <div className="border-r border-[#E8E6E1] p-5">
-            <div className="flex items-center justify-between mb-3">
-              <div className="font-mono text-[10px] uppercase tracking-[0.12em] text-[#6B6B6B]">Evaluation Stages</div>
-              <span className="font-mono text-[10px] text-[#6B6B6B]">3 of 4</span>
-            </div>
-            <div className="space-y-3.5">
-              {[
-                { t: "Engineering Labs", s: "Passed", v: 92, d: true, active: false },
-                { t: "Knowledge Assessment", s: "Passed", v: 84, d: true, active: false },
-                { t: "Vitarka AI Interview", s: "In review", v: 76, d: false, active: true },
-                { t: "Recruiter Evaluation", s: "Pending", v: 0, d: false, active: false },
-              ].map((r, i) => (
-                <div key={i}>
-                  <div className="flex items-center justify-between">
-                    <div className="flex items-center gap-2.5 text-[13px] text-[#0A0A0A]">
-                      <span className={`grid h-4 w-4 place-items-center rounded-full ${r.d ? "bg-[#0A0A0A]" : r.active ? "border border-[#0A0A0A] bg-white" : "border border-[#E8E6E1] bg-white"}`}>
-                        {r.d ? <Check className="h-2.5 w-2.5 text-white" /> : r.active ? <span className="h-1.5 w-1.5 rounded-full bg-[#0A0A0A]" /> : null}
-                      </span>
-                      <span className="font-medium">{r.t}</span>
-                    </div>
-                    <span className={`font-mono text-[10px] uppercase tracking-[0.1em] ${r.active ? "text-[#0A0A0A]" : "text-[#6B6B6B]"}`}>{r.s}</span>
-                  </div>
-                  <div className="mt-1.5 ml-6 h-[3px] rounded-full bg-[#F1EFEA] overflow-hidden">
-                    <div className="h-full bg-[#0A0A0A]" style={{ width: `${r.v}%` }} />
-                  </div>
-                </div>
-              ))}
-            </div>
-
-            <div className="mt-5 flex items-center justify-between rounded-md border border-[#E8E6E1] bg-[#FAFAF8] px-3 py-2.5">
-              <div>
-                <div className="font-mono text-[10px] uppercase tracking-[0.12em] text-[#6B6B6B]">Recommendation</div>
-                <div className="text-[13px] font-semibold text-[#0A0A0A]">Shortlist for onsite</div>
-              </div>
-              <span className="inline-flex items-center gap-1.5 rounded border border-[#1A8F5C]/25 bg-[#1A8F5C]/10 px-2 py-1 text-[11px] font-medium text-[#1A8F5C]">
-                <Check className="h-3 w-3" /> Approved
-              </span>
-            </div>
-          </div>
-
-          <div className="p-5">
-            <div className="flex items-center justify-between mb-3">
-              <div className="font-mono text-[10px] uppercase tracking-[0.12em] text-[#6B6B6B]">Recent Signals</div>
-              <span className="font-mono text-[10px] text-[#6B6B6B]">Today</span>
-            </div>
-            <div className="space-y-3 text-[13px]">
-              <Signal icon={<GitPullRequest className="h-3 w-3" />} label="Fixed payment webhook race condition" meta="LAB · DEBUGGING" />
-              <Signal icon={<Terminal className="h-3 w-3" />} label="Explained JWT rotation trade‑offs" meta="VITARKA · 4M CLIP" />
-              <Signal icon={<Database className="h-3 w-3" />} label="Optimized N+1 query (−340ms)" meta="LAB · PERFORMANCE" />
-              <Signal icon={<Bug className="h-3 w-3" />} label="Identified missing idempotency key" meta="LAB · INCIDENT" />
-            </div>
-
-            <div className="mt-5 border-t border-[#E8E6E1] pt-4">
-              <div className="font-mono text-[10px] uppercase tracking-[0.12em] text-[#6B6B6B] mb-2">Capability Breakdown</div>
-              <div className="grid grid-cols-3 gap-2">
-                {[
-                  { l: "Debug", v: 92 },
-                  { l: "Design", v: 84 },
-                  { l: "Data", v: 76 },
-                  { l: "Comm", v: 88 },
-                  { l: "Test", v: 71 },
-                  { l: "Ship", v: 90 },
-                ].map((m) => (
-                  <div key={m.l} className="rounded border border-[#E8E6E1] px-2 py-1.5">
-                    <div className="font-mono text-[9px] uppercase tracking-[0.12em] text-[#6B6B6B]">{m.l}</div>
-                    <div className="mt-0.5 font-mono text-[13px] text-[#0A0A0A]">{m.v}</div>
-                  </div>
-                ))}
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      {/* Corporate helper badge */}
-      <div className="mt-4 flex items-center justify-between rounded-md border border-[#E8E6E1] bg-white px-4 py-2.5 text-[12px] text-[#4A4A4A]">
-        <span className="inline-flex items-center gap-2">
-          <span className="grid h-5 w-5 place-items-center rounded bg-[#0A0A0A] text-[10px] font-mono text-white">SOC</span>
-          SOC 2 Type II · GDPR · SSO/SAML ready
-        </span>
-        <a href="#report" className="inline-flex items-center gap-1 font-medium text-[#0A0A0A] hover:underline">
-          View sample report <ArrowUpRight className="h-3 w-3" />
-        </a>
-      </div>
-    </div>
-  );
-}
-
-function Signal({ icon, label, meta }: { icon: React.ReactNode; label: string; meta: string }) {
-  return (
-    <div className="flex items-start gap-2.5">
-      <div className="mt-0.5 grid h-5 w-5 place-items-center rounded-[4px] border border-[#E8E6E1] bg-white text-[#6B6B6B]">{icon}</div>
-      <div className="min-w-0 flex-1">
-        <div className="text-[#0A0A0A] truncate">{label}</div>
-        <div className="font-mono text-[10px] tracking-[0.08em] text-[#6B6B6B]">{meta}</div>
-      </div>
-    </div>
-  );
-}
 
 /* ================================================================
    2 — Traditional vs Yuvro Labs
@@ -463,45 +290,38 @@ function ReportSplit() {
 }
 
 function MiniReportPreview() {
+  const pillars = [
+    { k: "Engineering Labs", d: "Practical simulation tasks" },
+    { k: "Knowledge Assessment", d: "Concept & fundamentals" },
+    { k: "Vitarka AI Interview", d: "Reasoning & communication" },
+  ];
   return (
     <div className="relative">
       <div className="rounded-[4px] border border-[#E8E6E1] bg-white overflow-hidden">
         <div className="border-b border-[#E8E6E1] px-6 py-5 flex items-center justify-between">
           <div>
-            <div className="font-mono text-[11px] uppercase tracking-[0.08em] text-[#6B6B6B]">Candidate Report · CR-2847</div>
-            <div className="mt-1 text-[18px] font-semibold tracking-tight">Priya Nair — Senior Backend Engineer</div>
+            <div className="font-mono text-[11px] uppercase tracking-[0.08em] text-[#6B6B6B]">Candidate Report</div>
+            <div className="mt-1 text-[18px] font-semibold tracking-tight">Senior Backend Engineer</div>
           </div>
           <div className="inline-flex items-center gap-1.5 rounded-[4px] border border-[#E8E6E1] px-2 py-1 font-mono text-[11px] text-[#6B6B6B]">
             <Download className="h-3 w-3" /> PDF
           </div>
         </div>
-        <div className="grid grid-cols-3 divide-x divide-[#E8E6E1] border-b border-[#E8E6E1]">
-          {[
-            { k: "Labs", v: 92 },
-            { k: "Assessment", v: 84 },
-            { k: "Vitarka", v: 76 },
-          ].map(x => (
-            <div key={x.k} className="px-6 py-5">
-              <div className="font-mono text-[11px] uppercase tracking-[0.08em] text-[#6B6B6B]">{x.k}</div>
-              <div className="mt-1 text-[28px] font-semibold tracking-tight font-mono"><CountUp to={x.v} /></div>
-              <div className="mt-2 h-[3px] rounded-full bg-[#E8E6E1] overflow-hidden">
-                <div className="h-full bg-[#0A0A0A]" style={{ width: `${x.v}%` }} />
+        <div className="divide-y divide-[#E8E6E1] border-b border-[#E8E6E1]">
+          {pillars.map(p => (
+            <div key={p.k} className="px-6 py-4 flex items-center justify-between">
+              <div>
+                <div className="text-[14px] font-medium tracking-tight text-[#0A0A0A]">{p.k}</div>
+                <div className="mt-0.5 text-[12px] text-[#6B6B6B]">{p.d}</div>
               </div>
+              <span className="font-mono text-[10px] uppercase tracking-[0.1em] text-[#6B6B6B]">Evidence</span>
             </div>
           ))}
         </div>
         <div className="px-6 py-5">
-          <div className="flex items-center justify-between">
-            <div className="font-mono text-[11px] uppercase tracking-[0.08em] text-[#6B6B6B]">Engineering Capability Index</div>
-            <div className="font-mono text-[11px] text-[#6B6B6B]">weighted composite</div>
-          </div>
-          <div className="mt-2 flex items-baseline gap-2">
-            <span className="text-[56px] leading-none font-semibold tracking-tight"><CountUp to={84} /></span>
-            <span className="font-mono text-[12px] text-[#6B6B6B]">/ 100 · STRONG FIT</span>
-          </div>
-          <div className="mt-4 h-[6px] rounded-full bg-[#E8E6E1] overflow-hidden">
-            <div className="h-full" style={{ width: "84%", background: "#F5A623" }} />
-          </div>
+          <div className="font-mono text-[11px] uppercase tracking-[0.08em] text-[#6B6B6B]">Engineering Capability Index</div>
+          <div className="mt-2 text-[20px] font-semibold tracking-tight text-[#0A0A0A]">Unified hiring signal</div>
+          <p className="mt-1.5 text-[13px] text-[#6B6B6B] leading-relaxed">A composite view combining labs, assessment and interview evidence into a single recommendation.</p>
         </div>
         <div className="border-t border-[#E8E6E1] px-6 py-4 grid grid-cols-2 gap-4">
           <div>
@@ -525,6 +345,7 @@ function MiniReportPreview() {
     </div>
   );
 }
+
 
 /* ================================================================
    4 — Inside Every Evaluation (dark flow)
@@ -662,10 +483,10 @@ function SimulationLabs() {
    ================================================================ */
 function CapabilityMetrics() {
   const metrics = [
-    { t: "Debugging", v: 92 }, { t: "Problem Solving", v: 88 }, { t: "Architecture", v: 74 },
-    { t: "API Development", v: 90 }, { t: "Database Design", v: 71 }, { t: "Performance Optimization", v: 82 },
-    { t: "System Thinking", v: 78 }, { t: "Communication", v: 85 }, { t: "Collaboration", v: 80 },
-    { t: "Code Quality", v: 87 }, { t: "Learning Ability", v: 76 }, { t: "Engineering Ownership", v: 89 },
+    "Debugging", "Problem Solving", "Architecture",
+    "API Development", "Database Design", "Performance Optimization",
+    "System Thinking", "Communication", "Collaboration",
+    "Code Quality", "Learning Ability", "Engineering Ownership",
   ];
   return (
     <section className="border-t border-[#E8E6E1]">
@@ -681,14 +502,10 @@ function CapabilityMetrics() {
 
         <div className="mt-14 grid md:grid-cols-2 gap-x-16 gap-y-3">
           {metrics.map((m, i) => (
-            <Reveal key={m.t} delay={i * 40}>
-              <div className="grid grid-cols-[auto_1fr_auto_auto] items-center gap-4 py-3 border-b border-[#E8E6E1]">
+            <Reveal key={m} delay={i * 40}>
+              <div className="grid grid-cols-[auto_1fr] items-center gap-4 py-3 border-b border-[#E8E6E1]">
                 <div className="font-mono text-[11px] text-[#6B6B6B] w-6">{String(i + 1).padStart(2, "0")}</div>
-                <div className="text-[14px] tracking-tight font-medium">{m.t}</div>
-                <div className="w-40 h-[3px] rounded-full bg-[#E8E6E1] overflow-hidden">
-                  <div className="h-full bg-[#0A0A0A]" style={{ width: `${m.v}%` }} />
-                </div>
-                <div className="w-8 text-right font-mono text-[11px] text-[#0A0A0A]">{m.v}</div>
+                <div className="text-[15px] tracking-tight font-medium">{m}</div>
               </div>
             </Reveal>
           ))}
@@ -697,6 +514,7 @@ function CapabilityMetrics() {
     </section>
   );
 }
+
 
 /* ================================================================
    7 — Full report preview
@@ -731,15 +549,15 @@ function ReportPreview() {
 
             <div className="grid md:grid-cols-4 divide-x divide-[#E8E6E1] border-b border-[#E8E6E1]">
               {[
-                { k: "Engineering Labs", v: 92, sub: "8 of 9 tasks" },
-                { k: "Assessment", v: 84, sub: "42 of 50" },
-                { k: "Vitarka AI", v: 76, sub: "4 dimensions" },
-                { k: "ECI", v: 84, sub: "STRONG FIT" },
+                { k: "Engineering Labs", sub: "Practical simulation tasks" },
+                { k: "Assessment", sub: "Concept coverage" },
+                { k: "Vitarka AI", sub: "Interview evidence" },
+                { k: "ECI", sub: "Unified signal" },
               ].map(x => (
                 <div key={x.k} className="p-6">
                   <div className="font-mono text-[11px] uppercase tracking-[0.08em] text-[#6B6B6B]">{x.k}</div>
-                  <div className="mt-2 text-[36px] font-semibold tracking-tight font-mono"><CountUp to={x.v} /></div>
-                  <div className="font-mono text-[11px] text-[#6B6B6B]">{x.sub}</div>
+                  <div className="mt-2 text-[18px] font-semibold tracking-tight text-[#0A0A0A]">Evidence layer</div>
+                  <div className="mt-1 font-mono text-[11px] text-[#6B6B6B]">{x.sub}</div>
                 </div>
               ))}
             </div>
@@ -751,15 +569,16 @@ function ReportPreview() {
               </div>
               <span className="shrink-0 inline-flex items-center gap-1.5 rounded-full border border-[#E8E6E1] px-3 py-1 font-mono text-[11px] uppercase tracking-[0.08em]">
                 <span className="h-1.5 w-1.5 rounded-full" style={{ background: "#1A8F5C" }} />
-                Strong Fit · 84 ECI
+                Strong Fit
               </span>
             </div>
+
 
             <div className="grid md:grid-cols-3 divide-x divide-[#E8E6E1]">
               <div className="p-8">
                 <div className="font-mono text-[11px] uppercase tracking-[0.08em] text-[#6B6B6B] mb-3">Strengths</div>
                 <ul className="space-y-3 text-[13px]">
-                  {["Debugged race condition in under 12 minutes", "Correctly identified missing idempotency key", "Explained JWT rotation trade-offs clearly", "Optimized N+1 query, cut latency by 340ms"].map(s => (
+                  {["Debugged race condition efficiently", "Correctly identified missing idempotency key", "Explained JWT rotation trade-offs clearly", "Optimized N+1 query and reduced latency"].map(s => (
                     <li key={s} className="flex gap-2 items-start"><span className="mt-1.5 h-2 w-2 rounded-full shrink-0" style={{ background: "#1A8F5C" }} /><span className="text-[#0A0A0A]">{s}</span></li>
                   ))}
                 </ul>
