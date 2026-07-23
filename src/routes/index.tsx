@@ -578,7 +578,7 @@ function ReportPreview() {
               <div className="p-8">
                 <div className="font-mono text-[11px] uppercase tracking-[0.08em] text-[#6B6B6B] mb-3">Strengths</div>
                 <ul className="space-y-3 text-[13px]">
-                  {["Debugged race condition in under 12 minutes", "Correctly identified missing idempotency key", "Explained JWT rotation trade-offs clearly", "Optimized N+1 query, cut latency by 340ms"].map(s => (
+                  {["Debugged race condition efficiently", "Correctly identified missing idempotency key", "Explained JWT rotation trade-offs clearly", "Optimized N+1 query and reduced latency"].map(s => (
                     <li key={s} className="flex gap-2 items-start"><span className="mt-1.5 h-2 w-2 rounded-full shrink-0" style={{ background: "#1A8F5C" }} /><span className="text-[#0A0A0A]">{s}</span></li>
                   ))}
                 </ul>
