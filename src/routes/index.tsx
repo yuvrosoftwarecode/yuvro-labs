@@ -290,45 +290,38 @@ function ReportSplit() {
 }
 
 function MiniReportPreview() {
+  const pillars = [
+    { k: "Engineering Labs", d: "Practical simulation tasks" },
+    { k: "Knowledge Assessment", d: "Concept & fundamentals" },
+    { k: "Vitarka AI Interview", d: "Reasoning & communication" },
+  ];
   return (
     <div className="relative">
       <div className="rounded-[4px] border border-[#E8E6E1] bg-white overflow-hidden">
         <div className="border-b border-[#E8E6E1] px-6 py-5 flex items-center justify-between">
           <div>
-            <div className="font-mono text-[11px] uppercase tracking-[0.08em] text-[#6B6B6B]">Candidate Report · CR-2847</div>
-            <div className="mt-1 text-[18px] font-semibold tracking-tight">Priya Nair — Senior Backend Engineer</div>
+            <div className="font-mono text-[11px] uppercase tracking-[0.08em] text-[#6B6B6B]">Candidate Report</div>
+            <div className="mt-1 text-[18px] font-semibold tracking-tight">Senior Backend Engineer</div>
           </div>
           <div className="inline-flex items-center gap-1.5 rounded-[4px] border border-[#E8E6E1] px-2 py-1 font-mono text-[11px] text-[#6B6B6B]">
             <Download className="h-3 w-3" /> PDF
           </div>
         </div>
-        <div className="grid grid-cols-3 divide-x divide-[#E8E6E1] border-b border-[#E8E6E1]">
-          {[
-            { k: "Labs", v: 92 },
-            { k: "Assessment", v: 84 },
-            { k: "Vitarka", v: 76 },
-          ].map(x => (
-            <div key={x.k} className="px-6 py-5">
-              <div className="font-mono text-[11px] uppercase tracking-[0.08em] text-[#6B6B6B]">{x.k}</div>
-              <div className="mt-1 text-[28px] font-semibold tracking-tight font-mono"><CountUp to={x.v} /></div>
-              <div className="mt-2 h-[3px] rounded-full bg-[#E8E6E1] overflow-hidden">
-                <div className="h-full bg-[#0A0A0A]" style={{ width: `${x.v}%` }} />
+        <div className="divide-y divide-[#E8E6E1] border-b border-[#E8E6E1]">
+          {pillars.map(p => (
+            <div key={p.k} className="px-6 py-4 flex items-center justify-between">
+              <div>
+                <div className="text-[14px] font-medium tracking-tight text-[#0A0A0A]">{p.k}</div>
+                <div className="mt-0.5 text-[12px] text-[#6B6B6B]">{p.d}</div>
               </div>
+              <span className="font-mono text-[10px] uppercase tracking-[0.1em] text-[#6B6B6B]">Evidence</span>
             </div>
           ))}
         </div>
         <div className="px-6 py-5">
-          <div className="flex items-center justify-between">
-            <div className="font-mono text-[11px] uppercase tracking-[0.08em] text-[#6B6B6B]">Engineering Capability Index</div>
-            <div className="font-mono text-[11px] text-[#6B6B6B]">weighted composite</div>
-          </div>
-          <div className="mt-2 flex items-baseline gap-2">
-            <span className="text-[56px] leading-none font-semibold tracking-tight"><CountUp to={84} /></span>
-            <span className="font-mono text-[12px] text-[#6B6B6B]">/ 100 · STRONG FIT</span>
-          </div>
-          <div className="mt-4 h-[6px] rounded-full bg-[#E8E6E1] overflow-hidden">
-            <div className="h-full" style={{ width: "84%", background: "#F5A623" }} />
-          </div>
+          <div className="font-mono text-[11px] uppercase tracking-[0.08em] text-[#6B6B6B]">Engineering Capability Index</div>
+          <div className="mt-2 text-[20px] font-semibold tracking-tight text-[#0A0A0A]">Unified hiring signal</div>
+          <p className="mt-1.5 text-[13px] text-[#6B6B6B] leading-relaxed">A composite view combining labs, assessment and interview evidence into a single recommendation.</p>
         </div>
         <div className="border-t border-[#E8E6E1] px-6 py-4 grid grid-cols-2 gap-4">
           <div>
@@ -352,6 +345,7 @@ function MiniReportPreview() {
     </div>
   );
 }
+
 
 /* ================================================================
    4 — Inside Every Evaluation (dark flow)
