@@ -61,17 +61,19 @@ import {
 import { computeAttentionGroups, loadViewed, loadNotedSet, type AttentionGroup } from "@/lib/recruiterCandidateDetail";
 import { IntelligenceTab } from "@/components/recruiter/IntelligenceTab";
 import { SettingsTab } from "@/components/recruiter/SettingsTab";
+import { FollowUpsTab } from "@/components/recruiter/FollowUpsTab";
 
 const searchSchema = z.object({
   tab: z
-    .enum(["overview", "candidates", "intelligence", "attention", "settings"])
+    .enum(["overview", "candidates", "followups", "intelligence", "attention", "settings"])
     .default("overview")
     .catch("overview"),
 });
 
-const TAB_LABELS: Record<"overview" | "candidates" | "intelligence" | "attention" | "settings", string> = {
+const TAB_LABELS: Record<"overview" | "candidates" | "followups" | "intelligence" | "attention" | "settings", string> = {
   overview: "Overview",
   candidates: "Candidates",
+  followups: "Follow-ups",
   intelligence: "Hiring Intelligence",
   attention: "Need Your Attention",
   settings: "Settings",
