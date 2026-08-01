@@ -12,6 +12,7 @@ import { Route as rootRouteImport } from './routes/__root'
 import { Route as RecruiterLoginRouteImport } from './routes/recruiter-login'
 import { Route as RecruiterRouteImport } from './routes/recruiter'
 import { Route as ProfileRouteImport } from './routes/profile'
+import { Route as PricingRouteImport } from './routes/pricing'
 import { Route as LeaderboardRouteImport } from './routes/leaderboard'
 import { Route as HackathonsRouteImport } from './routes/hackathons'
 import { Route as ForumRouteImport } from './routes/forum'
@@ -88,6 +89,11 @@ const RecruiterRoute = RecruiterRouteImport.update({
 const ProfileRoute = ProfileRouteImport.update({
   id: '/profile',
   path: '/profile',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const PricingRoute = PricingRouteImport.update({
+  id: '/pricing',
+  path: '/pricing',
   getParentRoute: () => rootRouteImport,
 } as any)
 const LeaderboardRoute = LeaderboardRouteImport.update({
@@ -424,6 +430,7 @@ export interface FileRoutesByFullPath {
   '/forum': typeof ForumRoute
   '/hackathons': typeof HackathonsRouteWithChildren
   '/leaderboard': typeof LeaderboardRoute
+  '/pricing': typeof PricingRoute
   '/profile': typeof ProfileRoute
   '/recruiter': typeof RecruiterRouteWithChildren
   '/recruiter-login': typeof RecruiterLoginRoute
@@ -488,6 +495,7 @@ export interface FileRoutesByTo {
   '/forum': typeof ForumRoute
   '/hackathons': typeof HackathonsRouteWithChildren
   '/leaderboard': typeof LeaderboardRoute
+  '/pricing': typeof PricingRoute
   '/profile': typeof ProfileRoute
   '/recruiter-login': typeof RecruiterLoginRoute
   '/admin/ai-mentor': typeof AdminAiMentorRoute
@@ -553,6 +561,7 @@ export interface FileRoutesById {
   '/forum': typeof ForumRoute
   '/hackathons': typeof HackathonsRouteWithChildren
   '/leaderboard': typeof LeaderboardRoute
+  '/pricing': typeof PricingRoute
   '/profile': typeof ProfileRoute
   '/recruiter': typeof RecruiterRouteWithChildren
   '/recruiter-login': typeof RecruiterLoginRoute
@@ -622,6 +631,7 @@ export interface FileRouteTypes {
     | '/forum'
     | '/hackathons'
     | '/leaderboard'
+    | '/pricing'
     | '/profile'
     | '/recruiter'
     | '/recruiter-login'
@@ -686,6 +696,7 @@ export interface FileRouteTypes {
     | '/forum'
     | '/hackathons'
     | '/leaderboard'
+    | '/pricing'
     | '/profile'
     | '/recruiter-login'
     | '/admin/ai-mentor'
@@ -750,6 +761,7 @@ export interface FileRouteTypes {
     | '/forum'
     | '/hackathons'
     | '/leaderboard'
+    | '/pricing'
     | '/profile'
     | '/recruiter'
     | '/recruiter-login'
@@ -818,6 +830,7 @@ export interface RootRouteChildren {
   ForumRoute: typeof ForumRoute
   HackathonsRoute: typeof HackathonsRouteWithChildren
   LeaderboardRoute: typeof LeaderboardRoute
+  PricingRoute: typeof PricingRoute
   ProfileRoute: typeof ProfileRoute
   RecruiterRoute: typeof RecruiterRouteWithChildren
   RecruiterLoginRoute: typeof RecruiterLoginRoute
@@ -845,6 +858,13 @@ declare module '@tanstack/react-router' {
       path: '/profile'
       fullPath: '/profile'
       preLoaderRoute: typeof ProfileRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/pricing': {
+      id: '/pricing'
+      path: '/pricing'
+      fullPath: '/pricing'
+      preLoaderRoute: typeof PricingRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/leaderboard': {
@@ -1529,6 +1549,7 @@ const rootRouteChildren: RootRouteChildren = {
   ForumRoute: ForumRoute,
   HackathonsRoute: HackathonsRouteWithChildren,
   LeaderboardRoute: LeaderboardRoute,
+  PricingRoute: PricingRoute,
   ProfileRoute: ProfileRoute,
   RecruiterRoute: RecruiterRouteWithChildren,
   RecruiterLoginRoute: RecruiterLoginRoute,
@@ -1537,3 +1558,13 @@ const rootRouteChildren: RootRouteChildren = {
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
   ._addFileTypes<FileRouteTypes>()
+
+import type { getRouter } from './router.tsx'
+import type { startInstance } from './start.ts'
+declare module '@tanstack/react-start' {
+  interface Register {
+    ssr: true
+    router: Awaited<ReturnType<typeof getRouter>>
+    config: Awaited<ReturnType<typeof startInstance.getOptions>>
+  }
+}
