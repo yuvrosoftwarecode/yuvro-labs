@@ -138,10 +138,21 @@ export function FollowUpsTab({ ev, notify }: { ev: Evaluation; notify: (m: strin
   const [records, setRecords] = useState<RecordRow[]>(SEED_RECORDS);
 
   useEffect(() => {
+    let next: Persisted = DEFAULTS;
     try {
       const raw = localStorage.getItem(KEY(ev.id));
-      if (raw) setData({ ...DEFAULTS, ...JSON.parse(raw) });
+      if (raw) next = { ...DEFAULTS, ...JSON.parse(raw) };
     } catch {}
+    try {
+      const pre = localStorage.getItem(`yuvro-followup-prefill-${ev.id}`);
+      if (pre) {
+        const p = JSON.parse(pre) as { name?: string; email?: string; phone?: string };
+        next = { ...next, individual: { ...next.individual, name: p.name ?? "", email: p.email ?? "", phone: p.phone ?? "" } };
+        localStorage.removeItem(`yuvro-followup-prefill-${ev.id}`);
+        setPage("individual");
+      }
+    } catch {}
+    setData(next);
   }, [ev.id]);
 
   const persist = (next: Persisted) => {
