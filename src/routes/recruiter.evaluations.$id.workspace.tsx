@@ -73,7 +73,7 @@ const searchSchema = z.object({
 
 const TAB_LABELS: Record<"overview" | "candidates" | "followups" | "records" | "intelligence" | "attention" | "settings", string> = {
   overview: "Overview",
-  candidates: "Candidates",
+  candidates: "Submissions",
   followups: "Follow-ups",
   records: "Candidate Records",
   intelligence: "Hiring Intelligence",
