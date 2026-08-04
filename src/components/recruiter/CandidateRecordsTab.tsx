@@ -290,13 +290,15 @@ export function CandidateRecordsTab({
           )}
         </div>
 
-        <button onClick={exportCsv} className={toolBtn}><Download className="h-3.5 w-3.5" /> Export</button>
+          <button onClick={exportCsv} className={toolBtn}><Download className="h-3.5 w-3.5" /> Export</button>
+        </div>
       </div>
 
       {/* Table */}
-      <div className="border-t border-black/10">
-        <div className="max-h-[62vh] overflow-auto">
+      <div className="border-t border-neutral-200">
+        <div>
           <table className="w-full text-[12.5px]">
+
             <thead className="sticky top-0 z-10">
               <tr className="bg-neutral-900 text-left text-[11px] uppercase tracking-widest text-white">
                 {COLUMNS.filter((c) => show(c.key)).map((c) => (
