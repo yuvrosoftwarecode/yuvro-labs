@@ -352,10 +352,16 @@ function BulkPage({ bulk, onChange, notify }: { bulk: BulkSetup; onChange: (b: B
 
       <div className="flex items-center justify-between border-t border-white/10 pt-6">
         <div className="text-[12px] text-neutral-500">{dirty ? "Unsaved changes" : "All changes saved"}</div>
-        <button onClick={() => { setDirty(false); notify("Follow-ups activated for bulk candidates"); }} className={btnPrimary}>
-          <Send className="h-3.5 w-3.5" /> Save & Activate Follow-ups
-        </button>
+        <div className="flex items-center gap-2">
+          <button onClick={() => { setDirty(false); notify("Bulk follow-up settings saved"); }} className={btnOutline}>
+            <Save className="h-3.5 w-3.5" /> Save
+          </button>
+          <button onClick={() => { setDirty(false); notify("Follow-ups activated for bulk candidates"); }} className={btnPrimary}>
+            <Send className="h-3.5 w-3.5" /> Save & Activate Follow-ups
+          </button>
+        </div>
       </div>
+
     </div>
   );
 }
@@ -427,11 +433,15 @@ function IndividualPage({ ind, onChange, notify }: { ind: IndividualSetup; onCha
         </div>
       </Section>
 
-      <div className="flex items-center justify-end border-t border-white/10 pt-6">
+      <div className="flex items-center justify-end gap-2 border-t border-white/10 pt-6">
+        <button onClick={() => notify("Individual follow-up settings saved")} className={btnOutline}>
+          <Save className="h-3.5 w-3.5" /> Save
+        </button>
         <button onClick={() => notify("Candidate added and follow-ups activated")} className={btnPrimary}>
           <User className="h-3.5 w-3.5" /> Add Candidate & Activate Follow-ups
         </button>
       </div>
+
     </div>
   );
 }
