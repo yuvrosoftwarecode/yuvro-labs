@@ -171,34 +171,41 @@ export function CandidateRecordsTab({
   ];
 
   return (
-    <div className="space-y-5">
-      {/* Summary row */}
-      <div className="flex flex-wrap items-stretch gap-2">
-        {summary.map((s) => (
-          <button
-            key={s.label}
-            onClick={s.onClick}
-            className={`rounded-lg border px-4 py-2.5 text-left transition ${
-              s.active ? "border-neutral-900 bg-neutral-900 text-white" : "border-black/10 bg-white text-neutral-900 hover:border-neutral-400"
-            }`}
-          >
-            <div className={`text-[11px] uppercase tracking-widest ${s.active ? "text-white/70" : "text-neutral-500"}`}>{s.label}</div>
-            <div className="mt-0.5 text-[18px] font-medium tabular-nums">{s.value.toLocaleString()}</div>
+    <div className="space-y-3">
+      {/* Row 1 — Full-width search */}
+      <div className="relative flex items-center">
+        <Search className="pointer-events-none absolute left-3 h-4 w-4 text-neutral-400" />
+        <input
+          value={search}
+          onChange={(e) => setSearch(e.target.value)}
+          placeholder="Search candidates by name, email, phone or candidate ID..."
+          className="w-full rounded-lg border border-neutral-200 bg-white py-2 pl-9 pr-9 text-[13px] text-neutral-900 placeholder-neutral-400 outline-none focus:border-neutral-400"
+        />
+        {search && (
+          <button onClick={() => setSearch("")} className="absolute right-2 rounded-md p-1 text-neutral-400 hover:bg-neutral-100 hover:text-neutral-700">
+            <X className="h-3.5 w-3.5" />
           </button>
-        ))}
+        )}
       </div>
 
-      {/* Toolbar */}
-      <div className="flex flex-wrap items-center gap-2">
-        <div className="relative min-w-[260px] flex-1">
-          <Search className="pointer-events-none absolute left-3 top-1/2 h-3.5 w-3.5 -translate-y-1/2 text-neutral-400" />
-          <input
-            value={search}
-            onChange={(e) => setSearch(e.target.value)}
-            placeholder="Search name, email, phone or candidate ID..."
-            className="w-full rounded-lg border border-black/10 bg-white py-2 pl-9 pr-3 text-[13px] text-neutral-900 outline-none placeholder:text-neutral-400 focus:border-neutral-400"
-          />
-        </div>
+      {/* Row 2 — Segment nav (left) + toolbar actions (right) */}
+      <div className="flex items-center justify-between gap-4">
+        <nav className="flex items-center gap-1">
+          {summary.map((s) => (
+            <button
+              key={s.label}
+              onClick={s.onClick}
+              className={`inline-flex items-center gap-1.5 whitespace-nowrap rounded-md px-2.5 py-1.5 text-[12.5px] transition ${s.active ? "bg-neutral-900 text-white" : "text-neutral-600 hover:bg-neutral-100 hover:text-neutral-900"}`}
+            >
+              <span className={s.active ? "font-medium" : ""}>{s.label}</span>
+              <span className={`rounded-full px-1.5 py-0.5 text-[10px] font-medium tabular-nums ${s.active ? "bg-white/20 text-white" : "bg-neutral-100 text-neutral-600"}`}>
+                {s.value.toLocaleString()}
+              </span>
+            </button>
+          ))}
+        </nav>
+        <div className="flex items-center gap-2">
+
 
         <div className="relative">
           <button onClick={() => { setFiltersOpen((v) => !v); setColsOpen(false); }} className={toolBtn}>
@@ -283,13 +290,15 @@ export function CandidateRecordsTab({
           )}
         </div>
 
-        <button onClick={exportCsv} className={toolBtn}><Download className="h-3.5 w-3.5" /> Export</button>
+          <button onClick={exportCsv} className={toolBtn}><Download className="h-3.5 w-3.5" /> Export</button>
+        </div>
       </div>
 
       {/* Table */}
-      <div className="border-t border-black/10">
-        <div className="max-h-[62vh] overflow-auto">
+      <div className="border-t border-neutral-200">
+        <div>
           <table className="w-full text-[12.5px]">
+
             <thead className="sticky top-0 z-10">
               <tr className="bg-neutral-900 text-left text-[11px] uppercase tracking-widest text-white">
                 {COLUMNS.filter((c) => show(c.key)).map((c) => (
