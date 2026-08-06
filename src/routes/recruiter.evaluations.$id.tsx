@@ -14,7 +14,7 @@ import {
 const search = z.object({ view: z.enum(["edit", "preview", "publish", "publish-done"]).default("edit").catch("edit") });
 
 export const Route = createFileRoute("/recruiter/evaluations/$id")({
-  validateSearch: (s) => search.parse(s),
+  validateSearch: (s: { view?: string } & SearchSchemaInput) => search.parse(s),
   head: () => ({ meta: [{ title: "Evaluation Workspace — Yuvro Labs" }, { name: "robots", content: "noindex" }] }),
   component: EvaluationWorkspace,
 });
