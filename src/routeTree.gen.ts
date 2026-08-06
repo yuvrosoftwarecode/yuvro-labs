@@ -69,6 +69,7 @@ import { Route as LabSlugTicketTicketIdRouteImport } from './routes/lab.$slug.ti
 import { Route as CollaborationSprintIdWorkspaceRouteImport } from './routes/collaboration.sprint.$id.workspace'
 import { Route as AdminLabsIdSprintsRouteImport } from './routes/admin.labs.$id.sprints'
 import { Route as AdminLabsIdEditRouteImport } from './routes/admin.labs.$id.edit'
+import { Route as AdminLabsIdAttemptsRouteImport } from './routes/admin.labs.$id.attempts'
 import { Route as RecruiterEvaluationsIdCandidatesCandidateIdRouteImport } from './routes/recruiter.evaluations.$id.candidates.$candidateId'
 import { Route as LabSlugTicketTicketIdReviewRouteImport } from './routes/lab.$slug.ticket.$ticketId.review'
 import { Route as CollaborationSprintIdTicketTicketIdRouteImport } from './routes/collaboration.sprint.$id.ticket.$ticketId'
@@ -381,6 +382,11 @@ const AdminLabsIdEditRoute = AdminLabsIdEditRouteImport.update({
   path: '/$id/edit',
   getParentRoute: () => AdminLabsRoute,
 } as any)
+const AdminLabsIdAttemptsRoute = AdminLabsIdAttemptsRouteImport.update({
+  id: '/$id/attempts',
+  path: '/$id/attempts',
+  getParentRoute: () => AdminLabsRoute,
+} as any)
 const RecruiterEvaluationsIdCandidatesCandidateIdRoute =
   RecruiterEvaluationsIdCandidatesCandidateIdRouteImport.update({
     id: '/candidates/$candidateId',
@@ -473,6 +479,7 @@ export interface FileRoutesByFullPath {
   '/admin/hackathons/': typeof AdminHackathonsIndexRoute
   '/admin/labs/': typeof AdminLabsIndexRoute
   '/recruiter/evaluations/': typeof RecruiterEvaluationsIndexRoute
+  '/admin/labs/$id/attempts': typeof AdminLabsIdAttemptsRoute
   '/admin/labs/$id/edit': typeof AdminLabsIdEditRoute
   '/admin/labs/$id/sprints': typeof AdminLabsIdSprintsRouteWithChildren
   '/collaboration/sprint/$id/workspace': typeof CollaborationSprintIdWorkspaceRoute
@@ -535,6 +542,7 @@ export interface FileRoutesByTo {
   '/admin/hackathons': typeof AdminHackathonsIndexRoute
   '/admin/labs': typeof AdminLabsIndexRoute
   '/recruiter/evaluations': typeof RecruiterEvaluationsIndexRoute
+  '/admin/labs/$id/attempts': typeof AdminLabsIdAttemptsRoute
   '/admin/labs/$id/edit': typeof AdminLabsIdEditRoute
   '/admin/labs/$id/sprints': typeof AdminLabsIdSprintsRouteWithChildren
   '/collaboration/sprint/$id/workspace': typeof CollaborationSprintIdWorkspaceRoute
@@ -604,6 +612,7 @@ export interface FileRoutesById {
   '/admin/hackathons/': typeof AdminHackathonsIndexRoute
   '/admin/labs/': typeof AdminLabsIndexRoute
   '/recruiter/evaluations/': typeof RecruiterEvaluationsIndexRoute
+  '/admin/labs/$id/attempts': typeof AdminLabsIdAttemptsRoute
   '/admin/labs/$id/edit': typeof AdminLabsIdEditRoute
   '/admin/labs/$id/sprints': typeof AdminLabsIdSprintsRouteWithChildren
   '/collaboration/sprint/$id/workspace': typeof CollaborationSprintIdWorkspaceRoute
@@ -674,6 +683,7 @@ export interface FileRouteTypes {
     | '/admin/hackathons/'
     | '/admin/labs/'
     | '/recruiter/evaluations/'
+    | '/admin/labs/$id/attempts'
     | '/admin/labs/$id/edit'
     | '/admin/labs/$id/sprints'
     | '/collaboration/sprint/$id/workspace'
@@ -736,6 +746,7 @@ export interface FileRouteTypes {
     | '/admin/hackathons'
     | '/admin/labs'
     | '/recruiter/evaluations'
+    | '/admin/labs/$id/attempts'
     | '/admin/labs/$id/edit'
     | '/admin/labs/$id/sprints'
     | '/collaboration/sprint/$id/workspace'
@@ -804,6 +815,7 @@ export interface FileRouteTypes {
     | '/admin/hackathons/'
     | '/admin/labs/'
     | '/recruiter/evaluations/'
+    | '/admin/labs/$id/attempts'
     | '/admin/labs/$id/edit'
     | '/admin/labs/$id/sprints'
     | '/collaboration/sprint/$id/workspace'
@@ -1259,6 +1271,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AdminLabsIdEditRouteImport
       parentRoute: typeof AdminLabsRoute
     }
+    '/admin/labs/$id/attempts': {
+      id: '/admin/labs/$id/attempts'
+      path: '/$id/attempts'
+      fullPath: '/admin/labs/$id/attempts'
+      preLoaderRoute: typeof AdminLabsIdAttemptsRouteImport
+      parentRoute: typeof AdminLabsRoute
+    }
     '/recruiter/evaluations/$id/candidates/$candidateId': {
       id: '/recruiter/evaluations/$id/candidates/$candidateId'
       path: '/candidates/$candidateId'
@@ -1332,6 +1351,7 @@ const AdminLabsIdSprintsRouteWithChildren =
 interface AdminLabsRouteChildren {
   AdminLabsNewRoute: typeof AdminLabsNewRoute
   AdminLabsIndexRoute: typeof AdminLabsIndexRoute
+  AdminLabsIdAttemptsRoute: typeof AdminLabsIdAttemptsRoute
   AdminLabsIdEditRoute: typeof AdminLabsIdEditRoute
   AdminLabsIdSprintsRoute: typeof AdminLabsIdSprintsRouteWithChildren
 }
@@ -1339,6 +1359,7 @@ interface AdminLabsRouteChildren {
 const AdminLabsRouteChildren: AdminLabsRouteChildren = {
   AdminLabsNewRoute: AdminLabsNewRoute,
   AdminLabsIndexRoute: AdminLabsIndexRoute,
+  AdminLabsIdAttemptsRoute: AdminLabsIdAttemptsRoute,
   AdminLabsIdEditRoute: AdminLabsIdEditRoute,
   AdminLabsIdSprintsRoute: AdminLabsIdSprintsRouteWithChildren,
 }

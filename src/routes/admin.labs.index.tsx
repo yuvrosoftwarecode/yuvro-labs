@@ -1,6 +1,6 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { AdminShell, Badge, KpiCard } from "@/components/admin/AdminShell";
-import { Plus, FlaskConical, Trash2, Pencil, CheckCircle2 } from "lucide-react";
+import { Plus, FlaskConical, Trash2, Pencil, CheckCircle2, Eye } from "lucide-react";
 import { useEffect, useMemo, useState } from "react";
 import { loadLabs, deleteLab, LAB_TYPES, labTypeLabel, difficultyLabel, type AdminLab, type LabType } from "@/lib/adminLabs";
 
@@ -79,6 +79,7 @@ function LabsPage() {
                   </td>
                   <td className="px-4 py-2.5 text-xs">
                     <div className="flex items-center gap-3">
+                      <Link to="/admin/labs/$id/attempts" params={{ id: l.id }} className="text-foreground hover:underline inline-flex items-center gap-1"><Eye className="h-3 w-3" /> View</Link>
                       <Link to="/admin/labs/$id/edit" params={{ id: l.id }} className="text-primary hover:underline inline-flex items-center gap-1"><Pencil className="h-3 w-3" /> Edit</Link>
                       <button onClick={() => setConfirmId(l.id)} className="text-destructive hover:underline inline-flex items-center gap-1"><Trash2 className="h-3 w-3" /> Delete</button>
                     </div>
