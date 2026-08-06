@@ -1,4 +1,4 @@
-import { createFileRoute, useNavigate, Link, Outlet, useLocation } from "@tanstack/react-router";
+import { createFileRoute, useNavigate, Link, Outlet, useLocation, type SearchSchemaInput } from "@tanstack/react-router";
 import { useEffect, useMemo, useState } from "react";
 import { z } from "zod";
 import {
