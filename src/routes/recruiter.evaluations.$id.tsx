@@ -10,6 +10,7 @@ import {
   getEvaluation, saveEvaluation, evaluationTotals, LAB_LIBRARY, QUESTION_BANK, SUBSECTION_NAMES,
   newUid, Evaluation, Section, LabsSection, AssessmentSection, DiscussionSection, LabItem, QuestionItem,
 } from "@/lib/recruiter";
+import { VitarkaSection } from "@/components/recruiter/VitarkaSection";
 
 const search = z.object({ view: z.enum(["edit", "preview", "publish", "publish-done"]).default("edit").catch("edit") });
 
@@ -96,6 +97,8 @@ function EvaluationWorkspace() {
                   if (to < 0 || to >= x.sections.length) return;
                   const [it] = x.sections.splice(idx, 1); x.sections.splice(to, 0, it);
                 })}
+                evaluation={ev}
+                onPublishSection={() => saveEvaluation(ev)}
                 onAddLab={() => setLabDrawerFor(s.id)}
                 onAddSubsection={() => setAddSubFor(s.id)}
                 onAddQuestions={(subId) => setQDrawerFor({ sectionId: s.id, subId })}
@@ -171,8 +174,10 @@ function EvaluationWorkspace() {
 
 // ---------------- Section block ----------------
 
-function SectionBlock({ section, index, total, onChange, onDelete, onDuplicate, onMove, onAddLab, onAddSubsection, onAddQuestions }: {
+function SectionBlock({ section, index, total, evaluation, onPublishSection, onChange, onDelete, onDuplicate, onMove, onAddLab, onAddSubsection, onAddQuestions }: {
   section: Section; index: number; total: number;
+  evaluation: Evaluation;
+  onPublishSection: () => void;
   onChange: (s: Section) => void;
   onDelete: () => void; onDuplicate: () => void;
   onMove: (dir: "up" | "down") => void;
@@ -209,7 +214,9 @@ function SectionBlock({ section, index, total, onChange, onDelete, onDuplicate, 
         <div className="p-4">
           {section.kind === "labs" && <LabsSectionBody section={section} onChange={onChange} onAddLab={onAddLab} />}
           {section.kind === "assessment" && <AssessmentSectionBody section={section} onChange={onChange} onAddSubsection={onAddSubsection} onAddQuestions={onAddQuestions} />}
-          {section.kind === "discussion" && <DiscussionSectionBody section={section} onChange={onChange} />}
+          {section.kind === "discussion" && (
+            <VitarkaSection section={section} evaluation={evaluation} onChange={onChange} onPublish={onPublishSection} />
+          )}
         </div>
       )}
     </div>

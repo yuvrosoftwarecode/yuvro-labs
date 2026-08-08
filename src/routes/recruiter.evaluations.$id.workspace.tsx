@@ -156,7 +156,7 @@ function Workspace() {
     const c = duplicateEvaluation(ev.id);
     if (c) {
       notify("Evaluation duplicated");
-      nav({ to: "/recruiter/evaluations/$id/workspace", params: { id: c.id } });
+      nav({ to: "/recruiter/evaluations/$id/workspace", params: { id: c.id }, search: { tab: "overview" } });
     }
   };
   const onArchive = () => {
@@ -348,7 +348,7 @@ function OverviewTab({
 }: {
   ev: Evaluation;
   candidates: Candidate[];
-  onGoto: (t: "candidates" | "overview" | "insights" | "reports" | "settings") => void;
+  onGoto: (t: "overview" | "candidates" | "followups" | "records" | "intelligence" | "attention" | "settings") => void;
   notify: (m: string) => void;
 }) {
   const stats = useMemo(() => {
@@ -2518,7 +2518,7 @@ function AttentionTab({
 }: {
   evId: string;
   candidates: Candidate[];
-  onGoto: (t: "overview" | "candidates" | "intelligence" | "attention" | "settings") => void;
+  onGoto: (t: "overview" | "candidates" | "followups" | "records" | "intelligence" | "attention" | "settings") => void;
 }) {
   const nav = useNavigate();
   const [viewed, setViewed] = useState<Set<string>>(new Set());
