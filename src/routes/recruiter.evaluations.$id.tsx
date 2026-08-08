@@ -10,6 +10,7 @@ import {
   getEvaluation, saveEvaluation, evaluationTotals, LAB_LIBRARY, QUESTION_BANK, SUBSECTION_NAMES,
   newUid, Evaluation, Section, LabsSection, AssessmentSection, DiscussionSection, LabItem, QuestionItem,
 } from "@/lib/recruiter";
+import { VitarkaSection } from "@/components/recruiter/VitarkaSection";
 
 const search = z.object({ view: z.enum(["edit", "preview", "publish", "publish-done"]).default("edit").catch("edit") });
 
