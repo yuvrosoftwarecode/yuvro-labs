@@ -49,15 +49,50 @@ export interface AssessmentSection {
   title: string;
   subsections: Subsection[];
 }
+export type VitarkaMode = "independent" | "combined";
+export type VitarkaDifficulty = "Easy" | "Medium" | "Hard" | "Adaptive";
+export type VitarkaSource =
+  | "Engineering Lab" | "Assessment" | "Coding" | "Candidate Decision" | "Job Description" | "Skill" | "Recruiter";
+
+export interface VitarkaQuestion {
+  id: string;
+  text: string;
+  skill: string;
+  focus: string;
+  minutes: number;
+  source: VitarkaSource;
+}
+
 export interface DiscussionSection {
   id: string;
   kind: "discussion";
   title: string;
   duration: number;
   mode: "Automatic" | "Custom" | "Hybrid";
-  questions: string[]; // custom questions
+  questions: string[]; // custom questions (Hybrid / Custom)
+  interviewMode?: VitarkaMode | null;
+  jd?: { kind: "file" | "text"; name?: string; text?: string } | null;
+  primarySkills?: string[];
+  secondarySkills?: string[];
+  focus?: string[];
+  difficulty?: VitarkaDifficulty;
+  generated?: VitarkaQuestion[];
+  followUps?: boolean;
+  published?: boolean;
 }
 export type Section = LabsSection | AssessmentSection | DiscussionSection;
+
+export const SKILL_LIBRARY = [
+  "Java", "Spring Boot", "REST APIs", "SQL", "PostgreSQL", "MongoDB", "Docker", "Kubernetes", "AWS",
+  "Kafka", "Redis", "Python", "Django", "Node", "React", "TypeScript", "System Design", "Microservices",
+  "Testing", "CI/CD", "Security", "Performance Tuning", "Data Structures", "Linux", "GraphQL",
+];
+
+export const INTERVIEW_FOCUS_OPTIONS = [
+  "Technical Knowledge", "Practical Engineering", "Problem Solving", "Debugging",
+  "System Design", "Architecture", "Communication", "Behavioural",
+];
+
 
 export interface Evaluation {
   id: string;
