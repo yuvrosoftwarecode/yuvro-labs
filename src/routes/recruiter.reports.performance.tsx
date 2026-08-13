@@ -38,7 +38,7 @@ function PerformanceReports() {
 
       <div className="grid gap-4 sm:grid-cols-3">
         <StatTile label="Avg ECI" value={avg(done.map(c => c.eci))} hint="Across submitted candidates" />
-        <StatTile label="Avg completion time" value={`${avg(done.map(c => c.timeMinutes))} min`} />
+        <StatTile label="Avg completion time" value={`${avg(done.map(c => c.completionMinutes))} min`} />
         <StatTile label="Top-band share" value={`${done.length ? Math.round((band(80, 101) / done.length) * 100) : 0}%`} hint="ECI 80+" />
       </div>
 

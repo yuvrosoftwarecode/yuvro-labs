@@ -32,9 +32,9 @@ function ReportsOverview() {
         <Panel title="Average scores" desc="Cohort-wide signal quality.">
           <div className="space-y-4">
             <Bar label="Engineering Capability Index" value={avg(completed.map(c => c.eci))} max={100} suffix="/100" />
-            <Bar label="Engineering Labs" value={avg(completed.map(c => c.labs))} max={100} suffix="/100" />
-            <Bar label="Knowledge Assessment" value={avg(completed.map(c => c.assessment))} max={100} suffix="/100" />
-            <Bar label="Vitarka" value={avg(completed.map(c => c.vitarka))} max={100} suffix="/100" />
+            <Bar label="Engineering Labs" value={avg(completed.map(c => c.labsScore))} max={100} suffix="/100" />
+            <Bar label="Knowledge Assessment" value={avg(completed.map(c => c.assessmentScore))} max={100} suffix="/100" />
+            <Bar label="Vitarka" value={avg(completed.map(c => c.vitarkaScore))} max={100} suffix="/100" />
           </div>
         </Panel>
 
@@ -47,7 +47,7 @@ function ReportsOverview() {
                 <span className="font-medium">{e.title}</span>,
                 <Pill tone={e.status === "published" ? "green" : "neutral"}>{e.status}</Pill>,
                 e.candidatesInvited,
-                `${e.candidatesCompleted} · ${t.duration ?? 0} min`,
+                `${e.candidatesCompleted} · ${t.minutes} min`,
               ];
             })}
           />

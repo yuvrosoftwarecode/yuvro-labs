@@ -37,7 +37,7 @@ function EvaluationReports() {
             `${r.invited ? Math.round((r.done / r.invited) * 100) : 0}%`,
             r.avgEci,
             r.shortlisted,
-            <Link to="/recruiter/evaluations/$id/workspace" params={{ id: r.e.id }} className="text-neutral-500 hover:text-neutral-900">Open</Link>,
+            <Link to="/recruiter/evaluations/$id/workspace" params={{ id: r.e.id }} search={{ tab: "overview" }} className="text-neutral-500 hover:text-neutral-900">Open</Link>,
           ])}
         />
       </Panel>

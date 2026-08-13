@@ -50,9 +50,9 @@ function CandidateReports() {
             <div><div className="font-medium">{c.name}</div><div className="text-[11px] text-neutral-500">{c.email}</div></div>,
             c.evalTitle,
             c.eci,
-            c.labs,
-            c.assessment,
-            c.vitarka,
+            c.labsScore,
+            c.assessmentScore,
+            c.vitarkaScore,
             <Pill tone={tone(c.hiringStatus)}>{c.hiringStatus}</Pill>,
           ])}
         />
