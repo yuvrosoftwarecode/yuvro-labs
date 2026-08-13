@@ -29,6 +29,7 @@ import { Route as EvaluationIndexRouteImport } from './routes/evaluation.index'
 import { Route as CollaborationIndexRouteImport } from './routes/collaboration.index'
 import { Route as AdminIndexRouteImport } from './routes/admin.index'
 import { Route as RecruiterSettingsRouteImport } from './routes/recruiter.settings'
+import { Route as RecruiterReportsRouteImport } from './routes/recruiter.reports'
 import { Route as LabSlugRouteImport } from './routes/lab.$slug'
 import { Route as HackathonsIdRouteImport } from './routes/hackathons.$id'
 import { Route as EvaluationWorkspaceRouteImport } from './routes/evaluation.workspace'
@@ -175,6 +176,11 @@ const AdminIndexRoute = AdminIndexRouteImport.update({
 const RecruiterSettingsRoute = RecruiterSettingsRouteImport.update({
   id: '/settings',
   path: '/settings',
+  getParentRoute: () => RecruiterRoute,
+} as any)
+const RecruiterReportsRoute = RecruiterReportsRouteImport.update({
+  id: '/reports',
+  path: '/reports',
   getParentRoute: () => RecruiterRoute,
 } as any)
 const LabSlugRoute = LabSlugRouteImport.update({
@@ -466,6 +472,7 @@ export interface FileRoutesByFullPath {
   '/evaluation/workspace': typeof EvaluationWorkspaceRoute
   '/hackathons/$id': typeof HackathonsIdRoute
   '/lab/$slug': typeof LabSlugRouteWithChildren
+  '/recruiter/reports': typeof RecruiterReportsRoute
   '/recruiter/settings': typeof RecruiterSettingsRoute
   '/admin/': typeof AdminIndexRoute
   '/collaboration/': typeof CollaborationIndexRoute
@@ -529,6 +536,7 @@ export interface FileRoutesByTo {
   '/evaluation/workspace': typeof EvaluationWorkspaceRoute
   '/hackathons/$id': typeof HackathonsIdRoute
   '/lab/$slug': typeof LabSlugRouteWithChildren
+  '/recruiter/reports': typeof RecruiterReportsRoute
   '/recruiter/settings': typeof RecruiterSettingsRoute
   '/admin': typeof AdminIndexRoute
   '/collaboration': typeof CollaborationIndexRoute
@@ -599,6 +607,7 @@ export interface FileRoutesById {
   '/evaluation/workspace': typeof EvaluationWorkspaceRoute
   '/hackathons/$id': typeof HackathonsIdRoute
   '/lab/$slug': typeof LabSlugRouteWithChildren
+  '/recruiter/reports': typeof RecruiterReportsRoute
   '/recruiter/settings': typeof RecruiterSettingsRoute
   '/admin/': typeof AdminIndexRoute
   '/collaboration/': typeof CollaborationIndexRoute
@@ -670,6 +679,7 @@ export interface FileRouteTypes {
     | '/evaluation/workspace'
     | '/hackathons/$id'
     | '/lab/$slug'
+    | '/recruiter/reports'
     | '/recruiter/settings'
     | '/admin/'
     | '/collaboration/'
@@ -733,6 +743,7 @@ export interface FileRouteTypes {
     | '/evaluation/workspace'
     | '/hackathons/$id'
     | '/lab/$slug'
+    | '/recruiter/reports'
     | '/recruiter/settings'
     | '/admin'
     | '/collaboration'
@@ -802,6 +813,7 @@ export interface FileRouteTypes {
     | '/evaluation/workspace'
     | '/hackathons/$id'
     | '/lab/$slug'
+    | '/recruiter/reports'
     | '/recruiter/settings'
     | '/admin/'
     | '/collaboration/'
@@ -989,6 +1001,13 @@ declare module '@tanstack/react-router' {
       path: '/settings'
       fullPath: '/recruiter/settings'
       preLoaderRoute: typeof RecruiterSettingsRouteImport
+      parentRoute: typeof RecruiterRoute
+    }
+    '/recruiter/reports': {
+      id: '/recruiter/reports'
+      path: '/reports'
+      fullPath: '/recruiter/reports'
+      preLoaderRoute: typeof RecruiterReportsRouteImport
       parentRoute: typeof RecruiterRoute
     }
     '/lab/$slug': {
@@ -1517,6 +1536,7 @@ const RecruiterEvaluationsIdRouteWithChildren =
   )
 
 interface RecruiterRouteChildren {
+  RecruiterReportsRoute: typeof RecruiterReportsRoute
   RecruiterSettingsRoute: typeof RecruiterSettingsRoute
   RecruiterIndexRoute: typeof RecruiterIndexRoute
   RecruiterEvaluationsIdRoute: typeof RecruiterEvaluationsIdRouteWithChildren
@@ -1524,6 +1544,7 @@ interface RecruiterRouteChildren {
 }
 
 const RecruiterRouteChildren: RecruiterRouteChildren = {
+  RecruiterReportsRoute: RecruiterReportsRoute,
   RecruiterSettingsRoute: RecruiterSettingsRoute,
   RecruiterIndexRoute: RecruiterIndexRoute,
   RecruiterEvaluationsIdRoute: RecruiterEvaluationsIdRouteWithChildren,
