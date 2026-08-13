@@ -1,5 +1,5 @@
 import { createFileRoute, Link, Outlet, useRouterState, useNavigate } from "@tanstack/react-router";
-import { LayoutDashboard, ClipboardList, Settings, LogOut, Sparkles, Sun, Moon } from "lucide-react";
+import { LayoutDashboard, ClipboardList, BarChart3, Settings, LogOut, Sparkles, Sun, Moon } from "lucide-react";
 import { useAuth } from "@/lib/auth";
 import { useTheme } from "@/hooks/use-theme";
 
@@ -16,6 +16,7 @@ function RecruiterLayout() {
   const items = [
     { to: "/recruiter", label: "Dashboard", icon: LayoutDashboard, exact: true },
     { to: "/recruiter/evaluations", label: "Evaluations", icon: ClipboardList },
+    { to: "/recruiter/reports", label: "Reports", icon: BarChart3 },
     { to: "/recruiter/settings", label: "Settings", icon: Settings },
   ];
   const isActive = (to: string, exact?: boolean) => exact ? pathname === to : pathname.startsWith(to);
