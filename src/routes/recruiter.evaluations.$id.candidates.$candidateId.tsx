@@ -1066,7 +1066,7 @@ function LabDrawer({ lab, onClose }: { lab: LabAttempt; onClose: () => void }) {
   return (
     <>
       <div className="fixed inset-0 z-40 bg-black/50" onClick={onClose} />
-      <aside className="fixed right-0 top-0 z-50 h-full w-full max-w-2xl overflow-y-auto border-l border-white/10 bg-neutral-950">
+      <aside className="fixed right-0 top-0 z-50 h-full w-full max-w-5xl overflow-y-auto border-l border-white/10 bg-neutral-950">
         <div className="sticky top-0 z-10 border-b border-white/5 bg-neutral-950/95 px-6 py-4 backdrop-blur">
           <div className="flex items-start justify-between gap-3">
             <div>
