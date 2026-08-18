@@ -96,9 +96,6 @@ function Header({ yearly, setYearly }: { yearly: boolean; setYearly: (v: boolean
                   style={active ? { background: INK } : undefined}
                 >
                   {label}
-                  {label === "Yearly" && !yearly && (
-                    <span className="ml-2 font-mono text-[10px] uppercase tracking-wide" style={{ color: AMBER }}>{YEARLY_DISCOUNT_LABEL}</span>
-                  )}
                 </button>
               );
             })}
@@ -110,40 +107,102 @@ function Header({ yearly, setYearly }: { yearly: boolean; setYearly: (v: boolean
   );
 }
 
-function PlanCards({ yearly }: { yearly: boolean }) {
+function FreeTrialCard() {
+  return (
+    <section className="mx-auto max-w-7xl px-6 pt-12">
+      <div className="rounded-xl border bg-white p-7 lg:p-8" style={{ borderColor: BORDER }}>
+        <div className="grid gap-8 lg:grid-cols-[0.9fr_1fr_1fr] lg:items-start">
+          <div>
+            <div className="font-mono text-[11px] font-semibold uppercase tracking-[0.12em] text-[#6B6B6B]">Free Trial</div>
+            <div className="mt-3 flex items-baseline gap-2">
+              <span className="text-[40px] font-bold leading-none tracking-[-0.03em]">{freeTrial.price}</span>
+              <span className="text-[14px] text-[#6B6B6B]">/ {freeTrial.duration}</span>
+            </div>
+            <p className="mt-4 text-[14px] leading-relaxed text-[#6B6B6B]">
+              The natural entry point. Try the full evaluation workflow before choosing a plan.
+            </p>
+            <Link
+              to="/auth"
+              search={{ tab: "signup" }}
+              onClick={() => selectPlan("trial", "monthly")}
+              className="mt-5 inline-flex items-center justify-center gap-1.5 rounded-md border bg-white px-4 py-2.5 text-sm font-medium transition hover:bg-[#F5F3EE]"
+              style={{ borderColor: BORDER }}
+            >
+              {freeTrial.cta} <ArrowRight className="h-3.5 w-3.5" />
+            </Link>
+          </div>
+          <div className="border-t pt-5 lg:border-l lg:border-t-0 lg:pl-8 lg:pt-0" style={{ borderColor: BORDER }}>
+            <div className="font-mono text-[11px] font-semibold uppercase tracking-[0.12em] text-[#6B6B6B]">Includes</div>
+            <ul className="mt-4 space-y-2.5 text-[14px]">
+              {freeTrial.includes.map((f) => (
+                <li key={f} className="flex gap-2.5">
+                  <Check className="mt-0.5 h-4 w-4 shrink-0" style={{ color: "#1A8F5C" }} />
+                  <span>{f}</span>
+                </li>
+              ))}
+            </ul>
+          </div>
+          <div className="border-t pt-5 lg:border-l lg:border-t-0 lg:pl-8 lg:pt-0" style={{ borderColor: BORDER }}>
+            <div className="font-mono text-[11px] font-semibold uppercase tracking-[0.12em] text-[#6B6B6B]">Access includes</div>
+            <ul className="mt-4 grid gap-2.5 sm:grid-cols-2 text-[14px]">
+              {freeTrial.access.map((f) => (
+                <li key={f} className="flex gap-2.5">
+                  <Check className="mt-0.5 h-4 w-4 shrink-0" style={{ color: "#1A8F5C" }} />
+                  <span>{f}</span>
+                </li>
+              ))}
+            </ul>
+          </div>
+        </div>
+      </div>
+    </section>
+  );
+}
+
+function PlanCards({ yearly, selected, setSelected }: { yearly: boolean; selected: string | null; setSelected: (id: string) => void }) {
+  const billing: "monthly" | "yearly" = yearly ? "yearly" : "monthly";
   return (
     <section className="mx-auto max-w-7xl px-6 py-14">
       <div className="grid gap-6 md:grid-cols-3">
         {plans.map((p) => {
           const price = yearly ? p.yearly : p.monthly;
+          const isSelected = selected === p.id;
           return (
             <div
               key={p.id}
-              className={`relative flex flex-col rounded-xl bg-white p-7 transition hover:-translate-y-0.5 ${p.popular ? "border-2 shadow-[0_2px_20px_rgba(10,10,10,0.06)]" : "border"}`}
-              style={{ borderColor: p.popular ? INK : BORDER }}
+              onClick={() => setSelected(p.id)}
+              className={`relative flex cursor-pointer flex-col rounded-xl bg-white p-7 transition hover:-translate-y-0.5 ${isSelected || p.popular ? "border-2" : "border"}`}
+              style={{ borderColor: isSelected ? INK : p.popular ? INK : BORDER }}
             >
               {p.popular && (
                 <span className="absolute -top-3 left-7 rounded-full px-3 py-1 font-mono text-[10px] font-semibold uppercase tracking-[0.08em] text-white" style={{ background: AMBER }}>
                   Most Popular
                 </span>
               )}
-              <div className="font-mono text-[11px] font-semibold uppercase tracking-[0.12em] text-[#6B6B6B]">{p.name}</div>
-              <div className="mt-4 flex items-baseline gap-1.5">
-                <span className="text-[48px] font-bold leading-none tracking-[-0.03em]">${price}</span>
-                <span className="text-[14px] text-[#6B6B6B]">/ month</span>
+              <div className="flex items-center justify-between">
+                <div className="font-mono text-[11px] font-semibold uppercase tracking-[0.12em] text-[#6B6B6B]">{p.name}</div>
+                {isSelected && (
+                  <span className="font-mono text-[10px] font-semibold uppercase tracking-[0.08em] text-[#6B6B6B]">Selected</span>
+                )}
               </div>
-              {yearly && <div className="mt-1.5 text-[12px] text-[#6B6B6B]">billed yearly · ${price * 12} / year</div>}
+              <div className="mt-4 flex items-baseline gap-1.5">
+                <span className="text-[48px] font-bold leading-none tracking-[-0.03em]">${price.toLocaleString()}</span>
+                <span className="text-[14px] text-[#6B6B6B]">{yearly ? "/ year" : "/ month"}</span>
+              </div>
+              <div className="mt-1.5 text-[12px] text-[#6B6B6B]">
+                {yearly ? `billed yearly · $${p.monthly}/month equivalent` : "billed monthly"}
+              </div>
               <p className="mt-4 text-[14px] leading-relaxed text-[#6B6B6B]">{p.tagline}</p>
 
               <Link
                 to="/auth"
                 search={{ tab: "signup" }}
+                onClick={() => { setSelected(p.id); selectPlan(p.id, billing); }}
                 className={`mt-6 inline-flex items-center justify-center gap-1.5 rounded-md px-4 py-2.5 text-sm font-medium transition ${p.popular ? "text-white hover:brightness-95" : "border text-[#0A0A0A] hover:bg-[#F5F3EE]"}`}
                 style={p.popular ? { background: INK } : { borderColor: BORDER, background: "#fff" }}
               >
                 {p.cta} <ArrowRight className="h-3.5 w-3.5" />
               </Link>
-              {p.note && <div className="mt-2 text-center text-[12px] text-[#6B6B6B]">{p.note}</div>}
 
               <ul className="mt-7 space-y-2.5 border-t pt-6 text-[14px]" style={{ borderColor: BORDER }}>
                 {p.features.map((f) => (
@@ -157,9 +216,14 @@ function PlanCards({ yearly }: { yearly: boolean }) {
           );
         })}
       </div>
+      <div className="mt-8 rounded-lg border bg-white px-5 py-4 text-[13px] leading-relaxed text-[#6B6B6B]" style={{ borderColor: BORDER }}>
+        <p>{rolloverNote}</p>
+        <p className="mt-1.5">{topUpNote}</p>
+      </div>
     </section>
   );
 }
+
 
 function EnterpriseCard() {
   return (
