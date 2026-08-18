@@ -357,7 +357,7 @@ function FinalCTA() {
             Talk to Sales
           </a>
         </div>
-        <p className="mt-5 font-mono text-[12px] text-white/50">No credit card required · Cancel anytime</p>
+        <p className="mt-5 font-mono text-[12px] text-white/50">15-day free trial · Cancel anytime</p>
       </div>
     </section>
   );
