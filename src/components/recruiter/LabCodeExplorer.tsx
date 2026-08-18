@@ -167,22 +167,11 @@ function Workspace({
             Explorer
           </div>
           <div className="min-h-0 flex-1 overflow-y-auto pb-2">
-            {list.map(f => (
-              <button
-                key={f.path}
-                onClick={() => setActive(f.path)}
-                className={`flex w-full items-center gap-1.5 px-3 py-1.5 text-left text-[11px] ${
-                  current?.path === f.path ? "bg-white/10 text-white" : "text-neutral-400 hover:bg-white/5"
-                }`}
-              >
-                <FileCode2 className="h-3 w-3 shrink-0 text-neutral-500" />
-                <span className="flex-1 truncate font-mono">{f.path}</span>
-                {kindBadge(f.kind)}
-              </button>
-            ))}
+            <FileTree files={list} active={current?.path ?? ""} onSelect={setActive} />
             {list.length === 0 && (
               <div className="px-3 py-6 text-center text-[11px] text-neutral-500">No files changed.</div>
             )}
+
           </div>
         </div>
 
