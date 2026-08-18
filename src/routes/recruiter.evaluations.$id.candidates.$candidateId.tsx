@@ -45,6 +45,8 @@ import {
 } from "lucide-react";
 import { getCandidates } from "@/lib/recruiterCandidates";
 import { getEvaluation } from "@/lib/recruiter";
+import { LabCodeExplorer } from "@/components/recruiter/LabCodeExplorer";
+
 import {
   getCandidateDetail,
   loadNotes,
@@ -1064,7 +1066,7 @@ function LabDrawer({ lab, onClose }: { lab: LabAttempt; onClose: () => void }) {
   return (
     <>
       <div className="fixed inset-0 z-40 bg-black/50" onClick={onClose} />
-      <aside className="fixed right-0 top-0 z-50 h-full w-full max-w-2xl overflow-y-auto border-l border-white/10 bg-neutral-950">
+      <aside className="fixed right-0 top-0 z-50 h-full w-full max-w-5xl overflow-y-auto border-l border-white/10 bg-neutral-950">
         <div className="sticky top-0 z-10 border-b border-white/5 bg-neutral-950/95 px-6 py-4 backdrop-blur">
           <div className="flex items-start justify-between gap-3">
             <div>
@@ -1115,21 +1117,10 @@ function LabDrawer({ lab, onClose }: { lab: LabAttempt; onClose: () => void }) {
             </ol>
           </Block>
 
-          <Block title="Files modified" icon={<FileText className="h-3.5 w-3.5" />}>
-            <div className="divide-y divide-white/5 overflow-hidden rounded-lg border border-white/10">
-              {lab.files.map((f, i) => (
-                <div key={i} className="flex items-center gap-2 bg-white/[0.02] px-3 py-2 text-[12px]">
-                  <span
-                    className={`inline-flex h-4 w-4 items-center justify-center rounded text-[9px] font-bold ${f.kind === "created" ? "bg-emerald-400/20 text-emerald-300" : f.kind === "deleted" ? "bg-red-400/20 text-red-300" : "bg-amber-400/20 text-amber-300"}`}
-                  >
-                    {f.kind[0].toUpperCase()}
-                  </span>
-                  <span className="flex-1 truncate font-mono text-neutral-300">{f.path}</span>
-                  <span className="text-[11px] text-neutral-500">+{f.changes}</span>
-                </div>
-              ))}
-            </div>
+          <Block title="Submitted code" icon={<FileText className="h-3.5 w-3.5" />}>
+            <LabCodeExplorer labId={lab.id} changedFiles={lab.files.map(f => ({ path: f.path, kind: f.kind }))} />
           </Block>
+
 
           <Block title="Git commits" icon={<GitCommit className="h-3.5 w-3.5" />}>
             <div className="space-y-2">
