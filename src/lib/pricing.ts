@@ -4,7 +4,7 @@ export type Plan = {
   id: string;
   name: string;
   monthly: number;
-  yearly: number; // per-month price when billed yearly
+  yearly: number; // total price when billed yearly
   tagline: string;
   features: string[];
   cta: string;
@@ -12,17 +12,37 @@ export type Plan = {
   popular?: boolean;
 };
 
-export const YEARLY_DISCOUNT_LABEL = "2 months free";
+export const freeTrial = {
+  id: "trial",
+  name: "Free Trial",
+  duration: "15 Days",
+  price: "$0",
+  includes: [
+    "20 Assessment Submissions",
+    "10 Engineering Lab Submissions",
+    "15 AI Interview Minutes",
+  ],
+  access: [
+    "Evaluation Builder",
+    "Engineering Labs",
+    "Knowledge Assessments",
+    "Vitarka AI",
+    "Candidate Results",
+    "Basic Reports",
+    "Follow-ups",
+  ],
+  cta: "Start Free Trial",
+};
 
 export const plans: Plan[] = [
   {
-    id: "startup",
-    name: "Startup",
-    monthly: 49,
-    yearly: 41,
+    id: "starter",
+    name: "Starter",
+    monthly: 50,
+    yearly: 600,
     tagline: "For startups making their first engineering hires.",
     features: [
-      "Unlimited assessment creation",
+      "Unlimited evaluation creation",
       "50 candidate attempts / month",
       "10 Engineering Simulation runs",
       "150 AI Interview minutes",
@@ -30,20 +50,19 @@ export const plans: Plan[] = [
       "Coding assessments",
       "Candidate engineering reports",
       "Basic proctoring",
-      "Cancel anytime",
+      "Follow-ups",
     ],
     cta: "Start Free Trial",
-    note: "No credit card required",
   },
   {
     id: "growth",
     name: "Growth",
-    monthly: 149,
-    yearly: 124,
+    monthly: 150,
+    yearly: 1800,
     tagline: "For growing teams hiring engineers regularly.",
     popular: true,
     features: [
-      "Unlimited assessment creation",
+      "Unlimited evaluation creation",
       "150 candidate attempts / month",
       "40 Engineering Simulation runs",
       "600 AI Interview minutes",
@@ -52,19 +71,19 @@ export const plans: Plan[] = [
       "Advanced candidate reports",
       "Advanced proctoring",
       "Custom assessments",
+      "Follow-ups",
       "Priority support",
     ],
     cta: "Start Free Trial",
-    note: "No credit card required",
   },
   {
     id: "scale",
     name: "Scale",
-    monthly: 399,
-    yearly: 332,
+    monthly: 499,
+    yearly: 5988,
     tagline: "For companies running engineering hiring at scale.",
     features: [
-      "Unlimited assessment creation",
+      "Unlimited evaluation creation",
       "500 candidate attempts / month",
       "100 Engineering Simulation runs",
       "1,500 AI Interview minutes",
@@ -73,34 +92,20 @@ export const plans: Plan[] = [
       "Advanced engineering reports",
       "Advanced proctoring",
       "Custom assessments",
+      "Follow-ups",
       "Team management",
       "API / ATS integration",
       "Priority support",
     ],
     cta: "Start Free Trial",
-    note: "No credit card required",
   },
 ];
 
-export const enterprise = {
-  heading: "Need more? Let's build a plan around your hiring volume.",
-  body:
-    "For larger hiring teams that need higher candidate volumes, custom simulation capacity, additional AI interview minutes, integrations, security controls, and dedicated support.",
-  price: "Custom Pricing",
-  cta: "Talk to Sales",
-  features: [
-    "Custom candidate volume",
-    "Custom Engineering Simulation volume",
-    "Custom AI Interview minutes",
-    "Custom recruiter access",
-    "ATS integrations",
-    "API access",
-    "SSO",
-    "Advanced analytics",
-    "Custom engineering simulations",
-    "Dedicated support",
-  ],
-};
+export const rolloverNote =
+  "Unused credits roll over up to 25% into your next billing cycle.";
+export const topUpNote =
+  "Need more usage? Additional credits are available as top-ups.";
+
 
 export const topUps = [
   {
