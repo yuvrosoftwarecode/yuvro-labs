@@ -1,0 +1,222 @@
+import { useMemo, useState } from "react";
+import { Columns2, FileCode2, FileDiff, Files, Rows3 } from "lucide-react";
+import { getLabRepo, type RepoDiffLine, type RepoFile } from "@/lib/labRepo";
+
+const rowBg = (t: RepoDiffLine["type"]) =>
+  t === "add" ? "bg-emerald-400/10" : t === "del" ? "bg-red-400/10" : "";
+const sign = (t: RepoDiffLine["type"]) => (t === "add" ? "+" : t === "del" ? "-" : " ");
+const signColor = (t: RepoDiffLine["type"]) =>
+  t === "add" ? "text-emerald-300" : t === "del" ? "text-red-300" : "text-neutral-600";
+
+function kindBadge(kind?: RepoFile["kind"]) {
+  if (!kind) return null;
+  const tone =
+    kind === "created"
+      ? "bg-emerald-400/15 text-emerald-300"
+      : kind === "deleted"
+        ? "bg-red-400/15 text-red-300"
+        : "bg-amber-400/15 text-amber-300";
+  return (
+    <span className={`rounded px-1 text-[9px] font-bold uppercase ${tone}`}>{kind[0]}</span>
+  );
+}
+
+function FileTree({
+  files,
+  activePath,
+  onSelect,
+}: {
+  files: RepoFile[];
+  activePath: string;
+  onSelect: (p: string) => void;
+}) {
+  return (
+    <div className="max-h-[420px] w-56 shrink-0 overflow-y-auto border-r border-white/10 bg-white/[0.02]">
+      {files.map(f => (
+        <button
+          key={f.path}
+          onClick={() => onSelect(f.path)}
+          className={`flex w-full items-center gap-1.5 px-2.5 py-1.5 text-left text-[11px] ${
+            activePath === f.path ? "bg-white/10 text-white" : "text-neutral-400 hover:bg-white/5"
+          }`}
+        >
+          <FileCode2 className="h-3 w-3 shrink-0 text-neutral-500" />
+          <span className="flex-1 truncate font-mono">{f.path}</span>
+          {kindBadge(f.kind)}
+        </button>
+      ))}
+    </div>
+  );
+}
+
+function CodeView({ file }: { file: RepoFile }) {
+  return (
+    <div className="min-w-0 flex-1 overflow-auto">
+      <div className="flex items-center gap-2 border-b border-white/10 px-3 py-1.5 text-[11px]">
+        <span className="font-mono text-neutral-300">{file.path}</span>
+        {file.changed ? (
+          <span className="ml-auto text-[10px]">
+            <span className="text-emerald-300">+{file.additions}</span>{" "}
+            <span className="text-red-300">−{file.deletions}</span>
+          </span>
+        ) : (
+          <span className="ml-auto text-[10px] text-neutral-500">unchanged</span>
+        )}
+      </div>
+      <div className="max-h-[380px] overflow-auto font-mono text-[11.5px] leading-5">
+        {file.content.map((line, i) => (
+          <div key={i} className="flex">
+            <span className="w-10 shrink-0 select-none px-2 text-right text-neutral-600">{i + 1}</span>
+            <span className="whitespace-pre-wrap break-all pr-3 text-neutral-300">{line}</span>
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+}
+
+function Unified({ file }: { file: RepoFile }) {
+  return (
+    <div className="font-mono text-[11.5px] leading-5">
+      {file.diff.map((l, i) => (
+        <div key={i} className={`flex ${rowBg(l.type)}`}>
+          <span className="w-9 shrink-0 select-none px-2 text-right text-neutral-600">{l.oldNo ?? ""}</span>
+          <span className="w-9 shrink-0 select-none px-2 text-right text-neutral-600">{l.newNo ?? ""}</span>
+          <span className={`w-4 shrink-0 select-none ${signColor(l.type)}`}>{sign(l.type)}</span>
+          <span className="whitespace-pre-wrap break-all pr-3 text-neutral-300">{l.text}</span>
+        </div>
+      ))}
+    </div>
+  );
+}
+
+function Split({ file }: { file: RepoFile }) {
+  const rows: { left?: RepoDiffLine; right?: RepoDiffLine }[] = [];
+  const q: RepoDiffLine[] = [];
+  const flush = () => {
+    const dels = q.filter(l => l.type === "del");
+    const adds = q.filter(l => l.type === "add");
+    for (let i = 0; i < Math.max(dels.length, adds.length); i++) rows.push({ left: dels[i], right: adds[i] });
+    q.length = 0;
+  };
+  for (const l of file.diff) {
+    if (l.type === "ctx") {
+      flush();
+      rows.push({ left: l, right: l });
+    } else q.push(l);
+  }
+  flush();
+
+  const Cell = ({ l, side }: { l?: RepoDiffLine; side: "left" | "right" }) => (
+    <div className={`flex min-w-0 flex-1 ${l ? rowBg(l.type) : "bg-white/[0.02]"}`}>
+      <span className="w-9 shrink-0 select-none px-2 text-right text-neutral-600">
+        {(side === "left" ? l?.oldNo : l?.newNo) ?? ""}
+      </span>
+      <span className={`w-4 shrink-0 select-none ${l ? signColor(l.type) : ""}`}>{l ? sign(l.type) : ""}</span>
+      <span className="whitespace-pre-wrap break-all pr-3 text-neutral-300">{l?.text ?? ""}</span>
+    </div>
+  );
+
+  return (
+    <div className="font-mono text-[11.5px] leading-5">
+      {rows.map((r, i) => (
+        <div key={i} className="flex divide-x divide-white/10">
+          <Cell l={r.left} side="left" />
+          <Cell l={r.right} side="right" />
+        </div>
+      ))}
+    </div>
+  );
+}
+
+export function LabCodeExplorer({
+  labId,
+  changedFiles,
+}: {
+  labId: string;
+  changedFiles: { path: string; kind: "modified" | "created" | "deleted" }[];
+}) {
+  const files = useMemo(() => getLabRepo(labId, changedFiles), [labId, changedFiles]);
+  const changed = files.filter(f => f.changed);
+  const [view, setView] = useState<"files" | "diff">("files");
+  const [mode, setMode] = useState<"unified" | "split">("unified");
+  const [active, setActive] = useState(changed[0]?.path ?? files[0]?.path ?? "");
+  const activeFile = files.find(f => f.path === active) ?? files[0];
+
+  const adds = changed.reduce((a, f) => a + f.additions, 0);
+  const dels = changed.reduce((a, f) => a + f.deletions, 0);
+
+  return (
+    <div className="rounded-xl border border-white/10 bg-white/[0.02]">
+      <div className="flex flex-wrap items-center gap-2 border-b border-white/10 px-3 py-2">
+        <div className="inline-flex overflow-hidden rounded-md border border-white/10 text-[11px]">
+          <button
+            onClick={() => setView("files")}
+            className={`inline-flex items-center gap-1 px-2.5 py-1 ${view === "files" ? "bg-white text-neutral-900" : "text-neutral-400 hover:bg-white/5"}`}
+          >
+            <Files className="h-3 w-3" /> File view
+          </button>
+          <button
+            onClick={() => setView("diff")}
+            className={`inline-flex items-center gap-1 border-l border-white/10 px-2.5 py-1 ${view === "diff" ? "bg-white text-neutral-900" : "text-neutral-400 hover:bg-white/5"}`}
+          >
+            <FileDiff className="h-3 w-3" /> Diff view
+          </button>
+        </div>
+
+        <span className="text-[11px] text-neutral-500">
+          {view === "files"
+            ? `${files.length} files · ${changed.length} changed`
+            : `${changed.length} changed files`}
+          <span className="ml-2 text-emerald-300">+{adds}</span>
+          <span className="ml-1 text-red-300">−{dels}</span>
+        </span>
+
+        {view === "diff" && (
+          <div className="ml-auto inline-flex overflow-hidden rounded-md border border-white/10 text-[11px]">
+            <button
+              onClick={() => setMode("unified")}
+              className={`inline-flex items-center gap-1 px-2.5 py-1 ${mode === "unified" ? "bg-white text-neutral-900" : "text-neutral-400 hover:bg-white/5"}`}
+            >
+              <Rows3 className="h-3 w-3" /> Unified
+            </button>
+            <button
+              onClick={() => setMode("split")}
+              className={`inline-flex items-center gap-1 border-l border-white/10 px-2.5 py-1 ${mode === "split" ? "bg-white text-neutral-900" : "text-neutral-400 hover:bg-white/5"}`}
+            >
+              <Columns2 className="h-3 w-3" /> Split
+            </button>
+          </div>
+        )}
+      </div>
+
+      {view === "files" ? (
+        <div className="flex">
+          <FileTree files={files} activePath={activeFile?.path ?? ""} onSelect={setActive} />
+          {activeFile && <CodeView file={activeFile} />}
+        </div>
+      ) : (
+        <div className="max-h-[460px] space-y-3 overflow-auto p-3">
+          {changed.map(f => (
+            <div key={f.path} className="overflow-hidden rounded-lg border border-white/10 bg-black/30">
+              <div className="flex items-center gap-2 border-b border-white/10 bg-white/[0.03] px-3 py-1.5 text-[11px]">
+                <span className="font-mono text-neutral-300">{f.path}</span>
+                {kindBadge(f.kind)}
+                <span className="ml-auto text-[10px]">
+                  <span className="text-emerald-300">+{f.additions}</span>{" "}
+                  <span className="text-red-300">−{f.deletions}</span>
+                </span>
+              </div>
+              <div className="overflow-x-auto">
+                {mode === "unified" ? <Unified file={f} /> : <Split file={f} />}
+              </div>
+            </div>
+          ))}
+          {changed.length === 0 && (
+            <div className="py-8 text-center text-[12px] text-neutral-500">No files changed.</div>
+          )}
+        </div>
+      )}
+    </div>
+  );
+}
