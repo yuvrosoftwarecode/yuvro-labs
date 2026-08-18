@@ -1,15 +1,15 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useState } from "react";
 import { ArrowRight, Check, GitCommit, Minus, Plus } from "lucide-react";
-import { plans, enterprise, topUps, usageExplainers, faqs, YEARLY_DISCOUNT_LABEL } from "@/lib/pricing";
+import { plans, enterprise, topUps, usageExplainers, faqs, freeTrial, rolloverNote, topUpNote } from "@/lib/pricing";
 
 export const Route = createFileRoute("/pricing")({
   head: () => ({
     meta: [
       { title: "Pricing — Yuvro Labs Engineering Evaluation Plans" },
-      { name: "description", content: "Simple pricing for technical hiring teams. Coding assessments, Engineering Simulations and AI technical interviews from $49/month. Cancel anytime." },
+      { name: "description", content: "Simple pricing for technical hiring teams. Coding assessments, Engineering Simulations and AI technical interviews from $50/month. Start with a free 15-day trial." },
       { property: "og:title", content: "Pricing — Yuvro Labs Engineering Evaluation Plans" },
-      { property: "og:description", content: "Startup, Growth and Scale plans for engineering hiring. Usage top-ups available. No long-term contracts." },
+      { property: "og:description", content: "Starter, Growth and Scale plans for engineering hiring. Usage top-ups available. No long-term contracts." },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary_large_image" },
     ],
@@ -22,13 +22,21 @@ const INK = "#0A0A0A";
 const MUTED = "#6B6B6B";
 const BORDER = "#E8E6E1";
 
+export function selectPlan(planId: string, billing: "monthly" | "yearly") {
+  try {
+    localStorage.setItem("yuvro-selected-plan", JSON.stringify({ planId, billing }));
+  } catch { /* ignore */ }
+}
+
 function Pricing() {
-  const [yearly, setYearly] = useState(false);
+  const [yearly, setYearly] = useState(true);
+  const [selected, setSelected] = useState<string | null>("growth");
   return (
     <div className="min-h-screen text-[#0A0A0A] antialiased selection:bg-[#0A0A0A] selection:text-white" style={{ background: "#FAFAF8" }}>
       <PricingNav />
       <Header yearly={yearly} setYearly={setYearly} />
-      <PlanCards yearly={yearly} />
+      <FreeTrialCard />
+      <PlanCards yearly={yearly} selected={selected} setSelected={setSelected} />
       <EnterpriseCard />
       <TopUps />
       <UsageWorks />
@@ -38,6 +46,7 @@ function Pricing() {
     </div>
   );
 }
+
 
 function PricingNav() {
   return (
