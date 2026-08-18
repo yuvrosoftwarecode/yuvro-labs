@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useState } from "react";
-import { Columns2, FileCode2, FileDiff, Files, Maximize2, Minimize2, Rows3 } from "lucide-react";
+import { ChevronRight, Columns2, FileCode2, FileDiff, Files, Folder, FolderOpen, Maximize2, Minimize2, Rows3 } from "lucide-react";
 import { getLabRepo, type RepoDiffLine, type RepoFile } from "@/lib/labRepo";
 
 const rowBg = (t: RepoDiffLine["type"]) =>
