@@ -106,6 +106,28 @@ export const rolloverNote =
 export const topUpNote =
   "Need more usage? Additional credits are available as top-ups.";
 
+export const enterprise = {
+  heading: "Need more? Let's build a plan around your hiring volume.",
+  body:
+    "For larger hiring teams that need higher candidate volumes, custom simulation capacity, additional AI interview minutes, integrations, security controls, and dedicated support.",
+  price: "Custom Pricing",
+  cta: "Talk to Sales",
+  features: [
+    "Custom candidate volume",
+    "Custom Engineering Simulation volume",
+    "Custom AI Interview minutes",
+    "Custom recruiter access",
+    "ATS integrations",
+    "API access",
+    "SSO",
+    "Advanced analytics",
+    "Custom engineering simulations",
+    "Dedicated support",
+  ] as string[],
+};
+
+
+
 
 export const topUps = [
   {
@@ -157,8 +179,9 @@ export const faqs = [
   },
   {
     q: "Do unused monthly credits roll over?",
-    a: "Monthly included AI Interview minutes and Engineering Simulation runs reset each billing cycle.",
+    a: "Partially. Up to 25% of unused eligible monthly credits roll over into your next billing cycle. For example, if 150 candidate attempts are included and you use 100, 25% of the unused 50 carries forward.",
   },
+
   {
     q: "What happens if I run out of credits?",
     a: "You can purchase additional AI Interview minutes or Engineering Simulation runs without upgrading your subscription.",
