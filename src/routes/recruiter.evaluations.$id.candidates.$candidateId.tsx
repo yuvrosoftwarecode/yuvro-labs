@@ -45,6 +45,8 @@ import {
 } from "lucide-react";
 import { getCandidates } from "@/lib/recruiterCandidates";
 import { getEvaluation } from "@/lib/recruiter";
+import { LabCodeExplorer } from "@/components/recruiter/LabCodeExplorer";
+
 import {
   getCandidateDetail,
   loadNotes,
