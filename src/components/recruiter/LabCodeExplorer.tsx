@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useState } from "react";
-import { Columns2, FileCode2, FileDiff, Files, Maximize2, Minimize2, Rows3 } from "lucide-react";
+import { ChevronRight, Columns2, FileCode2, FileDiff, Files, Folder, FolderOpen, Maximize2, Minimize2, Rows3 } from "lucide-react";
 import { getLabRepo, type RepoDiffLine, type RepoFile } from "@/lib/labRepo";
 
 const rowBg = (t: RepoDiffLine["type"]) =>
@@ -18,6 +18,136 @@ function kindBadge(kind?: RepoFile["kind"]) {
         : "bg-amber-400/15 text-amber-300";
   return (
     <span className={`rounded px-1 text-[9px] font-bold uppercase ${tone}`}>{kind[0]}</span>
+  );
+}
+
+type TreeNode = {
+  name: string;
+  path: string;
+  file?: RepoFile;
+  children: TreeNode[];
+};
+
+function buildTree(files: RepoFile[]): TreeNode[] {
+  const root: TreeNode = { name: "", path: "", children: [] };
+  for (const f of files) {
+    const parts = f.path.split("/");
+    let node = root;
+    parts.forEach((part, i) => {
+      const path = parts.slice(0, i + 1).join("/");
+      let next = node.children.find(c => c.name === part && (i === parts.length - 1 ? !!c.file : !c.file));
+      if (!next) {
+        next = { name: part, path, children: [] };
+        node.children.push(next);
+      }
+      if (i === parts.length - 1) next.file = f;
+      node = next;
+    });
+  }
+  const sort = (nodes: TreeNode[]) => {
+    nodes.sort((a, b) => {
+      const af = !!a.file, bf = !!b.file;
+      if (af !== bf) return af ? 1 : -1;
+      return a.name.localeCompare(b.name);
+    });
+    nodes.forEach(n => sort(n.children));
+  };
+  sort(root.children);
+  return root.children;
+}
+
+function TreeRow({
+  node,
+  depth,
+  active,
+  onSelect,
+  openDirs,
+  toggleDir,
+}: {
+  node: TreeNode;
+  depth: number;
+  active: string;
+  onSelect: (p: string) => void;
+  openDirs: Record<string, boolean>;
+  toggleDir: (p: string) => void;
+}) {
+  const pad = { paddingLeft: 8 + depth * 12 };
+
+  if (node.file) {
+    const isActive = active === node.file.path;
+    return (
+      <button
+        onClick={() => onSelect(node.file!.path)}
+        style={pad}
+        className={`flex w-full items-center gap-1.5 py-1 pr-2 text-left text-[11px] ${
+          isActive ? "bg-white/10 text-white" : "text-neutral-400 hover:bg-white/5"
+        }`}
+      >
+        <FileCode2 className="h-3 w-3 shrink-0 text-neutral-500" />
+        <span className="flex-1 truncate font-mono">{node.name}</span>
+        {kindBadge(node.file.kind)}
+      </button>
+    );
+  }
+
+  const open = openDirs[node.path] !== false;
+  return (
+    <>
+      <button
+        onClick={() => toggleDir(node.path)}
+        style={pad}
+        className="flex w-full items-center gap-1 py-1 pr-2 text-left text-[11px] text-neutral-300 hover:bg-white/5"
+      >
+        <ChevronRight className={`h-3 w-3 shrink-0 text-neutral-500 transition-transform ${open ? "rotate-90" : ""}`} />
+        {open ? (
+          <FolderOpen className="h-3 w-3 shrink-0 text-amber-300/80" />
+        ) : (
+          <Folder className="h-3 w-3 shrink-0 text-amber-300/80" />
+        )}
+        <span className="flex-1 truncate font-mono">{node.name}</span>
+      </button>
+      {open &&
+        node.children.map(c => (
+          <TreeRow
+            key={c.path + (c.file ? "#f" : "#d")}
+            node={c}
+            depth={depth + 1}
+            active={active}
+            onSelect={onSelect}
+            openDirs={openDirs}
+            toggleDir={toggleDir}
+          />
+        ))}
+    </>
+  );
+}
+
+function FileTree({
+  files,
+  active,
+  onSelect,
+}: {
+  files: RepoFile[];
+  active: string;
+  onSelect: (p: string) => void;
+}) {
+  const tree = useMemo(() => buildTree(files), [files]);
+  const [openDirs, setOpenDirs] = useState<Record<string, boolean>>({});
+  const toggleDir = (p: string) => setOpenDirs(s => ({ ...s, [p]: s[p] === false }));
+  return (
+    <div>
+      {tree.map(n => (
+        <TreeRow
+          key={n.path + (n.file ? "#f" : "#d")}
+          node={n}
+          depth={0}
+          active={active}
+          onSelect={onSelect}
+          openDirs={openDirs}
+          toggleDir={toggleDir}
+        />
+      ))}
+    </div>
   );
 }
 
@@ -167,22 +297,11 @@ function Workspace({
             Explorer
           </div>
           <div className="min-h-0 flex-1 overflow-y-auto pb-2">
-            {list.map(f => (
-              <button
-                key={f.path}
-                onClick={() => setActive(f.path)}
-                className={`flex w-full items-center gap-1.5 px-3 py-1.5 text-left text-[11px] ${
-                  current?.path === f.path ? "bg-white/10 text-white" : "text-neutral-400 hover:bg-white/5"
-                }`}
-              >
-                <FileCode2 className="h-3 w-3 shrink-0 text-neutral-500" />
-                <span className="flex-1 truncate font-mono">{f.path}</span>
-                {kindBadge(f.kind)}
-              </button>
-            ))}
+            <FileTree files={list} active={current?.path ?? ""} onSelect={setActive} />
             {list.length === 0 && (
               <div className="px-3 py-6 text-center text-[11px] text-neutral-500">No files changed.</div>
             )}
+
           </div>
         </div>
 
