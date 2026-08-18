@@ -21,59 +21,6 @@ function kindBadge(kind?: RepoFile["kind"]) {
   );
 }
 
-function FileTree({
-  files,
-  activePath,
-  onSelect,
-}: {
-  files: RepoFile[];
-  activePath: string;
-  onSelect: (p: string) => void;
-}) {
-  return (
-    <div className="max-h-[420px] w-56 shrink-0 overflow-y-auto border-r border-white/10 bg-white/[0.02]">
-      {files.map(f => (
-        <button
-          key={f.path}
-          onClick={() => onSelect(f.path)}
-          className={`flex w-full items-center gap-1.5 px-2.5 py-1.5 text-left text-[11px] ${
-            activePath === f.path ? "bg-white/10 text-white" : "text-neutral-400 hover:bg-white/5"
-          }`}
-        >
-          <FileCode2 className="h-3 w-3 shrink-0 text-neutral-500" />
-          <span className="flex-1 truncate font-mono">{f.path}</span>
-          {kindBadge(f.kind)}
-        </button>
-      ))}
-    </div>
-  );
-}
-
-function CodeView({ file }: { file: RepoFile }) {
-  return (
-    <div className="min-w-0 flex-1 overflow-auto">
-      <div className="flex items-center gap-2 border-b border-white/10 px-3 py-1.5 text-[11px]">
-        <span className="font-mono text-neutral-300">{file.path}</span>
-        {file.changed ? (
-          <span className="ml-auto text-[10px]">
-            <span className="text-emerald-300">+{file.additions}</span>{" "}
-            <span className="text-red-300">−{file.deletions}</span>
-          </span>
-        ) : (
-          <span className="ml-auto text-[10px] text-neutral-500">unchanged</span>
-        )}
-      </div>
-      <div className="max-h-[380px] overflow-auto font-mono text-[11.5px] leading-5">
-        {file.content.map((line, i) => (
-          <div key={i} className="flex">
-            <span className="w-10 shrink-0 select-none px-2 text-right text-neutral-600">{i + 1}</span>
-            <span className="whitespace-pre-wrap break-all pr-3 text-neutral-300">{line}</span>
-          </div>
-        ))}
-      </div>
-    </div>
-  );
-}
 
 function Unified({ file }: { file: RepoFile }) {
   return (
