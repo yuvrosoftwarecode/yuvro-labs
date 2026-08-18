@@ -129,45 +129,54 @@ function Split({ file }: { file: RepoFile }) {
   );
 }
 
-export function LabCodeExplorer({
-  labId,
-  changedFiles,
+function Workspace({
+  files,
+  fullscreen,
+  onToggleFullscreen,
 }: {
-  labId: string;
-  changedFiles: { path: string; kind: "modified" | "created" | "deleted" }[];
+  files: RepoFile[];
+  fullscreen: boolean;
+  onToggleFullscreen: () => void;
 }) {
-  const files = useMemo(() => getLabRepo(labId, changedFiles), [labId, changedFiles]);
   const changed = files.filter(f => f.changed);
   const [view, setView] = useState<"files" | "diff">("files");
   const [mode, setMode] = useState<"unified" | "split">("unified");
-  const [active, setActive] = useState(changed[0]?.path ?? files[0]?.path ?? "");
-  const activeFile = files.find(f => f.path === active) ?? files[0];
+  const list = view === "files" ? files : changed;
+  const [active, setActive] = useState(files[0]?.path ?? "");
+  const current = list.find(f => f.path === active) ?? list[0];
 
   const adds = changed.reduce((a, f) => a + f.additions, 0);
   const dels = changed.reduce((a, f) => a + f.deletions, 0);
 
-  return (
-    <div className="rounded-xl border border-white/10 bg-white/[0.02]">
-      <div className="flex flex-wrap items-center gap-2 border-b border-white/10 px-3 py-2">
-        <div className="inline-flex overflow-hidden rounded-md border border-white/10 text-[11px]">
-          <button
-            onClick={() => setView("files")}
-            className={`inline-flex items-center gap-1 px-2.5 py-1 ${view === "files" ? "bg-white text-neutral-900" : "text-neutral-400 hover:bg-white/5"}`}
-          >
-            <Files className="h-3 w-3" /> File view
-          </button>
-          <button
-            onClick={() => setView("diff")}
-            className={`inline-flex items-center gap-1 border-l border-white/10 px-2.5 py-1 ${view === "diff" ? "bg-white text-neutral-900" : "text-neutral-400 hover:bg-white/5"}`}
-          >
-            <FileDiff className="h-3 w-3" /> Diff view
-          </button>
-        </div>
+  const NavBtn = ({
+    id,
+    icon: Icon,
+    label,
+  }: { id: "files" | "diff"; icon: typeof Files; label: string }) => (
+    <button
+      onClick={() => setView(id)}
+      title={label}
+      className={`flex h-10 w-10 items-center justify-center rounded-lg transition ${
+        view === id ? "bg-white/10 text-white" : "text-neutral-500 hover:bg-white/5 hover:text-neutral-300"
+      }`}
+    >
+      <Icon className="h-4 w-4" />
+    </button>
+  );
 
+  return (
+    <div
+      className={`flex flex-col overflow-hidden border border-white/10 bg-neutral-950 ${
+        fullscreen ? "h-full rounded-none" : "h-[560px] rounded-xl"
+      }`}
+    >
+      {/* Top bar */}
+      <div className="flex items-center gap-2 border-b border-white/10 px-3 py-2">
+        <span className="text-[11px] font-medium uppercase tracking-wider text-neutral-400">
+          {view === "files" ? "File view" : "Diff view"}
+        </span>
         <span className="text-[11px] text-neutral-500">
-          {view === "files"
-            ? `${files.length} files · ${changed.length} changed`
-            : `${changed.length} changed files`}
+          {view === "files" ? `${files.length} files · ${changed.length} changed` : `${changed.length} changed files`}
           <span className="ml-2 text-emerald-300">+{adds}</span>
           <span className="ml-1 text-red-300">−{dels}</span>
         </span>
@@ -188,35 +197,114 @@ export function LabCodeExplorer({
             </button>
           </div>
         )}
+
+        <button
+          onClick={onToggleFullscreen}
+          className={`inline-flex items-center gap-1.5 rounded-md border border-white/10 px-2.5 py-1 text-[11px] text-neutral-300 hover:bg-white/5 ${view === "diff" ? "" : "ml-auto"}`}
+        >
+          {fullscreen ? <Minimize2 className="h-3 w-3" /> : <Maximize2 className="h-3 w-3" />}
+          {fullscreen ? "Exit full screen" : "Full screen"}
+        </button>
       </div>
 
-      {view === "files" ? (
-        <div className="flex">
-          <FileTree files={files} activePath={activeFile?.path ?? ""} onSelect={setActive} />
-          {activeFile && <CodeView file={activeFile} />}
+      <div className="flex min-h-0 flex-1">
+        {/* Activity bar */}
+        <div className="flex w-12 shrink-0 flex-col items-center gap-1 border-r border-white/10 bg-white/[0.02] py-2">
+          <NavBtn id="files" icon={Files} label="File view" />
+          <NavBtn id="diff" icon={FileDiff} label="Diff view" />
         </div>
-      ) : (
-        <div className="max-h-[460px] space-y-3 overflow-auto p-3">
-          {changed.map(f => (
-            <div key={f.path} className="overflow-hidden rounded-lg border border-white/10 bg-black/30">
-              <div className="flex items-center gap-2 border-b border-white/10 bg-white/[0.03] px-3 py-1.5 text-[11px]">
-                <span className="font-mono text-neutral-300">{f.path}</span>
+
+        {/* Explorer */}
+        <div className="flex w-64 shrink-0 flex-col border-r border-white/10 bg-white/[0.02]">
+          <div className="px-3 py-2 text-[10px] font-semibold uppercase tracking-widest text-neutral-500">
+            Explorer
+          </div>
+          <div className="min-h-0 flex-1 overflow-y-auto pb-2">
+            {list.map(f => (
+              <button
+                key={f.path}
+                onClick={() => setActive(f.path)}
+                className={`flex w-full items-center gap-1.5 px-3 py-1.5 text-left text-[11px] ${
+                  current?.path === f.path ? "bg-white/10 text-white" : "text-neutral-400 hover:bg-white/5"
+                }`}
+              >
+                <FileCode2 className="h-3 w-3 shrink-0 text-neutral-500" />
+                <span className="flex-1 truncate font-mono">{f.path}</span>
                 {kindBadge(f.kind)}
-                <span className="ml-auto text-[10px]">
-                  <span className="text-emerald-300">+{f.additions}</span>{" "}
-                  <span className="text-red-300">−{f.deletions}</span>
-                </span>
-              </div>
-              <div className="overflow-x-auto">
-                {mode === "unified" ? <Unified file={f} /> : <Split file={f} />}
-              </div>
+              </button>
+            ))}
+            {list.length === 0 && (
+              <div className="px-3 py-6 text-center text-[11px] text-neutral-500">No files changed.</div>
+            )}
+          </div>
+        </div>
+
+        {/* Content */}
+        <div className="flex min-w-0 flex-1 flex-col">
+          {!current ? (
+            <div className="flex flex-1 items-center justify-center text-[12px] text-neutral-500">
+              Select a file to view its contents
             </div>
-          ))}
-          {changed.length === 0 && (
-            <div className="py-8 text-center text-[12px] text-neutral-500">No files changed.</div>
+          ) : (
+            <>
+              <div className="flex items-center gap-2 border-b border-white/10 px-3 py-1.5 text-[11px]">
+                <span className="font-mono text-neutral-300">{current.path}</span>
+                {kindBadge(current.kind)}
+                {current.changed ? (
+                  <span className="ml-auto text-[10px]">
+                    <span className="text-emerald-300">+{current.additions}</span>{" "}
+                    <span className="text-red-300">−{current.deletions}</span>
+                  </span>
+                ) : (
+                  <span className="ml-auto text-[10px] text-neutral-500">unchanged</span>
+                )}
+              </div>
+              <div className="min-h-0 flex-1 overflow-auto">
+                {view === "diff" ? (
+                  mode === "unified" ? <Unified file={current} /> : <Split file={current} />
+                ) : (
+                  <div className="font-mono text-[11.5px] leading-5">
+                    {current.content.map((line, i) => (
+                      <div key={i} className="flex">
+                        <span className="w-10 shrink-0 select-none px-2 text-right text-neutral-600">{i + 1}</span>
+                        <span className="whitespace-pre-wrap break-all pr-3 text-neutral-300">{line}</span>
+                      </div>
+                    ))}
+                  </div>
+                )}
+              </div>
+            </>
           )}
         </div>
-      )}
+      </div>
     </div>
   );
 }
+
+export function LabCodeExplorer({
+  labId,
+  changedFiles,
+}: {
+  labId: string;
+  changedFiles: { path: string; kind: "modified" | "created" | "deleted" }[];
+}) {
+  const files = useMemo(() => getLabRepo(labId, changedFiles), [labId, changedFiles]);
+  const [full, setFull] = useState(false);
+
+  useEffect(() => {
+    if (!full) return;
+    const onKey = (e: KeyboardEvent) => e.key === "Escape" && setFull(false);
+    window.addEventListener("keydown", onKey);
+    return () => window.removeEventListener("keydown", onKey);
+  }, [full]);
+
+  if (full) {
+    return (
+      <div className="fixed inset-0 z-[100] bg-neutral-950">
+        <Workspace key="full" files={files} fullscreen onToggleFullscreen={() => setFull(false)} />
+      </div>
+    );
+  }
+  return <Workspace key="inline" files={files} fullscreen={false} onToggleFullscreen={() => setFull(true)} />;
+}
+
