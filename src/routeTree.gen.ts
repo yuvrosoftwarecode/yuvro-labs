@@ -25,11 +25,13 @@ import { Route as AnalyticsRouteImport } from './routes/analytics'
 import { Route as AdminRouteImport } from './routes/admin'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as RecruiterIndexRouteImport } from './routes/recruiter.index'
+import { Route as ProductIndexRouteImport } from './routes/product.index'
 import { Route as EvaluationIndexRouteImport } from './routes/evaluation.index'
 import { Route as CollaborationIndexRouteImport } from './routes/collaboration.index'
 import { Route as AdminIndexRouteImport } from './routes/admin.index'
 import { Route as RecruiterSettingsRouteImport } from './routes/recruiter.settings'
 import { Route as RecruiterReportsRouteImport } from './routes/recruiter.reports'
+import { Route as ProductSlugRouteImport } from './routes/product.$slug'
 import { Route as LabSlugRouteImport } from './routes/lab.$slug'
 import { Route as HackathonsIdRouteImport } from './routes/hackathons.$id'
 import { Route as EvaluationWorkspaceRouteImport } from './routes/evaluation.workspace'
@@ -165,6 +167,11 @@ const RecruiterIndexRoute = RecruiterIndexRouteImport.update({
   path: '/',
   getParentRoute: () => RecruiterRoute,
 } as any)
+const ProductIndexRoute = ProductIndexRouteImport.update({
+  id: '/product/',
+  path: '/product/',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const EvaluationIndexRoute = EvaluationIndexRouteImport.update({
   id: '/',
   path: '/',
@@ -189,6 +196,11 @@ const RecruiterReportsRoute = RecruiterReportsRouteImport.update({
   id: '/reports',
   path: '/reports',
   getParentRoute: () => RecruiterRoute,
+} as any)
+const ProductSlugRoute = ProductSlugRouteImport.update({
+  id: '/product/$slug',
+  path: '/product/$slug',
+  getParentRoute: () => rootRouteImport,
 } as any)
 const LabSlugRoute = LabSlugRouteImport.update({
   id: '/lab/$slug',
@@ -518,11 +530,13 @@ export interface FileRoutesByFullPath {
   '/evaluation/workspace': typeof EvaluationWorkspaceRoute
   '/hackathons/$id': typeof HackathonsIdRoute
   '/lab/$slug': typeof LabSlugRouteWithChildren
+  '/product/$slug': typeof ProductSlugRoute
   '/recruiter/reports': typeof RecruiterReportsRouteWithChildren
   '/recruiter/settings': typeof RecruiterSettingsRoute
   '/admin/': typeof AdminIndexRoute
   '/collaboration/': typeof CollaborationIndexRoute
   '/evaluation/': typeof EvaluationIndexRoute
+  '/product/': typeof ProductIndexRoute
   '/recruiter/': typeof RecruiterIndexRoute
   '/admin/hackathons/$id': typeof AdminHackathonsIdRoute
   '/admin/labs/new': typeof AdminLabsNewRoute
@@ -589,10 +603,12 @@ export interface FileRoutesByTo {
   '/evaluation/workspace': typeof EvaluationWorkspaceRoute
   '/hackathons/$id': typeof HackathonsIdRoute
   '/lab/$slug': typeof LabSlugRouteWithChildren
+  '/product/$slug': typeof ProductSlugRoute
   '/recruiter/settings': typeof RecruiterSettingsRoute
   '/admin': typeof AdminIndexRoute
   '/collaboration': typeof CollaborationIndexRoute
   '/evaluation': typeof EvaluationIndexRoute
+  '/product': typeof ProductIndexRoute
   '/recruiter': typeof RecruiterIndexRoute
   '/admin/hackathons/$id': typeof AdminHackathonsIdRoute
   '/admin/labs/new': typeof AdminLabsNewRoute
@@ -666,11 +682,13 @@ export interface FileRoutesById {
   '/evaluation/workspace': typeof EvaluationWorkspaceRoute
   '/hackathons/$id': typeof HackathonsIdRoute
   '/lab/$slug': typeof LabSlugRouteWithChildren
+  '/product/$slug': typeof ProductSlugRoute
   '/recruiter/reports': typeof RecruiterReportsRouteWithChildren
   '/recruiter/settings': typeof RecruiterSettingsRoute
   '/admin/': typeof AdminIndexRoute
   '/collaboration/': typeof CollaborationIndexRoute
   '/evaluation/': typeof EvaluationIndexRoute
+  '/product/': typeof ProductIndexRoute
   '/recruiter/': typeof RecruiterIndexRoute
   '/admin/hackathons/$id': typeof AdminHackathonsIdRoute
   '/admin/labs/new': typeof AdminLabsNewRoute
@@ -745,11 +763,13 @@ export interface FileRouteTypes {
     | '/evaluation/workspace'
     | '/hackathons/$id'
     | '/lab/$slug'
+    | '/product/$slug'
     | '/recruiter/reports'
     | '/recruiter/settings'
     | '/admin/'
     | '/collaboration/'
     | '/evaluation/'
+    | '/product/'
     | '/recruiter/'
     | '/admin/hackathons/$id'
     | '/admin/labs/new'
@@ -816,10 +836,12 @@ export interface FileRouteTypes {
     | '/evaluation/workspace'
     | '/hackathons/$id'
     | '/lab/$slug'
+    | '/product/$slug'
     | '/recruiter/settings'
     | '/admin'
     | '/collaboration'
     | '/evaluation'
+    | '/product'
     | '/recruiter'
     | '/admin/hackathons/$id'
     | '/admin/labs/new'
@@ -892,11 +914,13 @@ export interface FileRouteTypes {
     | '/evaluation/workspace'
     | '/hackathons/$id'
     | '/lab/$slug'
+    | '/product/$slug'
     | '/recruiter/reports'
     | '/recruiter/settings'
     | '/admin/'
     | '/collaboration/'
     | '/evaluation/'
+    | '/product/'
     | '/recruiter/'
     | '/admin/hackathons/$id'
     | '/admin/labs/new'
@@ -945,6 +969,8 @@ export interface RootRouteChildren {
   RecruiterRoute: typeof RecruiterRouteWithChildren
   RecruiterLoginRoute: typeof RecruiterLoginRoute
   LabSlugRoute: typeof LabSlugRouteWithChildren
+  ProductSlugRoute: typeof ProductSlugRoute
+  ProductIndexRoute: typeof ProductIndexRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -1061,6 +1087,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof RecruiterIndexRouteImport
       parentRoute: typeof RecruiterRoute
     }
+    '/product/': {
+      id: '/product/'
+      path: '/product'
+      fullPath: '/product/'
+      preLoaderRoute: typeof ProductIndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/evaluation/': {
       id: '/evaluation/'
       path: '/'
@@ -1095,6 +1128,13 @@ declare module '@tanstack/react-router' {
       fullPath: '/recruiter/reports'
       preLoaderRoute: typeof RecruiterReportsRouteImport
       parentRoute: typeof RecruiterRoute
+    }
+    '/product/$slug': {
+      id: '/product/$slug'
+      path: '/product/$slug'
+      fullPath: '/product/$slug'
+      preLoaderRoute: typeof ProductSlugRouteImport
+      parentRoute: typeof rootRouteImport
     }
     '/lab/$slug': {
       id: '/lab/$slug'
@@ -1754,6 +1794,8 @@ const rootRouteChildren: RootRouteChildren = {
   RecruiterRoute: RecruiterRouteWithChildren,
   RecruiterLoginRoute: RecruiterLoginRoute,
   LabSlugRoute: LabSlugRouteWithChildren,
+  ProductSlugRoute: ProductSlugRoute,
+  ProductIndexRoute: ProductIndexRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
