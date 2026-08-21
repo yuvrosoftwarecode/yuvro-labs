@@ -109,34 +109,12 @@ function SectionGlyph() {
 }
 
 /* ================================================================
-   HEADER — LOCKED. Do not modify.
+   HEADER — shared site nav (Product mega-menu lives here)
    ================================================================ */
 function LandingNav() {
-  return (
-    <header className="sticky top-0 z-50 backdrop-blur-xl bg-white/80 border-b border-neutral-200">
-      <div className="mx-auto flex h-16 max-w-7xl items-center px-6">
-        <Link to="/" className="flex items-center gap-2 font-semibold tracking-tight">
-          <div className="grid h-8 w-8 place-items-center rounded-lg text-white font-mono text-sm" style={{ background: "#0A0A0A" }}>Y</div>
-          <span className="text-base">Yuvro Labs</span>
-        </Link>
-        <nav className="ml-10 hidden md:flex items-center gap-7 text-sm text-[#6B6B6B]">
-          <a href="#labs" className="hover:text-[#0A0A0A] transition">Labs</a>
-          <a href="#process" className="hover:text-[#0A0A0A] transition">How it works</a>
-          <a href="#report" className="hover:text-[#0A0A0A] transition">Report</a>
-          <Link to="/pricing" className="hover:text-[#0A0A0A] transition">Pricing</Link>
-          <Link to="/recruiter-login" className="hover:text-[#0A0A0A] transition">Recruiter Login</Link>
-        </nav>
-        <div className="ml-auto flex items-center gap-3">
-          <Link to="/auth" search={{ tab: "signin" }} className="text-sm text-[#6B6B6B] hover:text-[#0A0A0A] transition">Sign In</Link>
-          <Link to="/auth" search={{ tab: "signup" }} className="inline-flex items-center gap-1.5 rounded-md px-4 py-2 text-sm font-medium text-white transition hover:brightness-95" style={{ background: "#F5A623" }}>
-            Get Started <ArrowRight className="h-3.5 w-3.5" />
-          </Link>
-        </div>
-
-      </div>
-    </header>
-  );
+  return <SiteNav />;
 }
+
 
 /* ================================================================
    1 — HERO
