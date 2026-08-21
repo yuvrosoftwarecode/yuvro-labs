@@ -25,6 +25,7 @@ import { Route as AnalyticsRouteImport } from './routes/analytics'
 import { Route as AdminRouteImport } from './routes/admin'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as RecruiterIndexRouteImport } from './routes/recruiter.index'
+import { Route as ProductIndexRouteImport } from './routes/product.index'
 import { Route as EvaluationIndexRouteImport } from './routes/evaluation.index'
 import { Route as CollaborationIndexRouteImport } from './routes/collaboration.index'
 import { Route as AdminIndexRouteImport } from './routes/admin.index'
@@ -164,6 +165,11 @@ const RecruiterIndexRoute = RecruiterIndexRouteImport.update({
   id: '/',
   path: '/',
   getParentRoute: () => RecruiterRoute,
+} as any)
+const ProductIndexRoute = ProductIndexRouteImport.update({
+  id: '/product/',
+  path: '/product/',
+  getParentRoute: () => rootRouteImport,
 } as any)
 const EvaluationIndexRoute = EvaluationIndexRouteImport.update({
   id: '/',
@@ -523,6 +529,7 @@ export interface FileRoutesByFullPath {
   '/admin/': typeof AdminIndexRoute
   '/collaboration/': typeof CollaborationIndexRoute
   '/evaluation/': typeof EvaluationIndexRoute
+  '/product/': typeof ProductIndexRoute
   '/recruiter/': typeof RecruiterIndexRoute
   '/admin/hackathons/$id': typeof AdminHackathonsIdRoute
   '/admin/labs/new': typeof AdminLabsNewRoute
@@ -593,6 +600,7 @@ export interface FileRoutesByTo {
   '/admin': typeof AdminIndexRoute
   '/collaboration': typeof CollaborationIndexRoute
   '/evaluation': typeof EvaluationIndexRoute
+  '/product': typeof ProductIndexRoute
   '/recruiter': typeof RecruiterIndexRoute
   '/admin/hackathons/$id': typeof AdminHackathonsIdRoute
   '/admin/labs/new': typeof AdminLabsNewRoute
@@ -671,6 +679,7 @@ export interface FileRoutesById {
   '/admin/': typeof AdminIndexRoute
   '/collaboration/': typeof CollaborationIndexRoute
   '/evaluation/': typeof EvaluationIndexRoute
+  '/product/': typeof ProductIndexRoute
   '/recruiter/': typeof RecruiterIndexRoute
   '/admin/hackathons/$id': typeof AdminHackathonsIdRoute
   '/admin/labs/new': typeof AdminLabsNewRoute
@@ -750,6 +759,7 @@ export interface FileRouteTypes {
     | '/admin/'
     | '/collaboration/'
     | '/evaluation/'
+    | '/product/'
     | '/recruiter/'
     | '/admin/hackathons/$id'
     | '/admin/labs/new'
@@ -820,6 +830,7 @@ export interface FileRouteTypes {
     | '/admin'
     | '/collaboration'
     | '/evaluation'
+    | '/product'
     | '/recruiter'
     | '/admin/hackathons/$id'
     | '/admin/labs/new'
@@ -897,6 +908,7 @@ export interface FileRouteTypes {
     | '/admin/'
     | '/collaboration/'
     | '/evaluation/'
+    | '/product/'
     | '/recruiter/'
     | '/admin/hackathons/$id'
     | '/admin/labs/new'
@@ -945,6 +957,7 @@ export interface RootRouteChildren {
   RecruiterRoute: typeof RecruiterRouteWithChildren
   RecruiterLoginRoute: typeof RecruiterLoginRoute
   LabSlugRoute: typeof LabSlugRouteWithChildren
+  ProductIndexRoute: typeof ProductIndexRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -1060,6 +1073,13 @@ declare module '@tanstack/react-router' {
       fullPath: '/recruiter/'
       preLoaderRoute: typeof RecruiterIndexRouteImport
       parentRoute: typeof RecruiterRoute
+    }
+    '/product/': {
+      id: '/product/'
+      path: '/product'
+      fullPath: '/product/'
+      preLoaderRoute: typeof ProductIndexRouteImport
+      parentRoute: typeof rootRouteImport
     }
     '/evaluation/': {
       id: '/evaluation/'
@@ -1754,6 +1774,7 @@ const rootRouteChildren: RootRouteChildren = {
   RecruiterRoute: RecruiterRouteWithChildren,
   RecruiterLoginRoute: RecruiterLoginRoute,
   LabSlugRoute: LabSlugRouteWithChildren,
+  ProductIndexRoute: ProductIndexRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
