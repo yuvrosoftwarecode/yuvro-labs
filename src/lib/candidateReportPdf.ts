@@ -1,4 +1,5 @@
 import { jsPDF } from "jspdf";
+import type { EvaluationSummaryData } from "./evaluationSummary";
 
 export interface ReportInput {
   name: string;
@@ -18,6 +19,7 @@ export interface ReportInput {
   aiSummary: string;
   nextStep: string;
   evaluationTitle: string;
+  summary?: EvaluationSummaryData;
 }
 
 const AMBER: [number, number, number] = [245, 166, 35];
