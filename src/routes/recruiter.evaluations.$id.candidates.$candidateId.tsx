@@ -46,6 +46,8 @@ import {
 import { getCandidates } from "@/lib/recruiterCandidates";
 import { getEvaluation } from "@/lib/recruiter";
 import { LabCodeExplorer } from "@/components/recruiter/LabCodeExplorer";
+import { downloadCandidateReportPdf } from "@/lib/candidateReportPdf";
+
 
 import {
   getCandidateDetail,
