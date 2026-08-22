@@ -370,42 +370,9 @@ function OverviewPane({
         </div>
       </div>
 
-      {/* Executive summary */}
-      <div className="grid grid-cols-1 gap-6 md:grid-cols-3">
-        <MetaCard
-          icon={<UserIcon className="h-3.5 w-3.5" />}
-          label="Experience"
-          value={candidate.experience === 0 ? "Fresher" : `${candidate.experience} years`}
-        />
-        <MetaCard icon={<GraduationCap className="h-3.5 w-3.5" />} label="College" value={candidate.college} />
-        <MetaCard icon={<Briefcase className="h-3.5 w-3.5" />} label="Current company" value={candidate.company} />
-        <MetaCard icon={<MapPin className="h-3.5 w-3.5" />} label="Location" value={detail.location} />
-        <MetaCard
-          icon={<Clock className="h-3.5 w-3.5" />}
-          label="Completion time"
-          value={`${candidate.completionMinutes} minutes`}
-        />
-        <MetaCard
-          icon={<CalendarPlus className="h-3.5 w-3.5" />}
-          label="Submitted"
-          value={new Date(candidate.submittedAt).toLocaleString()}
-        />
-      </div>
+      {/* Evaluation summary */}
+      <EvaluationSummary candidate={candidate} />
 
-      <div className="rounded-2xl border border-white/5 bg-white/[0.02] p-5">
-        <div className="flex items-center gap-2 text-[11px] uppercase tracking-widest text-neutral-500">
-          <Sparkles className="h-3.5 w-3.5 text-emerald-400" /> AI Summary
-        </div>
-        <p className="mt-3 text-[14px] leading-relaxed text-neutral-200">{detail.aiSummary}</p>
-        <div className="mt-6 grid grid-cols-1 gap-6 md:grid-cols-2">
-          <ListBlock title="Strengths" items={detail.strengths} tone="good" />
-          <ListBlock title="Weaknesses" items={detail.weaknesses} tone="warn" />
-        </div>
-        <div className="mt-6 rounded-xl border border-emerald-400/20 bg-emerald-400/[0.04] p-4">
-          <div className="text-[11px] uppercase tracking-widest text-emerald-300/80">Recommended next step</div>
-          <div className="mt-1 text-[14px] text-white">{detail.nextStep}</div>
-        </div>
-      </div>
 
       <div className="rounded-2xl border border-white/5 bg-white/[0.02] p-5">
         <div className="text-[11px] uppercase tracking-widest text-neutral-500">Skills identified</div>
