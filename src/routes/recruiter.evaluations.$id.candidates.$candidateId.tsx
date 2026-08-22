@@ -370,42 +370,9 @@ function OverviewPane({
         </div>
       </div>
 
-      {/* Executive summary */}
-      <div className="grid grid-cols-1 gap-6 md:grid-cols-3">
-        <MetaCard
-          icon={<UserIcon className="h-3.5 w-3.5" />}
-          label="Experience"
-          value={candidate.experience === 0 ? "Fresher" : `${candidate.experience} years`}
-        />
-        <MetaCard icon={<GraduationCap className="h-3.5 w-3.5" />} label="College" value={candidate.college} />
-        <MetaCard icon={<Briefcase className="h-3.5 w-3.5" />} label="Current company" value={candidate.company} />
-        <MetaCard icon={<MapPin className="h-3.5 w-3.5" />} label="Location" value={detail.location} />
-        <MetaCard
-          icon={<Clock className="h-3.5 w-3.5" />}
-          label="Completion time"
-          value={`${candidate.completionMinutes} minutes`}
-        />
-        <MetaCard
-          icon={<CalendarPlus className="h-3.5 w-3.5" />}
-          label="Submitted"
-          value={new Date(candidate.submittedAt).toLocaleString()}
-        />
-      </div>
+      {/* Evaluation summary */}
+      <EvaluationSummary candidate={candidate} />
 
-      <div className="rounded-2xl border border-white/5 bg-white/[0.02] p-5">
-        <div className="flex items-center gap-2 text-[11px] uppercase tracking-widest text-neutral-500">
-          <Sparkles className="h-3.5 w-3.5 text-emerald-400" /> AI Summary
-        </div>
-        <p className="mt-3 text-[14px] leading-relaxed text-neutral-200">{detail.aiSummary}</p>
-        <div className="mt-6 grid grid-cols-1 gap-6 md:grid-cols-2">
-          <ListBlock title="Strengths" items={detail.strengths} tone="good" />
-          <ListBlock title="Weaknesses" items={detail.weaknesses} tone="warn" />
-        </div>
-        <div className="mt-6 rounded-xl border border-emerald-400/20 bg-emerald-400/[0.04] p-4">
-          <div className="text-[11px] uppercase tracking-widest text-emerald-300/80">Recommended next step</div>
-          <div className="mt-1 text-[14px] text-white">{detail.nextStep}</div>
-        </div>
-      </div>
 
       <div className="rounded-2xl border border-white/5 bg-white/[0.02] p-5">
         <div className="text-[11px] uppercase tracking-widest text-neutral-500">Skills identified</div>
@@ -423,6 +390,140 @@ function OverviewPane({
     </div>
   );
 }
+
+function SummaryBlock({
+  title,
+  score,
+  summary,
+  strengths,
+  explore,
+}: {
+  title: string;
+  score: number;
+  summary: string;
+  strengths: string[];
+  explore: string;
+}) {
+  return (
+    <div className="rounded-2xl border border-white/5 bg-white/[0.02] p-5">
+      <div className="flex items-baseline justify-between">
+        <div className="text-[11px] uppercase tracking-widest text-neutral-500">{title}</div>
+        <div className="text-[13px] font-medium text-white">
+          {score}
+          <span className="text-neutral-500">/100</span>
+        </div>
+      </div>
+      <p className="mt-3 text-[13px] leading-relaxed text-neutral-300">{summary}</p>
+      <div className="mt-4 text-[10px] uppercase tracking-widest text-neutral-500">Strengths</div>
+      <ul className="mt-1.5 space-y-1">
+        {strengths.map((s) => (
+          <li key={s} className="flex gap-2 text-[12px] text-neutral-300">
+            <span className="mt-1.5 h-1 w-1 shrink-0 rounded-full bg-emerald-400" />
+            {s}
+          </li>
+        ))}
+      </ul>
+      <div className="mt-4 text-[10px] uppercase tracking-widest text-neutral-500">Area to explore</div>
+      <div className="mt-1.5 flex gap-2 text-[12px] text-neutral-300">
+        <span className="mt-1.5 h-1 w-1 shrink-0 rounded-full bg-amber-400" />
+        {explore}
+      </div>
+    </div>
+  );
+}
+
+function EvaluationSummary({ candidate }: { candidate: { name: string; labsScore: number; assessmentScore: number; vitarkaScore: number; eci: number } }) {
+  const first = candidate.name.split(" ")[0];
+  const overall = candidate.eci;
+  const verdict = overall >= 75 ? "Shortlisted" : overall >= 60 ? "Hold" : "Rejected";
+  const verdictTone =
+    verdict === "Shortlisted"
+      ? "border-emerald-400/25 bg-emerald-400/[0.06] text-emerald-300"
+      : verdict === "Hold"
+        ? "border-amber-400/25 bg-amber-400/[0.06] text-amber-300"
+        : "border-red-400/25 bg-red-400/[0.06] text-red-300";
+
+  return (
+    <div className="space-y-4">
+      <SectionHeading>Evaluation summary</SectionHeading>
+
+      <div className="grid grid-cols-1 gap-4 md:grid-cols-3">
+        <SummaryBlock
+          title="Engineering Labs"
+          score={candidate.labsScore}
+          summary={`${first} performed well in the Python API lab and fixed the validation issue while improving the database interaction. His debugging was systematic — he traced the API issue back to the SQL query.`}
+          strengths={["Python API debugging", "SQL troubleshooting", "Practical problem solving"]}
+          explore="Transaction management"
+        />
+        <SummaryBlock
+          title="Assessment"
+          score={candidate.assessmentScore}
+          summary={`${first} performed well on Python and database-related questions. Results were weaker on system-design concepts, which is worth exploring further.`}
+          strengths={["Python", "REST APIs", "SQL"]}
+          explore="System design"
+        />
+        <SummaryBlock
+          title="Vitarka AI"
+          score={candidate.vitarkaScore}
+          summary={`${first} explained the Python API changes he made in the lab and why he introduced the validation logic. He connected the SQL change to the API performance issue and handled follow-ups on error handling well.`}
+          strengths={["Explains implementation decisions", "Good Python/API understanding", "Handles technical follow-ups"]}
+          explore="Transaction-level reasoning"
+        />
+      </div>
+
+      <div className="rounded-2xl border border-white/10 bg-white/[0.035] p-5">
+        <div className="flex flex-wrap items-center justify-between gap-3">
+          <div className="text-[11px] uppercase tracking-widest text-neutral-400">Overall recommendation</div>
+          <div className="flex items-center gap-3">
+            <div className="text-[13px] font-medium text-white">
+              {overall}
+              <span className="text-neutral-500">/100</span>
+            </div>
+            <span className={`rounded-full border px-2.5 py-0.5 text-[11px] uppercase tracking-widest ${verdictTone}`}>
+              {verdict}
+            </span>
+          </div>
+        </div>
+        <p className="mt-3 text-[13px] leading-relaxed text-neutral-200">
+          {first} shows good hands-on backend engineering ability, particularly in Python APIs, debugging and SQL
+          troubleshooting. His Vitarka discussion was largely consistent with the work completed in the lab, which is a
+          positive signal that he understands the implementation rather than simply completing the task. The main area
+          to explore further is system design and transaction-level reasoning.
+        </p>
+        <div className="mt-5 grid grid-cols-1 gap-6 md:grid-cols-2">
+          <div>
+            <div className="text-[10px] uppercase tracking-widest text-neutral-500">Strengths</div>
+            <ul className="mt-1.5 space-y-1">
+              {[
+                "Strong hands-on Python/API work",
+                "Good debugging and SQL troubleshooting",
+                "Able to explain implementation decisions",
+                "Consistent lab and Vitarka performance",
+              ].map((s) => (
+                <li key={s} className="flex gap-2 text-[12px] text-neutral-300">
+                  <span className="mt-1.5 h-1 w-1 shrink-0 rounded-full bg-emerald-400" />
+                  {s}
+                </li>
+              ))}
+            </ul>
+          </div>
+          <div>
+            <div className="text-[10px] uppercase tracking-widest text-neutral-500">Areas to explore</div>
+            <ul className="mt-1.5 space-y-1">
+              {["System-design depth", "Transaction management"].map((s) => (
+                <li key={s} className="flex gap-2 text-[12px] text-neutral-300">
+                  <span className="mt-1.5 h-1 w-1 shrink-0 rounded-full bg-amber-400" />
+                  {s}
+                </li>
+              ))}
+            </ul>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
+
 
 function LabsPane({
   detail,
