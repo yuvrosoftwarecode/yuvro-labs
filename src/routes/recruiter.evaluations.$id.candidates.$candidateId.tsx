@@ -151,6 +151,7 @@ function CandidateWorkspace() {
       aiSummary: detail.aiSummary,
       nextStep: detail.nextStep,
       evaluationTitle: ev.title,
+      summary: buildEvaluationSummary(candidate),
     });
     act("download", "Downloaded candidate report (PDF)");
     notify("Report downloaded as PDF");
