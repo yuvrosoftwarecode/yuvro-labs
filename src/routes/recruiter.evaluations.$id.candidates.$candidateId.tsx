@@ -420,9 +420,8 @@ function SummaryBlock({
 }
 
 function EvaluationSummary({ candidate }: { candidate: { name: string; labsScore: number; assessmentScore: number; vitarkaScore: number; eci: number } }) {
-  const first = candidate.name.split(" ")[0];
-  const overall = candidate.eci;
-  const verdict = overall >= 75 ? "Shortlisted" : overall >= 60 ? "Hold" : "Rejected";
+  const data = buildEvaluationSummary(candidate);
+  const { overall, verdict } = data;
   const verdictTone =
     verdict === "Shortlisted"
       ? "border-emerald-400/25 bg-emerald-400/[0.06] text-emerald-300"
@@ -435,27 +434,16 @@ function EvaluationSummary({ candidate }: { candidate: { name: string; labsScore
       <SectionHeading>Evaluation summary</SectionHeading>
 
       <div className="grid grid-cols-1 gap-4 md:grid-cols-3">
-        <SummaryBlock
-          title="Engineering Labs"
-          score={candidate.labsScore}
-          summary={`${first} performed well in the Python API lab and fixed the validation issue while improving the database interaction. His debugging was systematic — he traced the API issue back to the SQL query.`}
-          strengths={["Python API debugging", "SQL troubleshooting", "Practical problem solving"]}
-          explore="Transaction management"
-        />
-        <SummaryBlock
-          title="Assessment"
-          score={candidate.assessmentScore}
-          summary={`${first} performed well on Python and database-related questions. Results were weaker on system-design concepts, which is worth exploring further.`}
-          strengths={["Python", "REST APIs", "SQL"]}
-          explore="System design"
-        />
-        <SummaryBlock
-          title="Vitarka AI"
-          score={candidate.vitarkaScore}
-          summary={`${first} explained the Python API changes he made in the lab and why he introduced the validation logic. He connected the SQL change to the API performance issue and handled follow-ups on error handling well.`}
-          strengths={["Explains implementation decisions", "Good Python/API understanding", "Handles technical follow-ups"]}
-          explore="Transaction-level reasoning"
-        />
+        {data.blocks.map((b) => (
+          <SummaryBlock
+            key={b.title}
+            title={b.title}
+            score={b.score}
+            summary={b.summary}
+            strengths={b.strengths}
+            explore={b.explore}
+          />
+        ))}
       </div>
 
       <div className="rounded-2xl border border-white/10 bg-white/[0.035] p-5">
@@ -471,22 +459,12 @@ function EvaluationSummary({ candidate }: { candidate: { name: string; labsScore
             </span>
           </div>
         </div>
-        <p className="mt-3 text-[13px] leading-relaxed text-neutral-200">
-          {first} shows good hands-on backend engineering ability, particularly in Python APIs, debugging and SQL
-          troubleshooting. His Vitarka discussion was largely consistent with the work completed in the lab, which is a
-          positive signal that he understands the implementation rather than simply completing the task. The main area
-          to explore further is system design and transaction-level reasoning.
-        </p>
+        <p className="mt-3 text-[13px] leading-relaxed text-neutral-200">{data.overallText}</p>
         <div className="mt-5 grid grid-cols-1 gap-6 md:grid-cols-2">
           <div>
             <div className="text-[10px] uppercase tracking-widest text-neutral-500">Strengths</div>
             <ul className="mt-1.5 space-y-1">
-              {[
-                "Strong hands-on Python/API work",
-                "Good debugging and SQL troubleshooting",
-                "Able to explain implementation decisions",
-                "Consistent lab and Vitarka performance",
-              ].map((s) => (
+              {data.overallStrengths.map((s) => (
                 <li key={s} className="flex gap-2 text-[12px] text-neutral-300">
                   <span className="mt-1.5 h-1 w-1 shrink-0 rounded-full bg-emerald-400" />
                   {s}
@@ -497,7 +475,7 @@ function EvaluationSummary({ candidate }: { candidate: { name: string; labsScore
           <div>
             <div className="text-[10px] uppercase tracking-widest text-neutral-500">Areas to explore</div>
             <ul className="mt-1.5 space-y-1">
-              {["System-design depth", "Transaction management"].map((s) => (
+              {data.overallExplore.map((s) => (
                 <li key={s} className="flex gap-2 text-[12px] text-neutral-300">
                   <span className="mt-1.5 h-1 w-1 shrink-0 rounded-full bg-amber-400" />
                   {s}
@@ -510,6 +488,7 @@ function EvaluationSummary({ candidate }: { candidate: { name: string; labsScore
     </div>
   );
 }
+
 
 
 function LabsPane({
