@@ -148,8 +148,45 @@ export function buildCandidateReportPdf(d: ReportInput) {
     y += 8;
   };
 
+  const subLabel = (text: string, color: [number, number, number]) => {
+    ensure(18);
+    doc.setFont("helvetica", "bold").setFontSize(8);
+    doc.setTextColor(...color);
+    doc.text(text.toUpperCase(), M, y);
+    y += 12;
+  };
+
   section("Evaluation Summary");
   para(d.aiSummary);
+
+  if (d.summary) {
+    d.summary.blocks.forEach((b) => {
+      ensure(40);
+      doc.setFont("helvetica", "bold").setFontSize(10);
+      doc.setTextColor(...INK);
+      doc.text(b.title, M, y);
+      doc.text(`${b.score}/100`, W - M, y, { align: "right" });
+      y += 14;
+      para(b.summary);
+      subLabel("Strengths", MUTED);
+      bullets(b.strengths, [16, 150, 105]);
+      subLabel("Area to explore", MUTED);
+      bullets([b.explore], [217, 119, 6]);
+    });
+
+    section("Overall Recommendation");
+    ensure(20);
+    doc.setFont("helvetica", "bold").setFontSize(10);
+    doc.setTextColor(...INK);
+    doc.text(`${d.summary.verdict}`, M, y);
+    doc.text(`${d.summary.overall}/100`, W - M, y, { align: "right" });
+    y += 16;
+    para(d.summary.overallText);
+    subLabel("Strengths", MUTED);
+    bullets(d.summary.overallStrengths, [16, 150, 105]);
+    subLabel("Areas to explore", MUTED);
+    bullets(d.summary.overallExplore, [217, 119, 6]);
+  }
 
   if (d.strengths.length) {
     section("Key Strengths");
@@ -162,6 +199,7 @@ export function buildCandidateReportPdf(d: ReportInput) {
 
   section("Recommended Next Step");
   para(d.nextStep);
+
 
   // Footer on every page
   const pages = doc.getNumberOfPages();
