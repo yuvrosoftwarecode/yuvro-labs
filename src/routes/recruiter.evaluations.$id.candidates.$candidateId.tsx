@@ -46,6 +46,8 @@ import {
 import { getCandidates } from "@/lib/recruiterCandidates";
 import { getEvaluation } from "@/lib/recruiter";
 import { LabCodeExplorer } from "@/components/recruiter/LabCodeExplorer";
+import { downloadCandidateReportPdf } from "@/lib/candidateReportPdf";
+
 
 import {
   getCandidateDetail,
@@ -130,44 +132,29 @@ function CandidateWorkspace() {
     }
   };
   const downloadReport = () => {
-    const rows: string[] = [
-      `Yuvro Labs — Candidate Report`,
-      `Name: ${candidate.name}`,
-      `Email: ${candidate.email}`,
-      `Phone: ${candidate.phone}`,
-      `College: ${candidate.college}`,
-      `Company: ${candidate.company}`,
-      `Experience: ${candidate.experience}y`,
-      ``,
-      `Engineering Capability Index: ${candidate.eci}/100`,
-      `Recommendation: ${candidate.recommendation}`,
-      `Confidence: ${detail.confidence}%`,
-      ``,
-      `Labs: ${candidate.labsScore}`,
-      `Assessment: ${candidate.assessmentScore}`,
-      `Vitarka: ${candidate.vitarkaScore}`,
-      ``,
-      `Strengths:`,
-      ...detail.strengths.map((s) => `  - ${s}`),
-      ``,
-      `Weaknesses:`,
-      ...detail.weaknesses.map((s) => `  - ${s}`),
-      ``,
-      `AI Summary:`,
-      detail.aiSummary,
-      ``,
-      `Recommended Next Step: ${detail.nextStep}`,
-    ];
-    const blob = new Blob([rows.join("\n")], { type: "text/plain" });
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement("a");
-    a.href = url;
-    a.download = `${candidate.name.replace(/\s+/g, "-")}-report.txt`;
-    a.click();
-    URL.revokeObjectURL(url);
-    act("download", "Downloaded candidate report");
-    notify("Report downloaded");
+    downloadCandidateReportPdf({
+      name: candidate.name,
+      email: candidate.email,
+      phone: candidate.phone,
+      college: candidate.college,
+      company: candidate.company,
+      experience: candidate.experience,
+      eci: candidate.eci,
+      recommendation: candidate.recommendation,
+      confidence: detail.confidence,
+      labsScore: candidate.labsScore,
+      assessmentScore: candidate.assessmentScore,
+      vitarkaScore: candidate.vitarkaScore,
+      strengths: detail.strengths,
+      weaknesses: detail.weaknesses,
+      aiSummary: detail.aiSummary,
+      nextStep: detail.nextStep,
+      evaluationTitle: ev.title,
+    });
+    act("download", "Downloaded candidate report (PDF)");
+    notify("Report downloaded as PDF");
   };
+
   const downloadResume = () => {
     const blob = new Blob([resumeText(candidate, detail)], { type: "text/plain" });
     const url = URL.createObjectURL(blob);
