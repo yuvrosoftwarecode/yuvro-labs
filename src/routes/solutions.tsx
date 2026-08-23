@@ -712,8 +712,9 @@ const STATS = [
 ];
 
 function PayForHireSection() {
+  const payBg = "#F4F9F7"; // very light mint from reference
   return (
-    <section style={{ background: T.tealTint }}>
+    <section style={{ background: payBg }}>
       <div className="mx-auto max-w-[1120px] px-6 py-24">
         <Eyebrow>How you pay</Eyebrow>
         <h2
@@ -785,7 +786,7 @@ function PayForHireSection() {
             >
               <span
                 className="grid h-[68px] w-[68px] place-items-center rounded-full border-2"
-                style={{ background: T.goldTint, borderColor: T.gold, boxShadow: `0 0 0 6px ${T.tealTint}` }}
+                style={{ background: T.goldTint, borderColor: T.gold, boxShadow: `0 0 0 6px ${payBg}` }}
               >
                 <Award className="h-7 w-7" style={{ color: T.goldDeep }} />
               </span>
