@@ -19,6 +19,7 @@ import {
   CircleCheck,
 } from "lucide-react";
 import rheaAvatar from "@/assets/rhea-kapoor.jpg";
+import { SiteNav } from "@/components/site/SiteNav";
 
 export const Route = createFileRoute("/solutions")({
   head: () => ({
@@ -45,14 +46,14 @@ export const Route = createFileRoute("/solutions")({
 /* ---------------------------------- tokens --------------------------------- */
 
 const T = {
-  ink: "#161A1F",
+  ink: "#0A0A0A",
   inkSoft: "#3A4048",
-  paper: "#F1F1EC",
-  raised: "#FAFAF7",
-  line: "#D8D7CF",
-  gold: "#B4872E",
-  goldDeep: "#8C6620",
-  goldTint: "#FAEEDA",
+  paper: "#FAFAF8",
+  raised: "#FFFFFF",
+  line: "#E8E6E1",
+  gold: "#F5A623",
+  goldDeep: "#E8871A",
+  goldTint: "#FCF0DC",
   teal: "#2E5C52",
   tealTint: "#DCEDE7",
   purple: "#6F63A6",
@@ -61,10 +62,11 @@ const T = {
   coralTint: "#F5E2D8",
   blue: "#3D6E93",
   blueTint: "#DCE9F1",
-  muted: "#6B6F68",
+  muted: "#6B6B6B",
 };
 
-const SERIF = '"Fraunces", ui-serif, Georgia, serif';
+/* Site-matched heading font (same Inter grotesque as the landing page) */
+const SERIF = '"Inter", ui-sans-serif, system-ui, sans-serif';
 const MONO = '"IBM Plex Mono", ui-monospace, SFMono-Regular, Menlo, monospace';
 
 /* ---------------------------------- hooks ---------------------------------- */
