@@ -927,6 +927,8 @@ function SolutionsPage() {
         @keyframes hwp-in { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: none; } }
         .hwp-screen { animation: hwp-in 420ms cubic-bezier(0.16,1,0.3,1) both; }
         .hwp-caret { display: inline-block; width: 6px; height: 12px; margin-left: 1px; vertical-align: -1px; animation: hwp-blink 0.9s steps(1) infinite; }
+        .hwp-stage { height: 480px; }
+        @media (max-width: 639px) { .hwp-stage { height: auto; min-height: 0; } }
         @keyframes hwp-blink { 50% { opacity: 0; } }
         @media (prefers-reduced-motion: reduce) {
           .hwp-screen { animation: none; }
