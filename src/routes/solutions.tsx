@@ -694,14 +694,21 @@ function ProcessSection() {
 
 /* ---------------------------- pay-for-hire section -------------------------- */
 
+/* dotted wave through all 7 stage nodes, ending at the hire medallion
+   (viewBox space: 1400 × 360 — peaks y=112, troughs y=248, medallion 1310,196) */
+const WAVE_PATH =
+  "M0,140 C40,112 90,112 140,112 C230,112 230,248 320,248 C410,248 410,112 500,112 C590,112 590,248 680,248 C770,248 770,112 860,112 C950,112 950,248 1040,248 C1130,248 1130,112 1220,112 C1290,112 1290,196 1310,196";
+
+const DOT_LOOP_S = 8; // seconds for the gold dot to travel the full path
+
 const PIPELINE = [
-  { label: "Requirement & JD", icon: FileText, color: "#6B6F68", tint: "#E9E8E2" },
-  { label: "Account manager", icon: UserCheck, color: T.purple, tint: T.purpleTint },
-  { label: "Recruiter match", icon: Users, color: T.coral, tint: T.coralTint },
-  { label: "Real task", icon: TerminalSquare, color: T.blue, tint: T.blueTint },
-  { label: "Vitarka interview", icon: Bot, color: T.teal, tint: T.tealTint },
-  { label: "Proof report", icon: FileCheck2, color: T.gold, tint: T.goldTint },
-  { label: "Your interview", icon: Video, color: T.purple, tint: T.purpleTint },
+  { label: "Requirement & JD", icon: FileText, x: 10.0, y: 31.1, above: true, tint: "#D9D8D2", color: "#454841", pulse: 0.83 },
+  { label: "Account manager", icon: UserCheck, x: 22.857, y: 68.9, above: false, tint: "#DCD5F0", color: "#5B4E9E", pulse: 1.87 },
+  { label: "Recruiter match", icon: Users, x: 35.714, y: 31.1, above: true, tint: "#E7C2B6", color: "#9E4A33", pulse: 2.91 },
+  { label: "Real task", icon: Code2, x: 48.571, y: 68.9, above: false, tint: "#C7D8F0", color: "#2F4E86", pulse: 3.95 },
+  { label: "Vitarka interview", icon: MessageSquareText, x: 61.429, y: 31.1, above: true, tint: "#C3E7D4", color: "#2E6B50", pulse: 4.99 },
+  { label: "Proof report", icon: ShieldCheck, x: 74.286, y: 68.9, above: false, tint: "#EBD1DE", color: "#8E4470", pulse: 6.02 },
+  { label: "Your interview", icon: CalendarCheck, x: 87.143, y: 31.1, above: true, tint: "#EDD8A4", color: "#8A6420", pulse: 7.06 },
 ];
 
 const STATS = [
