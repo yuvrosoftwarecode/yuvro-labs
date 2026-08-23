@@ -7,9 +7,9 @@ import {
   FileText,
   UserCheck,
   Users,
-  TerminalSquare,
+  Code2,
+  CalendarCheck,
   Bot,
-  Video,
   Award,
   ArrowRight,
   Folder,
@@ -694,14 +694,21 @@ function ProcessSection() {
 
 /* ---------------------------- pay-for-hire section -------------------------- */
 
+/* dotted wave through all 7 stage nodes, ending at the hire medallion
+   (viewBox space: 1400 × 360 — peaks y=112, troughs y=248, medallion 1310,196) */
+const WAVE_PATH =
+  "M0,140 C40,112 90,112 140,112 C230,112 230,248 320,248 C410,248 410,112 500,112 C590,112 590,248 680,248 C770,248 770,112 860,112 C950,112 950,248 1040,248 C1130,248 1130,112 1220,112 C1290,112 1290,196 1310,196";
+
+const DOT_LOOP_S = 8; // seconds for the gold dot to travel the full path
+
 const PIPELINE = [
-  { label: "Requirement & JD", icon: FileText, color: "#6B6F68", tint: "#E9E8E2" },
-  { label: "Account manager", icon: UserCheck, color: T.purple, tint: T.purpleTint },
-  { label: "Recruiter match", icon: Users, color: T.coral, tint: T.coralTint },
-  { label: "Real task", icon: TerminalSquare, color: T.blue, tint: T.blueTint },
-  { label: "Vitarka interview", icon: Bot, color: T.teal, tint: T.tealTint },
-  { label: "Proof report", icon: FileCheck2, color: T.gold, tint: T.goldTint },
-  { label: "Your interview", icon: Video, color: T.purple, tint: T.purpleTint },
+  { label: "Requirement & JD", icon: FileText, x: 10.0, y: 31.1, above: true, tint: "#D9D8D2", color: "#454841", pulse: 0.83 },
+  { label: "Account manager", icon: UserCheck, x: 22.857, y: 68.9, above: false, tint: "#DCD5F0", color: "#5B4E9E", pulse: 1.87 },
+  { label: "Recruiter match", icon: Users, x: 35.714, y: 31.1, above: true, tint: "#E7C2B6", color: "#9E4A33", pulse: 2.91 },
+  { label: "Real task", icon: Code2, x: 48.571, y: 68.9, above: false, tint: "#C7D8F0", color: "#2F4E86", pulse: 3.95 },
+  { label: "Vitarka interview", icon: MessageSquareText, x: 61.429, y: 31.1, above: true, tint: "#C3E7D4", color: "#2E6B50", pulse: 4.99 },
+  { label: "Proof report", icon: ShieldCheck, x: 74.286, y: 68.9, above: false, tint: "#EBD1DE", color: "#8E4470", pulse: 6.02 },
+  { label: "Your interview", icon: CalendarCheck, x: 87.143, y: 31.1, above: true, tint: "#EDD8A4", color: "#8A6420", pulse: 7.06 },
 ];
 
 const STATS = [
@@ -728,71 +735,84 @@ function PayForHireSection() {
           when a candidate we send actually starts.
         </p>
 
-        {/* pipeline — desktop: flowing connector, nodes alternate above/below */}
+        {/* pipeline — desktop: dotted wave, traveling gold dot, alternating pastel nodes */}
         <div className="relative mt-16 hidden md:block">
-          <div style={{ paddingTop: "30%" }} />
+          <div style={{ paddingTop: "26%" }} />
           <div className="absolute left-0 top-0 h-full w-full">
             <svg
-              viewBox="0 0 1000 300"
+              viewBox="0 0 1400 360"
               preserveAspectRatio="none"
               className="h-full w-full"
               aria-hidden
             >
               <path
-                d="M0,150 C70,60 130,60 200,150 S330,240 400,150 S530,60 600,150 S730,240 800,150 S900,80 1000,150"
+                id="hwp-wave"
+                d={WAVE_PATH}
                 fill="none"
-                stroke={T.teal}
-                strokeWidth="1.5"
-                strokeDasharray="6 6"
-                opacity="0.55"
-                vectorEffect="non-scaling-stroke"
+                stroke="#CCCBC3"
+                strokeWidth="5"
+                strokeLinecap="round"
+                strokeDasharray="0.1 15"
               />
+              {/* traveling gold dot — constant speed along the wave, with halo + tracer */}
+              <g className="hwp-traveler">
+                <circle r="16" fill="#C8952A" opacity="0.16" />
+                <circle r="7.5" fill="#C8952A" />
+                <animateMotion dur={`${DOT_LOOP_S}s`} repeatCount="indefinite">
+                  <mpath href="#hwp-wave" />
+                </animateMotion>
+              </g>
+              <g className="hwp-traveler" opacity="0.35">
+                <circle r="4.5" fill="#C8952A" />
+                <animateMotion dur={`${DOT_LOOP_S}s`} begin="-0.22s" repeatCount="indefinite">
+                  <mpath href="#hwp-wave" />
+                </animateMotion>
+              </g>
             </svg>
 
             {PIPELINE.map((n, i) => {
-              const x = 4 + i * 11.6; // 4% .. 73.6%
-              const above = i % 2 === 0;
               const Icon = n.icon;
-              const iconEl = (
-                <span
-                  className="grid h-11 w-11 shrink-0 place-items-center rounded-full border"
-                  style={{ background: n.tint, borderColor: n.color }}
-                >
-                  <Icon style={{ color: n.color, width: 18, height: 18 }} />
-                </span>
-              );
-              const labelEl = (
-                <span className="text-[9.5px] uppercase leading-tight" style={{ fontFamily: MONO, letterSpacing: "0.08em", color: T.inkSoft }}>
-                  {n.label}
-                </span>
-              );
               return (
                 <div
                   key={n.label}
-                  className="absolute flex w-[104px] -translate-x-1/2 flex-col items-center gap-2 text-center"
-                  style={above ? { left: `${x}%`, top: 0 } : { left: `${x}%`, bottom: 0 }}
+                  className="hwp-pop absolute"
+                  style={{ left: `${n.x}%`, top: `${n.y}%`, animationDelay: `${i * 90}ms` }}
                 >
-                  {/* above the curve: label on top, icon sits on the crest;
-                      below the curve: icon sits on the trough, label underneath */}
-                  {above ? (<>{labelEl}{iconEl}</>) : (<>{iconEl}{labelEl}</>)}
+                  <span
+                    className="hwp-node-pulse absolute left-0 top-0 grid -translate-x-1/2 -translate-y-1/2 place-items-center rounded-full"
+                    style={{ width: 60, height: 60, background: n.tint, animationDelay: `${n.pulse}s` }}
+                  >
+                    <Icon strokeWidth={1.8} style={{ color: n.color, width: 24, height: 24 }} />
+                  </span>
+                  <span
+                    className="absolute left-0 -translate-x-1/2 whitespace-nowrap text-[15px] font-medium"
+                    style={n.above ? { bottom: 44, color: T.ink } : { top: 44, color: T.ink }}
+                  >
+                    {n.label}
+                  </span>
                 </div>
               );
             })}
 
-            {/* payoff stamp */}
+            {/* payoff medallion — double gold ring, "Hired in 20 days" */}
             <div
-              className="absolute flex w-[150px] -translate-x-1/2 -translate-y-1/2 flex-col items-center gap-2 text-center"
-              style={{ left: "90%", top: "50%" }}
+              className="hwp-pop absolute"
+              style={{ left: "93.57%", top: "54.4%", animationDelay: "700ms" }}
             >
               <span
-                className="grid h-[68px] w-[68px] place-items-center rounded-full border-2"
-                style={{ background: T.goldTint, borderColor: T.gold, boxShadow: `0 0 0 6px ${payBg}` }}
+                className="hwp-node-pulse absolute left-0 top-0 grid -translate-x-1/2 -translate-y-1/2 place-items-center rounded-full"
+                style={{ width: 96, height: 96, border: "1.5px solid #C9A227", animationDelay: "7.84s" }}
               >
-                <Award className="h-7 w-7" style={{ color: T.goldDeep }} />
+                <span
+                  className="grid place-items-center rounded-full"
+                  style={{ width: 78, height: 78, background: "#FBF4E2", border: "2px solid #C9A227" }}
+                >
+                  <Award strokeWidth={1.8} style={{ color: "#8A6420", width: 30, height: 30 }} />
+                </span>
               </span>
               <span
-                className="rounded-full border px-3 py-1 text-[11px] font-semibold"
-                style={{ fontFamily: MONO, borderColor: T.gold, background: T.goldTint, color: T.goldDeep }}
+                className="absolute left-0 w-[110px] -translate-x-1/2 text-center text-[15px] font-medium leading-snug"
+                style={{ top: 56, color: T.ink }}
               >
                 Hired in 20 days
               </span>
@@ -934,9 +954,21 @@ function SolutionsPage() {
         .hwp-stage { height: 480px; }
         @media (max-width: 639px) { .hwp-stage { height: auto; min-height: 0; } }
         @keyframes hwp-blink { 50% { opacity: 0; } }
+        @keyframes hwp-pop { from { opacity: 0; transform: scale(0.6); } to { opacity: 1; transform: scale(1); } }
+        .hwp-pop { animation: hwp-pop 550ms cubic-bezier(0.16,1,0.3,1) both; }
+        @keyframes hwp-pulse {
+          0% { transform: scale(1); box-shadow: 0 0 0 0 rgba(200,149,42,0); }
+          2.5% { transform: scale(1.14); box-shadow: 0 0 0 12px rgba(200,149,42,0.16); }
+          5.5% { transform: scale(1); box-shadow: 0 0 0 0 rgba(200,149,42,0); }
+          100% { transform: scale(1); box-shadow: 0 0 0 0 rgba(200,149,42,0); }
+        }
+        .hwp-node-pulse { animation: hwp-pulse 8s linear infinite; }
         @media (prefers-reduced-motion: reduce) {
           .hwp-screen { animation: none; }
           .hwp-caret { animation: none; }
+          .hwp-pop { animation: none; }
+          .hwp-node-pulse { animation: none; }
+          .hwp-traveler { display: none; }
         }
       `}</style>
     </div>
