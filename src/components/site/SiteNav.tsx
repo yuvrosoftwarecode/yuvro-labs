@@ -13,7 +13,7 @@ export function SiteNav() {
         </Link>
         <nav className="ml-10 hidden md:flex items-center gap-7 text-sm text-[#6B6B6B]">
           <ProductMegaMenu />
-          <a href="/#labs" className="hover:text-[#0A0A0A] transition">Solutions</a>
+          <Link to="/solutions" className="hover:text-[#0A0A0A] transition">Solutions</Link>
           <Link to="/pricing" className="hover:text-[#0A0A0A] transition">Pricing</Link>
           <Link to="/recruiter-login" className="hover:text-[#0A0A0A] transition">Recruiter Login</Link>
         </nav>
@@ -39,7 +39,7 @@ export function SiteNav() {
           <p className="mb-3 font-mono text-[10px] uppercase tracking-[0.18em] text-[#8A867E]">Platform</p>
           <ProductMobileNav onNavigate={() => setMobileOpen(false)} />
           <div className="mt-5 flex flex-col gap-3 text-[15px]">
-            <a href="/#labs" onClick={() => setMobileOpen(false)} className="text-[#2A2A28]">Solutions</a>
+            <Link to="/solutions" onClick={() => setMobileOpen(false)} className="text-[#2A2A28]">Solutions</Link>
             <Link to="/pricing" onClick={() => setMobileOpen(false)} className="text-[#2A2A28]">Pricing</Link>
             <Link to="/recruiter-login" onClick={() => setMobileOpen(false)} className="text-[#2A2A28]">Recruiter Login</Link>
           </div>
