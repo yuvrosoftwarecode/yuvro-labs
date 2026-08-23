@@ -576,7 +576,7 @@ function HeroDemoCard() {
       </div>
 
       {/* active screen only — hidden screens are not in the DOM */}
-      <div className="p-4" style={{ height: 480 }}>
+      <div className="hwp-stage p-4">
         {active === 0 && <ScreenReport />}
         {active === 1 && <ScreenSimulation active={active === 1} />}
         {active === 2 && <ScreenVitarka active={active === 2} />}
