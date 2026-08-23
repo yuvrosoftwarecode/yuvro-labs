@@ -111,7 +111,7 @@ function useTyping(text: string, active: boolean, speed = 26, startDelay = 350) 
 
 /* ------------------------------- small pieces ------------------------------ */
 
-function Eyebrow({ children, color = T.gold }: { children: React.ReactNode; color?: string }) {
+function Eyebrow({ children, color = T.goldDeep }: { children: React.ReactNode; color?: string }) {
   return (
     <p
       className="text-[11px] font-medium uppercase"
@@ -847,8 +847,9 @@ function PayForHireSection() {
 function SolutionsPage() {
   return (
     <div className="min-h-screen antialiased" style={{ background: T.paper, color: T.ink, fontFamily: '"Inter", ui-sans-serif, system-ui, sans-serif' }}>
+      <SiteNav />
       {/* ------------------------------- hero ------------------------------- */}
-      <section className="mx-auto grid max-w-[1120px] items-center gap-12 px-6 pb-24 pt-20 lg:grid-cols-2 lg:pt-28">
+      <section className="mx-auto grid max-w-[1120px] items-center gap-12 px-6 pb-24 pt-16 lg:grid-cols-2 lg:pt-20">
         <div>
           <Eyebrow>Hiring solutions for high-growth startups</Eyebrow>
           <h1
