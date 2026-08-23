@@ -1,9 +1,43 @@
 import { Link } from "@tanstack/react-router";
 import { useEffect, useRef, useState } from "react";
-import { productGroups } from "@/lib/productMenu";
-import { ProductGlyph } from "@/components/site/ProductGlyph";
+import { SquareTerminal, ListChecks, Bot, Send, ArrowRight } from "lucide-react";
+import ctaArt from "@/assets/mega-cta.jpg";
 
-/* Desktop trigger + panel. Hover or click opens; Esc / outside click closes. */
+type PlatformItem = {
+  slug: string;
+  title: string;
+  description: string;
+  icon: React.ComponentType<{ className?: string }>;
+};
+
+const platformItems: PlatformItem[] = [
+  {
+    slug: "engineering-simulations",
+    title: "Engineering Simulations",
+    description: "Evaluate real engineering work — debugging, optimization and code review.",
+    icon: SquareTerminal,
+  },
+  {
+    slug: "knowledge-assessments",
+    title: "Assessments",
+    description: "Measure technical knowledge across languages, frameworks and fundamentals.",
+    icon: ListChecks,
+  },
+  {
+    slug: "vitarka-ai",
+    title: "Vitarka AI Interviews",
+    description: "AI technical interviews that read the evidence and go deeper.",
+    icon: Bot,
+  },
+  {
+    slug: "automated-follow-ups",
+    title: "Automated Follow-ups",
+    description: "Reminders and AI calls that bring candidates back before deadlines.",
+    icon: Send,
+  },
+];
+
+/* Desktop trigger + dropdown panel. Hover or click opens; Esc / outside click closes. */
 export function ProductMegaMenu() {
   const [open, setOpen] = useState(false);
   const wrapRef = useRef<HTMLDivElement | null>(null);
@@ -19,7 +53,7 @@ export function ProductMegaMenu() {
   }, [open]);
 
   const cancelClose = () => { if (closeTimer.current) clearTimeout(closeTimer.current); };
-  const scheduleClose = () => { cancelClose(); closeTimer.current = setTimeout(() => setOpen(false), 140); };
+  const scheduleClose = () => { cancelClose(); closeTimer.current = setTimeout(() => setOpen(false), 160); };
 
   return (
     <div
@@ -32,127 +66,124 @@ export function ProductMegaMenu() {
         type="button"
         aria-expanded={open}
         onClick={() => setOpen((v) => !v)}
-        className={`inline-flex items-center gap-1.5 py-2 transition-colors ${open ? "text-[#0A0A0A]" : "text-[#6B6B6B] hover:text-[#0A0A0A]"}`}
+        className={`inline-flex items-center gap-1.5 py-2 text-sm transition-colors ${open ? "text-[#0A0A0A]" : "text-[#6B6B6B] hover:text-[#0A0A0A]"}`}
       >
-        Product
+        Platform
         <svg width="9" height="6" viewBox="0 0 9 6" fill="none" className={`transition-transform duration-200 ${open ? "rotate-180" : ""}`}>
           <path d="M1 1.2 4.5 4.6 8 1.2" stroke="currentColor" strokeWidth="1.2" strokeLinecap="round" strokeLinejoin="round" />
         </svg>
       </button>
 
       {open && (
-        <div
-          className="fixed left-0 right-0 top-16 z-50 px-6"
-          onMouseEnter={cancelClose}
-          onMouseLeave={scheduleClose}
-        >
+        <>
+          {/* dimmed page backdrop, like the reference */}
           <div
-            className="mx-auto max-w-[1120px] border border-[#E8E6E1] bg-white"
-            style={{ animation: "yvr-mega 180ms cubic-bezier(0.16,1,0.3,1) both" }}
+            className="fixed inset-0 top-16 z-40 bg-[#0A0A0A]/15 backdrop-blur-[2px]"
+            style={{ animation: "yvr-fade 200ms ease both" }}
+            onMouseEnter={scheduleClose}
+          />
+          <div
+            className="fixed left-0 right-0 top-16 z-50 px-6 pt-4"
+            onMouseEnter={cancelClose}
+            onMouseLeave={scheduleClose}
           >
-            <div className="flex items-baseline justify-between border-b border-[#E8E6E1] px-8 py-4">
-              <p className="text-[13px] text-[#6B6B6B]">
-                One system to <span className="text-[#0A0A0A]">evaluate</span>, verify, understand, follow up and hire engineers.
-              </p>
-              <div className="hidden lg:flex items-center gap-2 font-mono text-[10px] uppercase tracking-[0.16em] text-[#9A9A94]">
-                {["Evaluate", "Verify", "Understand", "Follow up", "Hire"].map((s, i) => (
-                  <span key={s} className="flex items-center gap-2">
-                    {i > 0 && <span className="text-[#D8D5CE]">/</span>}
-                    {s}
-                  </span>
-                ))}
-              </div>
-            </div>
-
-            <div className="grid grid-cols-2 divide-x divide-[#E8E6E1] lg:grid-cols-4">
-              {productGroups.map((g) => (
-                <div key={g.id} className="px-7 py-6 [&:nth-child(-n+2)]:border-b [&:nth-child(-n+2)]:border-[#E8E6E1] lg:[&:nth-child(-n+2)]:border-b-0">
-                  <div className="mb-4 flex items-baseline gap-2">
-                    <h3 className="font-mono text-[10px] uppercase tracking-[0.18em] text-[#0A0A0A]">{g.heading}</h3>
-                    <span className="text-[10px] uppercase tracking-[0.12em] text-[#B4B0A8]">{g.caption}</span>
-                  </div>
-                  <ul className="space-y-0.5">
-                    {g.items.map((it) => (
+            <div
+              className="mx-auto grid max-w-[860px] grid-cols-1 gap-5 rounded-2xl border border-[#E8E6E1] bg-white p-5 shadow-[0_24px_60px_-20px_rgba(10,10,10,0.25)] md:grid-cols-[1fr_330px]"
+              style={{ animation: "yvr-mega 220ms cubic-bezier(0.16,1,0.3,1) both" }}
+            >
+              {/* Left: platform items */}
+              <div className="flex flex-col">
+                <ul>
+                  {platformItems.map((it) => {
+                    const Icon = it.icon;
+                    return (
                       <li key={it.slug}>
                         <Link
                           to="/product/$slug"
                           params={{ slug: it.slug }}
                           onClick={() => setOpen(false)}
-                          className="group -mx-2 flex gap-2.5 rounded-[3px] px-2 py-2 transition-colors hover:bg-[#F5F3EE]"
+                          className="group flex items-start gap-4 rounded-xl px-3 py-3.5 transition-colors hover:bg-[#F5F3EE]"
                         >
-                          <ProductGlyph name={it.glyph} className="mt-[3px] shrink-0 text-[#8A867E] transition-colors group-hover:text-[#0A0A0A]" />
+                          <span className="grid h-10 w-10 shrink-0 place-items-center rounded-lg border border-[#E8E6E1] bg-white text-[#0A0A0A] transition-colors group-hover:border-[#D8D5CE]">
+                            <Icon className="h-[18px] w-[18px]" />
+                          </span>
                           <span className="min-w-0">
-                            <span className={`block text-[13.5px] leading-tight ${it.emphasis ? "font-medium text-[#0A0A0A]" : "text-[#2A2A28]"}`}>
-                              {it.title}
-                              {it.emphasis && <span className="ml-1.5 inline-block h-1 w-1 translate-y-[-2px] rounded-full" style={{ background: "#F5A623" }} />}
-                            </span>
-                            <span className="mt-0.5 block text-[11.5px] leading-snug text-[#8A867E]">{it.short}</span>
+                            <span className="block text-[15px] font-semibold leading-tight text-[#0A0A0A]">{it.title}</span>
+                            <span className="mt-1 block text-[13px] leading-snug text-[#6B6B6B]">{it.description}</span>
                           </span>
                         </Link>
                       </li>
-                    ))}
-                  </ul>
-                </div>
-              ))}
-            </div>
+                    );
+                  })}
+                </ul>
+                <Link
+                  to="/product"
+                  onClick={() => setOpen(false)}
+                  className="mt-2 inline-flex items-center gap-2 px-3 pt-3 text-[13.5px] font-medium text-[#0A0A0A] transition-opacity hover:opacity-60"
+                >
+                  Explore the full platform
+                  <ArrowRight className="h-3.5 w-3.5" />
+                </Link>
+              </div>
 
-            <div className="flex items-center justify-between border-t border-[#E8E6E1] px-8 py-3">
-              <span className="text-[11.5px] text-[#8A867E]">Engineering Simulations · Vitarka AI · Evaluation Builder</span>
-              <Link to="/product" onClick={() => setOpen(false)} className="inline-flex items-center gap-1.5 text-[12.5px] text-[#0A0A0A] hover:opacity-70">
-                Explore Yuvro Labs
-                <svg width="12" height="10" viewBox="0 0 12 10" fill="none"><path d="M1 5h9M6.6 1.4 10.2 5l-3.6 3.6" stroke="currentColor" strokeWidth="1.2" strokeLinecap="round" strokeLinejoin="round" /></svg>
+              {/* Right: CTA card */}
+              <Link
+                to="/auth"
+                search={{ tab: "signup" }}
+                onClick={() => setOpen(false)}
+                className="group relative flex min-h-[320px] flex-col overflow-hidden rounded-xl bg-[#0A0A0A] p-6"
+              >
+                <h3
+                  className="relative z-10 text-[22px] leading-snug text-white"
+                  style={{ fontFamily: '"Fraunces", "Instrument Serif", ui-serif, Georgia, serif' }}
+                >
+                  Talk to an evaluation architect
+                </h3>
+                <span className="relative z-10 mt-3 inline-flex items-center gap-2 text-[14px] font-medium transition-transform duration-200 group-hover:translate-x-1" style={{ color: "#F5A623" }}>
+                  Book a demo
+                  <ArrowRight className="h-4 w-4" />
+                </span>
+                <img
+                  src={ctaArt}
+                  alt=""
+                  aria-hidden
+                  className="pointer-events-none absolute inset-x-0 bottom-0 z-0 h-[70%] w-full object-cover object-top opacity-90 transition-transform duration-500 group-hover:scale-[1.03]"
+                />
               </Link>
             </div>
           </div>
-        </div>
+        </>
       )}
-      <style>{`@keyframes yvr-mega { from { opacity:0; transform: translateY(-6px) } to { opacity:1; transform:none } }`}</style>
+      <style>{`@keyframes yvr-mega { from { opacity:0; transform: translateY(-8px) scale(0.99) } to { opacity:1; transform:none } } @keyframes yvr-fade { from { opacity:0 } to { opacity:1 } }`}</style>
     </div>
   );
 }
 
-/* Mobile: stacked accordion, not a shrunken mega-menu. */
+/* Mobile: simple stacked list of platform items. */
 export function ProductMobileNav({ onNavigate }: { onNavigate?: () => void }) {
-  const [openGroup, setOpenGroup] = useState<string | null>("platform");
   return (
-    <div className="divide-y divide-[#E8E6E1] border-y border-[#E8E6E1]">
-      {productGroups.map((g) => {
-        const open = openGroup === g.id;
+    <ul className="divide-y divide-[#E8E6E1] border-y border-[#E8E6E1]">
+      {platformItems.map((it) => {
+        const Icon = it.icon;
         return (
-          <div key={g.id}>
-            <button
-              type="button"
-              onClick={() => setOpenGroup(open ? null : g.id)}
-              className="flex w-full items-center justify-between px-1 py-3.5 text-left"
+          <li key={it.slug}>
+            <Link
+              to="/product/$slug"
+              params={{ slug: it.slug }}
+              onClick={onNavigate}
+              className="flex items-start gap-3 px-1 py-3"
             >
-              <span className="font-mono text-[10px] uppercase tracking-[0.18em] text-[#0A0A0A]">{g.heading}</span>
-              <svg width="10" height="7" viewBox="0 0 9 6" fill="none" className={`text-[#8A867E] transition-transform ${open ? "rotate-180" : ""}`}>
-                <path d="M1 1.2 4.5 4.6 8 1.2" stroke="currentColor" strokeWidth="1.2" strokeLinecap="round" strokeLinejoin="round" />
-              </svg>
-            </button>
-            {open && (
-              <ul className="pb-3">
-                {g.items.map((it) => (
-                  <li key={it.slug}>
-                    <Link
-                      to="/product/$slug"
-                      params={{ slug: it.slug }}
-                      onClick={onNavigate}
-                      className="flex gap-2.5 px-1 py-2.5"
-                    >
-                      <ProductGlyph name={it.glyph} className="mt-[3px] shrink-0 text-[#8A867E]" />
-                      <span>
-                        <span className="block text-[14px] text-[#0A0A0A]">{it.title}</span>
-                        <span className="block text-[12px] text-[#8A867E]">{it.short}</span>
-                      </span>
-                    </Link>
-                  </li>
-                ))}
-              </ul>
-            )}
-          </div>
+              <span className="grid h-9 w-9 shrink-0 place-items-center rounded-lg border border-[#E8E6E1] bg-white text-[#0A0A0A]">
+                <Icon className="h-4 w-4" />
+              </span>
+              <span>
+                <span className="block text-[14.5px] font-medium text-[#0A0A0A]">{it.title}</span>
+                <span className="mt-0.5 block text-[12.5px] leading-snug text-[#6B6B6B]">{it.description}</span>
+              </span>
+            </Link>
+          </li>
         );
       })}
-    </div>
+    </ul>
   );
 }

@@ -13,8 +13,7 @@ export function SiteNav() {
         </Link>
         <nav className="ml-10 hidden md:flex items-center gap-7 text-sm text-[#6B6B6B]">
           <ProductMegaMenu />
-          <a href="/#report" className="hover:text-[#0A0A0A] transition">Resources</a>
-          <a href="/#labs" className="hover:text-[#0A0A0A] transition">Customers</a>
+          <a href="/#labs" className="hover:text-[#0A0A0A] transition">Solutions</a>
           <Link to="/pricing" className="hover:text-[#0A0A0A] transition">Pricing</Link>
           <Link to="/recruiter-login" className="hover:text-[#0A0A0A] transition">Recruiter Login</Link>
         </nav>
@@ -37,11 +36,10 @@ export function SiteNav() {
 
       {mobileOpen && (
         <div className="md:hidden max-h-[calc(100vh-4rem)] overflow-y-auto border-t border-[#E8E6E1] bg-white px-5 pb-8 pt-4">
-          <p className="mb-3 font-mono text-[10px] uppercase tracking-[0.18em] text-[#8A867E]">Product</p>
+          <p className="mb-3 font-mono text-[10px] uppercase tracking-[0.18em] text-[#8A867E]">Platform</p>
           <ProductMobileNav onNavigate={() => setMobileOpen(false)} />
           <div className="mt-5 flex flex-col gap-3 text-[15px]">
-            <a href="/#report" onClick={() => setMobileOpen(false)} className="text-[#2A2A28]">Resources</a>
-            <a href="/#labs" onClick={() => setMobileOpen(false)} className="text-[#2A2A28]">Customers</a>
+            <a href="/#labs" onClick={() => setMobileOpen(false)} className="text-[#2A2A28]">Solutions</a>
             <Link to="/pricing" onClick={() => setMobileOpen(false)} className="text-[#2A2A28]">Pricing</Link>
             <Link to="/recruiter-login" onClick={() => setMobileOpen(false)} className="text-[#2A2A28]">Recruiter Login</Link>
           </div>
