@@ -19,6 +19,7 @@ import {
   CircleCheck,
 } from "lucide-react";
 import rheaAvatar from "@/assets/rhea-kapoor.jpg";
+import { SiteNav } from "@/components/site/SiteNav";
 
 export const Route = createFileRoute("/solutions")({
   head: () => ({
@@ -45,14 +46,14 @@ export const Route = createFileRoute("/solutions")({
 /* ---------------------------------- tokens --------------------------------- */
 
 const T = {
-  ink: "#161A1F",
+  ink: "#0A0A0A",
   inkSoft: "#3A4048",
-  paper: "#F1F1EC",
-  raised: "#FAFAF7",
-  line: "#D8D7CF",
-  gold: "#B4872E",
-  goldDeep: "#8C6620",
-  goldTint: "#FAEEDA",
+  paper: "#FAFAF8",
+  raised: "#FFFFFF",
+  line: "#E8E6E1",
+  gold: "#F5A623",
+  goldDeep: "#E8871A",
+  goldTint: "#FCF0DC",
   teal: "#2E5C52",
   tealTint: "#DCEDE7",
   purple: "#6F63A6",
@@ -61,10 +62,11 @@ const T = {
   coralTint: "#F5E2D8",
   blue: "#3D6E93",
   blueTint: "#DCE9F1",
-  muted: "#6B6F68",
+  muted: "#6B6B6B",
 };
 
-const SERIF = '"Fraunces", ui-serif, Georgia, serif';
+/* Site-matched heading font (same Inter grotesque as the landing page) */
+const SERIF = '"Inter", ui-sans-serif, system-ui, sans-serif';
 const MONO = '"IBM Plex Mono", ui-monospace, SFMono-Regular, Menlo, monospace';
 
 /* ---------------------------------- hooks ---------------------------------- */
@@ -109,7 +111,7 @@ function useTyping(text: string, active: boolean, speed = 26, startDelay = 350) 
 
 /* ------------------------------- small pieces ------------------------------ */
 
-function Eyebrow({ children, color = T.gold }: { children: React.ReactNode; color?: string }) {
+function Eyebrow({ children, color = T.goldDeep }: { children: React.ReactNode; color?: string }) {
   return (
     <p
       className="text-[11px] font-medium uppercase"
@@ -635,7 +637,7 @@ function ProcessSection() {
       <Eyebrow>How a placement works</Eyebrow>
       <h2
         className="mt-4 max-w-2xl text-3xl leading-[1.15] md:text-[40px]"
-        style={{ fontFamily: SERIF, fontWeight: 600, color: T.ink }}
+        style={{ fontFamily: SERIF, fontWeight: 700, letterSpacing: "-0.02em", color: T.ink }}
       >
         Every candidate goes through the same three steps before you meet them.
       </h2>
@@ -676,7 +678,7 @@ function ProcessSection() {
               >
                 <Icon className="h-5 w-5" style={{ color: s.color }} />
               </span>
-              <h3 className="mt-5 text-[19px] leading-snug" style={{ fontFamily: SERIF, fontWeight: 600, color: T.ink }}>
+              <h3 className="mt-5 text-[19px] leading-snug" style={{ fontFamily: SERIF, fontWeight: 700, letterSpacing: "-0.02em", color: T.ink }}>
                 {s.title}
               </h3>
               <p className="mt-3 text-[14px] leading-relaxed" style={{ color: T.muted }}>
@@ -716,7 +718,7 @@ function PayForHireSection() {
         <Eyebrow>How you pay</Eyebrow>
         <h2
           className="mt-4 text-3xl leading-[1.15] md:text-[40px]"
-          style={{ fontFamily: SERIF, fontWeight: 600, color: T.ink }}
+          style={{ fontFamily: SERIF, fontWeight: 700, letterSpacing: "-0.02em", color: T.ink }}
         >
           Pay for hire, not for search.
         </h2>
@@ -826,7 +828,7 @@ function PayForHireSection() {
         <div className="mt-16 grid grid-cols-2 gap-y-8 border-t pt-10 md:grid-cols-4" style={{ borderColor: "rgba(22,26,31,0.18)" }}>
           {STATS.map((s) => (
             <div key={s.label} className="pr-6">
-              <p className="text-3xl md:text-[36px]" style={{ fontFamily: SERIF, fontWeight: 600, color: T.gold }}>
+              <p className="text-3xl md:text-[36px]" style={{ fontFamily: SERIF, fontWeight: 700, letterSpacing: "-0.02em", color: T.gold }}>
                 {s.n}
               </p>
               <p className="mt-2 text-[10px] uppercase leading-snug" style={{ fontFamily: MONO, letterSpacing: "0.12em", color: T.inkSoft }}>
@@ -845,13 +847,14 @@ function PayForHireSection() {
 function SolutionsPage() {
   return (
     <div className="min-h-screen antialiased" style={{ background: T.paper, color: T.ink, fontFamily: '"Inter", ui-sans-serif, system-ui, sans-serif' }}>
+      <SiteNav />
       {/* ------------------------------- hero ------------------------------- */}
-      <section className="mx-auto grid max-w-[1120px] items-center gap-12 px-6 pb-24 pt-20 lg:grid-cols-2 lg:pt-28">
+      <section className="mx-auto grid max-w-[1120px] items-center gap-12 px-6 pb-24 pt-16 lg:grid-cols-2 lg:pt-20">
         <div>
           <Eyebrow>Hiring solutions for high-growth startups</Eyebrow>
           <h1
             className="mt-5 text-[42px] leading-[1.08] md:text-[58px]"
-            style={{ fontFamily: SERIF, fontWeight: 600, color: T.ink }}
+            style={{ fontFamily: SERIF, fontWeight: 700, letterSpacing: "-0.02em", color: T.ink }}
           >
             Hire with proof,
             <br />
@@ -892,7 +895,7 @@ function SolutionsPage() {
       <section className="mx-auto max-w-[1120px] px-6 py-24 text-center">
         <h2
           className="mx-auto max-w-xl text-3xl leading-[1.15] md:text-[42px]"
-          style={{ fontFamily: SERIF, fontWeight: 600, color: T.ink }}
+          style={{ fontFamily: SERIF, fontWeight: 700, letterSpacing: "-0.02em", color: T.ink }}
         >
           Send us your next open role.
         </h2>
