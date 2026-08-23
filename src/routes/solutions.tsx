@@ -637,7 +637,7 @@ function ProcessSection() {
       <Eyebrow>How a placement works</Eyebrow>
       <h2
         className="mt-4 max-w-2xl text-3xl leading-[1.15] md:text-[40px]"
-        style={{ fontFamily: SERIF, fontWeight: 600, color: T.ink }}
+        style={{ fontFamily: SERIF, fontWeight: 700, letterSpacing: "-0.02em", color: T.ink }}
       >
         Every candidate goes through the same three steps before you meet them.
       </h2>
@@ -678,7 +678,7 @@ function ProcessSection() {
               >
                 <Icon className="h-5 w-5" style={{ color: s.color }} />
               </span>
-              <h3 className="mt-5 text-[19px] leading-snug" style={{ fontFamily: SERIF, fontWeight: 600, color: T.ink }}>
+              <h3 className="mt-5 text-[19px] leading-snug" style={{ fontFamily: SERIF, fontWeight: 700, letterSpacing: "-0.02em", color: T.ink }}>
                 {s.title}
               </h3>
               <p className="mt-3 text-[14px] leading-relaxed" style={{ color: T.muted }}>
@@ -718,7 +718,7 @@ function PayForHireSection() {
         <Eyebrow>How you pay</Eyebrow>
         <h2
           className="mt-4 text-3xl leading-[1.15] md:text-[40px]"
-          style={{ fontFamily: SERIF, fontWeight: 600, color: T.ink }}
+          style={{ fontFamily: SERIF, fontWeight: 700, letterSpacing: "-0.02em", color: T.ink }}
         >
           Pay for hire, not for search.
         </h2>
@@ -828,7 +828,7 @@ function PayForHireSection() {
         <div className="mt-16 grid grid-cols-2 gap-y-8 border-t pt-10 md:grid-cols-4" style={{ borderColor: "rgba(22,26,31,0.18)" }}>
           {STATS.map((s) => (
             <div key={s.label} className="pr-6">
-              <p className="text-3xl md:text-[36px]" style={{ fontFamily: SERIF, fontWeight: 600, color: T.gold }}>
+              <p className="text-3xl md:text-[36px]" style={{ fontFamily: SERIF, fontWeight: 700, letterSpacing: "-0.02em", color: T.gold }}>
                 {s.n}
               </p>
               <p className="mt-2 text-[10px] uppercase leading-snug" style={{ fontFamily: MONO, letterSpacing: "0.12em", color: T.inkSoft }}>
@@ -853,7 +853,7 @@ function SolutionsPage() {
           <Eyebrow>Hiring solutions for high-growth startups</Eyebrow>
           <h1
             className="mt-5 text-[42px] leading-[1.08] md:text-[58px]"
-            style={{ fontFamily: SERIF, fontWeight: 600, color: T.ink }}
+            style={{ fontFamily: SERIF, fontWeight: 700, letterSpacing: "-0.02em", color: T.ink }}
           >
             Hire with proof,
             <br />
@@ -894,7 +894,7 @@ function SolutionsPage() {
       <section className="mx-auto max-w-[1120px] px-6 py-24 text-center">
         <h2
           className="mx-auto max-w-xl text-3xl leading-[1.15] md:text-[42px]"
-          style={{ fontFamily: SERIF, fontWeight: 600, color: T.ink }}
+          style={{ fontFamily: SERIF, fontWeight: 700, letterSpacing: "-0.02em", color: T.ink }}
         >
           Send us your next open role.
         </h2>
