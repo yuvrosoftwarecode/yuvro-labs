@@ -576,7 +576,7 @@ function HeroDemoCard() {
       </div>
 
       {/* active screen only — hidden screens are not in the DOM */}
-      <div className="p-4" style={{ minHeight: 480 }}>
+      <div className="p-4" style={{ height: 480 }}>
         {active === 0 && <ScreenReport />}
         {active === 1 && <ScreenSimulation active={active === 1} />}
         {active === 2 && <ScreenVitarka active={active === 2} />}
@@ -750,28 +750,28 @@ function PayForHireSection() {
               const x = 4 + i * 11.6; // 4% .. 73.6%
               const above = i % 2 === 0;
               const Icon = n.icon;
+              const iconEl = (
+                <span
+                  className="grid h-11 w-11 shrink-0 place-items-center rounded-full border"
+                  style={{ background: n.tint, borderColor: n.color }}
+                >
+                  <Icon style={{ color: n.color, width: 18, height: 18 }} />
+                </span>
+              );
+              const labelEl = (
+                <span className="text-[9.5px] uppercase leading-tight" style={{ fontFamily: MONO, letterSpacing: "0.08em", color: T.inkSoft }}>
+                  {n.label}
+                </span>
+              );
               return (
                 <div
                   key={n.label}
-                  className="absolute flex w-[110px] -translate-x-1/2 flex-col items-center gap-2 text-center"
-                  style={{ left: `${x}%`, top: above ? "6%" : "66%" }}
+                  className="absolute flex w-[104px] -translate-x-1/2 flex-col items-center gap-2 text-center"
+                  style={above ? { left: `${x}%`, top: 0 } : { left: `${x}%`, bottom: 0 }}
                 >
-                  {!above && (
-                    <span className="order-2 text-[9.5px] uppercase leading-tight" style={{ fontFamily: MONO, letterSpacing: "0.08em", color: T.inkSoft }}>
-                      {n.label}
-                    </span>
-                  )}
-                  <span
-                    className="grid h-11 w-11 place-items-center rounded-full border"
-                    style={{ background: n.tint, borderColor: n.color }}
-                  >
-                    <Icon className="h-4.5 w-4.5" style={{ color: n.color, width: 18, height: 18 }} />
-                  </span>
-                  {above && (
-                    <span className="text-[9.5px] uppercase leading-tight" style={{ fontFamily: MONO, letterSpacing: "0.08em", color: T.inkSoft }}>
-                      {n.label}
-                    </span>
-                  )}
+                  {/* above the curve: label on top, icon sits on the crest;
+                      below the curve: icon sits on the trough, label underneath */}
+                  {above ? (<>{labelEl}{iconEl}</>) : (<>{iconEl}{labelEl}</>)}
                 </div>
               );
             })}
