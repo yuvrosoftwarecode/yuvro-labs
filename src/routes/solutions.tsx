@@ -954,9 +954,21 @@ function SolutionsPage() {
         .hwp-stage { height: 480px; }
         @media (max-width: 639px) { .hwp-stage { height: auto; min-height: 0; } }
         @keyframes hwp-blink { 50% { opacity: 0; } }
+        @keyframes hwp-pop { from { opacity: 0; transform: scale(0.6); } to { opacity: 1; transform: scale(1); } }
+        .hwp-pop { animation: hwp-pop 550ms cubic-bezier(0.16,1,0.3,1) both; }
+        @keyframes hwp-pulse {
+          0% { transform: scale(1); box-shadow: 0 0 0 0 rgba(200,149,42,0); }
+          2.5% { transform: scale(1.14); box-shadow: 0 0 0 12px rgba(200,149,42,0.16); }
+          5.5% { transform: scale(1); box-shadow: 0 0 0 0 rgba(200,149,42,0); }
+          100% { transform: scale(1); box-shadow: 0 0 0 0 rgba(200,149,42,0); }
+        }
+        .hwp-node-pulse { animation: hwp-pulse 8s linear infinite; }
         @media (prefers-reduced-motion: reduce) {
           .hwp-screen { animation: none; }
           .hwp-caret { animation: none; }
+          .hwp-pop { animation: none; }
+          .hwp-node-pulse { animation: none; }
+          .hwp-traveler { display: none; }
         }
       `}</style>
     </div>
