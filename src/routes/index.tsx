@@ -634,11 +634,11 @@ function FinalCTA() {
             Verify engineering capability before making hiring decisions. Bring evidence into every hiring conversation.
           </p>
           <div className="mt-8 flex flex-wrap items-center gap-3">
-            <a href="#" className="inline-flex items-center gap-2 rounded-md bg-white px-5 py-3 text-[14px] font-medium text-[#0A0A0A] hover:bg-neutral-100 transition">
+            <Link to="/demo" className="inline-flex items-center gap-2 rounded-md bg-white px-5 py-3 text-[14px] font-medium text-[#0A0A0A] hover:bg-neutral-100 transition">
               Book Demo <ArrowUpRight className="h-4 w-4" />
-            </a>
-            <Link to="/auth" search={{ tab: "signup" }} className="inline-flex items-center gap-2 rounded-md border border-neutral-700 px-5 py-3 text-[14px] font-medium text-white hover:border-white transition">
-              Get Started
+            </Link>
+            <Link to="/demo" className="inline-flex items-center gap-2 rounded-md border border-neutral-700 px-5 py-3 text-[14px] font-medium text-white hover:border-white transition">
+              Book a Demo
             </Link>
           </div>
         </Reveal>

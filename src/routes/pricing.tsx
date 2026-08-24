@@ -353,7 +353,7 @@ function FinalCTA() {
           <Link to="/auth" search={{ tab: "signup" }} className="inline-flex items-center gap-1.5 rounded-md px-5 py-2.5 text-sm font-medium text-white transition hover:brightness-95" style={{ background: AMBER }}>
             Start Free Trial <ArrowRight className="h-3.5 w-3.5" />
           </Link>
-          <a href="mailto:sales@yuvrolabs.com" className="inline-flex items-center gap-1.5 rounded-md border border-white/25 px-5 py-2.5 text-sm font-medium text-white transition hover:bg-white/10">
+          <a href="/demo" className="inline-flex items-center gap-1.5 rounded-md border border-white/25 px-5 py-2.5 text-sm font-medium text-white transition hover:bg-white/10">
             Talk to Sales
           </a>
         </div>
