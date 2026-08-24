@@ -172,7 +172,7 @@ function HeroSection() {
       <div className="relative mx-auto grid max-w-6xl items-center gap-16 px-6 pb-28 pt-16 lg:grid-cols-[1.05fr_0.95fr] lg:pt-24">
         <Reveal>
           <h1
-            className="mt-5 text-[44px] font-bold leading-[1.05] tracking-[-0.02em] sm:text-[58px]"
+            className="text-[44px] font-bold leading-[1.05] tracking-[-0.02em] sm:text-[58px]"
             style={{ color: INK }}
           >
             Evidence, not assumptions.
