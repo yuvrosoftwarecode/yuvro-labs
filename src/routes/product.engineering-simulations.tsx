@@ -11,6 +11,7 @@ import {
   ShieldCheck,
   UserRoundX,
 } from "lucide-react";
+import { SiteNav } from "@/components/site/SiteNav";
 
 /* ============================================================
    Engineering Simulations — B2B landing page
@@ -151,25 +152,7 @@ function EngineeringSimulationsPage() {
         }
       `}</style>
 
-      {/* Minimal brand row — no header navigation */}
-      <div className="mx-auto flex max-w-6xl items-center justify-between px-6 pt-7">
-        <Link to="/" className="flex items-center gap-2.5">
-          <div
-            className="grid h-9 w-9 place-items-center rounded-xl font-mono text-sm font-semibold text-white"
-            style={{ background: INK }}
-          >
-            Y
-          </div>
-          <span className="text-[15px] font-semibold tracking-tight">Yuvro Labs</span>
-        </Link>
-        <a
-          href="mailto:hello@yuvrolabs.com"
-          className="rounded-full px-5 py-2 text-[13.5px] font-semibold transition-colors"
-          style={{ color: TEAL, background: "rgba(46,92,82,0.08)" }}
-        >
-          Talk to us
-        </a>
-      </div>
+      <SiteNav />
 
       <HeroSection />
       <GapSection />
@@ -185,24 +168,11 @@ function EngineeringSimulationsPage() {
    ============================================================ */
 function HeroSection() {
   return (
-    <section className="relative overflow-hidden">
-      {/* soft orb glows */}
-      <div
-        aria-hidden
-        className="pointer-events-none absolute -top-40 right-[-10%] h-[560px] w-[560px] rounded-full"
-        style={{ background: "radial-gradient(circle, rgba(220,237,231,0.9) 0%, rgba(220,237,231,0) 65%)" }}
-      />
-      <div
-        aria-hidden
-        className="pointer-events-none absolute top-64 left-[-12%] h-[480px] w-[480px] rounded-full"
-        style={{ background: "radial-gradient(circle, rgba(250,238,218,0.85) 0%, rgba(250,238,218,0) 65%)" }}
-      />
-
+    <section className="relative overflow-hidden bg-white">
       <div className="relative mx-auto grid max-w-6xl items-center gap-16 px-6 pb-28 pt-16 lg:grid-cols-[1.05fr_0.95fr] lg:pt-24">
         <Reveal>
-          <Eyebrow>Inside Yuvro Labs</Eyebrow>
           <h1
-            className="mt-5 text-[44px] font-bold leading-[1.05] tracking-[-0.02em] sm:text-[58px]"
+            className="text-[44px] font-bold leading-[1.05] tracking-[-0.02em] sm:text-[58px]"
             style={{ color: INK }}
           >
             Evidence, not assumptions.
@@ -341,7 +311,6 @@ function GapSection() {
   return (
     <section className="mx-auto max-w-6xl px-6 pb-32 pt-8">
       <Reveal className="max-w-3xl">
-        <Eyebrow>Where current assessments fall short</Eyebrow>
         <h2 className="mt-5 text-[32px] font-bold leading-[1.15] tracking-[-0.015em] sm:text-[40px]" style={{ color: INK }}>
           Coding tests measure whether a problem can be solved. They don't measure whether the job
           can be done.
@@ -387,7 +356,6 @@ function CoreSection() {
     >
       <div className="mx-auto max-w-6xl px-6 py-28 lg:py-36">
         <Reveal className="mx-auto max-w-3xl text-center">
-          <Eyebrow color={TEAL}>The core of the platform</Eyebrow>
           <h2 className="mt-5 text-[32px] font-bold leading-[1.12] tracking-[-0.015em] sm:text-[44px]" style={{ color: INK }}>
             Two signals, evaluated together, that neither a coding test nor a standalone AI
             interview can produce alone.
@@ -412,9 +380,6 @@ function CoreSection() {
               >
                 <FileCode2 size={22} strokeWidth={1.8} style={{ color: TEAL }} />
               </div>
-              <p className="mt-6 font-mono text-[11px] uppercase tracking-[0.22em]" style={{ color: TEAL }}>
-                Engineering Labs · What they do
-              </p>
               <p className="mt-4 text-[15px] leading-relaxed" style={{ color: BODY }}>
                 Candidates work inside a live development environment built around a real task: a
                 production-style bug, an incomplete feature, an existing codebase to navigate. Each
@@ -504,9 +469,6 @@ function CoreSection() {
               >
                 <MessagesSquare size={22} strokeWidth={1.8} style={{ color: "#6A5FA8" }} />
               </div>
-              <p className="mt-6 font-mono text-[11px] uppercase tracking-[0.22em]" style={{ color: "#6A5FA8" }}>
-                Vitarka AI · What happens next
-              </p>
               <p className="mt-4 text-[15px] leading-relaxed" style={{ color: BODY }}>
                 Immediately after the task, Vitarka reviews the candidate's own solution and asks
                 them to account for it — the decisions made, the tradeoffs considered, how they
@@ -599,7 +561,6 @@ function ReportSection() {
     <section id="sample-report" className="mx-auto max-w-6xl scroll-mt-10 px-6 py-28 lg:py-32">
       <div className="grid items-start gap-14 lg:grid-cols-[0.9fr_1.1fr]">
         <Reveal>
-          <Eyebrow>What lands in your inbox</Eyebrow>
           <h2 className="mt-5 text-[32px] font-bold leading-[1.15] tracking-[-0.015em] sm:text-[40px]" style={{ color: INK }}>
             One report. Every claim traceable to something the candidate actually did.
           </h2>
@@ -678,7 +639,6 @@ function CtaSection() {
           className="mx-auto max-w-6xl rounded-[28px] px-8 py-20 text-center sm:px-16"
           style={{ background: INK, boxShadow: LIFT_SHADOW }}
         >
-          <Eyebrow color="#8FA79F">Engineering Simulations</Eyebrow>
           <h2 className="mx-auto mt-5 max-w-2xl text-[30px] font-bold leading-[1.15] tracking-[-0.015em] text-white sm:text-[40px]">
             Hire the engineer you interviewed — not the one who prepped for the test.
           </h2>
