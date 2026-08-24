@@ -170,118 +170,66 @@ function EngineeringSimulationsPage() {
    SECTION 1 — HERO
    ============================================================ */
 function HeroSection() {
+  const checks = [
+    "Real engineering tasks",
+    "AI-guided reasoning",
+    "Decision-ready reports",
+  ];
+
   return (
     <section className="relative overflow-hidden bg-white">
-      <div className="relative mx-auto grid max-w-6xl items-center gap-16 px-6 pb-28 pt-16 lg:grid-cols-[1.05fr_0.95fr] lg:pt-24">
+      <div className="relative mx-auto max-w-5xl px-6 pb-24 pt-20 text-center lg:pt-28">
         <Reveal>
           <h1
-            className="text-[44px] font-bold leading-[1.05] tracking-[-0.02em] sm:text-[58px]"
+            className="font-serif text-[44px] font-normal leading-[1.08] tracking-[-0.02em] sm:text-[60px] lg:text-[72px]"
             style={{ color: INK }}
           >
             Evidence, not assumptions.
-          </h1>
-          <p className="mt-6 max-w-lg text-[17px] leading-relaxed" style={{ color: BODY }}>
-            Candidates complete a real engineering task inside a live environment, then explain their
-            reasoning to Vitarka, our AI interviewer. What you receive is a report grounded in what
-            they actually did — not a resume, and not a guess.
-          </p>
-          <div className="mt-9 flex flex-wrap items-center gap-4">
-            <PillPrimary href="#sample-report">
-              See a sample report
-              <ArrowRight size={16} />
-            </PillPrimary>
-            <PillSecondary href="mailto:hello@yuvrolabs.com">Talk to us</PillSecondary>
-          </div>
-        </Reveal>
-
-        {/* Report preview card */}
-        <Reveal delay={150}>
-          <div className="relative">
-            <div
-              aria-hidden
-              className="absolute -inset-8 rounded-[40px]"
-              style={{ background: "radial-gradient(closest-side, rgba(46,92,82,0.14), transparent)" }}
-            />
-            <div
-              className="es-float relative rounded-[24px] p-7"
-              style={{ background: SURFACE, boxShadow: LIFT_SHADOW }}
+            <br />
+            <span
+              className="italic"
+              style={{ color: TEAL }}
             >
-              <div className="flex items-center justify-between">
-                <div>
-                  <p className="font-mono text-[10px] uppercase tracking-[0.2em]" style={{ color: MUTED }}>
-                    Evaluation report
-                  </p>
-                  <p className="mt-1.5 text-[17px] font-semibold" style={{ color: INK }}>
-                    Backend Engineer · Senior
-                  </p>
-                </div>
-                {/* score ring */}
-                <div className="relative grid h-[68px] w-[68px] place-items-center">
-                  <svg viewBox="0 0 64 64" className="absolute inset-0 -rotate-90">
-                    <circle cx="32" cy="32" r="27" fill="none" stroke="#E9E7E0" strokeWidth="6" />
-                    <circle
-                      cx="32"
-                      cy="32"
-                      r="27"
-                      fill="none"
-                      stroke={TEAL}
-                      strokeWidth="6"
-                      strokeLinecap="round"
-                      strokeDasharray={`${2 * Math.PI * 27 * 0.82} ${2 * Math.PI * 27}`}
-                    />
-                  </svg>
-                  <span className="text-[18px] font-bold" style={{ color: TEAL }}>
-                    82
-                  </span>
-                </div>
-              </div>
-
-              <div className="mt-6 space-y-3.5">
-                {[
-                  { label: "Debugging", value: 88, tint: TEAL },
-                  { label: "Code quality", value: 76, tint: GOLD },
-                  { label: "Technical reasoning", value: 84, tint: TEAL },
-                ].map((s) => (
-                  <div key={s.label}>
-                    <div className="flex items-center justify-between text-[12.5px]">
-                      <span style={{ color: BODY }}>{s.label}</span>
-                      <span className="font-mono" style={{ color: MUTED }}>
-                        {s.value}
-                      </span>
-                    </div>
-                    <div className="mt-1.5 h-2 rounded-full" style={{ background: "#EDECE5" }}>
-                      <div
-                        className="h-2 rounded-full"
-                        style={{ width: `${s.value}%`, background: s.tint, opacity: 0.85 }}
-                      />
-                    </div>
-                  </div>
-                ))}
-              </div>
-
-              <div className="mt-6 flex flex-wrap gap-2">
+              Powering production-ready hiring.
+            </span>
+          </h1>
+          <p
+            className="mx-auto mt-8 max-w-2xl text-[17px] leading-relaxed"
+            style={{ color: BODY }}
+          >
+            Yuvro provides the engineering simulation layer behind modern hiring
+            — real tasks, AI-guided reasoning, and decision-ready evidence. Not
+            a resume, and not a guess.
+          </p>
+          <div className="mt-8 flex flex-wrap items-center justify-center gap-7">
+            {checks.map((item) => (
+              <div
+                key={item}
+                className="flex items-center gap-2 text-[15px] font-medium"
+                style={{ color: INK }}
+              >
                 <span
-                  className="inline-flex items-center gap-1.5 rounded-full px-3 py-1.5 text-[11.5px] font-semibold"
+                  className="grid h-5 w-5 place-items-center rounded-full"
                   style={{ background: TEAL_TINT, color: TEAL }}
                 >
-                  <ShieldCheck size={13} />
-                  Vitarka verified
+                  <Check size={12} strokeWidth={2.5} />
                 </span>
-                <span
-                  className="inline-flex items-center gap-1.5 rounded-full px-3 py-1.5 text-[11.5px] font-semibold"
-                  style={{ background: GOLD_TINT, color: GOLD }}
-                >
-                  <FileCode2 size={13} />
-                  14 evidence links
-                </span>
+                {item}
               </div>
-            </div>
+            ))}
+          </div>
+          <div className="mt-10 flex items-center justify-center gap-4">
+            <PillSecondary href="mailto:hello@yuvrolabs.com">
+              Talk to us
+              <ArrowRight size={16} />
+            </PillSecondary>
           </div>
         </Reveal>
       </div>
     </section>
   );
 }
+
 
 /* ============================================================
    SECTION 2 — THE GAP IN TECHNICAL HIRING
