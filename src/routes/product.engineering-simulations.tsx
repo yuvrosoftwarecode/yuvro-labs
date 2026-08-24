@@ -185,17 +185,16 @@ function HeroSection() {
             style={{ color: INK }}
           >
             Evidence, not assumptions.
-            <br />
-            <span style={{ color: TEAL }}>Powering production-ready hiring.</span>
           </h1>
 
           <p
             className="mx-auto mt-8 max-w-2xl text-[17px] leading-relaxed"
             style={{ color: BODY }}
           >
-            Yuvro provides the engineering simulation layer behind modern hiring
-            — real tasks, AI-guided reasoning, and decision-ready evidence. Not
-            a resume, and not a guess.
+            Candidates complete a real engineering task inside a live environment,
+            then explain their reasoning to Vitarka, our AI interviewer. What you
+            receive is a report grounded in what they actually did — not a resume,
+            and not a guess.
           </p>
           <div className="mt-8 flex flex-wrap items-center justify-center gap-7">
             {checks.map((item) => (
