@@ -888,8 +888,7 @@ function SolutionsPage() {
           </p>
           <div className="mt-9 flex flex-wrap items-center gap-3">
             <Link
-              to="/auth"
-              search={{ tab: "signup" }}
+              to="/demo"
               className="inline-flex items-center gap-2 rounded-sm px-6 py-3 text-[14px] font-medium transition hover:opacity-90"
               style={{ background: T.ink, color: T.raised, borderRadius: 2 }}
             >
