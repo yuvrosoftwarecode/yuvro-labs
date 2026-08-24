@@ -11,6 +11,7 @@ import {
   ShieldCheck,
   UserRoundX,
 } from "lucide-react";
+import { SiteNav } from "@/components/site/SiteNav";
 
 /* ============================================================
    Engineering Simulations — B2B landing page
@@ -151,25 +152,7 @@ function EngineeringSimulationsPage() {
         }
       `}</style>
 
-      {/* Minimal brand row — no header navigation */}
-      <div className="mx-auto flex max-w-6xl items-center justify-between px-6 pt-7">
-        <Link to="/" className="flex items-center gap-2.5">
-          <div
-            className="grid h-9 w-9 place-items-center rounded-xl font-mono text-sm font-semibold text-white"
-            style={{ background: INK }}
-          >
-            Y
-          </div>
-          <span className="text-[15px] font-semibold tracking-tight">Yuvro Labs</span>
-        </Link>
-        <a
-          href="mailto:hello@yuvrolabs.com"
-          className="rounded-full px-5 py-2 text-[13.5px] font-semibold transition-colors"
-          style={{ color: TEAL, background: "rgba(46,92,82,0.08)" }}
-        >
-          Talk to us
-        </a>
-      </div>
+      <SiteNav />
 
       <HeroSection />
       <GapSection />
