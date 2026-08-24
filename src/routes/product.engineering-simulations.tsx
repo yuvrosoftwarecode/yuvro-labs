@@ -177,21 +177,16 @@ function HeroSection() {
   ];
 
   return (
-    <section className="relative overflow-hidden bg-white">
-      <div className="relative mx-auto max-w-5xl px-6 pb-24 pt-20 text-center lg:pt-28">
+    <section className="relative flex min-h-[calc(100svh-4rem)] items-center overflow-hidden bg-white">
+      <div className="relative mx-auto w-full max-w-6xl px-6 py-20 text-center">
         <Reveal>
           <h1
-            className="text-[44px] font-normal leading-[1.08] tracking-[-0.02em] sm:text-[60px] lg:text-[72px]"
-            style={{ color: INK, fontFamily: '"Instrument Serif", Georgia, serif' }}
+            className="text-[40px] font-bold leading-[1.06] tracking-[-0.025em] sm:text-[56px] lg:text-[64px]"
+            style={{ color: INK }}
           >
             Evidence, not assumptions.
             <br />
-            <span
-              className="italic"
-              style={{ color: TEAL }}
-            >
-              Powering production-ready hiring.
-            </span>
+            <span style={{ color: TEAL }}>Powering production-ready hiring.</span>
           </h1>
 
           <p
