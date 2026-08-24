@@ -130,13 +130,14 @@ function PillSecondary({ children, href }: { children: ReactNode; href: string }
   return (
     <a
       href={href}
-      className="inline-flex items-center gap-2 rounded-full px-7 py-3.5 text-[15px] font-semibold transition-colors"
-      style={{ color: TEAL, background: "rgba(46,92,82,0.08)", border: "1px solid rgba(46,92,82,0.22)" }}
+      className="inline-flex items-center gap-2 rounded-full px-7 py-3.5 text-[15px] font-semibold text-white transition-transform hover:-translate-y-0.5"
+      style={{ background: INK }}
     >
       {children}
     </a>
   );
 }
+
 
 /* ============================================================ */
 
