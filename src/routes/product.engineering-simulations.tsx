@@ -380,9 +380,6 @@ function CoreSection() {
               >
                 <FileCode2 size={22} strokeWidth={1.8} style={{ color: TEAL }} />
               </div>
-              <p className="mt-6 font-mono text-[11px] uppercase tracking-[0.22em]" style={{ color: TEAL }}>
-                Engineering Labs · What they do
-              </p>
               <p className="mt-4 text-[15px] leading-relaxed" style={{ color: BODY }}>
                 Candidates work inside a live development environment built around a real task: a
                 production-style bug, an incomplete feature, an existing codebase to navigate. Each
@@ -472,9 +469,6 @@ function CoreSection() {
               >
                 <MessagesSquare size={22} strokeWidth={1.8} style={{ color: "#6A5FA8" }} />
               </div>
-              <p className="mt-6 font-mono text-[11px] uppercase tracking-[0.22em]" style={{ color: "#6A5FA8" }}>
-                Vitarka AI · What happens next
-              </p>
               <p className="mt-4 text-[15px] leading-relaxed" style={{ color: BODY }}>
                 Immediately after the task, Vitarka reviews the candidate's own solution and asks
                 them to account for it — the decisions made, the tradeoffs considered, how they
