@@ -181,8 +181,8 @@ function HeroSection() {
       <div className="relative mx-auto max-w-5xl px-6 pb-24 pt-20 text-center lg:pt-28">
         <Reveal>
           <h1
-            className="font-serif text-[44px] font-normal leading-[1.08] tracking-[-0.02em] sm:text-[60px] lg:text-[72px]"
-            style={{ color: INK }}
+            className="text-[44px] font-normal leading-[1.08] tracking-[-0.02em] sm:text-[60px] lg:text-[72px]"
+            style={{ color: INK, fontFamily: '"Instrument Serif", Georgia, serif' }}
           >
             Evidence, not assumptions.
             <br />
@@ -193,6 +193,7 @@ function HeroSection() {
               Powering production-ready hiring.
             </span>
           </h1>
+
           <p
             className="mx-auto mt-8 max-w-2xl text-[17px] leading-relaxed"
             style={{ color: BODY }}
