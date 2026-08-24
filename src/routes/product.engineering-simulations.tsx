@@ -168,22 +168,9 @@ function EngineeringSimulationsPage() {
    ============================================================ */
 function HeroSection() {
   return (
-    <section className="relative overflow-hidden">
-      {/* soft orb glows */}
-      <div
-        aria-hidden
-        className="pointer-events-none absolute -top-40 right-[-10%] h-[560px] w-[560px] rounded-full"
-        style={{ background: "radial-gradient(circle, rgba(220,237,231,0.9) 0%, rgba(220,237,231,0) 65%)" }}
-      />
-      <div
-        aria-hidden
-        className="pointer-events-none absolute top-64 left-[-12%] h-[480px] w-[480px] rounded-full"
-        style={{ background: "radial-gradient(circle, rgba(250,238,218,0.85) 0%, rgba(250,238,218,0) 65%)" }}
-      />
-
+    <section className="relative overflow-hidden bg-white">
       <div className="relative mx-auto grid max-w-6xl items-center gap-16 px-6 pb-28 pt-16 lg:grid-cols-[1.05fr_0.95fr] lg:pt-24">
         <Reveal>
-          <Eyebrow>Inside Yuvro Labs</Eyebrow>
           <h1
             className="mt-5 text-[44px] font-bold leading-[1.05] tracking-[-0.02em] sm:text-[58px]"
             style={{ color: INK }}
@@ -324,7 +311,6 @@ function GapSection() {
   return (
     <section className="mx-auto max-w-6xl px-6 pb-32 pt-8">
       <Reveal className="max-w-3xl">
-        <Eyebrow>Where current assessments fall short</Eyebrow>
         <h2 className="mt-5 text-[32px] font-bold leading-[1.15] tracking-[-0.015em] sm:text-[40px]" style={{ color: INK }}>
           Coding tests measure whether a problem can be solved. They don't measure whether the job
           can be done.
@@ -370,7 +356,6 @@ function CoreSection() {
     >
       <div className="mx-auto max-w-6xl px-6 py-28 lg:py-36">
         <Reveal className="mx-auto max-w-3xl text-center">
-          <Eyebrow color={TEAL}>The core of the platform</Eyebrow>
           <h2 className="mt-5 text-[32px] font-bold leading-[1.12] tracking-[-0.015em] sm:text-[44px]" style={{ color: INK }}>
             Two signals, evaluated together, that neither a coding test nor a standalone AI
             interview can produce alone.
@@ -582,7 +567,6 @@ function ReportSection() {
     <section id="sample-report" className="mx-auto max-w-6xl scroll-mt-10 px-6 py-28 lg:py-32">
       <div className="grid items-start gap-14 lg:grid-cols-[0.9fr_1.1fr]">
         <Reveal>
-          <Eyebrow>What lands in your inbox</Eyebrow>
           <h2 className="mt-5 text-[32px] font-bold leading-[1.15] tracking-[-0.015em] sm:text-[40px]" style={{ color: INK }}>
             One report. Every claim traceable to something the candidate actually did.
           </h2>
@@ -661,7 +645,6 @@ function CtaSection() {
           className="mx-auto max-w-6xl rounded-[28px] px-8 py-20 text-center sm:px-16"
           style={{ background: INK, boxShadow: LIFT_SHADOW }}
         >
-          <Eyebrow color="#8FA79F">Engineering Simulations</Eyebrow>
           <h2 className="mx-auto mt-5 max-w-2xl text-[30px] font-bold leading-[1.15] tracking-[-0.015em] text-white sm:text-[40px]">
             Hire the engineer you interviewed — not the one who prepped for the test.
           </h2>
