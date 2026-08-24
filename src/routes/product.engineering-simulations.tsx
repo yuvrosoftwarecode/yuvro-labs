@@ -178,10 +178,10 @@ function HeroSection() {
 
   return (
     <section className="relative flex min-h-[calc(100svh-4rem)] items-center overflow-hidden bg-white">
-      <div className="relative mx-auto w-full max-w-5xl px-6 py-20 text-center">
+      <div className="relative mx-auto w-full max-w-6xl px-6 py-20 text-center">
         <Reveal>
           <h1
-            className="text-[44px] font-bold leading-[1.04] tracking-[-0.025em] sm:text-[64px] lg:text-[80px]"
+            className="text-[40px] font-bold leading-[1.06] tracking-[-0.025em] sm:text-[56px] lg:text-[64px]"
             style={{ color: INK }}
           >
             Evidence, not assumptions.
