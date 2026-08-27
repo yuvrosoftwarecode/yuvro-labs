@@ -2,6 +2,7 @@ import { createFileRoute, Link } from "@tanstack/react-router";
 import { useEffect, useRef, useState } from "react";
 import { ArrowRight, Play, Check, Terminal, MessageSquare, ShieldCheck } from "lucide-react";
 import { SiteNav } from "@/components/site/SiteNav";
+import { YuvroHiringOrbit } from "@/components/site/YuvroHiringOrbit";
 
 export const Route = createFileRoute("/")({
   head: () => ({
