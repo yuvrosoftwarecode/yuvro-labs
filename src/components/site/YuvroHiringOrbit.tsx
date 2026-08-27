@@ -37,7 +37,7 @@ function polar(angleDeg: number, radius: number) {
 
 function Shell({ title, children }: { title: string; children: React.ReactNode }) {
   return (
-    <div className="w-[268px] overflow-hidden rounded-xl border border-[#E6E4DE] bg-white/95 backdrop-blur-md shadow-[0_18px_44px_-24px_rgba(27,31,35,0.30)]">
+    <div className="w-[240px] overflow-hidden rounded-xl border border-[#E6E4DE] bg-white shadow-[0_24px_60px_-30px_rgba(27,31,35,0.38)]">
       <div className="flex items-center gap-1.5 border-b border-[#EFEDE7] px-3 py-2">
         <span className="h-1.5 w-1.5 rounded-full bg-[#E4E2DC]" />
         <span className="h-1.5 w-1.5 rounded-full bg-[#E4E2DC]" />
@@ -47,6 +47,7 @@ function Shell({ title, children }: { title: string; children: React.ReactNode }
     </div>
   );
 }
+
 
 function Bar({ w, tone = "#E9E7E1" }: { w: string; tone?: string }) {
   return <span className="block h-1.5 rounded-full" style={{ width: w, background: tone }} />;
