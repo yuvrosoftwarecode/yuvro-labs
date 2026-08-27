@@ -192,18 +192,18 @@ export function YuvroHiringOrbit() {
   const R = 168; // orbit radius in px at base scale
 
   return (
-    <div ref={wrapRef} className="relative mx-auto w-full max-w-[560px] select-none">
+    <div ref={wrapRef} className="relative mx-auto flex w-full max-w-[620px] items-center justify-center select-none">
       {/* ambient glow */}
       <div
         aria-hidden
-        className="pointer-events-none absolute left-1/2 top-1/2 h-[420px] w-[420px] -translate-x-1/2 -translate-y-1/2 rounded-full blur-3xl"
-        style={{ background: `radial-gradient(circle, ${SAFFRON}14 0%, ${TEAL}0D 45%, transparent 70%)` }}
+        className="pointer-events-none absolute left-1/2 top-1/2 h-[460px] w-[460px] -translate-x-1/2 -translate-y-1/2 rounded-full blur-3xl"
+        style={{ background: `radial-gradient(circle, ${SAFFRON}12 0%, ${TEAL}0A 45%, transparent 70%)` }}
       />
 
-      <div className="relative mx-auto h-[440px] w-[440px] max-w-full scale-[0.62] sm:scale-[0.8] lg:scale-100 origin-center">
+      <div className="relative mx-auto h-[440px] w-[440px] max-w-full scale-[0.58] sm:scale-[0.78] lg:scale-[0.92] xl:scale-100 origin-center">
         {/* orbit rings */}
-        <div className="absolute left-1/2 top-1/2 h-[336px] w-[336px] -translate-x-1/2 -translate-y-1/2 rounded-full border border-[#E6E4DE]" />
-        <div className="absolute left-1/2 top-1/2 h-[232px] w-[232px] -translate-x-1/2 -translate-y-1/2 rounded-full border border-dashed border-[#EDEBE5]" />
+        <div className="absolute left-1/2 top-1/2 h-[336px] w-[336px] -translate-x-1/2 -translate-y-1/2 rounded-full border border-[#D9D6CE]" />
+        <div className="absolute left-1/2 top-1/2 h-[232px] w-[232px] -translate-x-1/2 -translate-y-1/2 rounded-full border border-dashed border-[#DFDCD4]" />
 
         {/* connection lines */}
         <svg className="absolute inset-0 h-full w-full" viewBox="0 0 440 440" aria-hidden>
@@ -214,10 +214,10 @@ export function YuvroHiringOrbit() {
               <line
                 key={f.key}
                 x1={220} y1={220} x2={220 + p.x} y2={220 + p.y}
-                stroke={on ? f.accent : "#E2E0DA"}
-                strokeWidth={on ? 1.4 : 1}
-                strokeOpacity={on ? 0.75 : 0.5}
-                style={{ transition: "stroke 700ms cubic-bezier(0.16,1,0.3,1), stroke-opacity 700ms" }}
+                stroke={on ? f.accent : "#D6D3CB"}
+                strokeWidth={on ? 1.5 : 1}
+                strokeOpacity={on ? 0.9 : 0.6}
+                style={{ transition: "stroke 900ms cubic-bezier(0.22,1,0.36,1), stroke-opacity 900ms cubic-bezier(0.22,1,0.36,1), stroke-width 900ms cubic-bezier(0.22,1,0.36,1)" }}
               />
             );
           })}
@@ -225,11 +225,11 @@ export function YuvroHiringOrbit() {
 
         {/* central hub */}
         <div
-          className="absolute left-1/2 top-1/2 grid h-[104px] w-[104px] -translate-x-1/2 -translate-y-1/2 place-items-center rounded-full border border-[#E6E4DE] bg-white/80 backdrop-blur-xl"
+          className="absolute left-1/2 top-1/2 grid h-[104px] w-[104px] place-items-center rounded-full border border-[#E0DDD5] bg-white"
           style={{
-            boxShadow: `0 20px 50px -28px rgba(27,31,35,0.35), 0 0 0 10px ${FEATURES[active].accent}0A`,
-            transform: `translate(-50%, -50%) scale(${reduced ? 1 : 1.015})`,
-            transition: "box-shadow 800ms cubic-bezier(0.16,1,0.3,1), transform 800ms cubic-bezier(0.16,1,0.3,1)",
+            boxShadow: `0 24px 56px -30px rgba(27,31,35,0.4), 0 0 0 10px ${FEATURES[active].accent}0D`,
+            transform: "translate(-50%, -50%)",
+            transition: "box-shadow 900ms cubic-bezier(0.22,1,0.36,1)",
           }}
         >
           <div className="text-center leading-none">
@@ -238,70 +238,67 @@ export function YuvroHiringOrbit() {
           </div>
         </div>
 
-        {/* feature nodes */}
+        {/* feature nodes + their anchored previews */}
         {FEATURES.map((f, i) => {
           const p = polar(f.angle, R);
           const on = i === active;
           const Icon = f.icon;
+          const P = PREVIEWS[i];
+          // anchor the preview outward from the node
+          const tx = p.x > 30 ? "0%" : p.x < -30 ? "-100%" : "-50%";
+          const ty = p.y > 30 ? "0%" : p.y < -30 ? "-100%" : "-50%";
+          const ox = p.x > 30 ? 14 : p.x < -30 ? -14 : 0;
+          const oy = p.y > 30 ? 14 : p.y < -30 ? -14 : 0;
           return (
-            <button
-              key={f.key}
-              type="button"
-              onMouseEnter={() => setHoveredIndex(i)}
-              onMouseLeave={() => setHoveredIndex(null)}
-              onFocus={() => setHoveredIndex(i)}
-              onBlur={() => setHoveredIndex(null)}
-              onTouchStart={() => setHoveredIndex(i)}
-              onTouchEnd={() => setHoveredIndex(null)}
-              className="absolute left-1/2 top-1/2 inline-flex items-center gap-2 whitespace-nowrap rounded-full border bg-white/85 px-3.5 py-2 text-[12px] font-medium backdrop-blur-md outline-none"
-              style={{
-                transform: `translate(calc(-50% + ${p.x}px), calc(-50% + ${p.y}px)) scale(${on ? 1.04 : 1})`,
-                borderColor: on ? f.accent : "#E6E4DE",
-                color: on ? "#0A0A0A" : "#6B6B6B",
-                boxShadow: on
-                  ? `0 14px 34px -20px rgba(27,31,35,0.4), 0 0 0 6px ${f.accent}12`
-                  : "0 8px 24px -20px rgba(27,31,35,0.35)",
-                transition:
-                  "transform 800ms cubic-bezier(0.16,1,0.3,1), box-shadow 800ms cubic-bezier(0.16,1,0.3,1), border-color 700ms, color 700ms",
-              }}
-            >
-              <Icon
-                className="h-3.5 w-3.5"
-                strokeWidth={1.6}
-                style={{ color: on ? f.accent : "#A8A49C", transition: "color 700ms" }}
-              />
-              {f.name}
-            </button>
-          );
-        })}
-      </div>
-
-      {/* preview cards */}
-      <div className="pointer-events-none relative -mt-6 grid place-items-center lg:absolute lg:right-[-24px] lg:top-1/2 lg:mt-0 lg:-translate-y-1/2">
-        <div className="relative h-[188px] w-[268px]">
-          {PREVIEWS.map((P, i) => {
-            const on = i === active;
-            return (
-              <div
-                key={FEATURES[i].key}
-                className="absolute inset-0"
+            <div key={f.key}>
+              <button
+                type="button"
+                onMouseEnter={() => setHoveredIndex(i)}
+                onMouseLeave={() => setHoveredIndex(null)}
+                onFocus={() => setHoveredIndex(i)}
+                onBlur={() => setHoveredIndex(null)}
+                onTouchStart={() => setHoveredIndex(i)}
+                onTouchEnd={() => setHoveredIndex(null)}
+                className="absolute left-1/2 top-1/2 z-10 inline-flex items-center gap-2 whitespace-nowrap rounded-full border bg-white px-3.5 py-2 text-[12px] font-medium outline-none"
                 style={{
-                  opacity: on ? 1 : 0,
-                  transform: on ? "translateY(0) scale(1)" : "translateY(10px) scale(0.97)",
-                  transition: on
-                    ? "opacity 700ms cubic-bezier(0.16,1,0.3,1), transform 700ms cubic-bezier(0.16,1,0.3,1)"
-                    : "opacity 550ms ease-out, transform 550ms ease-out",
-                  pointerEvents: "none",
-                  visibility: on ? "visible" : "hidden",
+                  transform: `translate(calc(-50% + ${p.x}px), calc(-50% + ${p.y}px)) scale(${on ? 1.05 : 1})`,
+                  borderColor: on ? f.accent : "#E0DDD5",
+                  color: on ? "#0A0A0A" : "#6B6B6B",
+                  boxShadow: on
+                    ? `0 16px 36px -22px rgba(27,31,35,0.42), 0 0 0 6px ${f.accent}14`
+                    : "0 8px 24px -20px rgba(27,31,35,0.3)",
+                  transition:
+                    "transform 900ms cubic-bezier(0.22,1,0.36,1), box-shadow 900ms cubic-bezier(0.22,1,0.36,1), border-color 900ms cubic-bezier(0.22,1,0.36,1), color 900ms cubic-bezier(0.22,1,0.36,1)",
+                  willChange: "transform",
                 }}
+              >
+                <Icon
+                  className="h-3.5 w-3.5"
+                  strokeWidth={1.6}
+                  style={{ color: on ? f.accent : "#A8A49C", transition: "color 900ms cubic-bezier(0.22,1,0.36,1)" }}
+                />
+                {f.name}
+              </button>
+
+              <div
                 aria-hidden={!on}
+                className="pointer-events-none absolute left-1/2 top-1/2 z-20"
+                style={{
+                  transform: `translate(calc(${tx} + ${p.x + ox}px), calc(${ty} + ${p.y + oy}px)) scale(${on ? 1 : 0.96})`,
+                  opacity: on ? 1 : 0,
+                  visibility: on ? "visible" : "hidden",
+                  transition:
+                    "opacity 700ms cubic-bezier(0.22,1,0.36,1), transform 900ms cubic-bezier(0.22,1,0.36,1), visibility 0ms linear " + (on ? "0ms" : "700ms"),
+                  willChange: "transform, opacity",
+                }}
               >
                 <P />
               </div>
-            );
-          })}
-        </div>
+            </div>
+          );
+        })}
       </div>
     </div>
   );
 }
+
