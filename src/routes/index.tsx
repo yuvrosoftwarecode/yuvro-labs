@@ -114,16 +114,16 @@ function useTypewriter(text: string, active: boolean, speed = 22, onDone?: () =>
 function Hero() {
   return (
     <section className="relative flex min-h-[calc(100svh-4rem)] items-center border-b border-[#E6E4DE]">
-      <div className="mx-auto w-full max-w-5xl px-6 py-16 text-center">
+      <div className="mx-auto grid w-full max-w-7xl items-center gap-12 px-6 py-16 lg:grid-cols-[minmax(0,45fr)_minmax(0,55fr)] lg:gap-8">
         <Reveal>
-          <h1 className="text-[52px] lg:text-[76px] leading-[1.02] tracking-[-0.025em] font-bold text-[#0A0A0A]">
+          <h1 className="text-[42px] lg:text-[60px] leading-[1.04] tracking-[-0.025em] font-bold text-[#0A0A0A]">
             Hire engineers with<br />
             <span className="inline-block">verified capability.</span>
           </h1>
-          <p className="mx-auto mt-6 max-w-2xl text-[18px] leading-relaxed text-[#6B6B6B]">
+          <p className="mt-6 max-w-xl text-[17px] leading-relaxed text-[#6B6B6B]">
             Yuvro Labs replaces resumes and guesswork with evidence. Evaluate how candidates think, debug, collaborate and execute through Engineering Simulation Labs, Knowledge Assessments and Vitarka AI Interviews.
           </p>
-          <div className="mt-8 flex flex-wrap items-center justify-center gap-3">
+          <div className="mt-8 flex flex-wrap items-center gap-3">
             <Link to="/auth" search={{ tab: "signup" }} className="inline-flex items-center gap-2 rounded-md px-5 py-3 text-[14px] font-medium text-white transition hover:brightness-95" style={{ background: "#F5A623" }}>
               Start Free Trial <ArrowRight className="h-4 w-4" />
             </Link>
@@ -132,10 +132,15 @@ function Hero() {
             </Link>
           </div>
         </Reveal>
+
+        <div className="relative">
+          <YuvroHiringOrbit />
+        </div>
       </div>
     </section>
   );
 }
+
 
 /* ================================================================
    1. ABOUT
