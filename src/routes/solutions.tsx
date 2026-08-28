@@ -1,5 +1,5 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import {
   FileCheck2,
   MessageSquareText,
@@ -632,9 +632,34 @@ const STEPS = [
 ];
 
 function ProcessSection() {
+  const sectionRef = useRef<HTMLElement | null>(null);
+  const [inView, setInView] = useState(false);
+  const [active, setActive] = useState(0);
+
+  useEffect(() => {
+    const el = sectionRef.current;
+    if (!el || typeof IntersectionObserver === "undefined") { setInView(true); return; }
+    const io = new IntersectionObserver(([e]) => setInView(e.isIntersecting), { threshold: 0.3 });
+    io.observe(el);
+    return () => io.disconnect();
+  }, []);
+
+  useEffect(() => {
+    if (!inView) return;
+    if (typeof window !== "undefined" && window.matchMedia?.("(prefers-reduced-motion: reduce)").matches) return;
+    const id = window.setInterval(() => setActive((a) => (a + 1) % STEPS.length), 1800);
+    return () => window.clearInterval(id);
+  }, [inView]);
+
   return (
-    <section id="how-it-works" className="mx-auto max-w-[1120px] px-6 py-24">
-      <Eyebrow>How a placement works</Eyebrow>
+    <section ref={sectionRef} id="how-it-works" className="mx-auto max-w-[1120px] px-6 py-24">
+      <style>{`
+        .yvr-step-card { border-color: transparent; transition: border-color 300ms ease, box-shadow 300ms ease, transform 300ms ease; }
+        .yvr-step-card.is-active { transform: translateY(-4px); border-color: var(--yvr-accent); box-shadow: 0 22px 46px -24px rgba(15,23,42,0.25); }
+        @media (prefers-reduced-motion: reduce) {
+          .yvr-step-card { transition: none !important; }
+        }
+      `}</style>
       <h2
         className="mt-4 max-w-2xl text-3xl leading-[1.15] md:text-[40px]"
         style={{ fontFamily: SERIF, fontWeight: 700, letterSpacing: "-0.02em", color: T.ink }}
@@ -643,35 +668,14 @@ function ProcessSection() {
       </h2>
 
       <div className="relative mt-14 grid gap-10 md:grid-cols-3 md:gap-8">
-        {/* arrow bubbles between cards (desktop) */}
-        {[1, 2].map((i) => (
-          <div
-            key={i}
-            className="absolute top-16 z-10 hidden h-9 w-9 -translate-x-1/2 place-items-center rounded-full border md:grid"
-            style={{
-              left: `${(i * 100) / 3}%`,
-              borderColor: T.line,
-              background: T.raised,
-            }}
-          >
-            <ArrowRight className="h-4 w-4" style={{ color: T.gold }} />
-          </div>
-        ))}
-
         {STEPS.map((s, i) => {
           const Icon = s.icon;
           return (
             <div
               key={s.title}
-              className="relative rounded-xl border p-7"
-              style={{ borderColor: T.line, background: T.raised }}
+              className={`yvr-step-card relative rounded-xl border p-7 ${active === i ? "is-active" : ""}`}
+              style={{ ...( { ["--yvr-accent"]: s.color } as React.CSSProperties) }}
             >
-              <span
-                className="absolute right-5 top-4 text-[12px]"
-                style={{ fontFamily: MONO, color: T.line }}
-              >
-                0{i + 1}
-              </span>
               <span
                 className="grid h-12 w-12 place-items-center rounded-full"
                 style={{ background: s.tint }}
@@ -723,7 +727,6 @@ function PayForHireSection() {
   return (
     <section style={{ background: payBg }}>
       <div className="mx-auto max-w-[1120px] px-6 py-24">
-        <Eyebrow>How you pay</Eyebrow>
         <h2
           className="mt-4 text-3xl leading-[1.15] md:text-[40px]"
           style={{ fontFamily: SERIF, fontWeight: 700, letterSpacing: "-0.02em", color: T.ink }}
@@ -754,17 +757,11 @@ function PayForHireSection() {
                 strokeLinecap="round"
                 strokeDasharray="0.1 15"
               />
-              {/* traveling gold dot — constant speed along the wave, with halo + tracer */}
+              {/* traveling gold dot — constant speed along the wave, with halo */}
               <g className="hwp-traveler">
                 <circle r="16" fill="#C8952A" opacity="0.16" />
                 <circle r="7.5" fill="#C8952A" />
                 <animateMotion dur={`${DOT_LOOP_S}s`} repeatCount="indefinite">
-                  <mpath href="#hwp-wave" />
-                </animateMotion>
-              </g>
-              <g className="hwp-traveler" opacity="0.35">
-                <circle r="4.5" fill="#C8952A" />
-                <animateMotion dur={`${DOT_LOOP_S}s`} begin="-0.22s" repeatCount="indefinite">
                   <mpath href="#hwp-wave" />
                 </animateMotion>
               </g>
@@ -846,17 +843,19 @@ function PayForHireSection() {
         </ol>
 
         {/* stat strip */}
-        <div className="mt-16 grid grid-cols-2 gap-y-8 border-t pt-10 md:grid-cols-4" style={{ borderColor: "rgba(22,26,31,0.18)" }}>
-          {STATS.map((s) => (
-            <div key={s.label} className="pr-6">
-              <p className="text-3xl md:text-[36px]" style={{ fontFamily: SERIF, fontWeight: 700, letterSpacing: "-0.02em", color: T.gold }}>
-                {s.n}
-              </p>
-              <p className="mt-2 text-[10px] uppercase leading-snug" style={{ fontFamily: MONO, letterSpacing: "0.12em", color: T.inkSoft }}>
-                {s.label}
-              </p>
-            </div>
-          ))}
+        <div className="mt-16 border-t pt-10" style={{ borderColor: "rgba(22,26,31,0.18)" }}>
+          <div className="grid grid-cols-2 divide-y divide-[rgba(22,26,31,0.14)] md:grid-cols-4 md:divide-x md:divide-y-0">
+            {STATS.map((s) => (
+              <div key={s.label} className="px-5 py-4 first:pl-0 md:py-0">
+                <p className="text-2xl" style={{ fontFamily: SERIF, fontWeight: 700, letterSpacing: "-0.02em", color: T.ink }}>
+                  {s.n}
+                </p>
+                <p className="mt-1.5 text-[12.5px] leading-snug" style={{ color: T.inkSoft }}>
+                  {s.label}
+                </p>
+              </div>
+            ))}
+          </div>
         </div>
       </div>
     </section>
@@ -872,7 +871,6 @@ function SolutionsPage() {
       {/* ------------------------------- hero ------------------------------- */}
       <section className="mx-auto grid max-w-[1120px] items-center gap-12 px-6 pb-24 pt-16 lg:grid-cols-2 lg:pt-20">
         <div>
-          <Eyebrow>Hiring solutions for high-growth startups</Eyebrow>
           <h1
             className="mt-5 text-[42px] leading-[1.08] md:text-[58px]"
             style={{ fontFamily: SERIF, fontWeight: 700, letterSpacing: "-0.02em", color: T.ink }}
