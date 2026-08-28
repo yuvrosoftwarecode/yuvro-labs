@@ -1,6 +1,6 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useEffect, useRef, useState } from "react";
-import { ArrowRight, Play, Check, Terminal, MessageSquare, ShieldCheck } from "lucide-react";
+import { ArrowRight, Play, Check, Terminal, MessageSquare, ShieldCheck, ScanFace, Files, Monitor } from "lucide-react";
 import { SiteNav } from "@/components/site/SiteNav";
 import { YuvroHiringOrbit } from "@/components/site/YuvroHiringOrbit";
 
@@ -28,7 +28,7 @@ function Landing() {
       <Hero />
       <About />
       <SimulationVitarkaSequence />
-      <Secured />
+      <SecurityIntegrity />
       <PayForHire />
       <footer className="border-t border-[#E6E4DE] px-6 py-10 text-center text-[13px] text-[#8A867E]">© 2026 Yuvro Labs</footer>
     </div>
@@ -345,38 +345,61 @@ function SimulationVitarkaSequence() {
 }
 
 /* ================================================================
-   4. SECURED ENVIRONMENT
+   4. SECURITY & INTEGRITY
    ================================================================ */
-const INTEGRITY = [
-  "Camera verification at session start",
-  "Active screen share for the full session",
-  "Tab-focus and window monitoring",
-  "External AI and paste tools blocked",
-  "Plagiarism and originality checks on every submission",
+const SECURITY_FEATURES = [
+  {
+    icon: ShieldCheck,
+    title: "Proctoring",
+    description: "Monitor candidate activity throughout the evaluation.",
+  },
+  {
+    icon: ScanFace,
+    title: "AI Face Detection",
+    description: "AI-powered face verification and presence monitoring.",
+  },
+  {
+    icon: Files,
+    title: "Plagiarism Detection",
+    description: "Identify suspicious similarities across candidate submissions.",
+  },
+  {
+    icon: Monitor,
+    title: "Screen Monitoring",
+    description: "Monitor the candidate's screen during the evaluation.",
+  },
 ];
 
-function Secured() {
+function SecurityIntegrity() {
   return (
-    <section className="border-b border-[#E6E4DE] px-6 py-24 lg:py-32">
-      <div className="mx-auto grid max-w-6xl gap-12 lg:grid-cols-[minmax(0,1fr)_minmax(0,1fr)] lg:gap-20">
+    <section className="border-b border-[#E6E4DE] bg-[#F3F8F4] px-6 py-16 lg:py-20">
+      <div className="mx-auto max-w-6xl">
         <Reveal>
-          <div className="mb-5 inline-grid h-10 w-10 place-items-center rounded-full border" style={{ borderColor: TEAL, color: TEAL }}>
-            <ShieldCheck className="h-4.5 w-4.5" strokeWidth={1.5} />
-          </div>
-          <h2 className="yvr-serif text-[34px] lg:text-[42px] font-normal leading-[1.1] tracking-[-0.015em] text-[#0A0A0A]">
-            Every session runs under the same integrity standard.
+          <p className="mb-3 text-[11px] font-semibold uppercase tracking-[0.18em]" style={{ color: TEAL }}>
+            Security & Integrity
+          </p>
+          <h2 className="yvr-serif text-[32px] lg:text-[40px] font-normal leading-[1.1] tracking-[-0.015em] text-[#0A0A0A]">
+            Evaluate with confidence.
           </h2>
+          <p className="mt-3 max-w-xl text-[15.5px] leading-relaxed text-[#6B6B6B]">
+            Built-in monitoring helps keep every evaluation fair, secure, and reliable.
+          </p>
         </Reveal>
-        <Reveal delay={80}>
-          <ul className="divide-y divide-[#EFEDE7] border-y border-[#EFEDE7]">
-            {INTEGRITY.map((i) => (
-              <li key={i} className="flex items-start gap-3 py-4 text-[15.5px] leading-relaxed text-[#4A4F58]">
-                <Check className="mt-1 h-4 w-4 shrink-0" strokeWidth={2} style={{ color: TEAL }} />
-                {i}
-              </li>
-            ))}
-          </ul>
-        </Reveal>
+
+        <div className="mt-10 grid gap-8 sm:grid-cols-2 lg:grid-cols-4 lg:gap-10">
+          {SECURITY_FEATURES.map((feature, i) => {
+            const Icon = feature.icon;
+            return (
+              <Reveal key={feature.title} delay={i * 60}>
+                <div className="flex flex-col items-start">
+                  <Icon className="h-11 w-11" strokeWidth={1.4} style={{ color: TEAL }} />
+                  <h3 className="mt-4 text-[15.5px] font-semibold text-[#0A0A0A]">{feature.title}</h3>
+                  <p className="mt-1.5 text-[13.5px] leading-relaxed text-[#6B6B6B]">{feature.description}</p>
+                </div>
+              </Reveal>
+            );
+          })}
+        </div>
       </div>
     </section>
   );
