@@ -3,6 +3,7 @@ import { useEffect, useRef, useState } from "react";
 import { ArrowRight, Play, Check, Terminal, MessageSquare, ShieldCheck, ScanFace, Files, Monitor } from "lucide-react";
 import { SiteNav } from "@/components/site/SiteNav";
 import { YuvroHiringOrbit } from "@/components/site/YuvroHiringOrbit";
+import { HumanAiStatement } from "@/components/site/HumanAiStatement";
 
 export const Route = createFileRoute("/")({
   head: () => ({
@@ -26,6 +27,7 @@ function Landing() {
       <LandingStyles />
       <SiteNav />
       <Hero />
+      <HumanAiStatement />
       <About />
       <SimulationVitarkaSequence />
       <SecurityIntegrity />
