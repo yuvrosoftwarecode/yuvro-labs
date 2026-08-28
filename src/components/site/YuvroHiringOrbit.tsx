@@ -1,5 +1,6 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 import { Terminal, MessageSquare, Handshake, BellRing, ShieldCheck } from "lucide-react";
+import yuvroLogo from "@/assets/YuvroLogo.png";
 
 const SAFFRON = "#F5A623";
 const TEAL = "#2E5C52";
@@ -10,15 +11,16 @@ type Feature = {
   icon: typeof Terminal;
   angle: number; // degrees, 0 = top, clockwise
   accent: string;
+  popupDir: "up" | "down";
 };
 
 /** Order is fixed: Labs -> Vitarka -> Pay for Hire -> Followups -> Proctoring */
 const FEATURES: Feature[] = [
-  { key: "labs", name: "Engineering Labs", icon: Terminal, angle: 0, accent: TEAL },
-  { key: "vitarka", name: "Vitarka AI", icon: MessageSquare, angle: 72, accent: SAFFRON },
-  { key: "pay", name: "Pay for Hire", icon: Handshake, angle: 144, accent: TEAL },
-  { key: "followups", name: "Automated Followups", icon: BellRing, angle: 216, accent: SAFFRON },
-  { key: "proctoring", name: "Proctoring", icon: ShieldCheck, angle: 288, accent: TEAL },
+  { key: "labs", name: "Engineering Labs", icon: Terminal, angle: 0, accent: TEAL, popupDir: "down" },
+  { key: "vitarka", name: "Vitarka AI", icon: MessageSquare, angle: 72, accent: SAFFRON, popupDir: "down" },
+  { key: "pay", name: "Pay for Hire", icon: Handshake, angle: 144, accent: TEAL, popupDir: "up" },
+  { key: "followups", name: "Automated Followups", icon: BellRing, angle: 216, accent: SAFFRON, popupDir: "up" },
+  { key: "proctoring", name: "Proctoring", icon: ShieldCheck, angle: 288, accent: TEAL, popupDir: "down" },
 ];
 
 const HOLD_MS = 2800;
@@ -189,31 +191,35 @@ export function YuvroHiringOrbit() {
 
   const active = hoveredIndex ?? automaticIndex;
 
-  const R = 168; // orbit radius in px at base scale
+  const R = 210; // orbit radius in px at base scale
 
   return (
-    <div ref={wrapRef} className="relative mx-auto flex w-full max-w-[620px] items-center justify-center select-none">
+    <div ref={wrapRef} className="relative mx-auto flex w-full max-w-[780px] items-center justify-center select-none">
       {/* ambient glow */}
       <div
         aria-hidden
-        className="pointer-events-none absolute left-1/2 top-1/2 h-[460px] w-[460px] -translate-x-1/2 -translate-y-1/2 rounded-full blur-3xl"
+        className="pointer-events-none absolute left-1/2 top-1/2 h-[580px] w-[580px] -translate-x-1/2 -translate-y-1/2 rounded-full blur-3xl"
         style={{ background: `radial-gradient(circle, ${SAFFRON}12 0%, ${TEAL}0A 45%, transparent 70%)` }}
       />
 
-      <div className="relative mx-auto h-[440px] w-[440px] max-w-full scale-[0.58] sm:scale-[0.78] lg:scale-[0.92] xl:scale-100 origin-center">
+      <div className="relative mx-auto h-[550px] w-[550px] max-w-full scale-[0.58] sm:scale-[0.78] lg:scale-[0.92] xl:scale-100 origin-center">
         {/* orbit rings */}
-        <div className="absolute left-1/2 top-1/2 h-[336px] w-[336px] -translate-x-1/2 -translate-y-1/2 rounded-full border border-[#D9D6CE]" />
-        <div className="absolute left-1/2 top-1/2 h-[232px] w-[232px] -translate-x-1/2 -translate-y-1/2 rounded-full border border-dashed border-[#DFDCD4]" />
+        <div className="absolute left-1/2 top-1/2 h-[420px] w-[420px] -translate-x-1/2 -translate-y-1/2 rounded-full border border-[#D9D6CE]" />
+        <div className="absolute left-1/2 top-1/2 h-[290px] w-[290px] -translate-x-1/2 -translate-y-1/2 rounded-full border border-dashed border-[#DFDCD4]" />
 
         {/* connection lines */}
-        <svg className="absolute inset-0 h-full w-full" viewBox="0 0 440 440" aria-hidden>
+        <svg className="absolute inset-0 h-full w-full" viewBox="0 0 550 550" aria-hidden>
           {FEATURES.map((f, i) => {
             const p = polar(f.angle, R);
             const on = i === active;
+            const len = Math.hypot(p.x, p.y) || 1;
+            const HUB_R = 68; // keep lines clear of the central logo
+            const x1 = 275 + (p.x / len) * HUB_R;
+            const y1 = 275 + (p.y / len) * HUB_R;
             return (
               <line
                 key={f.key}
-                x1={220} y1={220} x2={220 + p.x} y2={220 + p.y}
+                x1={x1} y1={y1} x2={275 + p.x} y2={275 + p.y}
                 stroke={on ? f.accent : "#D6D3CB"}
                 strokeWidth={on ? 1.5 : 1}
                 strokeOpacity={on ? 0.9 : 0.6}
@@ -225,16 +231,18 @@ export function YuvroHiringOrbit() {
 
         {/* central hub */}
         <div
-          className="absolute left-1/2 top-1/2 grid h-[104px] w-[104px] place-items-center rounded-full border border-[#E0DDD5] bg-white"
+          className="absolute left-1/2 top-1/2 grid h-[130px] w-[130px] place-items-center rounded-full border border-[#E0DDD5] bg-white"
           style={{
+            background: `linear-gradient(135deg, #FFFFFF 0%, ${TEAL}06 55%, ${SAFFRON}08 100%)`,
             boxShadow: `0 24px 56px -30px rgba(27,31,35,0.4), 0 0 0 10px ${FEATURES[active].accent}0D`,
             transform: "translate(-50%, -50%)",
             transition: "box-shadow 900ms cubic-bezier(0.22,1,0.36,1)",
           }}
         >
           <div className="text-center leading-none">
-            <span className="block text-[17px] font-bold tracking-[-0.02em] text-[#0A0A0A]">Yuvro</span>
-            <span className="mt-1 block font-mono text-[8px] uppercase tracking-[0.2em] text-[#8A867E]">labs</span>
+            <span className="p-6"><img src={yuvroLogo} alt="yuvro labs" width="80px" height="80px"/></span>
+            {/* <span className="block text-[21px] font-bold tracking-[-0.02em] text-[#0A0A0A]">Yuvro</span>
+            <span className="mt-1 block font-mono text-[9.5px] uppercase tracking-[0.2em] text-[#8A867E]">labs</span> */}
           </div>
         </div>
 
@@ -244,55 +252,62 @@ export function YuvroHiringOrbit() {
           const on = i === active;
           const Icon = f.icon;
           const P = PREVIEWS[i];
-          // anchor the preview outward from the node
-          const tx = p.x > 30 ? "0%" : p.x < -30 ? "-100%" : "-50%";
-          const ty = p.y > 30 ? "0%" : p.y < -30 ? "-100%" : "-50%";
-          const ox = p.x > 30 ? 14 : p.x < -30 ? -14 : 0;
-          const oy = p.y > 30 ? 14 : p.y < -30 ? -14 : 0;
+          const POPUP_GAP = 10;
           return (
-            <div key={f.key}>
-              <button
-                type="button"
-                onMouseEnter={() => setHoveredIndex(i)}
-                onMouseLeave={() => setHoveredIndex(null)}
-                onFocus={() => setHoveredIndex(i)}
-                onBlur={() => setHoveredIndex(null)}
-                onTouchStart={() => setHoveredIndex(i)}
-                onTouchEnd={() => setHoveredIndex(null)}
-                className="absolute left-1/2 top-1/2 z-10 inline-flex items-center gap-2 whitespace-nowrap rounded-full border bg-white px-3.5 py-2 text-[12px] font-medium outline-none"
-                style={{
-                  transform: `translate(calc(-50% + ${p.x}px), calc(-50% + ${p.y}px)) scale(${on ? 1.05 : 1})`,
-                  borderColor: on ? f.accent : "#E0DDD5",
-                  color: on ? "#0A0A0A" : "#6B6B6B",
-                  boxShadow: on
-                    ? `0 16px 36px -22px rgba(27,31,35,0.42), 0 0 0 6px ${f.accent}14`
-                    : "0 8px 24px -20px rgba(27,31,35,0.3)",
-                  transition:
-                    "transform 900ms cubic-bezier(0.22,1,0.36,1), box-shadow 900ms cubic-bezier(0.22,1,0.36,1), border-color 900ms cubic-bezier(0.22,1,0.36,1), color 900ms cubic-bezier(0.22,1,0.36,1)",
-                  willChange: "transform",
-                }}
-              >
-                <Icon
-                  className="h-3.5 w-3.5"
-                  strokeWidth={1.6}
-                  style={{ color: on ? f.accent : "#A8A49C", transition: "color 900ms cubic-bezier(0.22,1,0.36,1)" }}
-                />
-                {f.name}
-              </button>
+            <div
+              key={f.key}
+              className="absolute left-1/2 top-1/2"
+              style={{ transform: `translate(calc(-50% + ${p.x}px), calc(-50% + ${p.y}px))` }}
+            >
+              <div className="relative z-10 inline-flex">
+                <button
+                  type="button"
+                  onMouseEnter={() => setHoveredIndex(i)}
+                  onMouseLeave={() => setHoveredIndex(null)}
+                  onFocus={() => setHoveredIndex(i)}
+                  onBlur={() => setHoveredIndex(null)}
+                  onTouchStart={() => setHoveredIndex(i)}
+                  onTouchEnd={() => setHoveredIndex(null)}
+                  className="inline-flex items-center gap-2 whitespace-nowrap rounded-full border px-3.5 py-2 text-[12px] font-medium outline-none"
+                  style={{
+                    transform: `scale(${on ? 1.05 : 1})`,
+                    background: on ? "#e22988" : "#FFFFFF",
+                    borderColor: on ? "#e22988" : "#E0DDD5",
+                    color: on ? "#FFFFFF" : "#6B6B6B",
+                    boxShadow: on
+                      ? `0 16px 36px -22px rgba(27,31,35,0.42), 0 0 0 6px ${SAFFRON}26`
+                      : "0 8px 24px -20px rgba(27,31,35,0.3)",
+                    transition:
+                      "transform 900ms cubic-bezier(0.22,1,0.36,1), box-shadow 900ms cubic-bezier(0.22,1,0.36,1), border-color 900ms cubic-bezier(0.22,1,0.36,1), color 900ms cubic-bezier(0.22,1,0.36,1), background 900ms cubic-bezier(0.22,1,0.36,1)",
+                    willChange: "transform",
+                  }}
+                >
+                  <Icon
+                    className="h-3.5 w-3.5"
+                    strokeWidth={1.6}
+                    style={{ color: on ? "#FFFFFF" : "#A8A49C", transition: "color 900ms cubic-bezier(0.22,1,0.36,1)" }}
+                  />
+                  {f.name}
+                </button>
 
-              <div
-                aria-hidden={!on}
-                className="pointer-events-none absolute left-1/2 top-1/2 z-20"
-                style={{
-                  transform: `translate(calc(${tx} + ${p.x + ox}px), calc(${ty} + ${p.y + oy}px)) scale(${on ? 1 : 0.96})`,
-                  opacity: on ? 1 : 0,
-                  visibility: on ? "visible" : "hidden",
-                  transition:
-                    "opacity 700ms cubic-bezier(0.22,1,0.36,1), transform 900ms cubic-bezier(0.22,1,0.36,1), visibility 0ms linear " + (on ? "0ms" : "700ms"),
-                  willChange: "transform, opacity",
-                }}
-              >
-                <P />
+                <div
+                  aria-hidden={!on}
+                  className="pointer-events-none absolute left-1/2 z-20"
+                  style={{
+                    top: f.popupDir === "down" ? "100%" : undefined,
+                    bottom: f.popupDir === "up" ? "100%" : undefined,
+                    marginTop: f.popupDir === "down" ? POPUP_GAP : undefined,
+                    marginBottom: f.popupDir === "up" ? POPUP_GAP : undefined,
+                    transform: `translateX(-50%) scale(${on ? 1 : 0.96})`,
+                    opacity: on ? 1 : 0,
+                    visibility: on ? "visible" : "hidden",
+                    transition:
+                      "opacity 700ms cubic-bezier(0.22,1,0.36,1), transform 900ms cubic-bezier(0.22,1,0.36,1), visibility 0ms linear " + (on ? "0ms" : "700ms"),
+                    willChange: "transform, opacity",
+                  }}
+                >
+                  <P />
+                </div>
               </div>
             </div>
           );
@@ -301,4 +316,3 @@ export function YuvroHiringOrbit() {
     </div>
   );
 }
-

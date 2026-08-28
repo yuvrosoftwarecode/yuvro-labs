@@ -54,9 +54,13 @@ function LandingStyles() {
 
       .yvr-serif { font-family: Fraunces, Georgia, serif; font-optical-sizing: auto; }
 
+      @keyframes yvr-jump { 0%, 100% { transform: translateY(0); } 30% { transform: translateY(-7px); } 55% { transform: translateY(0); } 75% { transform: translateY(-3px); } }
+      .yvr-jump-card { transition: box-shadow 200ms ease, border-color 200ms ease; }
+      .yvr-jump-card:hover { animation: yvr-jump 650ms ease; }
+
       @media (prefers-reduced-motion: reduce) {
         .yvr-reveal { opacity: 1 !important; }
-        .yvr-reveal.is-in, .yvr-pop, .yvr-caret, .yvr-pulse-dot { animation: none !important; }
+        .yvr-reveal.is-in, .yvr-pop, .yvr-caret, .yvr-pulse-dot, .yvr-jump-card:hover { animation: none !important; }
       }
     `}</style>
   );
@@ -115,16 +119,16 @@ function useTypewriter(text: string, active: boolean, speed = 22, onDone?: () =>
 function Hero() {
   return (
     <section className="relative flex min-h-[calc(100svh-4rem)] items-center border-b border-[#E6E4DE]">
-      <div className="mx-auto grid w-full max-w-7xl items-center gap-12 px-6 py-16 lg:grid-cols-[minmax(0,45fr)_minmax(0,55fr)] lg:gap-8">
+      <div className="mx-auto grid w-full max-w-7xl items-start gap-12 px-6 py-16 lg:grid-cols-[minmax(0,45fr)_minmax(0,55fr)] lg:gap-8">
         <Reveal>
           <h1 className="text-[42px] lg:text-[60px] leading-[1.04] tracking-[-0.025em] font-bold text-[#0A0A0A]">
             Hire engineers with<br />
             <span className="inline-block">verified capability.</span>
           </h1>
-          <p className="mt-6 max-w-xl text-[17px] leading-relaxed text-[#6B6B6B]">
+          <p className="mt-12 max-w-xl text-[17px] leading-relaxed text-[#6B6B6B]">
             Yuvro Labs replaces resumes and guesswork with evidence. Evaluate how candidates think, debug, collaborate and execute through Engineering Simulation Labs, Knowledge Assessments and Vitarka AI Interviews.
           </p>
-          <div className="mt-8 flex flex-wrap items-center gap-3">
+          <div className="mt-16 flex flex-wrap items-center gap-3">
             <Link to="/auth" search={{ tab: "signup" }} className="inline-flex items-center gap-2 rounded-md px-5 py-3 text-[14px] font-medium text-white transition hover:brightness-95" style={{ background: "#F5A623" }}>
               Start Free Trial <ArrowRight className="h-4 w-4" />
             </Link>
@@ -408,16 +412,16 @@ function PayForHire() {
           </p>
         </Reveal>
 
-        <ol className="mt-14 grid gap-x-12 gap-y-8 border-t border-[#EFEDE7] pt-10 md:grid-cols-2">
+        <ol className="mt-14 grid gap-x-12 gap-y-4 border-t border-[#EFEDE7] pt-10 md:grid-cols-2">
           {PIPELINE.map(([title, body], i) => (
             <Reveal key={title} delay={i * 40}>
-              <li className="flex gap-4">
-                <span className="mt-0.5 grid h-7 w-7 shrink-0 place-items-center rounded-full border font-mono text-[11px]" style={{ borderColor: TEAL, color: TEAL }}>
+              <li className="yvr-jump-card flex items-center gap-3 rounded-lg border border-[#E6E4DE] bg-white px-4 py-2.5 shadow-sm hover:shadow-lg">
+                <span className="grid h-6 w-6 shrink-0 place-items-center rounded-full border font-mono text-[10.5px]" style={{ borderColor: TEAL, color: TEAL }}>
                   {i + 1}
                 </span>
                 <span>
-                  <span className="block text-[15.5px] font-medium text-[#0A0A0A]">{title}</span>
-                  <span className="mt-1.5 block text-[14.5px] leading-relaxed text-[#6B6B6B]">{body}</span>
+                  <span className="block text-[14px] font-medium text-[#0A0A0A]">{title}</span>
+                  <span className="block text-[12.5px] leading-snug text-[#6B6B6B]">{body}</span>
                 </span>
               </li>
             </Reveal>
