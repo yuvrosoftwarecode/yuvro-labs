@@ -24,16 +24,6 @@ const EXCHANGE: { q: string; a: string }[] = [
   { q: "How would you handle a spike in writes?", a: "…" },
 ];
 
-/* ---------- Column heads ---------- */
-function ColHead({ eyebrow, children }: { eyebrow: string; children: React.ReactNode }) {
-  return (
-    <div className="text-center">
-      <p className="text-[8px] font-semibold uppercase tracking-[0.18em] text-[#8A867E]">{eyebrow}</p>
-      <p className="mt-1.5 text-[11px] leading-[1.45] text-[#1B1F23]">{children}</p>
-    </div>
-  );
-}
-
 function SkeletonLines({ widths }: { widths: string[] }) {
   return (
     <div className="mt-2 space-y-1">
@@ -237,27 +227,16 @@ export function VitarkaFlow() {
       `}</style>
 
       <div className="grid gap-8 lg:grid-cols-3 lg:gap-5">
-        <div>
-          <ColHead eyebrow="Understands before it asks">
-            Reads the <span style={{ color: TEAL }}>job</span>, the role and the <span style={{ color: TEAL }}>candidate</span>.
-          </ColHead>
-          <div className="mt-5 space-y-2.5">
-            <InputCard icon={FileText} title="Job Description" items={["Role", "Responsibilities", "Required Skills", "Nice to Have"]} active={inView} delay={0} />
-            <InputCard icon={User} title="Candidate Resume" items={["Experience", "Skills", "Achievements", "Background"]} active={inView} delay={180} />
-          </div>
+        <div className="space-y-2.5">
+          <InputCard icon={FileText} title="Job Description" items={["Role", "Responsibilities", "Required Skills", "Nice to Have"]} active={inView} delay={0} />
+          <InputCard icon={User} title="Candidate Resume" items={["Experience", "Skills", "Achievements", "Background"]} active={inView} delay={180} />
         </div>
 
         <div>
-          <ColHead eyebrow="Thinks. Adapts. Decides.">
-            Not a script.<br />An <span style={{ color: TEAL }}>intelligent</span> interviewer.
-          </ColHead>
           <Core active={inView} />
         </div>
 
         <div>
-          <ColHead eyebrow="A conversation that adapts">
-            Listens, probes and goes <span style={{ color: TEAL }}>deeper</span>.
-          </ColHead>
           <Conversation active={inView} />
         </div>
       </div>
