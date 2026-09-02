@@ -24,16 +24,6 @@ const EXCHANGE: { q: string; a: string }[] = [
   { q: "How would you handle a spike in writes?", a: "…" },
 ];
 
-/* ---------- Column heads ---------- */
-function ColHead({ eyebrow, children }: { eyebrow: string; children: React.ReactNode }) {
-  return (
-    <div className="text-center">
-      <p className="text-[8px] font-semibold uppercase tracking-[0.18em] text-[#8A867E]">{eyebrow}</p>
-      <p className="mt-1.5 text-[11px] leading-[1.45] text-[#1B1F23]">{children}</p>
-    </div>
-  );
-}
-
 function SkeletonLines({ widths }: { widths: string[] }) {
   return (
     <div className="mt-2 space-y-1">
