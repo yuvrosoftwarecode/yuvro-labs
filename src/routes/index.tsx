@@ -257,37 +257,46 @@ function SimulationVitarkaSequence() {
 
           <Reveal delay={80}>
             <div className="relative">
-              <div className="overflow-hidden rounded-xl border border-[#20262E] bg-[#0D1117] shadow-[0_18px_50px_-24px_rgba(10,15,20,0.45)]">
-                {/* window bar */}
-                <div className="flex items-center gap-2 border-b border-[#1B2129] bg-[#11161D] px-4 py-2">
-                  <span className="h-2.5 w-2.5 rounded-full bg-[#2A323C]" />
-                  <span className="h-2.5 w-2.5 rounded-full bg-[#2A323C]" />
-                  <span className="h-2.5 w-2.5 rounded-full bg-[#2A323C]" />
-                  <span className="ml-2 font-mono text-[11px] text-[#7D8590]">JAVA-101 · Variables &amp; Types</span>
-                  <span className="ml-auto inline-flex items-center gap-1.5 rounded border border-[#2A323C] px-2 py-0.5 font-mono text-[10px] text-[#7D8590]">
-                    <Play className="h-2.5 w-2.5 text-[#3FB27F]" /> Run
-                  </span>
+              <div className="relative overflow-hidden rounded-xl border border-[#20262E] bg-[#1E1E1E] shadow-[0_18px_50px_-24px_rgba(10,15,20,0.45)]">
+                <img
+                  src={LAB_IMAGE_URL}
+                  alt="Yuvro lab workspace — a real Java task open in a live IDE with problem statement, file explorer and preview"
+                  className="block w-full"
+                  loading="lazy"
+                />
+                {/* code-writing reveal: covers the editor, lifts line-by-line as the code is "typed" */}
+                <div
+                  aria-hidden
+                  className="absolute"
+                  style={{
+                    left: `${CODE_REGION.left}%`,
+                    top: `${CODE_REGION.top}%`,
+                    width: `${CODE_REGION.width}%`,
+                    height: `${CODE_REGION.height}%`,
+                  }}
+                >
+                  <div
+                    className="absolute inset-0 bg-[#1E1E1E]"
+                    style={{
+                      clipPath: `inset(${codeProgress * 100}% 0 0 0)`,
+                      transition: "clip-path 90ms linear",
+                    }}
+                  />
+                  {inView && !taskDone && (
+                    <span
+                      className="yvr-caret absolute w-[2px]"
+                      style={{
+                        left: "3%",
+                        top: `${Math.min(codeProgress * 100, 96)}%`,
+                        height: "4.5%",
+                        background: "#E6EDF3",
+                      }}
+                    />
+                  )}
                 </div>
-                {/* tabs */}
-                <div className="flex items-center gap-1 border-b border-[#1B2129] bg-[#11161D] px-3 pt-1.5">
-                  <span className="rounded-t-md border border-b-0 border-[#1B2129] bg-[#0D1117] px-3 py-1.5 font-mono text-[11px] text-[#E6EDF3]">Main.java</span>
-                  <span className="px-3 py-1.5 font-mono text-[11px] text-[#7D8590]">MainTest.java</span>
-                  <span className="px-3 py-1.5 font-mono text-[11px] text-[#7D8590]">README.md</span>
-                </div>
-                {/* code */}
-                <div className="flex">
-                  <div aria-hidden className="select-none border-r border-[#1B2129] px-3 py-4 text-right font-mono text-[12.5px] leading-[1.75] text-[#3D444D]">
-                    {Array.from({ length: CODE_LINES.length }, (_, i) => <div key={i}>{i + 1}</div>)}
-                  </div>
-                  <pre className="min-h-[238px] flex-1 whitespace-pre px-4 py-4 font-mono text-[12.5px] leading-[1.75] text-[#E6EDF3]">
-{code}{!taskDone && <span className="yvr-caret" style={{ background: "#E6EDF3" }} />}
-                  </pre>
-                </div>
-                {/* status bar */}
-                <div className="flex items-center gap-3 border-t border-[#1B2129] bg-[#11161D] px-4 py-1.5 font-mono text-[10px] text-[#7D8590]">
-                  <span className="text-[#3FB27F]">✓ main</span>
-                  <span>Java 17</span>
-                  <span className="ml-auto">{taskDone ? "Main.java · 11 lines" : "typing…"}</span>
+                {/* status strip */}
+                <div className="absolute bottom-[4.5%] left-[52%] font-mono text-[10px] text-[#7D8590]">
+                  {taskDone ? "✓ Main.java · 22 lines" : "typing…"}
                 </div>
               </div>
 
