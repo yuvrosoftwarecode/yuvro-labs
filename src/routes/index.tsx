@@ -4,6 +4,7 @@ import { ArrowRight, Play, Check, Terminal, MessageSquare, ShieldCheck, ScanFace
 import { SiteNav } from "@/components/site/SiteNav";
 import { YuvroHiringOrbit } from "@/components/site/YuvroHiringOrbit";
 import { HumanAiStatement } from "@/components/site/HumanAiStatement";
+import { TwoSystemsConvergence } from "@/components/site/TwoSystemsConvergence";
 
 export const Route = createFileRoute("/")({
   head: () => ({
@@ -155,33 +156,28 @@ function Hero() {
 function About() {
   return (
     <section className="border-b border-[#E6E4DE] px-6 py-24 lg:py-32">
-      <div className="mx-auto grid max-w-6xl gap-12 lg:grid-cols-[minmax(0,1fr)_minmax(0,1fr)] lg:gap-20">
+      <div className="mx-auto max-w-[1050px] text-center">
         <Reveal>
-          <h2 className="yvr-serif text-[38px] lg:text-[48px] font-normal leading-[1.08] tracking-[-0.015em] text-[#0A0A0A]">
-            Two systems. One picture of how someone actually engineers.
+          <h2 className="yvr-serif mx-auto max-w-[980px] text-[38px] lg:text-[56px] font-normal leading-[1.08] tracking-[-0.02em] text-[#0A0A0A]">
+            Two systems work together to find how someone{" "}
+            <span className="relative whitespace-nowrap" style={{ color: TEAL }}>
+              actually engineers
+              <span className="absolute inset-x-0 -bottom-1 block h-[2px]" style={{ background: `${TEAL}40` }} />
+            </span>
+            .
           </h2>
         </Reveal>
-        <Reveal delay={80} className="space-y-5 text-[16.5px] leading-[1.75] text-[#4A4F58]">
-          <p>
-            Most hiring processes measure the wrong thing. A resume records where someone has been, and a whiteboard
-            puzzle records how quickly they can recall an algorithm under pressure. Neither tells you how a person
-            behaves inside an unfamiliar codebase on a Tuesday afternoon with an ambiguous ticket in front of them.
-          </p>
-          <p>
-            Yuvro Labs is built around two systems that work together. An Engineering Simulation puts the candidate
-            into a live environment with a real task, and Vitarka, our AI interviewer, asks them to explain the
-            decisions they just made. One produces the work; the other produces the reasoning behind it.
-          </p>
-          <p>
-            What you receive at the end is not a score in isolation. It is a picture — the diff they wrote, the paths
-            they explored, the trade-offs they can articulate and the ones they cannot — assembled into a review your
-            engineers can read in five minutes and trust.
-          </p>
-        </Reveal>
       </div>
+
+      <Reveal delay={80}>
+        <div className="mx-auto mt-16 max-w-[1120px]">
+          <TwoSystemsConvergence />
+        </div>
+      </Reveal>
     </section>
   );
 }
+
 
 /* ================================================================
    2 + 3. ENGINEERING SIMULATION → VITARKA AI (sequenced)
