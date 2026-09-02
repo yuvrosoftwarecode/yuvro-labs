@@ -227,27 +227,16 @@ export function VitarkaFlow() {
       `}</style>
 
       <div className="grid gap-8 lg:grid-cols-3 lg:gap-5">
-        <div>
-          <ColHead eyebrow="Understands before it asks">
-            Reads the <span style={{ color: TEAL }}>job</span>, the role and the <span style={{ color: TEAL }}>candidate</span>.
-          </ColHead>
-          <div className="mt-5 space-y-2.5">
-            <InputCard icon={FileText} title="Job Description" items={["Role", "Responsibilities", "Required Skills", "Nice to Have"]} active={inView} delay={0} />
-            <InputCard icon={User} title="Candidate Resume" items={["Experience", "Skills", "Achievements", "Background"]} active={inView} delay={180} />
-          </div>
+        <div className="space-y-2.5">
+          <InputCard icon={FileText} title="Job Description" items={["Role", "Responsibilities", "Required Skills", "Nice to Have"]} active={inView} delay={0} />
+          <InputCard icon={User} title="Candidate Resume" items={["Experience", "Skills", "Achievements", "Background"]} active={inView} delay={180} />
         </div>
 
         <div>
-          <ColHead eyebrow="Thinks. Adapts. Decides.">
-            Not a script.<br />An <span style={{ color: TEAL }}>intelligent</span> interviewer.
-          </ColHead>
           <Core active={inView} />
         </div>
 
         <div>
-          <ColHead eyebrow="A conversation that adapts">
-            Listens, probes and goes <span style={{ color: TEAL }}>deeper</span>.
-          </ColHead>
           <Conversation active={inView} />
         </div>
       </div>
