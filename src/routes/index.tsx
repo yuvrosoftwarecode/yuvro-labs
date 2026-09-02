@@ -313,61 +313,27 @@ function SimulationVitarkaSequence() {
 
       {/* Vitarka AI */}
       <section className="border-b border-[#E6E4DE] px-6 pb-24 lg:pb-32">
-        <div className="mx-auto grid max-w-6xl gap-12 lg:grid-cols-[minmax(0,1fr)_minmax(0,1fr)] lg:gap-20">
+        <div className="mx-auto max-w-[1240px]">
           <Reveal>
-            <div
-              className="mb-5 inline-grid h-10 w-10 place-items-center rounded-full border transition-colors duration-300"
-              style={{ borderColor: vitarkaActive ? TEAL : "#D9D6CF", color: vitarkaActive ? TEAL : "#A8A49C" }}
-            >
-              <MessageSquare className="h-4.5 w-4.5" strokeWidth={1.5} />
-            </div>
-            <h2 className="yvr-serif text-[34px] lg:text-[42px] font-normal leading-[1.1] tracking-[-0.015em] text-[#0A0A0A]">
-              An AI interviewer that doesn't need a simulation to run — but is far sharper when it has one.
-            </h2>
-            <span
-              className="mt-4 block h-[2px] w-16 transition-colors duration-300"
-              style={{ background: vitarkaActive ? TEAL : "#DEDBD4" }}
-            />
-            <div className="mt-6 space-y-5 text-[16.5px] leading-[1.75] text-[#4A4F58]">
-              <p>
-                Vitarka can run on its own as a structured technical interview, driven by the job description and the
-                skills you actually care about. It probes depth rather than recall, follows the candidate's answers
-                instead of reading from a fixed list, and returns a transcript with the reasoning graded, not just the
-                conclusion.
-              </p>
-              <p>
-                It becomes considerably sharper when it runs after a simulation. Because it has the candidate's own diff
-                in front of it, it can ask why a guard clause was added, why one query was rewritten and another left
-                alone, what the failure mode of their approach is. Rehearsed answers do not survive that kind of
-                questioning.
-              </p>
-              <p>
-                It is not tied to one language, stack or role. Backend, frontend, data, infrastructure, mobile, QA —
-                the interview adapts to the domain being hired for.
-              </p>
+            <div className="mx-auto max-w-3xl text-center">
+              <h2 className="yvr-serif text-[32px] lg:text-[42px] font-normal leading-[1.12] tracking-[-0.015em] text-[#0A0A0A]">
+                An AI interviewer that doesn't need a simulation to run — but is far sharper when it has one.
+              </h2>
+              <span
+                className="mx-auto mt-5 block h-[2px] w-16 transition-colors duration-300"
+                style={{ background: vitarkaActive ? TEAL : "#DEDBD4" }}
+              />
             </div>
           </Reveal>
 
           <Reveal delay={80}>
-            <div className="rounded-xl border border-[#E6E4DE] bg-white">
-              <div className="border-b border-[#EFEDE7] px-4 py-2.5 font-mono text-[11px] text-[#8A867E]">
-                evidence · Main.java
-              </div>
-              <pre className="whitespace-pre px-5 py-4 font-mono text-[12.5px] leading-[1.75] text-[#6B6B6B]">
-{`double castedDouble = integerValue; // implicit
-`}<span style={{ background: vitarkaActive ? `${TEAL}14` : "transparent", borderLeft: `2px solid ${vitarkaActive ? TEAL : "transparent"}`, paddingLeft: 6, display: "inline-block", width: "100%", color: "#1B1F23", transition: "background-color 300ms, border-color 300ms" }}>{`int castedInt = (int) pi;           // explicit`}</span>{`
-System.out.println("Int: " + castedInt);`}
-              </pre>
-              <div className="border-t border-[#EFEDE7] px-5 py-4">
-                <p className="font-mono text-[10px] uppercase tracking-[0.16em]" style={{ color: vitarkaActive ? TEAL : "#A8A49C" }}>Vitarka</p>
-                <p className="mt-2 min-h-[44px] text-[14.5px] leading-relaxed text-[#1B1F23]">
-                  {question}{vitarkaActive && question.length < VITARKA_Q.length && <span className="yvr-caret" />}
-                </p>
-              </div>
+            <div className="mt-16">
+              <VitarkaFlow />
             </div>
           </Reveal>
         </div>
       </section>
+
     </div>
   );
 }
