@@ -4,6 +4,7 @@ import { ArrowRight, Play, Check, Terminal, MessageSquare, ShieldCheck, ScanFace
 import { SiteNav } from "@/components/site/SiteNav";
 import { YuvroHiringOrbit } from "@/components/site/YuvroHiringOrbit";
 import { HumanAiStatement } from "@/components/site/HumanAiStatement";
+import { TwoSystemsConvergence } from "@/components/site/TwoSystemsConvergence";
 
 export const Route = createFileRoute("/")({
   head: () => ({
