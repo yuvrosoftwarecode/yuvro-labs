@@ -183,14 +183,20 @@ function About() {
    2 + 3. ENGINEERING SIMULATION → VITARKA AI (sequenced)
    ================================================================ */
 const CODE_LINES = [
-  "async function getInvoice(id) {",
-  "  const row = await db.invoice.find(id);",
-  "  if (!row) throw new NotFound(id);",
-  "  return serialize(row);",
+  "public class Main {",
+  "    public static void main(String[] args) {",
+  "        int integerValue = 42;",
+  "        double pi = 3.14;",
+  "        boolean isJavaFun = true;",
+  '        String greeting = "Hello Java";',
+  "",
+  '        System.out.println("Integer: " + integerValue);',
+  '        System.out.println("String: " + greeting);',
+  "    }",
   "}",
 ];
 const CODE_TEXT = CODE_LINES.join("\n");
-const VITARKA_Q = "You added a null guard before serialize() — what breaks without it?";
+const VITARKA_Q = "You chose explicit casting over implicit — what breaks without it?";
 
 function SimulationVitarkaSequence() {
   const reduced = typeof window !== "undefined" ? prefersReduced() : false;
