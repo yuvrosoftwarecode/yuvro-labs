@@ -296,7 +296,7 @@ function SimulationVitarkaSequence() {
       </section>
 
       {/* Handoff connector */}
-      <div className="relative mx-auto my-14 h-24 w-full max-w-6xl px-6">
+      <div className="relative mx-auto my-6 h-16 w-full max-w-6xl px-6">
         <div className="relative mx-auto h-full w-px" style={{ background: "#E6E4DE" }}>
           {pulseRunning && (
             <span
