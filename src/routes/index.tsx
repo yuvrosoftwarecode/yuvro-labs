@@ -1,10 +1,11 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useEffect, useRef, useState } from "react";
-import { ArrowRight, Play, MessageSquare, ShieldCheck, ScanFace, Files, Monitor } from "lucide-react";
+import { ArrowRight, Play, ShieldCheck, ScanFace, Files, Monitor } from "lucide-react";
 import { SiteNav } from "@/components/site/SiteNav";
 import { YuvroHiringOrbit } from "@/components/site/YuvroHiringOrbit";
 import { HumanAiStatement } from "@/components/site/HumanAiStatement";
 import { TwoSystemsConvergence } from "@/components/site/TwoSystemsConvergence";
+import { VitarkaFlow } from "@/components/site/VitarkaFlow";
 
 export const Route = createFileRoute("/")({
   head: () => ({
@@ -199,7 +200,6 @@ const CODE_LINES = [
   "}",
 ];
 const CODE_TEXT = CODE_LINES.join("\n");
-const VITARKA_Q = "You used an explicit cast for pi — what breaks without it?";
 const LAB_IMAGE_URL = "/__l5e/assets-v1/4592a42b-7cea-4467-a44c-d1a2ef55b5f2/lab-workspace.png";
 // Code editor region within the lab screenshot (percentages of the image)
 const CODE_REGION = { left: 49.7, top: 14.9, width: 49.6, height: 51.3 };
@@ -227,7 +227,6 @@ function SimulationVitarkaSequence() {
     if (reduced && inView) setTaskDone(true);
   }, [reduced, inView]);
 
-  const { out: question } = useTypewriter(VITARKA_Q, vitarkaActive, 26);
 
   return (
     <div ref={ref}>
