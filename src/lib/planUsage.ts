@@ -13,9 +13,9 @@ export interface PlanLimits {
 }
 
 export const PLAN_LIMITS: Record<PlanId, PlanLimits> = {
-  startup: { id: "startup", name: "Starter", price: 50, attempts: 50, simulations: 10, aiMinutes: 150, seats: 2 },
-  growth: { id: "growth", name: "Growth", price: 150, attempts: 150, simulations: 40, aiMinutes: 600, seats: 5 },
-  scale: { id: "scale", name: "Scale", price: 499, attempts: 500, simulations: 100, aiMinutes: 1500, seats: 10 },
+  startup: { id: "startup", name: "Starter", price: 50, attempts: 50, simulations: 10, aiMinutes: 150, seats: 1 },
+  growth: { id: "growth", name: "Growth", price: 150, attempts: 150, simulations: 40, aiMinutes: 600, seats: 3 },
+  scale: { id: "scale", name: "Scale", price: 499, attempts: 500, simulations: 100, aiMinutes: 1500, seats: 5 },
 };
 
 
