@@ -235,25 +235,9 @@ function SimulationVitarkaSequence() {
       <section className="px-6 pt-14 lg:pt-20">
         <div className="mx-auto grid max-w-6xl items-center gap-10 lg:grid-cols-[minmax(0,1fr)_minmax(0,1fr)] lg:gap-16">
           <Reveal>
-            <div className="mb-5 inline-grid h-10 w-10 place-items-center rounded-full border" style={{ borderColor: TEAL, color: TEAL }}>
-              <Terminal className="h-4.5 w-4.5" strokeWidth={1.5} />
-            </div>
             <h2 className="yvr-serif text-[34px] lg:text-[42px] font-normal leading-[1.1] tracking-[-0.015em] text-[#0A0A0A]">
               A real task, in a real environment.
             </h2>
-            <span className="mt-4 block h-[2px] w-16" style={{ background: TEAL }} />
-            <div className="mt-6 space-y-5 text-[16.5px] leading-[1.75] text-[#4A4F58]">
-              <p>
-                Candidates open a live workspace with a running project, a repository, dependencies and a ticket scoped
-                to the role you are hiring for — fixing a defect, extending an endpoint, tightening a query. It takes
-                twenty to thirty minutes, not a weekend, and it looks like the first week of the job rather than an exam.
-              </p>
-              <p>
-                Everything is captured as it happens: the files they opened, the order they worked in, the commands they
-                ran, the tests they trusted and the final diff. That record is what your team reviews — the same way you
-                would review a pull request from someone already on the team.
-              </p>
-            </div>
           </Reveal>
 
           <Reveal delay={80}>
@@ -262,7 +246,7 @@ function SimulationVitarkaSequence() {
                 <img
                   src={LAB_IMAGE_URL}
                   alt="Yuvro lab workspace — a real Java task open in a live IDE with problem statement, file explorer and preview"
-                  className="block w-full"
+                  className="block h-auto max-h-[520px] w-full object-cover object-top"
                   loading="lazy"
                 />
                 {/* code-writing reveal: covers the editor, lifts line-by-line as the code is "typed" */}
@@ -296,12 +280,6 @@ function SimulationVitarkaSequence() {
                   )}
                 </div>
               </div>
-
-              {taskDone && (
-                <div className="yvr-pop mt-4 inline-flex items-center gap-2 rounded-full border bg-white px-3.5 py-1.5 text-[12.5px] font-medium" style={{ borderColor: TEAL, color: TEAL }}>
-                  <Check className="h-3.5 w-3.5" strokeWidth={2.2} /> Task complete
-                </div>
-              )}
             </div>
           </Reveal>
         </div>
