@@ -1,5 +1,4 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
-
 import { useEffect, useRef, useState } from "react";
 import { ArrowRight, Play, Check, Terminal, MessageSquare, ShieldCheck, ScanFace, Files, Monitor } from "lucide-react";
 import { SiteNav } from "@/components/site/SiteNav";
@@ -295,10 +294,6 @@ function SimulationVitarkaSequence() {
                       }}
                     />
                   )}
-                </div>
-                {/* status strip */}
-                <div className="absolute bottom-[4.5%] left-[52%] font-mono text-[10px] text-[#7D8590]">
-                  {taskDone ? "✓ Main.java · 22 lines" : "typing…"}
                 </div>
               </div>
 
