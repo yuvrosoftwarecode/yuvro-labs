@@ -225,14 +225,14 @@ function SimulationVitarkaSequence() {
   return (
     <div ref={ref}>
       {/* Engineering Simulation */}
-      <section className="px-6 pt-24 lg:pt-32">
-        <div className="mx-auto grid max-w-6xl gap-12 lg:grid-cols-[minmax(0,1fr)_minmax(0,1fr)] lg:gap-20">
+      <section className="px-6 pt-14 lg:pt-20">
+        <div className="mx-auto grid max-w-6xl items-center gap-10 lg:grid-cols-[minmax(0,1fr)_minmax(0,1fr)] lg:gap-16">
           <Reveal>
             <div className="mb-5 inline-grid h-10 w-10 place-items-center rounded-full border" style={{ borderColor: TEAL, color: TEAL }}>
               <Terminal className="h-4.5 w-4.5" strokeWidth={1.5} />
             </div>
             <h2 className="yvr-serif text-[34px] lg:text-[42px] font-normal leading-[1.1] tracking-[-0.015em] text-[#0A0A0A]">
-              A real task, in a real environment — not a puzzle.
+              A real task, in a real environment.
             </h2>
             <span className="mt-4 block h-[2px] w-16" style={{ background: TEAL }} />
             <div className="mt-6 space-y-5 text-[16.5px] leading-[1.75] text-[#4A4F58]">
