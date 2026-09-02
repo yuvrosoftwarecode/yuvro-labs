@@ -200,6 +200,9 @@ const CODE_LINES = [
 ];
 const CODE_TEXT = CODE_LINES.join("\n");
 const VITARKA_Q = "You used an explicit cast for pi — what breaks without it?";
+const LAB_IMAGE_URL = "/__l5e/assets-v1/4592a42b-7cea-4467-a44c-d1a2ef55b5f2/lab-workspace.png";
+// Code editor region within the lab screenshot (percentages of the image)
+const CODE_REGION = { left: 49.7, top: 14.9, width: 49.6, height: 51.3 };
 
 function SimulationVitarkaSequence() {
   const reduced = typeof window !== "undefined" ? prefersReduced() : false;
