@@ -350,14 +350,12 @@ function SimulationVitarkaSequence() {
           <Reveal delay={80}>
             <div className="rounded-xl border border-[#E6E4DE] bg-white">
               <div className="border-b border-[#EFEDE7] px-4 py-2.5 font-mono text-[11px] text-[#8A867E]">
-                evidence · invoices/service.ts
+                evidence · Main.java
               </div>
               <pre className="whitespace-pre px-5 py-4 font-mono text-[12.5px] leading-[1.75] text-[#6B6B6B]">
-{`async function getInvoice(id) {
-  const row = await db.invoice.find(id);
-`}<span style={{ background: vitarkaActive ? `${TEAL}14` : "transparent", borderLeft: `2px solid ${vitarkaActive ? TEAL : "transparent"}`, paddingLeft: 6, display: "inline-block", width: "100%", color: "#1B1F23", transition: "background-color 300ms, border-color 300ms" }}>{`  if (!row) throw new NotFound(id);`}</span>{`
-  return serialize(row);
-}`}
+{`double castedDouble = integerValue; // implicit
+`}<span style={{ background: vitarkaActive ? `${TEAL}14` : "transparent", borderLeft: `2px solid ${vitarkaActive ? TEAL : "transparent"}`, paddingLeft: 6, display: "inline-block", width: "100%", color: "#1B1F23", transition: "background-color 300ms, border-color 300ms" }}>{`int castedInt = (int) pi;           // explicit`}</span>{`
+System.out.println("Int: " + castedInt);`}
               </pre>
               <div className="border-t border-[#EFEDE7] px-5 py-4">
                 <p className="font-mono text-[10px] uppercase tracking-[0.16em]" style={{ color: vitarkaActive ? TEAL : "#A8A49C" }}>Vitarka</p>
