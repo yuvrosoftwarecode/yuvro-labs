@@ -80,7 +80,7 @@ function InputCard({
 function Waves({ active }: { active: boolean }) {
   const lines = Array.from({ length: 7 });
   return (
-    <svg className="pointer-events-none absolute left-1/2 top-1/2 h-[105px] w-[200%] -translate-x-1/2 -translate-y-1/2" viewBox="0 0 800 150" fill="none" aria-hidden>
+    <svg className="pointer-events-none absolute left-1/2 top-1/2 h-[105px] w-[360px] -translate-x-1/2 -translate-y-1/2" viewBox="0 0 800 150" fill="none" aria-hidden>
       {lines.map((_, i) => {
         const amp = 10 + i * 4;
         const d = `M0 75 C 120 ${75 - amp}, 240 ${75 + amp}, 400 75 S 680 ${75 - amp}, 800 75`;
