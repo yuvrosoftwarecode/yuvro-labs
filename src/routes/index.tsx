@@ -238,6 +238,20 @@ function SimulationVitarkaSequence() {
             <h2 className="yvr-serif text-[34px] lg:text-[42px] font-normal leading-[1.1] tracking-[-0.015em] text-[#0A0A0A]">
               A real task, in a real environment.
             </h2>
+            <div className="mt-6 space-y-5 text-[16.5px] leading-[1.75] text-[#4A4F58]">
+              <p>
+                Candidates open a live workspace with a running project, a repository, dependencies and a ticket scoped
+                to the role you are hiring for — fixing a defect, extending an endpoint, tightening a query. It takes
+                twenty to thirty minutes, not a weekend, and it looks like the first week of the job rather than an exam.
+              </p>
+            </div>
+            <Link
+              to="/product/engineering-simulations"
+              className="mt-6 inline-flex items-center gap-2 text-[14px] font-medium transition hover:gap-3"
+              style={{ color: TEAL }}
+            >
+              Learn more <ArrowRight className="h-4 w-4" />
+            </Link>
           </Reveal>
 
           <Reveal delay={80}>
