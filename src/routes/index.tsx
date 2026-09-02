@@ -213,6 +213,7 @@ function SimulationVitarkaSequence() {
   const [vitarkaActive, setVitarkaActive] = useState(false);
 
   const { out: code } = useTypewriter(CODE_TEXT, inView, 14, () => setTaskDone(true));
+  const codeProgress = reduced ? 1 : Math.min(code.length / CODE_TEXT.length, 1);
 
   useEffect(() => {
     if (!taskDone) return;
