@@ -28,17 +28,17 @@ const EXCHANGE: { q: string; a: string }[] = [
 function ColHead({ eyebrow, children }: { eyebrow: string; children: React.ReactNode }) {
   return (
     <div className="text-center">
-      <p className="text-[10.5px] font-semibold uppercase tracking-[0.18em] text-[#8A867E]">{eyebrow}</p>
-      <p className="mt-3 text-[17px] leading-[1.45] text-[#1B1F23]">{children}</p>
+      <p className="text-[9px] font-semibold uppercase tracking-[0.18em] text-[#8A867E]">{eyebrow}</p>
+      <p className="mt-2 text-[13px] leading-[1.45] text-[#1B1F23]">{children}</p>
     </div>
   );
 }
 
 function SkeletonLines({ widths }: { widths: string[] }) {
   return (
-    <div className="mt-4 space-y-2">
+    <div className="mt-3 space-y-1.5">
       {widths.map((w, i) => (
-        <span key={i} className="block h-[7px] rounded-full bg-[#EDEBE5]" style={{ width: w }} />
+        <span key={i} className="block h-[5px] rounded-full bg-[#EDEBE5]" style={{ width: w }} />
       ))}
     </div>
   );
@@ -49,23 +49,23 @@ function InputCard({
 }: { icon: typeof FileText; title: string; items: string[]; active: boolean; delay: number }) {
   return (
     <div
-      className="rounded-2xl border bg-white/70 p-6 transition-all duration-700"
+      className="rounded-xl border bg-white/70 p-4 transition-all duration-700"
       style={{
         borderColor: active ? `${TEAL}33` : "#E6E4DE",
-        boxShadow: active ? `0 14px 40px -28px ${TEAL}` : "none",
+        boxShadow: active ? `0 10px 28px -20px ${TEAL}` : "none",
         opacity: active ? 1 : 0.35,
         transform: active ? "translateY(0)" : "translateY(8px)",
         transitionDelay: `${delay}ms`,
       }}
     >
-      <div className="flex items-center gap-3">
-        <span className="grid h-9 w-9 place-items-center rounded-full bg-[#F1F4F0]" style={{ color: TEAL }}>
-          <Icon className="h-4 w-4" strokeWidth={1.6} />
+      <div className="flex items-center gap-2.5">
+        <span className="grid h-7 w-7 place-items-center rounded-full bg-[#F1F4F0]" style={{ color: TEAL }}>
+          <Icon className="h-3 w-3" strokeWidth={1.6} />
         </span>
-        <h3 className="text-[13px] font-semibold uppercase tracking-[0.09em] text-[#1B1F23]">{title}</h3>
+        <h3 className="text-[10.5px] font-semibold uppercase tracking-[0.09em] text-[#1B1F23]">{title}</h3>
       </div>
       <SkeletonLines widths={["88%", "96%", "70%"]} />
-      <ul className="mt-5 space-y-[7px] text-[13.5px] text-[#4A4F58]">
+      <ul className="mt-3.5 space-y-[5px] text-[11px] text-[#4A4F58]">
         {items.map((it) => (
           <li key={it} className="flex items-center gap-2">
             <span className="h-[3px] w-[3px] rounded-full bg-[#9A968E]" />{it}
@@ -80,7 +80,7 @@ function InputCard({
 function Waves({ active }: { active: boolean }) {
   const lines = Array.from({ length: 7 });
   return (
-    <svg className="pointer-events-none absolute left-1/2 top-1/2 h-[150px] w-[200%] -translate-x-1/2 -translate-y-1/2" viewBox="0 0 800 150" fill="none" aria-hidden>
+    <svg className="pointer-events-none absolute left-1/2 top-1/2 h-[105px] w-[360px] -translate-x-1/2 -translate-y-1/2" viewBox="0 0 800 150" fill="none" aria-hidden>
       {lines.map((_, i) => {
         const amp = 10 + i * 4;
         const d = `M0 75 C 120 ${75 - amp}, 240 ${75 + amp}, 400 75 S 680 ${75 - amp}, 800 75`;
@@ -105,9 +105,9 @@ function Waves({ active }: { active: boolean }) {
 
 function Core({ active }: { active: boolean }) {
   return (
-    <div className="relative flex min-h-[440px] flex-col items-center justify-center">
+    <div className="relative flex min-h-[320px] flex-col items-center justify-center">
       {/* orbit rings */}
-      {[300, 380, 460].map((s, i) => (
+      {[210, 268, 326].map((s, i) => (
         <span
           key={s}
           aria-hidden
@@ -123,40 +123,40 @@ function Core({ active }: { active: boolean }) {
       ))}
       <span
         aria-hidden
-        className="absolute h-[300px] w-[300px] rounded-full"
+        className="absolute h-[210px] w-[210px] rounded-full"
         style={{ background: `radial-gradient(circle, ${TEAL}12 0%, transparent 68%)`, opacity: active ? 1 : 0, transition: "opacity 1s ease" }}
       />
       <Waves active={active} />
 
       <div
-        className="relative grid h-[104px] w-[104px] place-items-center rounded-full"
+        className="relative grid h-[74px] w-[74px] place-items-center rounded-full"
         style={{
           background: "#243029",
-          boxShadow: active ? `0 20px 50px -20px ${TEAL}` : "none",
+          boxShadow: active ? `0 14px 36px -16px ${TEAL}` : "none",
           transform: active ? "scale(1)" : "scale(0.9)",
           transition: "transform 700ms cubic-bezier(0.16,1,0.3,1), box-shadow 700ms ease",
           animation: active ? "vitarka-breathe 4s ease-in-out infinite" : undefined,
         }}
       >
-        <AudioLines className="h-9 w-9 text-[#8FBFA6]" strokeWidth={1.6} />
+        <AudioLines className="h-6 w-6 text-[#8FBFA6]" strokeWidth={1.6} />
       </div>
 
-      <div className="relative mt-7 text-center">
-        <p className="yvr-serif text-[26px] tracking-[0.06em] text-[#0A0A0A]">VITARKA AI</p>
-        <p className="mt-2 text-[11px] font-medium uppercase leading-[1.7] tracking-[0.15em] text-[#8A867E]">
+      <div className="relative mt-4 text-center">
+        <p className="yvr-serif text-[19px] tracking-[0.06em] text-[#0A0A0A]">VITARKA AI</p>
+        <p className="mt-1.5 text-[9px] font-medium uppercase leading-[1.7] tracking-[0.15em] text-[#8A867E]">
           Understands. Questions.<br />Evaluates. Decides.
         </p>
       </div>
 
       <div
-        className="relative mt-10 w-full max-w-[300px] rounded-2xl border border-[#E6E4DE] bg-white/80 p-5 transition-all duration-700"
+        className="relative mt-6 w-full max-w-[220px] rounded-xl border border-[#E6E4DE] bg-white/80 p-3.5 transition-all duration-700"
         style={{ opacity: active ? 1 : 0, transform: active ? "translateY(0)" : "translateY(10px)", transitionDelay: "600ms" }}
       >
-        <div className="flex gap-3">
-          <span className="mt-[2px] grid h-7 w-7 shrink-0 place-items-center rounded-full" style={{ background: "#243029" }}>
-            <Check className="h-3.5 w-3.5 text-[#8FBFA6]" strokeWidth={2.5} />
+        <div className="flex gap-2.5">
+          <span className="mt-[2px] grid h-5 w-5 shrink-0 place-items-center rounded-full" style={{ background: "#243029" }}>
+            <Check className="h-2.5 w-2.5 text-[#8FBFA6]" strokeWidth={2.5} />
           </span>
-          <p className="text-[13.5px] leading-[1.7] text-[#4A4F58]">
+          <p className="text-[11px] leading-[1.65] text-[#4A4F58]">
             Makes decisions.<br />Scores reasoning.<br />Highlights strengths and gaps.
           </p>
         </div>
@@ -170,17 +170,17 @@ function Bubble({ text, side, shown }: { text: string; side: "ai" | "candidate";
   const isAi = side === "ai";
   return (
     <div
-      className={`flex items-start gap-2.5 transition-all duration-500 ${isAi ? "" : "flex-row-reverse pl-8"}`}
+      className={`flex items-start gap-2 transition-all duration-500 ${isAi ? "pr-8" : "flex-row-reverse pl-8"}`}
       style={{ opacity: shown ? 1 : 0, transform: shown ? "translateY(0)" : "translateY(8px)" }}
     >
       <span
-        className="mt-1 grid h-8 w-8 shrink-0 place-items-center rounded-full"
+        className="mt-[2px] grid h-6 w-6 shrink-0 place-items-center rounded-full"
         style={{ background: isAi ? "#243029" : "#EFEDE7" }}
       >
-        {isAi ? <AudioLines className="h-3.5 w-3.5 text-[#8FBFA6]" strokeWidth={1.8} /> : <User className="h-3.5 w-3.5 text-[#6B6B6B]" strokeWidth={1.8} />}
+        {isAi ? <AudioLines className="h-2.5 w-2.5 text-[#8FBFA6]" strokeWidth={1.8} /> : <User className="h-2.5 w-2.5 text-[#6B6B6B]" strokeWidth={1.8} />}
       </span>
       <p
-        className="rounded-xl px-4 py-3 text-[13.5px] leading-[1.55] text-[#1B1F23]"
+        className="rounded-lg px-3 py-2 text-[11px] leading-[1.55] text-[#1B1F23]"
         style={{ background: isAi ? "#EEF3EF" : "#FFFFFF", border: isAi ? "none" : "1px solid #E6E4DE" }}
       >
         {text}
@@ -199,21 +199,21 @@ function Conversation({ active }: { active: boolean }) {
   }, [active]);
 
   return (
-    <div className="flex min-h-[440px] flex-col justify-center gap-4">
+    <div className="flex min-h-[320px] flex-col justify-center gap-3">
       {EXCHANGE.map((e, i) => (
-        <div key={e.q} className="space-y-3">
+        <div key={e.q} className="space-y-2">
           <Bubble text={e.q} side="ai" shown={step > i * 2} />
           <Bubble text={e.a} side="candidate" shown={step > i * 2 + 1} />
         </div>
       ))}
       <div
-        className="mt-3 flex items-start gap-3 rounded-2xl border border-[#E6E4DE] bg-white/80 p-5 transition-all duration-700"
+        className="mt-2 flex items-start gap-2.5 rounded-xl border border-[#E6E4DE] bg-white/80 p-3.5 transition-all duration-700"
         style={{ opacity: step > 6 ? 1 : 0, transform: step > 6 ? "translateY(0)" : "translateY(10px)" }}
       >
-        <span className="grid h-9 w-9 shrink-0 place-items-center rounded-xl" style={{ background: "#FBF3E4", color: SAND }}>
-          <FileBadge className="h-4 w-4" strokeWidth={1.6} />
+        <span className="grid h-7 w-7 shrink-0 place-items-center rounded-lg" style={{ background: "#FBF3E4", color: SAND }}>
+          <FileBadge className="h-3 w-3" strokeWidth={1.6} />
         </span>
-        <p className="text-[13.5px] leading-[1.75] text-[#4A4F58]">
+        <p className="text-[11px] leading-[1.7] text-[#4A4F58]">
           Structured feedback.<br />Reasoning score.<br />
           <span className="text-[#1B1F23]">Decision: </span>
           <span style={{ color: TEAL }}>Proceed</span> / <span style={{ color: SAND }}>Hold</span> / <span style={{ color: "#B4472F" }}>Strong Hire</span>
@@ -236,12 +236,12 @@ export function VitarkaFlow() {
         }
       `}</style>
 
-      <div className="grid gap-12 lg:grid-cols-3 lg:gap-8">
+      <div className="grid gap-10 lg:grid-cols-3 lg:gap-6">
         <div>
           <ColHead eyebrow="Understands before it asks">
             Reads the <span style={{ color: TEAL }}>job</span>, the role and the <span style={{ color: TEAL }}>candidate</span>.
           </ColHead>
-          <div className="mt-10 space-y-6">
+          <div className="mt-7 space-y-4">
             <InputCard icon={FileText} title="Job Description" items={["Role", "Responsibilities", "Required Skills", "Nice to Have"]} active={inView} delay={0} />
             <InputCard icon={User} title="Candidate Resume" items={["Experience", "Skills", "Achievements", "Background"]} active={inView} delay={180} />
           </div>
