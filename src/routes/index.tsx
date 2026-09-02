@@ -6,7 +6,6 @@ import { YuvroHiringOrbit } from "@/components/site/YuvroHiringOrbit";
 import { HumanAiStatement } from "@/components/site/HumanAiStatement";
 import { TwoSystemsConvergence } from "@/components/site/TwoSystemsConvergence";
 import { VitarkaFlow } from "@/components/site/VitarkaFlow";
-import { VitarkaColumnHeads } from "@/components/site/VitarkaColumnHeads";
 
 export const Route = createFileRoute("/")({
   head: () => ({
@@ -316,29 +315,41 @@ function SimulationVitarkaSequence() {
         <div className="mx-auto max-w-[1100px]">
           <Reveal>
             <div className="mx-auto max-w-3xl text-center">
-              <h2 className="yvr-serif text-[28px] lg:text-[38px] font-normal leading-[1.12] tracking-[-0.015em] text-[#0A0A0A]">
-                An AI interviewer that doesn't need a simulation to run — but is far sharper when it has one.
+              <h2 className="yvr-serif text-[30px] lg:text-[44px] font-normal leading-[1.14] tracking-[-0.015em] text-[#0A0A0A]">
+                Vitarka AI is more than a voice bot.<br className="hidden sm:block" /> It&rsquo;s an interviewer that thinks.
               </h2>
               <span
-                className="mx-auto mt-5 block h-[2px] w-16 transition-colors duration-300"
+                className="mx-auto mt-6 block h-[2px] w-16 transition-colors duration-300"
                 style={{ background: vitarkaActive ? TEAL : "#DEDBD4" }}
               />
-            </div>
-          </Reveal>
-
-          <Reveal delay={80}>
-            <div className="mt-16 mb-12">
-              <VitarkaColumnHeads />
+              <p className="mx-auto mt-7 max-w-2xl text-[14.5px] leading-[1.85] text-[#4A4F58]">
+                Before the interview, Vitarka understands the job, the skills that matter, and the candidate&rsquo;s background. During the conversation, it listens, evaluates, makes decisions, and changes its next question based on the candidate&rsquo;s responses &mdash; rather than following a fixed script.
+              </p>
             </div>
           </Reveal>
 
           <Reveal delay={120}>
-            <div className="mb-8">
+            <div className="mt-20 mb-20">
               <VitarkaFlow />
+            </div>
+          </Reveal>
+
+          <Reveal delay={80}>
+            <div className="mx-auto max-w-2xl space-y-6 text-center">
+              <p className="text-[14.5px] leading-[1.85] text-[#4A4F58]">
+                Built to conduct first-level interviews across technical and non-technical roles, Vitarka can interview engineers, salespeople, marketers, accountants, and more.
+              </p>
+              <p className="text-[14.5px] leading-[1.85] text-[#4A4F58]">
+                When paired with a Simulation, it gets even sharper &mdash; connecting what a candidate did with why they did it.
+              </p>
+              <p className="yvr-serif pt-4 text-[20px] leading-[1.5] tracking-[-0.01em] text-[#0A0A0A] lg:text-[24px]">
+                One interviewer. Any role. A conversation that adapts.
+              </p>
             </div>
           </Reveal>
         </div>
       </section>
+
 
     </div>
   );
