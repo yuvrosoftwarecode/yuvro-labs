@@ -199,7 +199,7 @@ const CODE_LINES = [
   "}",
 ];
 const CODE_TEXT = CODE_LINES.join("\n");
-const VITARKA_Q = "You chose explicit casting over implicit — what breaks without it?";
+const VITARKA_Q = "You used an explicit cast for pi — what breaks without it?";
 
 function SimulationVitarkaSequence() {
   const reduced = typeof window !== "undefined" ? prefersReduced() : false;
