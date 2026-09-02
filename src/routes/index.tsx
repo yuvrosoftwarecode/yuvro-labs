@@ -311,11 +311,11 @@ function SimulationVitarkaSequence() {
       </div>
 
       {/* Vitarka AI */}
-      <section className="border-b border-[#E6E4DE] px-6 pb-24 lg:pb-32">
-        <div className="mx-auto max-w-[1240px]">
+      <section className="border-b border-[#E6E4DE] px-6 pb-28 lg:pb-36">
+        <div className="mx-auto max-w-[1100px]">
           <Reveal>
             <div className="mx-auto max-w-3xl text-center">
-              <h2 className="yvr-serif text-[32px] lg:text-[42px] font-normal leading-[1.12] tracking-[-0.015em] text-[#0A0A0A]">
+              <h2 className="yvr-serif text-[28px] lg:text-[38px] font-normal leading-[1.12] tracking-[-0.015em] text-[#0A0A0A]">
                 An AI interviewer that doesn't need a simulation to run — but is far sharper when it has one.
               </h2>
               <span
@@ -326,7 +326,7 @@ function SimulationVitarkaSequence() {
           </Reveal>
 
           <Reveal delay={80}>
-            <div className="mt-16">
+            <div className="mt-12 mb-8">
               <VitarkaFlow />
             </div>
           </Reveal>
