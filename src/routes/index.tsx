@@ -6,6 +6,7 @@ import { YuvroHiringOrbit } from "@/components/site/YuvroHiringOrbit";
 import { HumanAiStatement } from "@/components/site/HumanAiStatement";
 import { TwoSystemsConvergence } from "@/components/site/TwoSystemsConvergence";
 import { VitarkaFlow } from "@/components/site/VitarkaFlow";
+import { VitarkaColumnHeads } from "@/components/site/VitarkaColumnHeads";
 
 export const Route = createFileRoute("/")({
   head: () => ({
@@ -326,7 +327,13 @@ function SimulationVitarkaSequence() {
           </Reveal>
 
           <Reveal delay={80}>
-            <div className="mt-12 mb-8">
+            <div className="mt-16 mb-12">
+              <VitarkaColumnHeads />
+            </div>
+          </Reveal>
+
+          <Reveal delay={120}>
+            <div className="mb-8">
               <VitarkaFlow />
             </div>
           </Reveal>
