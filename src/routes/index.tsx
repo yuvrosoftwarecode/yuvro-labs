@@ -6,7 +6,6 @@ import { YuvroHiringOrbit } from "@/components/site/YuvroHiringOrbit";
 import { HumanAiStatement } from "@/components/site/HumanAiStatement";
 import { TwoSystemsConvergence } from "@/components/site/TwoSystemsConvergence";
 import { VitarkaFlow } from "@/components/site/VitarkaFlow";
-import { VitarkaColumnHeads } from "@/components/site/VitarkaColumnHeads";
 
 export const Route = createFileRoute("/")({
   head: () => ({
