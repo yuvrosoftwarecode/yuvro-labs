@@ -33,6 +33,7 @@ import { Route as CollaborationIndexRouteImport } from './routes/collaboration.i
 import { Route as AdminIndexRouteImport } from './routes/admin.index'
 import { Route as RecruiterSettingsRouteImport } from './routes/recruiter.settings'
 import { Route as RecruiterReportsRouteImport } from './routes/recruiter.reports'
+import { Route as ProductVitarkaAiRouteImport } from './routes/product.vitarka-ai'
 import { Route as ProductEngineeringSimulationsRouteImport } from './routes/product.engineering-simulations'
 import { Route as ProductSlugRouteImport } from './routes/product.$slug'
 import { Route as LabSlugRouteImport } from './routes/lab.$slug'
@@ -209,6 +210,11 @@ const RecruiterReportsRoute = RecruiterReportsRouteImport.update({
   id: '/reports',
   path: '/reports',
   getParentRoute: () => RecruiterRoute,
+} as any)
+const ProductVitarkaAiRoute = ProductVitarkaAiRouteImport.update({
+  id: '/product/vitarka-ai',
+  path: '/product/vitarka-ai',
+  getParentRoute: () => rootRouteImport,
 } as any)
 const ProductEngineeringSimulationsRoute =
   ProductEngineeringSimulationsRouteImport.update({
@@ -553,6 +559,7 @@ export interface FileRoutesByFullPath {
   '/lab/$slug': typeof LabSlugRouteWithChildren
   '/product/$slug': typeof ProductSlugRoute
   '/product/engineering-simulations': typeof ProductEngineeringSimulationsRoute
+  '/product/vitarka-ai': typeof ProductVitarkaAiRoute
   '/recruiter/reports': typeof RecruiterReportsRouteWithChildren
   '/recruiter/settings': typeof RecruiterSettingsRoute
   '/admin/': typeof AdminIndexRoute
@@ -629,6 +636,7 @@ export interface FileRoutesByTo {
   '/lab/$slug': typeof LabSlugRouteWithChildren
   '/product/$slug': typeof ProductSlugRoute
   '/product/engineering-simulations': typeof ProductEngineeringSimulationsRoute
+  '/product/vitarka-ai': typeof ProductVitarkaAiRoute
   '/recruiter/settings': typeof RecruiterSettingsRoute
   '/admin': typeof AdminIndexRoute
   '/collaboration': typeof CollaborationIndexRoute
@@ -711,6 +719,7 @@ export interface FileRoutesById {
   '/lab/$slug': typeof LabSlugRouteWithChildren
   '/product/$slug': typeof ProductSlugRoute
   '/product/engineering-simulations': typeof ProductEngineeringSimulationsRoute
+  '/product/vitarka-ai': typeof ProductVitarkaAiRoute
   '/recruiter/reports': typeof RecruiterReportsRouteWithChildren
   '/recruiter/settings': typeof RecruiterSettingsRoute
   '/admin/': typeof AdminIndexRoute
@@ -795,6 +804,7 @@ export interface FileRouteTypes {
     | '/lab/$slug'
     | '/product/$slug'
     | '/product/engineering-simulations'
+    | '/product/vitarka-ai'
     | '/recruiter/reports'
     | '/recruiter/settings'
     | '/admin/'
@@ -871,6 +881,7 @@ export interface FileRouteTypes {
     | '/lab/$slug'
     | '/product/$slug'
     | '/product/engineering-simulations'
+    | '/product/vitarka-ai'
     | '/recruiter/settings'
     | '/admin'
     | '/collaboration'
@@ -952,6 +963,7 @@ export interface FileRouteTypes {
     | '/lab/$slug'
     | '/product/$slug'
     | '/product/engineering-simulations'
+    | '/product/vitarka-ai'
     | '/recruiter/reports'
     | '/recruiter/settings'
     | '/admin/'
@@ -1010,6 +1022,7 @@ export interface RootRouteChildren {
   LabSlugRoute: typeof LabSlugRouteWithChildren
   ProductSlugRoute: typeof ProductSlugRoute
   ProductEngineeringSimulationsRoute: typeof ProductEngineeringSimulationsRoute
+  ProductVitarkaAiRoute: typeof ProductVitarkaAiRoute
   ProductIndexRoute: typeof ProductIndexRoute
 }
 
@@ -1182,6 +1195,13 @@ declare module '@tanstack/react-router' {
       fullPath: '/recruiter/reports'
       preLoaderRoute: typeof RecruiterReportsRouteImport
       parentRoute: typeof RecruiterRoute
+    }
+    '/product/vitarka-ai': {
+      id: '/product/vitarka-ai'
+      path: '/product/vitarka-ai'
+      fullPath: '/product/vitarka-ai'
+      preLoaderRoute: typeof ProductVitarkaAiRouteImport
+      parentRoute: typeof rootRouteImport
     }
     '/product/engineering-simulations': {
       id: '/product/engineering-simulations'
@@ -1859,6 +1879,7 @@ const rootRouteChildren: RootRouteChildren = {
   LabSlugRoute: LabSlugRouteWithChildren,
   ProductSlugRoute: ProductSlugRoute,
   ProductEngineeringSimulationsRoute: ProductEngineeringSimulationsRoute,
+  ProductVitarkaAiRoute: ProductVitarkaAiRoute,
   ProductIndexRoute: ProductIndexRoute,
 }
 export const routeTree = rootRouteImport
