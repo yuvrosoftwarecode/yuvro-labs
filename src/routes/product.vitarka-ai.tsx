@@ -7,7 +7,6 @@ import {
   Check,
   Database,
   FileText,
-  Gauge,
   ListChecks,
   Pencil,
   RefreshCw,
