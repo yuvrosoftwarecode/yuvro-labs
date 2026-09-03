@@ -474,7 +474,6 @@ function Hero() {
       <div className="mx-auto max-w-6xl px-6 py-16 lg:py-24">
         <Reveal>
           <div className="max-w-3xl">
-            <Eyebrow color={TEAL}>Vitarka AI</Eyebrow>
             <h1
               className="mt-5 text-[36px] font-bold leading-[1.06] tracking-[-0.025em] sm:text-[50px] lg:text-[58px]"
               style={{ color: INK }}
@@ -522,7 +521,6 @@ function Positioning() {
       <div className="mx-auto max-w-6xl">
         <Reveal>
           <SectionHead
-            eyebrow="Positioning"
             title="Not a question bank. A thinking interviewer."
             copy="Vitarka listens to the answer, evaluates it, and decides where the conversation should go next."
           />
@@ -600,7 +598,6 @@ function Prepares() {
         <Reveal>
           <SectionHead
             center
-            eyebrow="Preparation"
             title="It starts before the first question."
             copy="Vitarka builds an interview strategy from the role, the skills that matter and the candidate's background."
           />
@@ -711,7 +708,6 @@ function Standalone() {
       <div className="mx-auto grid max-w-6xl gap-12 lg:grid-cols-2 lg:items-center">
         <Reveal>
           <SectionHead
-            eyebrow="Standalone"
             title="Run the first interview."
             copy="Give Vitarka the role and candidate profile. It handles the first conversation from start to finish."
           />
@@ -844,7 +840,6 @@ function AnyRole() {
         <Reveal>
           <SectionHead
             center
-            eyebrow="Coverage"
             title="One interviewer. Any role."
             copy="The conversation adapts to the role — not the other way around."
           />
@@ -1285,7 +1280,7 @@ function ThreeWays() {
     <section className="px-6 py-20" style={{ background: "#FFFFFF" }}>
       <div className="mx-auto max-w-6xl">
         <Reveal>
-          <SectionHead center eyebrow="Flexibility" title="Use it your way." />
+          <SectionHead center title="Use it your way." />
         </Reveal>
 
         <div className="mt-12 grid gap-4 md:grid-cols-3">
@@ -1336,10 +1331,7 @@ function ThreeWays() {
           >
             <div className="flex flex-wrap items-center justify-between gap-6">
               <div>
-                <p className="font-mono text-[10px] uppercase tracking-[0.2em]" style={{ color: "#C8A45E" }}>
-                  Full evaluation
-                </p>
-                <p className="mt-2 text-[20px] font-semibold text-white">See the complete picture.</p>
+                <p className="text-[20px] font-semibold text-white">See the complete picture.</p>
               </div>
               <div className="flex flex-wrap items-center gap-2">
                 {["Simulation", "Assessment", "Vitarka"].map((s) => (
@@ -1386,7 +1378,6 @@ function AdaptiveBranching() {
         <Reveal>
           <SectionHead
             center
-            eyebrow="Adaptive"
             title="Every answer can change the next question."
             copy="No fixed script. No predetermined sequence. The conversation follows the candidate."
           />
@@ -1481,7 +1472,6 @@ function RecruiterControl() {
       <div className="mx-auto max-w-6xl">
         <Reveal>
           <SectionHead
-            eyebrow="Control"
             title="AI-led. Recruiter-controlled."
             copy="Vitarka generates the interview. Recruiters can review, edit, and publish the questions before the interview begins."
           />
@@ -1608,7 +1598,6 @@ function FinalReport() {
       <div className="mx-auto grid max-w-6xl gap-12 lg:grid-cols-2 lg:items-center">
         <Reveal>
           <SectionHead
-            eyebrow="Outcome"
             title="From conversation to hiring signal."
             copy="Turn an interview into a clear signal recruiters can act on."
           />
@@ -1716,10 +1705,7 @@ function FinalCta() {
           className="mx-auto max-w-6xl rounded-[28px] px-8 py-20 text-center sm:px-16"
           style={{ background: INK, boxShadow: LIFT_SHADOW }}
         >
-          <p className="font-mono text-[10.5px] uppercase tracking-[0.24em]" style={{ color: "#C8A45E" }}>
-            Vitarka AI
-          </p>
-          <h2 className="mx-auto mt-5 max-w-2xl text-[30px] font-bold leading-[1.15] tracking-[-0.015em] text-white sm:text-[40px]">
+          <h2 className="mx-auto max-w-2xl text-[30px] font-bold leading-[1.15] tracking-[-0.015em] text-white sm:text-[40px]">
             Give every candidate a conversation that adapts.
           </h2>
           <p className="mx-auto mt-5 max-w-xl text-[15.5px] leading-relaxed" style={{ color: "#B9BFC7" }}>
