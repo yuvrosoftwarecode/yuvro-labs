@@ -152,30 +152,19 @@ function useLoop(active: boolean, max: number, ms = 1600) {
   return step;
 }
 
-function Eyebrow({ children, color = MUTED }: { children: ReactNode; color?: string }) {
-  return (
-    <p className="font-mono text-[11px] uppercase tracking-[0.24em]" style={{ color }}>
-      {children}
-    </p>
-  );
-}
-
 function SectionHead({
-  eyebrow,
   title,
   copy,
   center,
 }: {
-  eyebrow?: string;
   title: string;
   copy?: string;
   center?: boolean;
 }) {
   return (
     <div className={center ? "mx-auto max-w-2xl text-center" : "max-w-2xl"}>
-      {eyebrow && <Eyebrow>{eyebrow}</Eyebrow>}
       <h2
-        className={`${eyebrow ? "mt-4" : ""} text-[28px] font-bold leading-[1.12] tracking-[-0.02em] sm:text-[38px]`}
+        className="text-[28px] font-bold leading-[1.12] tracking-[-0.02em] sm:text-[38px]"
         style={{ color: INK }}
       >
         {title}
