@@ -7,7 +7,6 @@ import {
   Check,
   Database,
   FileText,
-  Gauge,
   ListChecks,
   Pencil,
   RefreshCw,
@@ -152,30 +151,19 @@ function useLoop(active: boolean, max: number, ms = 1600) {
   return step;
 }
 
-function Eyebrow({ children, color = MUTED }: { children: ReactNode; color?: string }) {
-  return (
-    <p className="font-mono text-[11px] uppercase tracking-[0.24em]" style={{ color }}>
-      {children}
-    </p>
-  );
-}
-
 function SectionHead({
-  eyebrow,
   title,
   copy,
   center,
 }: {
-  eyebrow?: string;
   title: string;
   copy?: string;
   center?: boolean;
 }) {
   return (
     <div className={center ? "mx-auto max-w-2xl text-center" : "max-w-2xl"}>
-      {eyebrow && <Eyebrow>{eyebrow}</Eyebrow>}
       <h2
-        className={`${eyebrow ? "mt-4" : ""} text-[28px] font-bold leading-[1.12] tracking-[-0.02em] sm:text-[38px]`}
+        className="text-[28px] font-bold leading-[1.12] tracking-[-0.02em] sm:text-[38px]"
         style={{ color: INK }}
       >
         {title}
@@ -312,9 +300,6 @@ function VitarkaPage() {
       <Prepares />
       <Standalone />
       <AnyRole />
-      <CombinedEvaluation />
-      <LabsPlusVitarka />
-      <AssessmentPlusVitarka />
       <ThreeWays />
       <AdaptiveBranching />
       <RecruiterControl />
@@ -485,7 +470,6 @@ function Hero() {
       <div className="mx-auto max-w-6xl px-6 py-16 lg:py-24">
         <Reveal>
           <div className="max-w-3xl">
-            <Eyebrow color={TEAL}>Vitarka AI</Eyebrow>
             <h1
               className="mt-5 text-[36px] font-bold leading-[1.06] tracking-[-0.025em] sm:text-[50px] lg:text-[58px]"
               style={{ color: INK }}
@@ -533,7 +517,6 @@ function Positioning() {
       <div className="mx-auto max-w-6xl">
         <Reveal>
           <SectionHead
-            eyebrow="Positioning"
             title="Not a question bank. A thinking interviewer."
             copy="Vitarka listens to the answer, evaluates it, and decides where the conversation should go next."
           />
@@ -611,7 +594,6 @@ function Prepares() {
         <Reveal>
           <SectionHead
             center
-            eyebrow="Preparation"
             title="It starts before the first question."
             copy="Vitarka builds an interview strategy from the role, the skills that matter and the candidate's background."
           />
@@ -722,7 +704,6 @@ function Standalone() {
       <div className="mx-auto grid max-w-6xl gap-12 lg:grid-cols-2 lg:items-center">
         <Reveal>
           <SectionHead
-            eyebrow="Standalone"
             title="Run the first interview."
             copy="Give Vitarka the role and candidate profile. It handles the first conversation from start to finish."
           />
@@ -855,7 +836,6 @@ function AnyRole() {
         <Reveal>
           <SectionHead
             center
-            eyebrow="Coverage"
             title="One interviewer. Any role."
             copy="The conversation adapts to the role — not the other way around."
           />
@@ -900,374 +880,11 @@ function AnyRole() {
   );
 }
 
-/* ============================================================
-   6 — COMBINED EVALUATION
-   ============================================================ */
 
-function CombinedEvaluation() {
-  const { ref, inView } = useInView<HTMLDivElement>(0.2);
-  const step = useLoop(inView, 3, 1400);
 
-  return (
-    <section className="px-6 py-20">
-      <div className="mx-auto max-w-6xl">
-        <Reveal>
-          <SectionHead
-            eyebrow="Combined evaluation"
-            title="The conversation gets sharper when it has context."
-            copy="Combine Vitarka with Engineering Labs or Assessments to connect what a candidate did with why they did it."
-          />
-        </Reveal>
-
-        <div ref={ref} className="mt-12 grid gap-6 lg:grid-cols-[1.1fr_0.9fr]">
-          {/* did / why diagram */}
-          <Card className="p-6" tone="surface">
-            <div className="grid items-center gap-3 sm:grid-cols-[1fr_auto_1fr]">
-              <div className="space-y-3">
-                <EvidenceNode
-                  icon={SquareTerminal}
-                  title="Engineering Labs"
-                  note="What they did"
-                  active={step >= 1}
-                />
-                <EvidenceNode
-                  icon={ListChecks}
-                  title="Assessment"
-                  note="Why they did it"
-                  active={step >= 2}
-                />
-              </div>
-
-              <svg width="88" height="150" viewBox="0 0 88 150" fill="none" className="mx-auto hidden sm:block">
-                <path d="M2 36 C 44 36, 44 75, 86 75" stroke={step >= 1 ? TEAL : LINE} strokeWidth="1.2" className={step >= 1 ? "vk-dash" : undefined} />
-                <path d="M2 114 C 44 114, 44 75, 86 75" stroke={step >= 2 ? GOLD : LINE} strokeWidth="1.2" className={step >= 2 ? "vk-dash" : undefined} />
-              </svg>
-
-              <div
-                className="flex flex-col items-center gap-3 rounded-2xl p-5 transition-all duration-700"
-                style={{
-                  background: "#243029",
-                  opacity: step >= 3 ? 1 : 0.55,
-                  transform: step >= 3 ? "scale(1)" : "scale(0.97)",
-                }}
-              >
-                <VitarkaMark size={38} />
-                <p className="font-mono text-[10px] uppercase tracking-[0.18em] text-white">Vitarka AI</p>
-                <p className="text-center text-[12px] leading-relaxed" style={{ color: "#B7C8BF" }}>
-                  Connects execution with reasoning in one conversation.
-                </p>
-              </div>
-            </div>
-          </Card>
-
-          {/* stacked pipeline */}
-          <Card className="p-6">
-            <Chip tone="gold">Full pipeline</Chip>
-            <div className="mt-5 flex flex-col items-center">
-              <div className="grid w-full gap-2 sm:grid-cols-3">
-                {["Simulation", "Assessment", "Candidate Profile"].map((s) => (
-                  <div
-                    key={s}
-                    className="rounded-xl px-3 py-2.5 text-center text-[12.5px]"
-                    style={{ background: SURFACE, border: `1px solid ${LINE}`, color: BODY }}
-                  >
-                    {s}
-                  </div>
-                ))}
-              </div>
-              <FlowArrow />
-              <PipeNode label="Vitarka AI" dark />
-              <FlowArrow />
-              <PipeNode label="Adaptive Interview" />
-              <FlowArrow />
-              <PipeNode label="Hiring Signal" gold />
-            </div>
-          </Card>
-        </div>
-      </div>
-    </section>
-  );
-}
-
-function EvidenceNode({
-  icon: Icon,
-  title,
-  note,
-  active,
-}: {
-  icon: typeof SquareTerminal;
-  title: string;
-  note: string;
-  active: boolean;
-}) {
-  return (
-    <div
-      className="rounded-2xl p-4 transition-all duration-700"
-      style={{
-        background: "#FFFFFF",
-        border: `1px solid ${active ? TEAL : LINE}`,
-        opacity: active ? 1 : 0.5,
-        transform: active ? "none" : "translateY(6px)",
-      }}
-    >
-      <div className="flex items-center gap-2.5">
-        <span className="grid h-8 w-8 place-items-center rounded-full" style={{ background: TEAL_TINT, color: TEAL }}>
-          <Icon size={14} />
-        </span>
-        <p className="text-[14px] font-semibold" style={{ color: INK }}>
-          {title}
-        </p>
-      </div>
-      <p className="mt-2 font-mono text-[9.5px] uppercase tracking-[0.16em]" style={{ color: MUTED }}>
-        {note}
-      </p>
-    </div>
-  );
-}
-
-function PipeNode({ label, dark, gold }: { label: string; dark?: boolean; gold?: boolean }) {
-  return (
-    <div
-      className="w-full rounded-xl px-4 py-3 text-center text-[13px] font-semibold"
-      style={{
-        background: dark ? "#243029" : gold ? GOLD_TINT : "#FFFFFF",
-        color: dark ? "#FFFFFF" : gold ? GOLD : INK,
-        border: dark || gold ? "none" : `1px solid ${LINE}`,
-      }}
-    >
-      {label}
-    </div>
-  );
-}
 
 /* ============================================================
-   7 — LABS + VITARKA
-   ============================================================ */
-
-const LAB_ACTIONS = [
-  "Fixed API timeout",
-  "Added database index",
-  "Changed SQL query",
-  "Improved response time",
-];
-
-const LAB_TURNS = [
-  { q: "I noticed you added an index to the orders table. What led you to that decision?", a: "The slow query log showed a sequential scan on customer_id during peak hours." },
-  { q: "How did you determine that the index would improve performance?", a: "I ran EXPLAIN ANALYZE before and after — planning switched to an index scan." },
-  { q: "What trade-off did you consider?", a: "Write amplification on a high-insert table, so I kept it to a single composite index." },
-];
-
-function LabsPlusVitarka() {
-  const { ref, inView } = useInView<HTMLDivElement>(0.2);
-  const step = useLoop(inView, LAB_ACTIONS.length + LAB_TURNS.length * 2, 1100);
-
-  return (
-    <section className="px-6 py-20" style={{ background: "#FFFFFF" }}>
-      <div className="mx-auto max-w-6xl">
-        <Reveal>
-          <SectionHead
-            eyebrow="Engineering Labs + Vitarka"
-            title="See what they built. Ask why."
-            copy="A candidate fixes a bug, changes a query, or makes an architectural decision. Vitarka uses that context to explore the reasoning behind it."
-          />
-        </Reveal>
-
-        <div ref={ref} className="mt-12 grid gap-5 lg:grid-cols-[0.8fr_1.2fr]">
-          <Card className="p-5" tone="surface">
-            <div className="flex items-center gap-2">
-              <SquareTerminal size={15} style={{ color: TEAL }} />
-              <p className="text-[13.5px] font-semibold" style={{ color: INK }}>
-                Engineering Lab
-              </p>
-            </div>
-            <ul className="mt-4 space-y-2">
-              {LAB_ACTIONS.map((a, i) => {
-                const on = step > i;
-                return (
-                  <li
-                    key={a}
-                    className="flex items-center gap-2.5 rounded-xl px-3 py-2.5 transition-all duration-500"
-                    style={{
-                      background: "#FFFFFF",
-                      border: `1px solid ${on ? TEAL_TINT : LINE}`,
-                      opacity: on ? 1 : 0.4,
-                      transform: on ? "none" : "translateX(-6px)",
-                    }}
-                  >
-                    <span className="grid h-5 w-5 place-items-center rounded-full" style={{ background: on ? TEAL : "#EDEBE5" }}>
-                      <Check size={11} className="text-white" strokeWidth={3} />
-                    </span>
-                    <span className="text-[12.5px]" style={{ color: BODY }}>
-                      {a}
-                    </span>
-                  </li>
-                );
-              })}
-            </ul>
-            <div
-              className="mt-4 flex items-center gap-2 rounded-xl px-3 py-2 transition-opacity duration-700"
-              style={{ background: GOLD_TINT, opacity: step >= LAB_ACTIONS.length ? 1 : 0 }}
-            >
-              <Sparkles size={12} style={{ color: GOLD }} />
-              <p className="font-mono text-[9.5px] uppercase tracking-[0.14em]" style={{ color: GOLD }}>
-                Vitarka picked up 4 actions
-              </p>
-            </div>
-          </Card>
-
-          <Card className="p-5">
-            <div className="flex items-center justify-between">
-              <div className="flex items-center gap-2.5">
-                <VitarkaMark size={28} />
-                <p className="text-[13.5px] font-semibold" style={{ color: INK }}>
-                  Context-aware follow-ups
-                </p>
-              </div>
-              <Chip tone="teal">Grounded in lab activity</Chip>
-            </div>
-            <div className="mt-5 space-y-3">
-              {LAB_TURNS.map((t, i) => (
-                <div key={t.q} className="space-y-2">
-                  <Bubble side="ai" text={t.q} shown={step >= LAB_ACTIONS.length + i * 2} />
-                  <Bubble side="candidate" text={t.a} shown={step >= LAB_ACTIONS.length + i * 2 + 1} />
-                </div>
-              ))}
-            </div>
-            <div className="mt-5 grid gap-2 sm:grid-cols-2">
-              <MiniStat label="What they did" value="4 lab actions" tone="teal" />
-              <MiniStat label="Why they did it" value="3 reasoning probes" tone="gold" />
-            </div>
-          </Card>
-        </div>
-      </div>
-    </section>
-  );
-}
-
-function MiniStat({ label, value, tone }: { label: string; value: string; tone: "teal" | "gold" }) {
-  const color = tone === "teal" ? TEAL : GOLD;
-  const bg = tone === "teal" ? TEAL_TINT : GOLD_TINT;
-  return (
-    <div className="rounded-xl px-3 py-2.5" style={{ background: bg }}>
-      <p className="font-mono text-[9.5px] uppercase tracking-[0.14em]" style={{ color }}>
-        {label}
-      </p>
-      <p className="mt-1 text-[13px] font-semibold" style={{ color: INK }}>
-        {value}
-      </p>
-    </div>
-  );
-}
-
-/* ============================================================
-   8 — ASSESSMENT + VITARKA
-   ============================================================ */
-
-const SCORES = [
-  { label: "Python", value: 82 },
-  { label: "SQL", value: 76 },
-  { label: "System Design", value: 68 },
-];
-
-function AssessmentPlusVitarka() {
-  const { ref, inView } = useInView<HTMLDivElement>(0.2);
-  const step = useLoop(inView, 4, 1400);
-
-  return (
-    <section className="px-6 py-20">
-      <div className="mx-auto max-w-6xl">
-        <Reveal>
-          <SectionHead
-            eyebrow="Assessment + Vitarka"
-            title="Don't stop at the score."
-            copy="An assessment shows what a candidate knows. Vitarka explores how they think about it."
-          />
-        </Reveal>
-
-        <div ref={ref} className="mt-12 grid gap-5 lg:grid-cols-[0.75fr_1.25fr]">
-          <Card className="p-5" tone="surface">
-            <div className="flex items-center gap-2">
-              <Gauge size={15} style={{ color: TEAL }} />
-              <p className="text-[13.5px] font-semibold" style={{ color: INK }}>
-                Assessment result
-              </p>
-            </div>
-            <div className="mt-5 space-y-4">
-              {SCORES.map((s, i) => (
-                <div key={s.label}>
-                  <div className="flex items-baseline justify-between">
-                    <span className="text-[13px]" style={{ color: BODY }}>
-                      {s.label}
-                    </span>
-                    <span className="text-[13px] font-semibold" style={{ color: INK }}>
-                      {s.value}%
-                    </span>
-                  </div>
-                  <div className="mt-1.5 h-1.5 w-full overflow-hidden rounded-full" style={{ background: "#EDEBE5" }}>
-                    <span
-                      className="block h-full rounded-full"
-                      style={{
-                        width: inView ? `${s.value}%` : "0%",
-                        background: s.value >= 75 ? TEAL : GOLD,
-                        transition: `width 1s cubic-bezier(.16,1,.3,1) ${i * 150}ms`,
-                      }}
-                    />
-                  </div>
-                </div>
-              ))}
-            </div>
-            <p className="mt-5 text-[12px] leading-relaxed" style={{ color: MUTED }}>
-              Scores become interview context — not a list of repeated questions.
-            </p>
-          </Card>
-
-          <Card className="p-5">
-            <div className="flex items-center gap-2.5">
-              <VitarkaMark size={28} />
-              <p className="text-[13.5px] font-semibold" style={{ color: INK }}>
-                Score-aware conversation
-              </p>
-            </div>
-            <div className="mt-5 space-y-3">
-              <Bubble
-                side="ai"
-                text="Your Python fundamentals are strong. Walk me through how you'd handle this production scenario."
-                shown={step >= 1}
-              />
-              <Bubble
-                side="candidate"
-                text="I'd isolate the failing consumer first, then replay the queue once the schema mismatch is patched."
-                shown={step >= 2}
-              />
-              <Bubble
-                side="ai"
-                text="System design scored lower — how would you keep that replay idempotent at scale?"
-                shown={step >= 3}
-              />
-              <Bubble
-                side="candidate"
-                text="Dedup keys on the event ID plus an upsert path so retries can't double-apply."
-                shown={step >= 4}
-              />
-            </div>
-            <div
-              className="mt-5 flex items-center gap-2 rounded-xl px-3 py-2.5 transition-opacity duration-700"
-              style={{ background: TEAL_TINT, opacity: step >= 4 ? 1 : 0 }}
-            >
-              <Sparkles size={12} style={{ color: TEAL }} />
-              <p className="text-[12px]" style={{ color: TEAL }}>
-                Weakest area probed live — depth confirmed beyond the score.
-              </p>
-            </div>
-          </Card>
-        </div>
-      </div>
-    </section>
-  );
-}
-
-/* ============================================================
-   9 — THREE WAYS
+   6 — THREE WAYS
    ============================================================ */
 
 const WAYS = [
@@ -1296,7 +913,7 @@ function ThreeWays() {
     <section className="px-6 py-20" style={{ background: "#FFFFFF" }}>
       <div className="mx-auto max-w-6xl">
         <Reveal>
-          <SectionHead center eyebrow="Flexibility" title="Use it your way." />
+          <SectionHead center title="Use it your way." />
         </Reveal>
 
         <div className="mt-12 grid gap-4 md:grid-cols-3">
@@ -1347,10 +964,7 @@ function ThreeWays() {
           >
             <div className="flex flex-wrap items-center justify-between gap-6">
               <div>
-                <p className="font-mono text-[10px] uppercase tracking-[0.2em]" style={{ color: "#C8A45E" }}>
-                  Full evaluation
-                </p>
-                <p className="mt-2 text-[20px] font-semibold text-white">See the complete picture.</p>
+                <p className="text-[20px] font-semibold text-white">See the complete picture.</p>
               </div>
               <div className="flex flex-wrap items-center gap-2">
                 {["Simulation", "Assessment", "Vitarka"].map((s) => (
@@ -1376,7 +990,7 @@ function ThreeWays() {
 }
 
 /* ============================================================
-   10 — ADAPTIVE BRANCHING
+   7 — ADAPTIVE BRANCHING
    ============================================================ */
 
 const BRANCHES = [
@@ -1397,7 +1011,6 @@ function AdaptiveBranching() {
         <Reveal>
           <SectionHead
             center
-            eyebrow="Adaptive"
             title="Every answer can change the next question."
             copy="No fixed script. No predetermined sequence. The conversation follows the candidate."
           />
@@ -1472,7 +1085,7 @@ function AdaptiveBranching() {
 }
 
 /* ============================================================
-   11 — RECRUITER CONTROL
+   8 — RECRUITER CONTROL
    ============================================================ */
 
 const EDITOR_QUESTIONS = [
@@ -1492,7 +1105,6 @@ function RecruiterControl() {
       <div className="mx-auto max-w-6xl">
         <Reveal>
           <SectionHead
-            eyebrow="Control"
             title="AI-led. Recruiter-controlled."
             copy="Vitarka generates the interview. Recruiters can review, edit, and publish the questions before the interview begins."
           />
@@ -1600,7 +1212,7 @@ function EditorBtn({
 }
 
 /* ============================================================
-   12 — FINAL REPORT
+   9 — FINAL REPORT
    ============================================================ */
 
 const REPORT_ROWS = [
@@ -1619,7 +1231,6 @@ function FinalReport() {
       <div className="mx-auto grid max-w-6xl gap-12 lg:grid-cols-2 lg:items-center">
         <Reveal>
           <SectionHead
-            eyebrow="Outcome"
             title="From conversation to hiring signal."
             copy="Turn an interview into a clear signal recruiters can act on."
           />
@@ -1716,7 +1327,7 @@ function FinalReport() {
 }
 
 /* ============================================================
-   13 — FINAL CTA
+   10 — FINAL CTA
    ============================================================ */
 
 function FinalCta() {
@@ -1727,10 +1338,7 @@ function FinalCta() {
           className="mx-auto max-w-6xl rounded-[28px] px-8 py-20 text-center sm:px-16"
           style={{ background: INK, boxShadow: LIFT_SHADOW }}
         >
-          <p className="font-mono text-[10.5px] uppercase tracking-[0.24em]" style={{ color: "#C8A45E" }}>
-            Vitarka AI
-          </p>
-          <h2 className="mx-auto mt-5 max-w-2xl text-[30px] font-bold leading-[1.15] tracking-[-0.015em] text-white sm:text-[40px]">
+          <h2 className="mx-auto max-w-2xl text-[30px] font-bold leading-[1.15] tracking-[-0.015em] text-white sm:text-[40px]">
             Give every candidate a conversation that adapts.
           </h2>
           <p className="mx-auto mt-5 max-w-xl text-[15.5px] leading-relaxed" style={{ color: "#B9BFC7" }}>
