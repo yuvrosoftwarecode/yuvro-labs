@@ -179,8 +179,8 @@ function SectionHead({
 
 function PillPrimary({ children, to, href }: { children: ReactNode; to?: string; href?: string }) {
   const cls =
-    "inline-flex items-center gap-2 rounded-full px-7 py-3.5 text-[15px] font-semibold text-white transition-transform hover:-translate-y-0.5";
-  const style = { background: TEAL, boxShadow: "0 14px 30px -14px rgba(46,92,82,0.55)" };
+    "inline-flex items-center gap-2 rounded-md px-7 py-3.5 text-[15px] font-semibold text-white transition-transform hover:-translate-y-0.5";
+  const style = { background: "black", boxShadow: "0 14px 30px -14px rgba(46,92,82,0.55)" };
   if (href)
     return (
       <a href={href} className={cls} style={style}>
@@ -485,7 +485,7 @@ function Hero() {
                 Book a Demo
                 <ArrowRight size={16} />
               </PillPrimary>
-              <PillGhost href="#how-it-works">See How It Works</PillGhost>
+              {/* <PillGhost href="#how-it-works">See How It Works</PillGhost> */}
             </div>
           </div>
         </Reveal>

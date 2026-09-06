@@ -6,6 +6,7 @@ import { YuvroHiringOrbit } from "@/components/site/YuvroHiringOrbit";
 import { HumanAiStatement } from "@/components/site/HumanAiStatement";
 import { TwoSystemsConvergence } from "@/components/site/TwoSystemsConvergence";
 import { VitarkaFlow } from "@/components/site/VitarkaFlow";
+import labWorkspaceImage from "@/assets/lab-workspace.webp";
 
 export const Route = createFileRoute("/")({
   head: () => ({
@@ -25,7 +26,7 @@ const TEAL = "#2E5C52";
 
 function Landing() {
   return (
-    <div className="min-h-screen text-[#1B1F23] antialiased selection:bg-[#2E5C52] selection:text-white" style={{ background: "#FAFAF7" }}>
+    <div className="min-h-screen text-[#1B1F23] antialiased selection:bg-[#2E5C52] selection:text-white" style={{ background: "#FAFAFA" }}>
       <LandingStyles />
       <SiteNav />
       <Hero />
@@ -133,7 +134,7 @@ function Hero() {
             Yuvro Labs replaces resumes and guesswork with evidence. Evaluate how candidates think, debug, collaborate and execute through Engineering Simulation Labs, Knowledge Assessments and Vitarka AI Interviews.
           </p>
           <div className="mt-16 flex flex-wrap items-center gap-3">
-            <Link to="/auth" search={{ tab: "signup" }} className="inline-flex items-center gap-2 rounded-md px-5 py-3 text-[14px] font-medium text-white transition hover:brightness-95" style={{ background: "#F5A623" }}>
+            <Link to="/auth" search={{ tab: "signup" }} className="inline-flex items-center gap-2 rounded-md px-5 py-3 text-[14px] font-medium text-white transition hover:brightness-95" style={{ background: "black" }}>
               Start Free Trial <ArrowRight className="h-4 w-4" />
             </Link>
             <Link to="/demo" className="inline-flex items-center gap-2 rounded-md border border-[#E8E6E1] bg-white px-5 py-3 text-[14px] font-medium text-[#0A0A0A] hover:border-[#0A0A0A] transition">
@@ -156,16 +157,11 @@ function Hero() {
    ================================================================ */
 function About() {
   return (
-    <section className="border-b border-[#E6E4DE] px-6 py-24 lg:py-32">
+    <section className="px-6 py-24 lg:py-32">
       <div className="mx-auto max-w-[1050px] text-center">
         <Reveal>
-          <h2 className="yvr-serif mx-auto max-w-[980px] text-[38px] lg:text-[56px] font-normal leading-[1.08] tracking-[-0.02em] text-[#0A0A0A]">
-            Two systems work together to find how someone{" "}
-            <span className="relative whitespace-nowrap" style={{ color: TEAL }}>
-              actually engineers
-              <span className="absolute inset-x-0 -bottom-1 block h-[2px]" style={{ background: `${TEAL}40` }} />
-            </span>
-            .
+          <h2 className="yvr-serif mx-auto max-w-[980px] text-[38px] lg:text-[44px] font-normal leading-[1.08] tracking-[-0.02em] text-[#0A0A0A]">
+            Two systems work together to find how someone actual engineers.
           </h2>
         </Reveal>
       </div>
@@ -200,7 +196,7 @@ const CODE_LINES = [
   "}",
 ];
 const CODE_TEXT = CODE_LINES.join("\n");
-const LAB_IMAGE_URL = "/__l5e/assets-v1/4592a42b-7cea-4467-a44c-d1a2ef55b5f2/lab-workspace.png";
+const LAB_IMAGE_URL = labWorkspaceImage;
 // Code editor region within the lab screenshot (percentages of the image)
 const CODE_REGION = { left: 49.7, top: 14.9, width: 49.6, height: 51.3 };
 
@@ -231,7 +227,7 @@ function SimulationVitarkaSequence() {
   return (
     <div ref={ref}>
       {/* Engineering Simulation */}
-      <section className="px-6 pt-14 lg:pt-20">
+      <section className="bg-[#EAF2F7] px-6 py-20 lg:py-28">
         <div className="mx-auto grid max-w-6xl items-center gap-10 lg:grid-cols-[minmax(0,1fr)_minmax(0,1fr)] lg:gap-16">
           <Reveal>
             <h2 className="yvr-serif text-[34px] lg:text-[42px] font-normal leading-[1.1] tracking-[-0.015em] text-[#0A0A0A]">
@@ -298,30 +294,16 @@ function SimulationVitarkaSequence() {
         </div>
       </section>
 
-      {/* Handoff connector */}
-      <div className="relative mx-auto my-6 h-16 w-full max-w-6xl px-6">
-        <div className="relative mx-auto h-full w-px" style={{ background: "#E6E4DE" }}>
-          {pulseRunning && (
-            <span
-              className="yvr-pulse-dot absolute left-1/2 h-2 w-2 -translate-x-1/2 rounded-full"
-              style={{ background: TEAL, boxShadow: `0 0 0 5px ${TEAL}1A` }}
-            />
-          )}
-        </div>
-      </div>
 
       {/* Vitarka AI */}
-      <section className="border-b border-[#E6E4DE] px-6 pb-28 lg:pb-36">
+      <section className="border-b border-[#E6E4DE] px-6 pb-28 pt-28 lg:pb-36">
         <div className="mx-auto max-w-[1100px]">
           <Reveal>
             <div className="mx-auto max-w-3xl text-center">
               <h2 className="yvr-serif text-[30px] lg:text-[44px] font-normal leading-[1.14] tracking-[-0.015em] text-[#0A0A0A]">
                 Vitarka AI is more than a voice bot.<br className="hidden sm:block" /> It&rsquo;s an interviewer that thinks.
               </h2>
-              <span
-                className="mx-auto mt-6 block h-[2px] w-16 transition-colors duration-300"
-                style={{ background: vitarkaActive ? TEAL : "#DEDBD4" }}
-              />
+              
               <p className="mx-auto mt-7 max-w-2xl text-[14.5px] leading-[1.85] text-[#4A4F58]">
                 Before the interview, Vitarka understands the job, the skills that matter, and the candidate&rsquo;s background. During the conversation, it listens, evaluates, makes decisions, and changes its next question based on the candidate&rsquo;s responses &mdash; rather than following a fixed script.
               </p>
@@ -438,7 +420,6 @@ function PayForHire() {
           <h2 className="yvr-serif max-w-3xl text-[38px] lg:text-[48px] font-normal leading-[1.08] tracking-[-0.015em] text-[#0A0A0A]">
             We share evidence, not resumes.
           </h2>
-          <span className="mt-4 block h-[2px] w-16" style={{ background: TEAL }} />
           <p className="mt-6 max-w-2xl text-[16.5px] leading-[1.75] text-[#4A4F58]">
             When we send you a candidate, the first thing you see is the work — the task they completed, the reasoning
             they gave for it and the conditions the session ran under. The resume is a footnote. Here is what happens

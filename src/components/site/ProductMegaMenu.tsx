@@ -17,24 +17,24 @@ const platformItems: PlatformItem[] = [
     description: "Evaluate real engineering work — debugging, optimization and code review.",
     icon: SquareTerminal,
   },
-  {
-    slug: "knowledge-assessments",
-    title: "Assessments",
-    description: "Measure technical knowledge across languages, frameworks and fundamentals.",
-    icon: ListChecks,
-  },
+  // {
+  //   slug: "knowledge-assessments",
+  //   title: "Assessments",
+  //   description: "Measure technical knowledge across languages, frameworks and fundamentals.",
+  //   icon: ListChecks,
+  // },
   {
     slug: "vitarka-ai",
     title: "Vitarka AI Interviews",
     description: "AI technical interviews that read the evidence and go deeper.",
     icon: Bot,
   },
-  {
-    slug: "automated-follow-ups",
-    title: "Automated Follow-ups",
-    description: "Reminders and AI calls that bring candidates back before deadlines.",
-    icon: Send,
-  },
+  // {
+  //   slug: "automated-follow-ups",
+  //   title: "Automated Follow-ups",
+  //   description: "Reminders and AI calls that bring candidates back before deadlines.",
+  //   icon: Send,
+  // },
 ];
 
 /* Desktop trigger + dropdown panel. Hover or click opens; Esc / outside click closes. */

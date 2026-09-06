@@ -15,11 +15,11 @@ export function SiteNav() {
           <ProductMegaMenu />
           <Link to="/solutions" className="hover:text-[#0A0A0A] transition">Solutions</Link>
           <Link to="/pricing" className="hover:text-[#0A0A0A] transition">Pricing</Link>
-          <Link to="/recruiter-login" className="hover:text-[#0A0A0A] transition">Recruiter Login</Link>
+          <Link to="/yuvrolabs" className="hover:text-[#0A0A0A] transition">Yuvro labs</Link>
         </nav>
         <div className="ml-auto flex items-center gap-3">
           <Link to="/auth" search={{ tab: "signin" }} className="text-sm text-[#6B6B6B] hover:text-[#0A0A0A] transition">Sign In</Link>
-          <Link to="/demo" className="inline-flex items-center gap-1.5 rounded-md px-4 py-2 text-sm font-medium text-white transition hover:brightness-95" style={{ background: "#F5A623" }}>
+          <Link to="/demo" className="inline-flex items-center gap-1.5 rounded-md px-4 py-2 text-sm font-medium text-white transition hover:brightness-95" style={{ background: "black" }}>
             Book Demo
             <svg width="13" height="10" viewBox="0 0 12 10" fill="none"><path d="M1 5h9M6.6 1.4 10.2 5l-3.6 3.6" stroke="currentColor" strokeWidth="1.4" strokeLinecap="round" strokeLinejoin="round" /></svg>
           </Link>

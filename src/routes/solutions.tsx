@@ -893,13 +893,6 @@ function SolutionsPage() {
               Talk to us about a role
               <ArrowRight className="h-4 w-4" />
             </Link>
-            <a
-              href="#how-it-works"
-              className="inline-flex items-center gap-2 rounded-sm border px-6 py-3 text-[14px] font-medium transition hover:bg-white/60"
-              style={{ borderColor: T.ink, color: T.ink, borderRadius: 2 }}
-            >
-              See how it works
-            </a>
           </div>
         </div>
 

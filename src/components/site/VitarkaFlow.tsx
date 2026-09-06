@@ -133,14 +133,18 @@ function Core({ active }: { active: boolean }) {
 
       <div className="relative mt-3 text-center">
         <p className="yvr-serif text-[15px] tracking-[0.06em] text-[#0A0A0A]">VITARKA AI</p>
-        <p className="mt-1 text-[7.5px] font-medium uppercase leading-[1.7] tracking-[0.15em] text-[#8A867E]">
+        {/* nudged via transform (not margin) so it clears the wave line without shifting the checklist card below */}
+        <p
+          className="mt-1 text-[7.5px] font-medium uppercase leading-[1.7] tracking-[0.15em] text-[#8A867E]"
+          style={{ transform: "translateY(20px)" }}
+        >
           Understands. Questions.<br />Evaluates. Decides.
         </p>
       </div>
 
       <div
         className="relative mt-4 w-full max-w-[180px] rounded-lg border border-[#E6E4DE] bg-white/80 p-2.5 transition-all duration-700"
-        style={{ opacity: active ? 1 : 0, transform: active ? "translateY(0)" : "translateY(8px)", transitionDelay: "600ms" }}
+        style={{ opacity: active ? 1 : 0, transform: active ? "translateY(75px)" : "translateY(8px)", transitionDelay: "600ms" }}
       >
         <div className="flex gap-2">
           <span className="mt-[2px] grid h-4 w-4 shrink-0 place-items-center rounded-full" style={{ background: "#243029" }}>

@@ -204,8 +204,8 @@ export function YuvroHiringOrbit() {
 
       <div className="relative mx-auto h-[550px] w-[550px] max-w-full scale-[0.58] sm:scale-[0.78] lg:scale-[0.92] xl:scale-100 origin-center">
         {/* orbit rings */}
-        <div className="absolute left-1/2 top-1/2 h-[420px] w-[420px] -translate-x-1/2 -translate-y-1/2 rounded-full border border-[#D9D6CE]" />
-        <div className="absolute left-1/2 top-1/2 h-[290px] w-[290px] -translate-x-1/2 -translate-y-1/2 rounded-full border border-dashed border-[#DFDCD4]" />
+        <div className="absolute left-1/2 top-1/2 h-[420px] w-[420px] -translate-x-1/2 -translate-y-1/2 rounded-full border-2" style={{ borderColor: "#a29d9d" }} />
+        <div className="absolute left-1/2 top-1/2 h-[290px] w-[290px] -translate-x-1/2 -translate-y-1/2 rounded-full border-2 border-dashed" style={{ borderColor: SAFFRON }} />
 
         {/* connection lines */}
         <svg className="absolute inset-0 h-full w-full" viewBox="0 0 550 550" aria-hidden>
@@ -271,8 +271,8 @@ export function YuvroHiringOrbit() {
                   className="inline-flex items-center gap-2 whitespace-nowrap rounded-full border px-3.5 py-2 text-[12px] font-medium outline-none"
                   style={{
                     transform: `scale(${on ? 1.05 : 1})`,
-                    background: on ? "#e22988" : "#FFFFFF",
-                    borderColor: on ? "#e22988" : "#E0DDD5",
+                    background: on ? "#F5A623" : "#FFFFFF",
+                    borderColor: on ? "#F5A623" : "#E0DDD5",
                     color: on ? "#FFFFFF" : "#6B6B6B",
                     boxShadow: on
                       ? `0 16px 36px -22px rgba(27,31,35,0.42), 0 0 0 6px ${SAFFRON}26`
