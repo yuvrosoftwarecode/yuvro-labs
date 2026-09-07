@@ -35,7 +35,7 @@ function Landing() {
       <SimulationVitarkaSequence />
       <SecurityIntegrity />
       <PayForHire />
-      <footer className="border-t border-[#E6E4DE] px-6 py-10 text-center text-[13px] text-[#8A867E]">© 2026 Yuvro Labs</footer>
+      <SiteFooter />
     </div>
   );
 }

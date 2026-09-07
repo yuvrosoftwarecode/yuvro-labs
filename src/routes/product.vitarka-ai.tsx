@@ -17,6 +17,7 @@ import {
   Sparkles,
 } from "lucide-react";
 import { SiteNav } from "@/components/site/SiteNav";
+import { SiteFooter } from "@/components/site/SiteFooter";
 
 /* ============================================================
    Vitarka AI — dedicated product page

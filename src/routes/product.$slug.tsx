@@ -1,5 +1,6 @@
 import { createFileRoute, Link, notFound } from "@tanstack/react-router";
 import { SiteNav } from "@/components/site/SiteNav";
+import { SiteFooter } from "@/components/site/SiteFooter";
 import { ProductGlyph } from "@/components/site/ProductGlyph";
 import { findProductItem } from "@/lib/productMenu";
 
