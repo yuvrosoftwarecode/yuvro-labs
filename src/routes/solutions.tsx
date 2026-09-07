@@ -20,6 +20,7 @@ import {
 } from "lucide-react";
 import rheaAvatar from "@/assets/rhea-kapoor.jpg";
 import { SiteNav } from "@/components/site/SiteNav";
+import { SiteFooter } from "@/components/site/SiteFooter";
 
 export const Route = createFileRoute("/solutions")({
   head: () => ({
@@ -925,17 +926,7 @@ function SolutionsPage() {
         </Link>
       </section>
 
-      {/* -------------------------------- footer -------------------------------- */}
-      <footer className="border-t" style={{ borderColor: T.line }}>
-        <div className="mx-auto flex max-w-[1120px] items-center justify-between px-6 py-6">
-          <span className="text-[13px]" style={{ color: T.muted }}>
-            © 2026 Yuvro Labs
-          </span>
-          <span className="text-[11px] uppercase" style={{ fontFamily: MONO, letterSpacing: "0.18em", color: T.muted }}>
-            Hire with Proof
-          </span>
-        </div>
-      </footer>
+      <SiteFooter />
 
       <style>{`
         @keyframes hwp-in { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: none; } }

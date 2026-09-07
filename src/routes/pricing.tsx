@@ -1,8 +1,9 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useState } from "react";
-import { ArrowRight, Check, GitCommit, Minus, Plus } from "lucide-react";
+import { ArrowRight, Check, Minus, Plus } from "lucide-react";
 import { plans, enterprise, topUps, usageExplainers, faqs, freeTrial, rolloverNote, topUpNote } from "@/lib/pricing";
 import { SiteNav } from '@/components/site/SiteNav'
+import { SiteFooter } from '@/components/site/SiteFooter'
 
 export const Route = createFileRoute("/pricing")({
   head: () => ({
@@ -43,7 +44,7 @@ function Pricing() {
       <UsageWorks />
       <Faq />
       <FinalCTA />
-      <Footer />
+      <SiteFooter />
     </div>
   );
 }
@@ -347,21 +348,3 @@ function FinalCTA() {
   );
 }
 
-function Footer() {
-  return (
-    <footer className="border-t bg-white" style={{ borderColor: BORDER }}>
-      <div className="mx-auto max-w-7xl px-6 py-10 flex flex-wrap items-center justify-between gap-4 font-mono text-[12px] text-[#6B6B6B]">
-        <div className="flex items-center gap-2">
-          <GitCommit className="h-3.5 w-3.5" />
-          <span>© {new Date().getFullYear()} Yuvro Labs · Engineering Capability Verification</span>
-        </div>
-        <div className="flex items-center gap-6">
-          <a href="#" className="hover:text-[#0A0A0A]">Privacy</a>
-          <a href="#" className="hover:text-[#0A0A0A]">Terms</a>
-          <a href="#" className="hover:text-[#0A0A0A]">Security</a>
-          <a href="#" className="hover:text-[#0A0A0A]">Contact</a>
-        </div>
-      </div>
-    </footer>
-  );
-}
