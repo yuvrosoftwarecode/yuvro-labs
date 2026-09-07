@@ -1,8 +1,4 @@
 import { Link } from "@tanstack/react-router";
-import { productGroups } from "@/lib/productMenu";
-
-const LINE = "#E6E4DE";
-const MUTED = "#6B6B6B";
 
 function Social({ label, href, path }: { label: string; href: string; path: string }) {
   return (
@@ -12,7 +8,7 @@ function Social({ label, href, path }: { label: string; href: string; path: stri
       rel="noreferrer"
       aria-label={label}
       title={label}
-      className="grid h-9 w-9 place-items-center rounded-md border border-[#E6E4DE] bg-white text-[#6B6B6B] transition hover:-translate-y-0.5 hover:border-[#0A0A0A] hover:text-[#0A0A0A]"
+      className="grid h-9 w-9 place-items-center rounded-md border border-white/15 bg-white/5 text-white/60 transition hover:-translate-y-0.5 hover:border-white/40 hover:text-white"
     >
       <svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
         <path d={path} />
@@ -40,29 +36,27 @@ const SOCIALS = [
   {
     label: "YouTube",
     href: "https://youtube.com/",
-    path: "M23.5 6.9a3 3 0 0 0-2.11-2.13C19.5 4.25 12 4.25 12 4.25s-7.5 0-9.39.52A3 3 0 0 0 .5 6.9C0 8.8 0 12 0 12s0 3.2.5 5.1a3 3 0 0 0 2.11 2.13c1.89.52 9.39.52 9.39.52s7.5 0 9.39-.52a3 3 0 0 0 2.11-2.13C24 15.2 24 12 24 12s0-3.2-.5-5.1ZM9.6 15.6V8.4l6.24 3.6-6.24 3.6Z",
+    path: "M23.5 6.9a3 3 0 0 0-2.11-2.13C19.5 4.25 12 4.25 12 4.25s-7.5 0-9.39.52A3 3 0 0 0 .5 6.9C0 8.8 0 12 0 12s0 3.2.5 5.1a3 3 0 0 0 2.11 2.13c1.89.52 9.39.52 9.39.52s7.5 0 9.39-.52a3 3 0 0 0 2.11-.52 2.11 2.11 0 0 0 0-.01C24 15.2 24 12 24 12s0-3.2-.5-5.1ZM9.6 15.6V8.4l6.24 3.6-6.24 3.6Z",
   },
 ];
 
-export function SiteFooter() {
-  const platform = productGroups.find((g) => g.id === "platform")?.items ?? [];
-  const intelligence = productGroups.find((g) => g.id === "intelligence")?.items ?? [];
-  const workflow = [
-    ...(productGroups.find((g) => g.id === "workflow")?.items ?? []),
-    ...(productGroups.find((g) => g.id === "trust")?.items ?? []),
-  ].slice(0, 5);
+const PLATFORM = [
+  { slug: "engineering-simulations", title: "Engineering Simulations" },
+  { slug: "vitarka-ai", title: "Vitarka AI Interviews" },
+];
 
+export function SiteFooter() {
   return (
-    <footer className="border-t bg-white" style={{ borderColor: LINE }}>
+    <footer className="border-t border-white/10 bg-[#0A0A0A] text-white">
       <div className="mx-auto max-w-7xl px-6 py-14">
         <div className="grid gap-10 md:grid-cols-12">
           {/* brand */}
-          <div className="md:col-span-4">
-            <Link to="/" className="flex items-center gap-2 font-semibold tracking-tight text-[#0A0A0A]">
-              <span className="grid h-8 w-8 place-items-center rounded-lg bg-[#0A0A0A] font-mono text-sm text-white">Y</span>
+          <div className="md:col-span-5">
+            <Link to="/" className="flex items-center gap-2 font-semibold tracking-tight text-white">
+              <span className="grid h-8 w-8 place-items-center rounded-lg bg-white font-mono text-sm text-[#0A0A0A]">Y</span>
               <span className="text-base">Yuvro Labs</span>
             </Link>
-            <p className="mt-4 max-w-xs text-[13.5px] leading-relaxed" style={{ color: MUTED }}>
+            <p className="mt-4 max-w-xs text-[13.5px] leading-relaxed text-white/55">
               Evaluate engineers through real work — simulations, assessments and interviews that adapt, with evidence
               behind every hiring decision.
             </p>
@@ -74,12 +68,12 @@ export function SiteFooter() {
           </div>
 
           {/* link columns */}
-          <div className="md:col-span-2">
-            <p className="font-mono text-[10px] uppercase tracking-[0.18em] text-[#8A867E]">Platform</p>
+          <div className="md:col-span-3">
+            <p className="font-mono text-[10px] uppercase tracking-[0.18em] text-white/40">Platform</p>
             <ul className="mt-4 space-y-2.5 text-[13.5px]">
-              {platform.map((i) => (
+              {PLATFORM.map((i) => (
                 <li key={i.slug}>
-                  <Link to="/product/$slug" params={{ slug: i.slug }} className="text-[#3A3A38] transition hover:text-[#0A0A0A]">
+                  <Link to="/product/$slug" params={{ slug: i.slug }} className="text-white/65 transition hover:text-white">
                     {i.title}
                   </Link>
                 </li>
@@ -87,73 +81,40 @@ export function SiteFooter() {
             </ul>
           </div>
 
-          <div className="md:col-span-2">
-            <p className="font-mono text-[10px] uppercase tracking-[0.18em] text-[#8A867E]">Intelligence</p>
+          <div className="md:col-span-4">
+            <p className="font-mono text-[10px] uppercase tracking-[0.18em] text-white/40">Company</p>
             <ul className="mt-4 space-y-2.5 text-[13.5px]">
-              {intelligence.map((i) => (
-                <li key={i.slug}>
-                  <Link to="/product/$slug" params={{ slug: i.slug }} className="text-[#3A3A38] transition hover:text-[#0A0A0A]">
-                    {i.title}
-                  </Link>
-                </li>
-              ))}
-            </ul>
-          </div>
-
-          <div className="md:col-span-2">
-            <p className="font-mono text-[10px] uppercase tracking-[0.18em] text-[#8A867E]">Workflow &amp; Trust</p>
-            <ul className="mt-4 space-y-2.5 text-[13.5px]">
-              {workflow.map((i) => (
-                <li key={i.slug}>
-                  <Link to="/product/$slug" params={{ slug: i.slug }} className="text-[#3A3A38] transition hover:text-[#0A0A0A]">
-                    {i.title}
-                  </Link>
-                </li>
-              ))}
-            </ul>
-          </div>
-
-          <div className="md:col-span-2">
-            <p className="font-mono text-[10px] uppercase tracking-[0.18em] text-[#8A867E]">Company</p>
-            <ul className="mt-4 space-y-2.5 text-[13.5px]">
-              <li><Link to="/product" className="text-[#3A3A38] transition hover:text-[#0A0A0A]">Product</Link></li>
-              <li><Link to="/solutions" className="text-[#3A3A38] transition hover:text-[#0A0A0A]">Solutions</Link></li>
-              <li><Link to="/pricing" className="text-[#3A3A38] transition hover:text-[#0A0A0A]">Pricing</Link></li>
-              <li><Link to="/yuvrolabs" className="text-[#3A3A38] transition hover:text-[#0A0A0A]">Yuvro Labs</Link></li>
-              <li><Link to="/demo" className="text-[#3A3A38] transition hover:text-[#0A0A0A]">Book a demo</Link></li>
+              <li><Link to="/solutions" className="text-white/65 transition hover:text-white">Solutions</Link></li>
+              <li><Link to="/pricing" className="text-white/65 transition hover:text-white">Pricing</Link></li>
+              <li><Link to="/yuvrolabs" className="text-white/65 transition hover:text-white">Yuvro Labs</Link></li>
+              <li><Link to="/demo" className="text-white/65 transition hover:text-white">Book a demo</Link></li>
             </ul>
           </div>
         </div>
 
         {/* CTA strip */}
-        <div
-          className="mt-12 flex flex-wrap items-center justify-between gap-4 rounded-xl border px-6 py-5"
-          style={{ borderColor: LINE, background: "#FAFAF8" }}
-        >
-          <p className="text-[14.5px] text-[#0A0A0A]">Ready to see what a candidate can actually build?</p>
+        <div className="mt-12 flex flex-wrap items-center justify-between gap-4 rounded-xl border border-white/12 bg-white/[0.04] px-6 py-5">
+          <p className="text-[14.5px] text-white">Ready to see what a candidate can actually build?</p>
           <div className="flex items-center gap-3">
             <Link
               to="/demo"
-              className="rounded-md bg-[#0A0A0A] px-4 py-2 text-sm font-medium text-white transition hover:brightness-110"
+              className="rounded-md bg-white px-4 py-2 text-sm font-medium text-[#0A0A0A] transition hover:opacity-90"
             >
               Book Demo
             </Link>
-            <Link to="/pricing" className="text-sm text-[#6B6B6B] transition hover:text-[#0A0A0A]">
+            <Link to="/pricing" className="text-sm text-white/60 transition hover:text-white">
               See pricing
             </Link>
           </div>
         </div>
 
-        <div
-          className="mt-8 flex flex-wrap items-center justify-between gap-4 border-t pt-6 font-mono text-[11.5px]"
-          style={{ borderColor: LINE, color: MUTED }}
-        >
+        <div className="mt-8 flex flex-wrap items-center justify-between gap-4 border-t border-white/10 pt-6 font-mono text-[11.5px] text-white/45">
           <span>© {new Date().getFullYear()} Yuvro Labs · Hire with proof</span>
           <div className="flex flex-wrap items-center gap-6">
-            <a href="mailto:hello@yuvrolabs.com" className="hover:text-[#0A0A0A]">Contact</a>
-            <span className="hover:text-[#0A0A0A]">Privacy</span>
-            <span className="hover:text-[#0A0A0A]">Terms</span>
-            <span className="hover:text-[#0A0A0A]">Security</span>
+            <a href="mailto:hello@yuvrolabs.com" className="hover:text-white">Contact</a>
+            <span className="hover:text-white">Privacy</span>
+            <span className="hover:text-white">Terms</span>
+            <span className="hover:text-white">Security</span>
           </div>
         </div>
       </div>
