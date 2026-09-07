@@ -13,6 +13,7 @@ import {
   UserRoundX,
 } from "lucide-react";
 import { SiteNav } from "@/components/site/SiteNav";
+import { SiteFooter } from "@/components/site/SiteFooter";
 
 
 /* ============================================================
@@ -162,6 +163,7 @@ function EngineeringSimulationsPage() {
       <CoreSection />
       <ReportSection />
       <CtaSection />
+      <SiteFooter />
     </div>
   );
 }

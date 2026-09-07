@@ -1,5 +1,6 @@
 import { createFileRoute } from '@tanstack/react-router'
 import { SiteNav } from '@/components/site/SiteNav'
+import { SiteFooter } from '@/components/site/SiteFooter'
 
 export const Route = createFileRoute('/yuvrolabs/')({
   component: RouteComponent,
@@ -17,7 +18,7 @@ function RouteComponent() {
           We're building this page. Check back shortly.
         </p>
       </main>
-      <footer className="border-t border-[#E6E4DE] px-6 py-10 text-center text-[13px] text-[#8A867E]">© 2026 Yuvro Labs</footer>
+      <SiteFooter />
     </div>
   )
 }

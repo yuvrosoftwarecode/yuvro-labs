@@ -1,5 +1,6 @@
 import { createFileRoute, Link, notFound } from "@tanstack/react-router";
 import { SiteNav } from "@/components/site/SiteNav";
+import { SiteFooter } from "@/components/site/SiteFooter";
 import { ProductGlyph } from "@/components/site/ProductGlyph";
 import { findProductItem } from "@/lib/productMenu";
 
@@ -62,6 +63,7 @@ function ProductDetail() {
           <Link to="/pricing" className="text-sm text-[#6B6B6B] hover:text-[#0A0A0A]">See pricing</Link>
         </div>
       </main>
+      <SiteFooter />
     </div>
   );
 }

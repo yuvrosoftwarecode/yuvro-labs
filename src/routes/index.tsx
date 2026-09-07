@@ -2,6 +2,7 @@ import { createFileRoute, Link } from "@tanstack/react-router";
 import { useEffect, useRef, useState } from "react";
 import { ArrowRight, Play, ShieldCheck, ScanFace, Files, Monitor } from "lucide-react";
 import { SiteNav } from "@/components/site/SiteNav";
+import { SiteFooter } from "@/components/site/SiteFooter";
 import { YuvroHiringOrbit } from "@/components/site/YuvroHiringOrbit";
 import { HumanAiStatement } from "@/components/site/HumanAiStatement";
 import { TwoSystemsConvergence } from "@/components/site/TwoSystemsConvergence";
@@ -35,7 +36,7 @@ function Landing() {
       <SimulationVitarkaSequence />
       <SecurityIntegrity />
       <PayForHire />
-      <footer className="border-t border-[#E6E4DE] px-6 py-10 text-center text-[13px] text-[#8A867E]">© 2026 Yuvro Labs</footer>
+      <SiteFooter />
     </div>
   );
 }

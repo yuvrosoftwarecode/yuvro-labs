@@ -26,6 +26,7 @@ import { Route as AuthRouteImport } from './routes/auth'
 import { Route as AnalyticsRouteImport } from './routes/analytics'
 import { Route as AdminRouteImport } from './routes/admin'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as YuvrolabsIndexRouteImport } from './routes/yuvrolabs.index'
 import { Route as RecruiterIndexRouteImport } from './routes/recruiter.index'
 import { Route as ProductIndexRouteImport } from './routes/product.index'
 import { Route as EvaluationIndexRouteImport } from './routes/evaluation.index'
@@ -174,6 +175,11 @@ const AdminRoute = AdminRouteImport.update({
 const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const YuvrolabsIndexRoute = YuvrolabsIndexRouteImport.update({
+  id: '/yuvrolabs/',
+  path: '/yuvrolabs/',
   getParentRoute: () => rootRouteImport,
 } as any)
 const RecruiterIndexRoute = RecruiterIndexRouteImport.update({
@@ -567,6 +573,7 @@ export interface FileRoutesByFullPath {
   '/evaluation/': typeof EvaluationIndexRoute
   '/product/': typeof ProductIndexRoute
   '/recruiter/': typeof RecruiterIndexRoute
+  '/yuvrolabs/': typeof YuvrolabsIndexRoute
   '/admin/hackathons/$id': typeof AdminHackathonsIdRoute
   '/admin/labs/new': typeof AdminLabsNewRoute
   '/admin/users/$id': typeof AdminUsersIdRoute
@@ -643,6 +650,7 @@ export interface FileRoutesByTo {
   '/evaluation': typeof EvaluationIndexRoute
   '/product': typeof ProductIndexRoute
   '/recruiter': typeof RecruiterIndexRoute
+  '/yuvrolabs': typeof YuvrolabsIndexRoute
   '/admin/hackathons/$id': typeof AdminHackathonsIdRoute
   '/admin/labs/new': typeof AdminLabsNewRoute
   '/admin/users/$id': typeof AdminUsersIdRoute
@@ -727,6 +735,7 @@ export interface FileRoutesById {
   '/evaluation/': typeof EvaluationIndexRoute
   '/product/': typeof ProductIndexRoute
   '/recruiter/': typeof RecruiterIndexRoute
+  '/yuvrolabs/': typeof YuvrolabsIndexRoute
   '/admin/hackathons/$id': typeof AdminHackathonsIdRoute
   '/admin/labs/new': typeof AdminLabsNewRoute
   '/admin/users/$id': typeof AdminUsersIdRoute
@@ -812,6 +821,7 @@ export interface FileRouteTypes {
     | '/evaluation/'
     | '/product/'
     | '/recruiter/'
+    | '/yuvrolabs/'
     | '/admin/hackathons/$id'
     | '/admin/labs/new'
     | '/admin/users/$id'
@@ -888,6 +898,7 @@ export interface FileRouteTypes {
     | '/evaluation'
     | '/product'
     | '/recruiter'
+    | '/yuvrolabs'
     | '/admin/hackathons/$id'
     | '/admin/labs/new'
     | '/admin/users/$id'
@@ -971,6 +982,7 @@ export interface FileRouteTypes {
     | '/evaluation/'
     | '/product/'
     | '/recruiter/'
+    | '/yuvrolabs/'
     | '/admin/hackathons/$id'
     | '/admin/labs/new'
     | '/admin/users/$id'
@@ -1024,6 +1036,7 @@ export interface RootRouteChildren {
   ProductEngineeringSimulationsRoute: typeof ProductEngineeringSimulationsRoute
   ProductVitarkaAiRoute: typeof ProductVitarkaAiRoute
   ProductIndexRoute: typeof ProductIndexRoute
+  YuvrolabsIndexRoute: typeof YuvrolabsIndexRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -1145,6 +1158,13 @@ declare module '@tanstack/react-router' {
       path: '/'
       fullPath: '/'
       preLoaderRoute: typeof IndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/yuvrolabs/': {
+      id: '/yuvrolabs/'
+      path: '/yuvrolabs'
+      fullPath: '/yuvrolabs/'
+      preLoaderRoute: typeof YuvrolabsIndexRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/recruiter/': {
@@ -1881,6 +1901,7 @@ const rootRouteChildren: RootRouteChildren = {
   ProductEngineeringSimulationsRoute: ProductEngineeringSimulationsRoute,
   ProductVitarkaAiRoute: ProductVitarkaAiRoute,
   ProductIndexRoute: ProductIndexRoute,
+  YuvrolabsIndexRoute: YuvrolabsIndexRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
