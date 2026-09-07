@@ -63,6 +63,7 @@ function ProductDetail() {
           <Link to="/pricing" className="text-sm text-[#6B6B6B] hover:text-[#0A0A0A]">See pricing</Link>
         </div>
       </main>
+      <SiteFooter />
     </div>
   );
 }

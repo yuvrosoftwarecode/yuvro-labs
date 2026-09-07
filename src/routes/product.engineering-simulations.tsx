@@ -163,6 +163,7 @@ function EngineeringSimulationsPage() {
       <CoreSection />
       <ReportSection />
       <CtaSection />
+      <SiteFooter />
     </div>
   );
 }

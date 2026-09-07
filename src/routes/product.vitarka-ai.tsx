@@ -306,6 +306,7 @@ function VitarkaPage() {
       <RecruiterControl />
       <FinalReport />
       <FinalCta />
+      <SiteFooter />
     </div>
   );
 }

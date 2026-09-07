@@ -54,6 +54,7 @@ function ProductIndex() {
           ))}
         </div>
       </main>
+      <SiteFooter />
     </div>
   );
 }
