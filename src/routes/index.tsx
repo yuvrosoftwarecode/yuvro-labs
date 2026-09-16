@@ -64,9 +64,23 @@ function LandingStyles() {
       .yvr-jump-card { transition: box-shadow 200ms ease, border-color 200ms ease; }
       .yvr-jump-card:hover { animation: yvr-jump 650ms ease; }
 
+      /* Hero animated background washes */
+      @keyframes yvr-hero-tint {
+        0%, 100% { background-color: #F2F6F3; }
+        33% { background-color: #F6F3EC; }
+        66% { background-color: #EFF4F2; }
+      }
+      .yvr-hero-tint { animation: yvr-hero-tint 16s ease-in-out infinite; }
+      @keyframes yvr-hero-blob-a { 0%, 100% { transform: translate3d(0,0,0) scale(1); } 50% { transform: translate3d(9%, -7%, 0) scale(1.18); } }
+      @keyframes yvr-hero-blob-b { 0%, 100% { transform: translate3d(0,0,0) scale(1.1); } 50% { transform: translate3d(-8%, 6%, 0) scale(0.94); } }
+      @keyframes yvr-hero-blob-c { 0%, 100% { transform: translate3d(0,0,0) scale(1); } 50% { transform: translate3d(6%, 8%, 0) scale(1.14); } }
+      .yvr-hero-blob-a { background: radial-gradient(circle, #2E5C52 0%, transparent 70%); animation: yvr-hero-blob-a 22s ease-in-out infinite; }
+      .yvr-hero-blob-b { background: radial-gradient(circle, #F5A623 0%, transparent 70%); animation: yvr-hero-blob-b 26s ease-in-out infinite; }
+      .yvr-hero-blob-c { background: radial-gradient(circle, #7FB3A0 0%, transparent 70%); animation: yvr-hero-blob-c 30s ease-in-out infinite; }
+
       @media (prefers-reduced-motion: reduce) {
         .yvr-reveal { opacity: 1 !important; }
-        .yvr-reveal.is-in, .yvr-pop, .yvr-caret, .yvr-pulse-dot, .yvr-jump-card:hover { animation: none !important; }
+        .yvr-reveal.is-in, .yvr-pop, .yvr-caret, .yvr-pulse-dot, .yvr-jump-card:hover, .yvr-hero-tint, .yvr-hero-blob-a, .yvr-hero-blob-b, .yvr-hero-blob-c { animation: none !important; }
       }
     `}</style>
   );
@@ -124,8 +138,18 @@ function useTypewriter(text: string, active: boolean, speed = 22, onDone?: () =>
    ================================================================ */
 function Hero() {
   return (
-    <section className="relative flex min-h-[calc(100svh-4rem)] items-center border-b border-[#E6E4DE]">
-      <div className="mx-auto grid w-full max-w-7xl items-start gap-12 px-6 py-16 lg:grid-cols-[minmax(0,45fr)_minmax(0,55fr)] lg:gap-8">
+    <section className="relative flex min-h-[calc(100svh-4rem)] items-center overflow-hidden border-b border-[#E6E4DE] bg-[#FAFAF7]">
+      {/* animated color wash */}
+      <div aria-hidden className="pointer-events-none absolute inset-0">
+        <div className="yvr-hero-tint absolute inset-0" />
+        <div className="yvr-hero-blob yvr-hero-blob-a absolute -left-40 -top-32 h-[560px] w-[560px] rounded-full opacity-[0.16] blur-[110px]" />
+        <div className="yvr-hero-blob yvr-hero-blob-b absolute -right-40 top-1/4 h-[520px] w-[520px] rounded-full opacity-[0.12] blur-[120px]" />
+        <div className="yvr-hero-blob yvr-hero-blob-c absolute bottom-[-140px] left-1/3 h-[460px] w-[460px] rounded-full opacity-[0.14] blur-[110px]" />
+        {/* fade into the next section */}
+        <div className="absolute inset-x-0 bottom-0 h-28 bg-gradient-to-b from-transparent to-[#FAFAF7]" />
+      </div>
+
+      <div className="relative mx-auto grid w-full max-w-7xl items-start gap-12 px-6 py-16 lg:grid-cols-[minmax(0,45fr)_minmax(0,55fr)] lg:gap-8">
         <Reveal>
           <h1 className="text-[42px] lg:text-[60px] leading-[1.04] tracking-[-0.025em] font-bold text-[#0A0A0A]">
             Hire engineers with<br />
