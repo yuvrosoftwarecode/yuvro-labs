@@ -124,8 +124,18 @@ function useTypewriter(text: string, active: boolean, speed = 22, onDone?: () =>
    ================================================================ */
 function Hero() {
   return (
-    <section className="relative flex min-h-[calc(100svh-4rem)] items-center border-b border-[#E6E4DE]">
-      <div className="mx-auto grid w-full max-w-7xl items-start gap-12 px-6 py-16 lg:grid-cols-[minmax(0,45fr)_minmax(0,55fr)] lg:gap-8">
+    <section className="relative flex min-h-[calc(100svh-4rem)] items-center overflow-hidden border-b border-[#E6E4DE] bg-[#FAFAF7]">
+      {/* animated color wash */}
+      <div aria-hidden className="pointer-events-none absolute inset-0">
+        <div className="yvr-hero-tint absolute inset-0" />
+        <div className="yvr-hero-blob yvr-hero-blob-a absolute -left-40 -top-32 h-[560px] w-[560px] rounded-full opacity-[0.16] blur-[110px]" />
+        <div className="yvr-hero-blob yvr-hero-blob-b absolute -right-40 top-1/4 h-[520px] w-[520px] rounded-full opacity-[0.12] blur-[120px]" />
+        <div className="yvr-hero-blob yvr-hero-blob-c absolute bottom-[-140px] left-1/3 h-[460px] w-[460px] rounded-full opacity-[0.14] blur-[110px]" />
+        {/* fade into the next section */}
+        <div className="absolute inset-x-0 bottom-0 h-28 bg-gradient-to-b from-transparent to-[#FAFAF7]" />
+      </div>
+
+      <div className="relative mx-auto grid w-full max-w-7xl items-start gap-12 px-6 py-16 lg:grid-cols-[minmax(0,45fr)_minmax(0,55fr)] lg:gap-8">
         <Reveal>
           <h1 className="text-[42px] lg:text-[60px] leading-[1.04] tracking-[-0.025em] font-bold text-[#0A0A0A]">
             Hire engineers with<br />
