@@ -64,9 +64,23 @@ function LandingStyles() {
       .yvr-jump-card { transition: box-shadow 200ms ease, border-color 200ms ease; }
       .yvr-jump-card:hover { animation: yvr-jump 650ms ease; }
 
+      /* Hero animated background washes */
+      @keyframes yvr-hero-tint {
+        0%, 100% { background-color: #F2F6F3; }
+        33% { background-color: #F6F3EC; }
+        66% { background-color: #EFF4F2; }
+      }
+      .yvr-hero-tint { animation: yvr-hero-tint 16s ease-in-out infinite; }
+      @keyframes yvr-hero-blob-a { 0%, 100% { transform: translate3d(0,0,0) scale(1); } 50% { transform: translate3d(9%, -7%, 0) scale(1.18); } }
+      @keyframes yvr-hero-blob-b { 0%, 100% { transform: translate3d(0,0,0) scale(1.1); } 50% { transform: translate3d(-8%, 6%, 0) scale(0.94); } }
+      @keyframes yvr-hero-blob-c { 0%, 100% { transform: translate3d(0,0,0) scale(1); } 50% { transform: translate3d(6%, 8%, 0) scale(1.14); } }
+      .yvr-hero-blob-a { background: radial-gradient(circle, #2E5C52 0%, transparent 70%); animation: yvr-hero-blob-a 22s ease-in-out infinite; }
+      .yvr-hero-blob-b { background: radial-gradient(circle, #F5A623 0%, transparent 70%); animation: yvr-hero-blob-b 26s ease-in-out infinite; }
+      .yvr-hero-blob-c { background: radial-gradient(circle, #7FB3A0 0%, transparent 70%); animation: yvr-hero-blob-c 30s ease-in-out infinite; }
+
       @media (prefers-reduced-motion: reduce) {
         .yvr-reveal { opacity: 1 !important; }
-        .yvr-reveal.is-in, .yvr-pop, .yvr-caret, .yvr-pulse-dot, .yvr-jump-card:hover { animation: none !important; }
+        .yvr-reveal.is-in, .yvr-pop, .yvr-caret, .yvr-pulse-dot, .yvr-jump-card:hover, .yvr-hero-tint, .yvr-hero-blob-a, .yvr-hero-blob-b, .yvr-hero-blob-c { animation: none !important; }
       }
     `}</style>
   );
