@@ -22,6 +22,7 @@ import { Route as DemoRouteImport } from './routes/demo'
 import { Route as DashboardRouteImport } from './routes/dashboard'
 import { Route as CollaborationRouteImport } from './routes/collaboration'
 import { Route as CertificatesRouteImport } from './routes/certificates'
+import { Route as CareersRouteImport } from './routes/careers'
 import { Route as AuthRouteImport } from './routes/auth'
 import { Route as AnalyticsRouteImport } from './routes/analytics'
 import { Route as AdminRouteImport } from './routes/admin'
@@ -31,6 +32,7 @@ import { Route as RecruiterIndexRouteImport } from './routes/recruiter.index'
 import { Route as ProductIndexRouteImport } from './routes/product.index'
 import { Route as EvaluationIndexRouteImport } from './routes/evaluation.index'
 import { Route as CollaborationIndexRouteImport } from './routes/collaboration.index'
+import { Route as CareersIndexRouteImport } from './routes/careers.index'
 import { Route as AdminIndexRouteImport } from './routes/admin.index'
 import { Route as RecruiterSettingsRouteImport } from './routes/recruiter.settings'
 import { Route as RecruiterReportsRouteImport } from './routes/recruiter.reports'
@@ -48,6 +50,7 @@ import { Route as EvaluationCompleteRouteImport } from './routes/evaluation.comp
 import { Route as CollaborationSquadsRouteImport } from './routes/collaboration.squads'
 import { Route as CollaborationConnectionsRouteImport } from './routes/collaboration.connections'
 import { Route as CollaborationBrowseRouteImport } from './routes/collaboration.browse'
+import { Route as CareersApplyRouteImport } from './routes/careers.apply'
 import { Route as AdminUsersRouteImport } from './routes/admin.users'
 import { Route as AdminTicketsRouteImport } from './routes/admin.tickets'
 import { Route as AdminSprintsRouteImport } from './routes/admin.sprints'
@@ -157,6 +160,11 @@ const CertificatesRoute = CertificatesRouteImport.update({
   path: '/certificates',
   getParentRoute: () => rootRouteImport,
 } as any)
+const CareersRoute = CareersRouteImport.update({
+  id: '/careers',
+  path: '/careers',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const AuthRoute = AuthRouteImport.update({
   id: '/auth',
   path: '/auth',
@@ -201,6 +209,11 @@ const CollaborationIndexRoute = CollaborationIndexRouteImport.update({
   id: '/',
   path: '/',
   getParentRoute: () => CollaborationRoute,
+} as any)
+const CareersIndexRoute = CareersIndexRouteImport.update({
+  id: '/',
+  path: '/',
+  getParentRoute: () => CareersRoute,
 } as any)
 const AdminIndexRoute = AdminIndexRouteImport.update({
   id: '/',
@@ -288,6 +301,11 @@ const CollaborationBrowseRoute = CollaborationBrowseRouteImport.update({
   id: '/browse',
   path: '/browse',
   getParentRoute: () => CollaborationRoute,
+} as any)
+const CareersApplyRoute = CareersApplyRouteImport.update({
+  id: '/apply',
+  path: '/apply',
+  getParentRoute: () => CareersRoute,
 } as any)
 const AdminUsersRoute = AdminUsersRouteImport.update({
   id: '/users',
@@ -524,6 +542,7 @@ export interface FileRoutesByFullPath {
   '/admin': typeof AdminRouteWithChildren
   '/analytics': typeof AnalyticsRoute
   '/auth': typeof AuthRoute
+  '/careers': typeof CareersRouteWithChildren
   '/certificates': typeof CertificatesRoute
   '/collaboration': typeof CollaborationRouteWithChildren
   '/dashboard': typeof DashboardRoute
@@ -552,6 +571,7 @@ export interface FileRoutesByFullPath {
   '/admin/sprints': typeof AdminSprintsRoute
   '/admin/tickets': typeof AdminTicketsRoute
   '/admin/users': typeof AdminUsersRouteWithChildren
+  '/careers/apply': typeof CareersApplyRoute
   '/collaboration/browse': typeof CollaborationBrowseRoute
   '/collaboration/connections': typeof CollaborationConnectionsRoute
   '/collaboration/squads': typeof CollaborationSquadsRoute
@@ -569,6 +589,7 @@ export interface FileRoutesByFullPath {
   '/recruiter/reports': typeof RecruiterReportsRouteWithChildren
   '/recruiter/settings': typeof RecruiterSettingsRoute
   '/admin/': typeof AdminIndexRoute
+  '/careers/': typeof CareersIndexRoute
   '/collaboration/': typeof CollaborationIndexRoute
   '/evaluation/': typeof EvaluationIndexRoute
   '/product/': typeof ProductIndexRoute
@@ -630,6 +651,7 @@ export interface FileRoutesByTo {
   '/admin/sprints': typeof AdminSprintsRoute
   '/admin/tickets': typeof AdminTicketsRoute
   '/admin/users': typeof AdminUsersRouteWithChildren
+  '/careers/apply': typeof CareersApplyRoute
   '/collaboration/browse': typeof CollaborationBrowseRoute
   '/collaboration/connections': typeof CollaborationConnectionsRoute
   '/collaboration/squads': typeof CollaborationSquadsRoute
@@ -646,6 +668,7 @@ export interface FileRoutesByTo {
   '/product/vitarka-ai': typeof ProductVitarkaAiRoute
   '/recruiter/settings': typeof RecruiterSettingsRoute
   '/admin': typeof AdminIndexRoute
+  '/careers': typeof CareersIndexRoute
   '/collaboration': typeof CollaborationIndexRoute
   '/evaluation': typeof EvaluationIndexRoute
   '/product': typeof ProductIndexRoute
@@ -686,6 +709,7 @@ export interface FileRoutesById {
   '/admin': typeof AdminRouteWithChildren
   '/analytics': typeof AnalyticsRoute
   '/auth': typeof AuthRoute
+  '/careers': typeof CareersRouteWithChildren
   '/certificates': typeof CertificatesRoute
   '/collaboration': typeof CollaborationRouteWithChildren
   '/dashboard': typeof DashboardRoute
@@ -714,6 +738,7 @@ export interface FileRoutesById {
   '/admin/sprints': typeof AdminSprintsRoute
   '/admin/tickets': typeof AdminTicketsRoute
   '/admin/users': typeof AdminUsersRouteWithChildren
+  '/careers/apply': typeof CareersApplyRoute
   '/collaboration/browse': typeof CollaborationBrowseRoute
   '/collaboration/connections': typeof CollaborationConnectionsRoute
   '/collaboration/squads': typeof CollaborationSquadsRoute
@@ -731,6 +756,7 @@ export interface FileRoutesById {
   '/recruiter/reports': typeof RecruiterReportsRouteWithChildren
   '/recruiter/settings': typeof RecruiterSettingsRoute
   '/admin/': typeof AdminIndexRoute
+  '/careers/': typeof CareersIndexRoute
   '/collaboration/': typeof CollaborationIndexRoute
   '/evaluation/': typeof EvaluationIndexRoute
   '/product/': typeof ProductIndexRoute
@@ -772,6 +798,7 @@ export interface FileRouteTypes {
     | '/admin'
     | '/analytics'
     | '/auth'
+    | '/careers'
     | '/certificates'
     | '/collaboration'
     | '/dashboard'
@@ -800,6 +827,7 @@ export interface FileRouteTypes {
     | '/admin/sprints'
     | '/admin/tickets'
     | '/admin/users'
+    | '/careers/apply'
     | '/collaboration/browse'
     | '/collaboration/connections'
     | '/collaboration/squads'
@@ -817,6 +845,7 @@ export interface FileRouteTypes {
     | '/recruiter/reports'
     | '/recruiter/settings'
     | '/admin/'
+    | '/careers/'
     | '/collaboration/'
     | '/evaluation/'
     | '/product/'
@@ -878,6 +907,7 @@ export interface FileRouteTypes {
     | '/admin/sprints'
     | '/admin/tickets'
     | '/admin/users'
+    | '/careers/apply'
     | '/collaboration/browse'
     | '/collaboration/connections'
     | '/collaboration/squads'
@@ -894,6 +924,7 @@ export interface FileRouteTypes {
     | '/product/vitarka-ai'
     | '/recruiter/settings'
     | '/admin'
+    | '/careers'
     | '/collaboration'
     | '/evaluation'
     | '/product'
@@ -933,6 +964,7 @@ export interface FileRouteTypes {
     | '/admin'
     | '/analytics'
     | '/auth'
+    | '/careers'
     | '/certificates'
     | '/collaboration'
     | '/dashboard'
@@ -961,6 +993,7 @@ export interface FileRouteTypes {
     | '/admin/sprints'
     | '/admin/tickets'
     | '/admin/users'
+    | '/careers/apply'
     | '/collaboration/browse'
     | '/collaboration/connections'
     | '/collaboration/squads'
@@ -978,6 +1011,7 @@ export interface FileRouteTypes {
     | '/recruiter/reports'
     | '/recruiter/settings'
     | '/admin/'
+    | '/careers/'
     | '/collaboration/'
     | '/evaluation/'
     | '/product/'
@@ -1018,6 +1052,7 @@ export interface RootRouteChildren {
   AdminRoute: typeof AdminRouteWithChildren
   AnalyticsRoute: typeof AnalyticsRoute
   AuthRoute: typeof AuthRoute
+  CareersRoute: typeof CareersRouteWithChildren
   CertificatesRoute: typeof CertificatesRoute
   CollaborationRoute: typeof CollaborationRouteWithChildren
   DashboardRoute: typeof DashboardRoute
@@ -1132,6 +1167,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof CertificatesRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/careers': {
+      id: '/careers'
+      path: '/careers'
+      fullPath: '/careers'
+      preLoaderRoute: typeof CareersRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/auth': {
       id: '/auth'
       path: '/auth'
@@ -1194,6 +1236,13 @@ declare module '@tanstack/react-router' {
       fullPath: '/collaboration/'
       preLoaderRoute: typeof CollaborationIndexRouteImport
       parentRoute: typeof CollaborationRoute
+    }
+    '/careers/': {
+      id: '/careers/'
+      path: '/'
+      fullPath: '/careers/'
+      preLoaderRoute: typeof CareersIndexRouteImport
+      parentRoute: typeof CareersRoute
     }
     '/admin/': {
       id: '/admin/'
@@ -1313,6 +1362,13 @@ declare module '@tanstack/react-router' {
       fullPath: '/collaboration/browse'
       preLoaderRoute: typeof CollaborationBrowseRouteImport
       parentRoute: typeof CollaborationRoute
+    }
+    '/careers/apply': {
+      id: '/careers/apply'
+      path: '/apply'
+      fullPath: '/careers/apply'
+      preLoaderRoute: typeof CareersApplyRouteImport
+      parentRoute: typeof CareersRoute
     }
     '/admin/users': {
       id: '/admin/users'
@@ -1715,6 +1771,19 @@ const AdminRouteChildren: AdminRouteChildren = {
 
 const AdminRouteWithChildren = AdminRoute._addFileChildren(AdminRouteChildren)
 
+interface CareersRouteChildren {
+  CareersApplyRoute: typeof CareersApplyRoute
+  CareersIndexRoute: typeof CareersIndexRoute
+}
+
+const CareersRouteChildren: CareersRouteChildren = {
+  CareersApplyRoute: CareersApplyRoute,
+  CareersIndexRoute: CareersIndexRoute,
+}
+
+const CareersRouteWithChildren =
+  CareersRoute._addFileChildren(CareersRouteChildren)
+
 interface CollaborationSprintIdRouteChildren {
   CollaborationSprintIdWorkspaceRoute: typeof CollaborationSprintIdWorkspaceRoute
   CollaborationSprintIdReportIndividualRoute: typeof CollaborationSprintIdReportIndividualRoute
@@ -1883,6 +1952,7 @@ const rootRouteChildren: RootRouteChildren = {
   AdminRoute: AdminRouteWithChildren,
   AnalyticsRoute: AnalyticsRoute,
   AuthRoute: AuthRoute,
+  CareersRoute: CareersRouteWithChildren,
   CertificatesRoute: CertificatesRoute,
   CollaborationRoute: CollaborationRouteWithChildren,
   DashboardRoute: DashboardRoute,
