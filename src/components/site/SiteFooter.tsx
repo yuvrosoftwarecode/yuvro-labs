@@ -52,13 +52,18 @@ export function SiteFooter() {
         <div className="grid gap-10 md:grid-cols-12">
           {/* brand */}
           <div className="md:col-span-5">
-            <Link to="/" className="flex items-center gap-2 font-semibold tracking-tight text-white">
-              <span className="grid h-8 w-8 place-items-center rounded-lg bg-white font-mono text-sm text-[#0A0A0A]">Y</span>
+            <Link
+              to="/"
+              className="flex items-center gap-2 font-semibold tracking-tight text-white"
+            >
+              <span className="grid h-8 w-8 place-items-center rounded-lg bg-white font-mono text-sm text-[#0A0A0A]">
+                Y
+              </span>
               <span className="text-base">Yuvro Labs</span>
             </Link>
             <p className="mt-4 max-w-xs text-[13.5px] leading-relaxed text-white/55">
-              Evaluate engineers through real work — simulations, assessments and interviews that adapt, with evidence
-              behind every hiring decision.
+              Evaluate engineers through real work — simulations, assessments and interviews that
+              adapt, with evidence behind every hiring decision.
             </p>
             <div className="mt-5 flex items-center gap-2">
               {SOCIALS.map((s) => (
@@ -69,11 +74,16 @@ export function SiteFooter() {
 
           {/* link columns */}
           <div className="md:col-span-3">
-            <p className="font-mono text-[10px] uppercase tracking-[0.18em] text-white/40">Platform</p>
+            <p className="font-mono text-[10px] uppercase tracking-[0.18em] text-white/40">
+              Platform
+            </p>
             <ul className="mt-4 space-y-2.5 text-[13.5px]">
               {PLATFORM.map((i) => (
                 <li key={i.slug}>
-                  <Link to="/product/$slug" params={{ slug: i.slug }} className="text-white/65 transition hover:text-white">
+                  <Link
+                    to={`/product/${i.slug}` as any}
+                    className="text-white/65 transition hover:text-white"
+                  >
                     {i.title}
                   </Link>
                 </li>
@@ -82,19 +92,39 @@ export function SiteFooter() {
           </div>
 
           <div className="md:col-span-4">
-            <p className="font-mono text-[10px] uppercase tracking-[0.18em] text-white/40">Company</p>
+            <p className="font-mono text-[10px] uppercase tracking-[0.18em] text-white/40">
+              Company
+            </p>
             <ul className="mt-4 space-y-2.5 text-[13.5px]">
-              <li><Link to="/solutions" className="text-white/65 transition hover:text-white">Solutions</Link></li>
-              <li><Link to="/pricing" className="text-white/65 transition hover:text-white">Pricing</Link></li>
-              <li><Link to="/yuvrolabs" className="text-white/65 transition hover:text-white">Yuvro Labs</Link></li>
-              <li><Link to="/demo" className="text-white/65 transition hover:text-white">Book a demo</Link></li>
+              <li>
+                <Link to="/solutions" className="text-white/65 transition hover:text-white">
+                  Solutions
+                </Link>
+              </li>
+              <li>
+                <Link to="/pricing" className="text-white/65 transition hover:text-white">
+                  Pricing
+                </Link>
+              </li>
+              <li>
+                <Link to="/yuvrolabs" className="text-white/65 transition hover:text-white">
+                  Yuvro Labs
+                </Link>
+              </li>
+              <li>
+                <Link to="/demo" className="text-white/65 transition hover:text-white">
+                  Book a demo
+                </Link>
+              </li>
             </ul>
           </div>
         </div>
 
         {/* CTA strip */}
         <div className="mt-12 flex flex-wrap items-center justify-between gap-4 rounded-xl border border-white/12 bg-white/[0.04] px-6 py-5">
-          <p className="text-[14.5px] text-white">Ready to see what a candidate can actually build?</p>
+          <p className="text-[14.5px] text-white">
+            Ready to see what a candidate can actually build?
+          </p>
           <div className="flex items-center gap-3">
             <Link
               to="/demo"
@@ -111,7 +141,9 @@ export function SiteFooter() {
         <div className="mt-8 flex flex-wrap items-center justify-between gap-4 border-t border-white/10 pt-6 font-mono text-[11.5px] text-white/45">
           <span>© {new Date().getFullYear()} Yuvro Labs · Hire with proof</span>
           <div className="flex flex-wrap items-center gap-6">
-            <a href="mailto:hello@yuvrolabs.com" className="hover:text-white">Contact</a>
+            <a href="mailto:hello@yuvrolabs.com" className="hover:text-white">
+              Contact
+            </a>
             <span className="hover:text-white">Privacy</span>
             <span className="hover:text-white">Terms</span>
             <span className="hover:text-white">Security</span>

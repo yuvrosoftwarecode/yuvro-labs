@@ -45,21 +45,36 @@ export function ProductMegaMenu() {
 
   useEffect(() => {
     if (!open) return;
-    const onKey = (e: KeyboardEvent) => { if (e.key === "Escape") setOpen(false); };
-    const onDown = (e: MouseEvent) => { if (!wrapRef.current?.contains(e.target as Node)) setOpen(false); };
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key === "Escape") setOpen(false);
+    };
+    const onDown = (e: MouseEvent) => {
+      if (!wrapRef.current?.contains(e.target as Node)) setOpen(false);
+    };
     document.addEventListener("keydown", onKey);
     document.addEventListener("mousedown", onDown);
-    return () => { document.removeEventListener("keydown", onKey); document.removeEventListener("mousedown", onDown); };
+    return () => {
+      document.removeEventListener("keydown", onKey);
+      document.removeEventListener("mousedown", onDown);
+    };
   }, [open]);
 
-  const cancelClose = () => { if (closeTimer.current) clearTimeout(closeTimer.current); };
-  const scheduleClose = () => { cancelClose(); closeTimer.current = setTimeout(() => setOpen(false), 160); };
+  const cancelClose = () => {
+    if (closeTimer.current) clearTimeout(closeTimer.current);
+  };
+  const scheduleClose = () => {
+    cancelClose();
+    closeTimer.current = setTimeout(() => setOpen(false), 160);
+  };
 
   return (
     <div
       ref={wrapRef}
       className="relative"
-      onMouseEnter={() => { cancelClose(); setOpen(true); }}
+      onMouseEnter={() => {
+        cancelClose();
+        setOpen(true);
+      }}
       onMouseLeave={scheduleClose}
     >
       <button
@@ -69,8 +84,20 @@ export function ProductMegaMenu() {
         className={`inline-flex items-center gap-1.5 py-2 text-sm transition-colors ${open ? "text-[#0A0A0A]" : "text-[#6B6B6B] hover:text-[#0A0A0A]"}`}
       >
         Platform
-        <svg width="9" height="6" viewBox="0 0 9 6" fill="none" className={`transition-transform duration-200 ${open ? "rotate-180" : ""}`}>
-          <path d="M1 1.2 4.5 4.6 8 1.2" stroke="currentColor" strokeWidth="1.2" strokeLinecap="round" strokeLinejoin="round" />
+        <svg
+          width="9"
+          height="6"
+          viewBox="0 0 9 6"
+          fill="none"
+          className={`transition-transform duration-200 ${open ? "rotate-180" : ""}`}
+        >
+          <path
+            d="M1 1.2 4.5 4.6 8 1.2"
+            stroke="currentColor"
+            strokeWidth="1.2"
+            strokeLinecap="round"
+            strokeLinejoin="round"
+          />
         </svg>
       </button>
 
@@ -99,8 +126,7 @@ export function ProductMegaMenu() {
                     return (
                       <li key={it.slug}>
                         <Link
-                          to="/product/$slug"
-                          params={{ slug: it.slug }}
+                          to={`/product/${it.slug}` as any}
                           onClick={() => setOpen(false)}
                           className="group flex items-start gap-4 rounded-xl px-3 py-3.5 transition-colors hover:bg-[#F5F3EE]"
                         >
@@ -108,8 +134,12 @@ export function ProductMegaMenu() {
                             <Icon className="h-[18px] w-[18px]" />
                           </span>
                           <span className="min-w-0">
-                            <span className="block text-[15px] font-semibold leading-tight text-[#0A0A0A]">{it.title}</span>
-                            <span className="mt-1 block text-[13px] leading-snug text-[#6B6B6B]">{it.description}</span>
+                            <span className="block text-[15px] font-semibold leading-tight text-[#0A0A0A]">
+                              {it.title}
+                            </span>
+                            <span className="mt-1 block text-[13px] leading-snug text-[#6B6B6B]">
+                              {it.description}
+                            </span>
                           </span>
                         </Link>
                       </li>
@@ -139,7 +169,10 @@ export function ProductMegaMenu() {
                 >
                   Talk to an evaluation architect
                 </h3>
-                <span className="relative z-10 mt-3 inline-flex items-center gap-2 text-[14px] font-medium transition-transform duration-200 group-hover:translate-x-1" style={{ color: "#F5A623" }}>
+                <span
+                  className="relative z-10 mt-3 inline-flex items-center gap-2 text-[14px] font-medium transition-transform duration-200 group-hover:translate-x-1"
+                  style={{ color: "#F5A623" }}
+                >
                   Book a demo
                   <ArrowRight className="h-4 w-4" />
                 </span>
@@ -168,8 +201,7 @@ export function ProductMobileNav({ onNavigate }: { onNavigate?: () => void }) {
         return (
           <li key={it.slug}>
             <Link
-              to="/product/$slug"
-              params={{ slug: it.slug }}
+              to={`/product/${it.slug}` as any}
               onClick={onNavigate}
               className="flex items-start gap-3 px-1 py-3"
             >
@@ -178,7 +210,9 @@ export function ProductMobileNav({ onNavigate }: { onNavigate?: () => void }) {
               </span>
               <span>
                 <span className="block text-[14.5px] font-medium text-[#0A0A0A]">{it.title}</span>
-                <span className="mt-0.5 block text-[12.5px] leading-snug text-[#6B6B6B]">{it.description}</span>
+                <span className="mt-0.5 block text-[12.5px] leading-snug text-[#6B6B6B]">
+                  {it.description}
+                </span>
               </span>
             </Link>
           </li>

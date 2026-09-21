@@ -13,9 +13,20 @@ export const Route = createFileRoute("/")({
   head: () => ({
     meta: [
       { title: "Yuvro Labs — Verify Engineering Capability Before You Hire" },
-      { name: "description", content: "Yuvro Labs is an Engineering Capability Verification Platform. Evaluate real engineering ability through Engineering Simulations, Vitarka AI interviews and a pay-only-on-hire model." },
-      { property: "og:title", content: "Yuvro Labs — Verify Engineering Capability Before You Hire" },
-      { property: "og:description", content: "Stop hiring developers. Start verifying engineers. Evidence-based hiring for modern engineering teams." },
+      {
+        name: "description",
+        content:
+          "Yuvro Labs is an Engineering Capability Verification Platform. Evaluate real engineering ability through Engineering Simulations, Vitarka AI interviews and a pay-only-on-hire model.",
+      },
+      {
+        property: "og:title",
+        content: "Yuvro Labs — Verify Engineering Capability Before You Hire",
+      },
+      {
+        property: "og:description",
+        content:
+          "Stop hiring developers. Start verifying engineers. Evidence-based hiring for modern engineering teams.",
+      },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary_large_image" },
     ],
@@ -27,7 +38,10 @@ const TEAL = "#2E5C52";
 
 function Landing() {
   return (
-    <div className="min-h-screen text-[#1B1F23] antialiased selection:bg-[#2E5C52] selection:text-white" style={{ background: "#FAFAFA" }}>
+    <div
+      className="min-h-screen text-[#1B1F23] antialiased selection:bg-[#2E5C52] selection:text-white"
+      style={{ background: "#FAFAFA" }}
+    >
       <LandingStyles />
       <SiteNav />
       <Hero />
@@ -98,18 +112,41 @@ function useInView<T extends Element>(threshold = 0.2) {
   useEffect(() => {
     const el = ref.current;
     if (!el) return;
-    if (typeof IntersectionObserver === "undefined") { setInView(true); return; }
-    const io = new IntersectionObserver(([e]) => { if (e.isIntersecting) { setInView(true); io.disconnect(); } }, { threshold });
+    if (typeof IntersectionObserver === "undefined") {
+      setInView(true);
+      return;
+    }
+    const io = new IntersectionObserver(
+      ([e]) => {
+        if (e.isIntersecting) {
+          setInView(true);
+          io.disconnect();
+        }
+      },
+      { threshold },
+    );
     io.observe(el);
     return () => io.disconnect();
   }, [threshold]);
   return { ref, inView };
 }
 
-function Reveal({ children, delay = 0, className = "" }: { children: React.ReactNode; delay?: number; className?: string }) {
+function Reveal({
+  children,
+  delay = 0,
+  className = "",
+}: {
+  children: React.ReactNode;
+  delay?: number;
+  className?: string;
+}) {
   const { ref, inView } = useInView<HTMLDivElement>(0.15);
   return (
-    <div ref={ref} className={`yvr-reveal ${inView ? "is-in" : ""} ${className}`} style={{ animationDelay: `${delay}ms` }}>
+    <div
+      ref={ref}
+      className={`yvr-reveal ${inView ? "is-in" : ""} ${className}`}
+      style={{ animationDelay: `${delay}ms` }}
+    >
       {children}
     </div>
   );
@@ -120,12 +157,21 @@ function useTypewriter(text: string, active: boolean, speed = 22, onDone?: () =>
   const doneRef = useRef(false);
   useEffect(() => {
     if (!active || doneRef.current) return;
-    if (prefersReduced()) { doneRef.current = true; setOut(text); onDone?.(); return; }
+    if (prefersReduced()) {
+      doneRef.current = true;
+      setOut(text);
+      onDone?.();
+      return;
+    }
     let i = 0;
     const id = window.setInterval(() => {
       i += 1;
       setOut(text.slice(0, i));
-      if (i >= text.length) { window.clearInterval(id); doneRef.current = true; onDone?.(); }
+      if (i >= text.length) {
+        window.clearInterval(id);
+        doneRef.current = true;
+        onDone?.();
+      }
     }, speed);
     return () => window.clearInterval(id);
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -152,17 +198,28 @@ function Hero() {
       <div className="relative mx-auto grid w-full max-w-7xl items-start gap-12 px-6 py-16 lg:grid-cols-[minmax(0,45fr)_minmax(0,55fr)] lg:gap-8">
         <Reveal>
           <h1 className="text-[42px] lg:text-[60px] leading-[1.04] tracking-[-0.025em] font-bold text-[#0A0A0A]">
-            Hire engineers with<br />
+            Hire engineers with
+            <br />
             <span className="inline-block">verified capability.</span>
           </h1>
           <p className="mt-12 max-w-xl text-[17px] leading-relaxed text-[#6B6B6B]">
-            Yuvro Labs replaces resumes and guesswork with evidence. Evaluate how candidates think, debug, collaborate and execute through Engineering Simulation Labs, Knowledge Assessments and Vitarka AI Interviews.
+            Yuvro Labs replaces resumes and guesswork with evidence. Evaluate how candidates think,
+            debug, collaborate and execute through Engineering Simulation Labs, Knowledge
+            Assessments and Vitarka AI Interviews.
           </p>
           <div className="mt-16 flex flex-wrap items-center gap-3">
-            <Link to="/auth" search={{ tab: "signup" }} className="inline-flex items-center gap-2 rounded-md px-5 py-3 text-[14px] font-medium text-white transition hover:brightness-95" style={{ background: "black" }}>
+            <Link
+              to="/auth"
+              search={{ tab: "signup" }}
+              className="inline-flex items-center gap-2 rounded-md px-5 py-3 text-[14px] font-medium text-white transition hover:brightness-95"
+              style={{ background: "black" }}
+            >
               Start Free Trial <ArrowRight className="h-4 w-4" />
             </Link>
-            <Link to="/demo" className="inline-flex items-center gap-2 rounded-md border border-[#E8E6E1] bg-white px-5 py-3 text-[14px] font-medium text-[#0A0A0A] hover:border-[#0A0A0A] transition">
+            <Link
+              to="/book-demo"
+              className="inline-flex items-center gap-2 rounded-md border border-[#E8E6E1] bg-white px-5 py-3 text-[14px] font-medium text-[#0A0A0A] hover:border-[#0A0A0A] transition"
+            >
               <Play className="h-3.5 w-3.5" /> Book a Demo
             </Link>
           </div>
@@ -175,7 +232,6 @@ function Hero() {
     </section>
   );
 }
-
 
 /* ================================================================
    1. ABOUT
@@ -199,7 +255,6 @@ function About() {
     </section>
   );
 }
-
 
 /* ================================================================
    2 + 3. ENGINEERING SIMULATION → VITARKA AI (sequenced)
@@ -238,16 +293,21 @@ function SimulationVitarkaSequence() {
 
   useEffect(() => {
     if (!taskDone) return;
-    if (reduced) { setVitarkaActive(true); return; }
+    if (reduced) {
+      setVitarkaActive(true);
+      return;
+    }
     const t1 = window.setTimeout(() => setPulseRunning(true), 250);
     const t2 = window.setTimeout(() => setVitarkaActive(true), 950);
-    return () => { window.clearTimeout(t1); window.clearTimeout(t2); };
+    return () => {
+      window.clearTimeout(t1);
+      window.clearTimeout(t2);
+    };
   }, [taskDone, reduced]);
 
   useEffect(() => {
     if (reduced && inView) setTaskDone(true);
   }, [reduced, inView]);
-
 
   return (
     <div ref={ref}>
@@ -260,9 +320,10 @@ function SimulationVitarkaSequence() {
             </h2>
             <div className="mt-6 space-y-5 text-[16.5px] leading-[1.75] text-[#4A4F58]">
               <p>
-                Candidates open a live workspace with a running project, a repository, dependencies and a ticket scoped
-                to the role you are hiring for — fixing a defect, extending an endpoint, tightening a query. It takes
-                twenty to thirty minutes, not a weekend, and it looks like the first week of the job rather than an exam.
+                Candidates open a live workspace with a running project, a repository, dependencies
+                and a ticket scoped to the role you are hiring for — fixing a defect, extending an
+                endpoint, tightening a query. It takes twenty to thirty minutes, not a weekend, and
+                it looks like the first week of the job rather than an exam.
               </p>
             </div>
             <Link
@@ -319,18 +380,21 @@ function SimulationVitarkaSequence() {
         </div>
       </section>
 
-
       {/* Vitarka AI */}
       <section className="border-b border-[#E6E4DE] px-6 pb-28 pt-28 lg:pb-36">
         <div className="mx-auto max-w-[1100px]">
           <Reveal>
             <div className="mx-auto max-w-3xl text-center">
               <h2 className="yvr-serif text-[30px] lg:text-[44px] font-normal leading-[1.14] tracking-[-0.015em] text-[#0A0A0A]">
-                Vitarka AI is more than a voice bot.<br className="hidden sm:block" /> It&rsquo;s an interviewer that thinks.
+                Vitarka AI is more than a voice bot.
+                <br className="hidden sm:block" /> It&rsquo;s an interviewer that thinks.
               </h2>
-              
+
               <p className="mx-auto mt-7 max-w-2xl text-[14.5px] leading-[1.85] text-[#4A4F58]">
-                Before the interview, Vitarka understands the job, the skills that matter, and the candidate&rsquo;s background. During the conversation, it listens, evaluates, makes decisions, and changes its next question based on the candidate&rsquo;s responses &mdash; rather than following a fixed script.
+                Before the interview, Vitarka understands the job, the skills that matter, and the
+                candidate&rsquo;s background. During the conversation, it listens, evaluates, makes
+                decisions, and changes its next question based on the candidate&rsquo;s responses
+                &mdash; rather than following a fixed script.
               </p>
             </div>
           </Reveal>
@@ -344,10 +408,12 @@ function SimulationVitarkaSequence() {
           <Reveal delay={80}>
             <div className="mx-auto max-w-2xl space-y-6 text-center">
               <p className="text-[14.5px] leading-[1.85] text-[#4A4F58]">
-                Built to conduct first-level interviews across technical and non-technical roles, Vitarka can interview engineers, salespeople, marketers, accountants, and more.
+                Built to conduct first-level interviews across technical and non-technical roles,
+                Vitarka can interview engineers, salespeople, marketers, accountants, and more.
               </p>
               <p className="text-[14.5px] leading-[1.85] text-[#4A4F58]">
-                When paired with a Simulation, it gets even sharper &mdash; connecting what a candidate did with why they did it.
+                When paired with a Simulation, it gets even sharper &mdash; connecting what a
+                candidate did with why they did it.
               </p>
               <p className="yvr-serif pt-4 text-[20px] leading-[1.5] tracking-[-0.01em] text-[#0A0A0A] lg:text-[24px]">
                 One interviewer. Any role. A conversation that adapts.
@@ -356,8 +422,6 @@ function SimulationVitarkaSequence() {
           </Reveal>
         </div>
       </section>
-
-
     </div>
   );
 }
@@ -393,7 +457,10 @@ function SecurityIntegrity() {
     <section className="border-b border-[#E6E4DE] bg-[#F3F8F4] px-6 py-16 lg:py-20">
       <div className="mx-auto max-w-6xl">
         <Reveal>
-          <p className="mb-3 text-[11px] font-semibold uppercase tracking-[0.18em]" style={{ color: TEAL }}>
+          <p
+            className="mb-3 text-[11px] font-semibold uppercase tracking-[0.18em]"
+            style={{ color: TEAL }}
+          >
             Security & Integrity
           </p>
           <h2 className="yvr-serif text-[32px] lg:text-[40px] font-normal leading-[1.1] tracking-[-0.015em] text-[#0A0A0A]">
@@ -411,8 +478,12 @@ function SecurityIntegrity() {
               <Reveal key={feature.title} delay={i * 60}>
                 <div className="flex flex-col items-start">
                   <Icon className="h-11 w-11" strokeWidth={1.4} style={{ color: TEAL }} />
-                  <h3 className="mt-4 text-[15.5px] font-semibold text-[#0A0A0A]">{feature.title}</h3>
-                  <p className="mt-1.5 text-[13.5px] leading-relaxed text-[#6B6B6B]">{feature.description}</p>
+                  <h3 className="mt-4 text-[15.5px] font-semibold text-[#0A0A0A]">
+                    {feature.title}
+                  </h3>
+                  <p className="mt-1.5 text-[13.5px] leading-relaxed text-[#6B6B6B]">
+                    {feature.description}
+                  </p>
                 </div>
               </Reveal>
             );
@@ -427,13 +498,34 @@ function SecurityIntegrity() {
    5. PAY FOR HIRE
    ================================================================ */
 const PIPELINE = [
-  ["Requirement & JD", "We start from the role as your engineers describe it, not a generic title."],
-  ["Account manager", "A single named owner runs the search end to end and stays accountable for it."],
-  ["Recruiter match", "Our recruiters shortlist against the requirement, then hand candidates to evaluation."],
-  ["Real task", "Every shortlisted candidate completes an Engineering Simulation scoped to the role."],
-  ["Vitarka interview", "The AI interview runs on their own work and grades the reasoning behind it."],
-  ["Proof profile", "You receive a review built from the diff, the transcript and the integrity record."],
-  ["Scheduling & follow-ups", "Interviews, reminders and candidate communication are handled for you."],
+  [
+    "Requirement & JD",
+    "We start from the role as your engineers describe it, not a generic title.",
+  ],
+  [
+    "Account manager",
+    "A single named owner runs the search end to end and stays accountable for it.",
+  ],
+  [
+    "Recruiter match",
+    "Our recruiters shortlist against the requirement, then hand candidates to evaluation.",
+  ],
+  [
+    "Real task",
+    "Every shortlisted candidate completes an Engineering Simulation scoped to the role.",
+  ],
+  [
+    "Vitarka interview",
+    "The AI interview runs on their own work and grades the reasoning behind it.",
+  ],
+  [
+    "Proof profile",
+    "You receive a review built from the diff, the transcript and the integrity record.",
+  ],
+  [
+    "Scheduling & follow-ups",
+    "Interviews, reminders and candidate communication are handled for you.",
+  ],
   ["Hired in 20 days", "Median time from requirement to signed offer across roles we run."],
 ];
 
@@ -446,9 +538,9 @@ function PayForHire() {
             We share evidence, not resumes.
           </h2>
           <p className="mt-6 max-w-2xl text-[16.5px] leading-[1.75] text-[#4A4F58]">
-            When we send you a candidate, the first thing you see is the work — the task they completed, the reasoning
-            they gave for it and the conditions the session ran under. The resume is a footnote. Here is what happens
-            between your requirement and a signed offer.
+            When we send you a candidate, the first thing you see is the work — the task they
+            completed, the reasoning they gave for it and the conditions the session ran under. The
+            resume is a footnote. Here is what happens between your requirement and a signed offer.
           </p>
         </Reveal>
 
@@ -456,7 +548,10 @@ function PayForHire() {
           {PIPELINE.map(([title, body], i) => (
             <Reveal key={title} delay={i * 40}>
               <li className="yvr-jump-card flex items-center gap-3 rounded-lg border border-[#E6E4DE] bg-white px-4 py-2.5 shadow-sm hover:shadow-lg">
-                <span className="grid h-6 w-6 shrink-0 place-items-center rounded-full border font-mono text-[10.5px]" style={{ borderColor: TEAL, color: TEAL }}>
+                <span
+                  className="grid h-6 w-6 shrink-0 place-items-center rounded-full border font-mono text-[10.5px]"
+                  style={{ borderColor: TEAL, color: TEAL }}
+                >
                   {i + 1}
                 </span>
                 <span>
@@ -471,10 +566,14 @@ function PayForHire() {
         <Reveal delay={120}>
           <div className="mt-16 border-t border-[#EFEDE7] pt-10">
             <p className="max-w-2xl text-[16.5px] leading-[1.75] text-[#4A4F58]">
-              There is no retainer and no upfront fee. Sourcing, evaluation, interviews and follow-ups are on us — you
-              pay only when a candidate we send actually starts.
+              There is no retainer and no upfront fee. Sourcing, evaluation, interviews and
+              follow-ups are on us — you pay only when a candidate we send actually starts.
             </p>
-            <Link to="/demo" className="mt-7 inline-flex items-center gap-2 rounded-md px-5 py-3 text-[14px] font-medium text-white transition hover:brightness-110" style={{ background: TEAL }}>
+            <Link
+              to="/demo"
+              className="mt-7 inline-flex items-center gap-2 rounded-md px-5 py-3 text-[14px] font-medium text-white transition hover:brightness-110"
+              style={{ background: TEAL }}
+            >
               Book a demo <ArrowRight className="h-4 w-4" />
             </Link>
           </div>

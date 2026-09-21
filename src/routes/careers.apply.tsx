@@ -29,7 +29,7 @@ function ApplyPage() {
   const formRef = useRef<HTMLFormElement>(null);
 
   const GOOGLE_FORM_ACTION_URL =
-    "https://docs.google.com/forms/d/e/1FAIpQLSd_PAiM837L6r0iDKIifGGazCAtFKh7_AlqXJtDVOxY3W1BdA/formResponse";
+    "https://docs.google.com/forms/d/e/1FAIpQLScalt2ECkb4zOqERxBEG7SnvASsV-OxMYmG7d12vbYYQBfoUw/formResponse";
 
   const ENTRY_IDS = {
     fullName: "entry.1288130616",
@@ -229,7 +229,7 @@ function ApplyPage() {
                     type="text"
                     name={ENTRY_IDS.fullName}
                     className="input-field"
-                    placeholder="Jane Doe"
+                    placeholder="Enter your full name"
                   />
                 </Field>
                 <Field label="Email Address *">
@@ -238,7 +238,7 @@ function ApplyPage() {
                     type="email"
                     name={ENTRY_IDS.email}
                     className="input-field"
-                    placeholder="jane@example.com"
+                    placeholder="Enter your email address"
                   />
                 </Field>
                 <Field label="Mobile Number *">
@@ -247,7 +247,7 @@ function ApplyPage() {
                     type="tel"
                     name={ENTRY_IDS.mobileNumber}
                     className="input-field"
-                    placeholder="+91 9876543210"
+                    placeholder="Enter your mobile number"
                   />
                 </Field>
                 <Field label="WhatsApp Number *">
@@ -256,7 +256,7 @@ function ApplyPage() {
                     type="tel"
                     name={ENTRY_IDS.whatsappNumber}
                     className="input-field"
-                    placeholder="+91 9876543210"
+                    placeholder="Enter your WhatsApp number"
                   />
                 </Field>
                 <Field label="City *">
@@ -265,7 +265,7 @@ function ApplyPage() {
                     type="text"
                     name={ENTRY_IDS.city}
                     className="input-field"
-                    placeholder="Mumbai"
+                    placeholder="Enter your city"
                   />
                 </Field>
                 <Field label="State *">
@@ -274,7 +274,7 @@ function ApplyPage() {
                     type="text"
                     name={ENTRY_IDS.state}
                     className="input-field"
-                    placeholder="Maharashtra"
+                    placeholder="Enter your state"
                   />
                 </Field>
                 <Field label="LinkedIn Profile *">
@@ -283,7 +283,7 @@ function ApplyPage() {
                     type="url"
                     name={ENTRY_IDS.linkedin}
                     className="input-field"
-                    placeholder="https://linkedin.com/in/..."
+                    placeholder="Enter your LinkedIn profile URL"
                   />
                 </Field>
                 <Field label="GitHub Profile *">
@@ -292,7 +292,7 @@ function ApplyPage() {
                     type="url"
                     name={ENTRY_IDS.github}
                     className="input-field"
-                    placeholder="https://github.com/..."
+                    placeholder="Enter your GitHub profile URL"
                   />
                 </Field>
                 <Field label="Resume Link *" className="sm:col-span-2">
@@ -301,7 +301,7 @@ function ApplyPage() {
                     type="url"
                     name={ENTRY_IDS.resumeLink}
                     className="input-field"
-                    placeholder="Google Drive or Dropbox link (make sure it's public)"
+                    placeholder="Paste your resume link"
                   />
                 </Field>
               </div>
@@ -330,7 +330,7 @@ function ApplyPage() {
                   type="text"
                   name={ENTRY_IDS.college}
                   className="input-field"
-                  placeholder="University Name"
+                  placeholder="Enter your college or university name"
                 />
               </Field>
               <Field label="Degree *">
@@ -339,7 +339,7 @@ function ApplyPage() {
                   type="text"
                   name={ENTRY_IDS.degree}
                   className="input-field"
-                  placeholder="B.Tech, B.Sc, etc."
+                  placeholder="Enter your degree"
                 />
               </Field>
               <Field label="Branch / Specialization *">
@@ -348,7 +348,7 @@ function ApplyPage() {
                   type="text"
                   name={ENTRY_IDS.branch}
                   className="input-field"
-                  placeholder="Computer Science, etc."
+                  placeholder="Enter your branch or specialization"
                 />
               </Field>
               <Field label="Current Year *">
@@ -357,7 +357,7 @@ function ApplyPage() {
                   name={ENTRY_IDS.currentYear}
                   className="input-field bg-white cursor-pointer"
                 >
-                  <option value="">Select...</option>
+                  <option value="">Select your current year</option>
                   <option value="1st Yr">1st Year</option>
                   <option value="2nd Yr">2nd Year</option>
                   <option value="3rd Yr">3rd Year</option>
@@ -370,7 +370,7 @@ function ApplyPage() {
                   type="text"
                   name={ENTRY_IDS.graduationYear}
                   className="input-field"
-                  placeholder="e.g., 2026"
+                  placeholder="Enter your graduation year"
                 />
               </Field>
               <Field label="Current CGPA / Percentage *">
@@ -379,7 +379,7 @@ function ApplyPage() {
                   type="text"
                   name={ENTRY_IDS.cgpa}
                   className="input-field"
-                  placeholder="e.g., 8.5 or 85%"
+                  placeholder="Enter your current CGPA or percentage"
                 />
               </Field>
               <Field label="Active Backlogs *">
@@ -462,7 +462,7 @@ function ApplyPage() {
                     type="url"
                     name={ENTRY_IDS.projectLink}
                     className="input-field"
-                    placeholder="https://..."
+                    placeholder="Enter your project URL"
                   />
                 </Field>
                 <Field label="Best Technical Project Description *">
@@ -471,7 +471,7 @@ function ApplyPage() {
                     name={ENTRY_IDS.projectDescription}
                     rows={4}
                     className="input-field resize-y"
-                    placeholder="Describe your best project, your role, and what technologies you used..."
+                    placeholder="Describe your project, your role, and the technologies used"
                   ></textarea>
                 </Field>
               </div>
@@ -554,13 +554,13 @@ function ApplyPage() {
             </div>
 
             <div className="grid gap-6">
-              <Field label="Why do you want to intern at Yuvro? *">
+              <Field label="Why do you want to intern at Yuvro Software Private Limited? *">
                 <textarea
                   required={currentStep === 4}
                   name={ENTRY_IDS.whyYuvro}
                   rows={4}
                   className="input-field resize-y"
-                  placeholder="Tell us why you're interested..."
+                  placeholder="Tell us why you want to join Yuvro"
                 ></textarea>
               </Field>
               <Field label="What are your career goals? *">
@@ -569,7 +569,7 @@ function ApplyPage() {
                   name={ENTRY_IDS.careerGoals}
                   rows={4}
                   className="input-field resize-y"
-                  placeholder="Where do you see yourself in the future?"
+                  placeholder="Tell us about your career goals"
                 ></textarea>
               </Field>
             </div>

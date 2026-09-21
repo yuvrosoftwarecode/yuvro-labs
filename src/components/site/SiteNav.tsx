@@ -40,11 +40,11 @@ export function SiteNav() {
             Sign In
           </Link>
           <Link
-            to="/demo"
+            to="/book-demo"
             className="inline-flex items-center gap-1.5 rounded-md px-4 py-2 text-sm font-medium text-white transition hover:brightness-95"
             style={{ background: "black" }}
           >
-            Book Demo
+            Book a Demo
             <svg width="13" height="10" viewBox="0 0 12 10" fill="none">
               <path
                 d="M1 5h9M6.6 1.4 10.2 5l-3.6 3.6"
