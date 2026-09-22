@@ -1,6 +1,7 @@
 import { Link } from "@tanstack/react-router";
 import { type ReactNode } from "react";
 import { useTheme } from "@/hooks/use-theme";
+import YuvroLogo from "@/assets/YuvroLogo.png";
 
 export function EvalShell({ children, step, totalSteps, stepLabel }: { children: ReactNode; step?: number; totalSteps?: number; stepLabel?: string }) {
   const { theme, toggle } = useTheme();
@@ -10,7 +11,7 @@ export function EvalShell({ children, step, totalSteps, stepLabel }: { children:
         <div className="mx-auto flex h-14 max-w-6xl items-center justify-between px-6">
           <Link to="/" className="flex items-center gap-2.5">
             <YMark />
-            <span className="text-[13px] font-medium tracking-tight">Yuvro Labs</span>
+            <span className="text-[13px] font-medium tracking-tight">Yuvro</span>
           </Link>
           <div className="flex items-center gap-6 text-[12px] text-neutral-500">
             {step && totalSteps && stepLabel && (
@@ -124,7 +125,7 @@ export function ArrowRight() {
 }
 
 export function YMark() {
-  return <div className="grid h-7 w-7 place-items-center rounded-md bg-neutral-900 text-[11px] font-mono text-white">Y</div>;
+  return <img src={YuvroLogo} alt="Yuvro" className="h-7 w-auto" />;
 }
 
 export function Check({ className = "" }: { className?: string }) {

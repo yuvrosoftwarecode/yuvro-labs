@@ -2,6 +2,7 @@ import { createFileRoute, Link, Outlet, useRouterState, useNavigate } from "@tan
 import { LayoutDashboard, ClipboardList, BarChart3, Settings, LogOut, Sparkles, Sun, Moon } from "lucide-react";
 import { useAuth } from "@/lib/auth";
 import { useTheme } from "@/hooks/use-theme";
+import YuvroLogo from "@/assets/YuvroLogo.png";
 
 export const Route = createFileRoute("/recruiter")({
   head: () => ({ meta: [{ title: "Recruiter — Yuvro Labs" }, { name: "robots", content: "noindex" }] }),
@@ -31,9 +32,9 @@ function RecruiterLayout() {
       <div className="flex min-h-screen">
         <aside className="fixed inset-y-0 left-0 z-20 flex w-[240px] flex-col border-r border-white/5 bg-black/40 backdrop-blur-xl">
           <Link to="/recruiter" className="flex items-center gap-2.5 px-6 py-5">
-            <div className="grid h-8 w-8 place-items-center rounded-lg bg-gradient-to-br from-orange-500 to-amber-500 text-white font-mono text-sm font-bold">Y</div>
+            <img src={YuvroLogo} alt="Yuvro" className="h-8 w-auto" />
             <div className="leading-tight">
-              <div className="text-[13px] font-semibold">Yuvro Labs</div>
+              <div className="text-[13px] font-semibold">Yuvro</div>
               <div className="text-[10px] uppercase tracking-widest text-neutral-500">Recruiter</div>
             </div>
           </Link>

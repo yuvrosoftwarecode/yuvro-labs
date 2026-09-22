@@ -51,6 +51,7 @@ import { Route as EvaluationCompleteRouteImport } from './routes/evaluation.comp
 import { Route as CollaborationSquadsRouteImport } from './routes/collaboration.squads'
 import { Route as CollaborationConnectionsRouteImport } from './routes/collaboration.connections'
 import { Route as CollaborationBrowseRouteImport } from './routes/collaboration.browse'
+import { Route as CareersSoftwareEngineerInternRouteImport } from './routes/careers.software-engineer-intern'
 import { Route as CareersApplyRouteImport } from './routes/careers.apply'
 import { Route as AdminUsersRouteImport } from './routes/admin.users'
 import { Route as AdminTicketsRouteImport } from './routes/admin.tickets'
@@ -308,6 +309,12 @@ const CollaborationBrowseRoute = CollaborationBrowseRouteImport.update({
   path: '/browse',
   getParentRoute: () => CollaborationRoute,
 } as any)
+const CareersSoftwareEngineerInternRoute =
+  CareersSoftwareEngineerInternRouteImport.update({
+    id: '/software-engineer-intern',
+    path: '/software-engineer-intern',
+    getParentRoute: () => CareersRoute,
+  } as any)
 const CareersApplyRoute = CareersApplyRouteImport.update({
   id: '/apply',
   path: '/apply',
@@ -579,6 +586,7 @@ export interface FileRoutesByFullPath {
   '/admin/tickets': typeof AdminTicketsRoute
   '/admin/users': typeof AdminUsersRouteWithChildren
   '/careers/apply': typeof CareersApplyRoute
+  '/careers/software-engineer-intern': typeof CareersSoftwareEngineerInternRoute
   '/collaboration/browse': typeof CollaborationBrowseRoute
   '/collaboration/connections': typeof CollaborationConnectionsRoute
   '/collaboration/squads': typeof CollaborationSquadsRoute
@@ -660,6 +668,7 @@ export interface FileRoutesByTo {
   '/admin/tickets': typeof AdminTicketsRoute
   '/admin/users': typeof AdminUsersRouteWithChildren
   '/careers/apply': typeof CareersApplyRoute
+  '/careers/software-engineer-intern': typeof CareersSoftwareEngineerInternRoute
   '/collaboration/browse': typeof CollaborationBrowseRoute
   '/collaboration/connections': typeof CollaborationConnectionsRoute
   '/collaboration/squads': typeof CollaborationSquadsRoute
@@ -748,6 +757,7 @@ export interface FileRoutesById {
   '/admin/tickets': typeof AdminTicketsRoute
   '/admin/users': typeof AdminUsersRouteWithChildren
   '/careers/apply': typeof CareersApplyRoute
+  '/careers/software-engineer-intern': typeof CareersSoftwareEngineerInternRoute
   '/collaboration/browse': typeof CollaborationBrowseRoute
   '/collaboration/connections': typeof CollaborationConnectionsRoute
   '/collaboration/squads': typeof CollaborationSquadsRoute
@@ -838,6 +848,7 @@ export interface FileRouteTypes {
     | '/admin/tickets'
     | '/admin/users'
     | '/careers/apply'
+    | '/careers/software-engineer-intern'
     | '/collaboration/browse'
     | '/collaboration/connections'
     | '/collaboration/squads'
@@ -919,6 +930,7 @@ export interface FileRouteTypes {
     | '/admin/tickets'
     | '/admin/users'
     | '/careers/apply'
+    | '/careers/software-engineer-intern'
     | '/collaboration/browse'
     | '/collaboration/connections'
     | '/collaboration/squads'
@@ -1006,6 +1018,7 @@ export interface FileRouteTypes {
     | '/admin/tickets'
     | '/admin/users'
     | '/careers/apply'
+    | '/careers/software-engineer-intern'
     | '/collaboration/browse'
     | '/collaboration/connections'
     | '/collaboration/squads'
@@ -1382,6 +1395,13 @@ declare module '@tanstack/react-router' {
       fullPath: '/collaboration/browse'
       preLoaderRoute: typeof CollaborationBrowseRouteImport
       parentRoute: typeof CollaborationRoute
+    }
+    '/careers/software-engineer-intern': {
+      id: '/careers/software-engineer-intern'
+      path: '/software-engineer-intern'
+      fullPath: '/careers/software-engineer-intern'
+      preLoaderRoute: typeof CareersSoftwareEngineerInternRouteImport
+      parentRoute: typeof CareersRoute
     }
     '/careers/apply': {
       id: '/careers/apply'
@@ -1793,11 +1813,13 @@ const AdminRouteWithChildren = AdminRoute._addFileChildren(AdminRouteChildren)
 
 interface CareersRouteChildren {
   CareersApplyRoute: typeof CareersApplyRoute
+  CareersSoftwareEngineerInternRoute: typeof CareersSoftwareEngineerInternRoute
   CareersIndexRoute: typeof CareersIndexRoute
 }
 
 const CareersRouteChildren: CareersRouteChildren = {
   CareersApplyRoute: CareersApplyRoute,
+  CareersSoftwareEngineerInternRoute: CareersSoftwareEngineerInternRoute,
   CareersIndexRoute: CareersIndexRoute,
 }
 

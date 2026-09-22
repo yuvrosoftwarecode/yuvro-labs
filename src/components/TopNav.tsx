@@ -5,6 +5,8 @@ import { me } from "@/lib/dummy";
 import { useAuth } from "@/lib/auth";
 import { useEffect, useRef, useState } from "react";
 
+import YuvroLogo from "@/assets/YuvroLogo.png";
+
 const primaryLinks = [
   { to: "/dashboard", label: "Individual Hub", icon: LayoutDashboard },
   { to: "/hackathons", label: "Hackathons", icon: Rocket },
@@ -40,8 +42,8 @@ export function TopNav({ rightSlot, activeOverride }: { rightSlot?: React.ReactN
     <header className="sticky top-0 z-40 glass border-b border-border">
       <div className="mx-auto flex h-14 max-w-[1400px] items-center gap-6 px-4">
         <Link to="/dashboard" className="flex items-center gap-2 font-semibold tracking-tight">
-          <div className="grid h-7 w-7 place-items-center rounded-md bg-gradient-to-br from-primary to-ui text-primary-foreground font-mono text-xs">Y</div>
-          <span>Yuvro Labs</span>
+          <img src={YuvroLogo} alt="Yuvro" className="h-7 w-auto" />
+          <span>Yuvro</span>
         </Link>
         <nav className="hidden md:flex items-center gap-1 text-sm">
           {primaryLinks.map((l) => {

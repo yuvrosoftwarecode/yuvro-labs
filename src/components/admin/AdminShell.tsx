@@ -7,6 +7,8 @@ import {
   Brain, Cpu, AlertTriangle, ListChecks, Activity, Sparkles, ChevronRight,
   PanelLeftClose, PanelLeftOpen, Rocket,
 } from "lucide-react";
+import YuvroLogo from "@/assets/YuvroLogo.png";
+
 
 const NAV: { group: string; items: { to: string; label: string; icon: any }[] }[] = [
   {
@@ -78,10 +80,10 @@ export function AdminShell({ title, breadcrumb, right, children }: {
     <div className="min-h-screen bg-background text-foreground flex">
       <aside className={`hidden md:flex shrink-0 flex-col border-r border-border bg-card/30 backdrop-blur transition-[width] duration-200 ${collapsed ? "w-14" : "w-60"}`}>
         <div className="h-14 flex items-center gap-2 px-3 border-b border-border">
-          <div className="grid h-7 w-7 shrink-0 place-items-center rounded-md bg-gradient-to-br from-primary to-ui text-primary-foreground font-mono text-xs">Y</div>
+          <img src={YuvroLogo} alt="Yuvro" className="h-7 w-auto shrink-0" />
           {!collapsed && (
             <div className="min-w-0">
-              <div className="text-sm font-semibold leading-tight truncate">Yuvro Labs</div>
+              <div className="text-sm font-semibold leading-tight truncate">Yuvro</div>
               <div className="text-[10px] text-muted-foreground truncate">Operations Console</div>
             </div>
           )}

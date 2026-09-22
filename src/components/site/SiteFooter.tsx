@@ -1,4 +1,5 @@
 import { Link } from "@tanstack/react-router";
+import YuvroLogo from "@/assets/YuvroLogo.png";
 
 function Social({ label, href, path }: { label: string; href: string; path: string }) {
   return (
@@ -56,10 +57,8 @@ export function SiteFooter() {
               to="/"
               className="flex items-center gap-2 font-semibold tracking-tight text-white"
             >
-              <span className="grid h-8 w-8 place-items-center rounded-lg bg-white font-mono text-sm text-[#0A0A0A]">
-                Y
-              </span>
-              <span className="text-base">Yuvro Labs</span>
+              <img src={YuvroLogo} alt="Yuvro" className="h-8 w-auto" />
+              <span className="text-base">Yuvro</span>
             </Link>
             <p className="mt-4 max-w-xs text-[13.5px] leading-relaxed text-white/55">
               Evaluate engineers through real work — simulations, assessments and interviews that

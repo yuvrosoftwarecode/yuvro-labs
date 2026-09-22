@@ -3,6 +3,7 @@ import { useState } from "react";
 import { z } from "zod";
 import { useAuth, DEMO_ACCOUNTS, Role } from "@/lib/auth";
 import { ArrowRight, Github, Eye, EyeOff, Bot, Activity, GitBranch, Layers, CheckCircle2 } from "lucide-react";
+import YuvroLogo from "@/assets/YuvroLogo.png";
 
 const searchSchema = z.object({ tab: z.enum(["signin", "signup"]).default("signin").catch("signin") });
 
@@ -51,8 +52,8 @@ function BrandPanel() {
         <div className="absolute inset-0 bg-[linear-gradient(to_right,oklch(0.5_0.2_260/0.05)_1px,transparent_1px),linear-gradient(to_bottom,oklch(0.5_0.2_260/0.05)_1px,transparent_1px)] bg-[size:40px_40px]" />
       </div>
       <Link to="/" className="flex items-center gap-2 font-semibold">
-        <div className="grid h-9 w-9 place-items-center rounded-lg bg-gradient-to-br from-primary to-ui text-primary-foreground font-mono shadow-lg shadow-primary/30">Y</div>
-        <span>Yuvro Labs</span>
+        <img src={YuvroLogo} alt="Yuvro" className="h-9 w-auto" />
+        <span>Yuvro</span>
       </Link>
       <div className="max-w-md">
         <h1 className="text-4xl font-semibold tracking-tight leading-tight">Welcome to Yuvro Labs</h1>

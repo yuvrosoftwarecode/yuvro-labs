@@ -2,6 +2,7 @@ import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { useState } from "react";
 import { ArrowRight, Eye, EyeOff, KeyRound, ShieldCheck } from "lucide-react";
 import { useAuth, DEMO_ACCOUNTS } from "@/lib/auth";
+import YuvroLogo from "@/assets/YuvroLogo.png";
 
 export const Route = createFileRoute("/recruiter-login")({
   head: () => ({
@@ -38,8 +39,8 @@ function RecruiterLoginPage() {
       <header className="border-b border-black/10">
         <div className="mx-auto flex max-w-6xl items-center justify-between px-6 py-4">
           <Link to="/" className="flex items-center gap-2">
-            <div className="grid h-8 w-8 place-items-center rounded-md bg-[#0A0A0A] font-mono text-sm text-white">Y</div>
-            <span className="text-[15px] font-semibold tracking-tight">Yuvro Labs</span>
+            <img src={YuvroLogo} alt="Yuvro" className="h-8 w-auto" />
+            <span className="text-[15px] font-semibold tracking-tight">Yuvro</span>
           </Link>
           <Link to="/" className="font-mono text-[11px] uppercase tracking-[0.12em] text-[#6B6B6B] hover:text-[#0A0A0A]">
             ← Back

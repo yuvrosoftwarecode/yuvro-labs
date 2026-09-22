@@ -2,19 +2,16 @@ import { Link } from "@tanstack/react-router";
 import { useState } from "react";
 import { ProductMegaMenu, ProductMobileNav } from "@/components/site/ProductMegaMenu";
 
+import YuvroLogo from "@/assets/YuvroLogo.png";
+
 export function SiteNav() {
   const [mobileOpen, setMobileOpen] = useState(false);
   return (
     <header className="sticky top-0 z-50 backdrop-blur-xl bg-white/80 border-b border-neutral-200">
       <div className="mx-auto flex h-16 max-w-7xl items-center px-6">
-        <Link to="/" className="flex items-center gap-2 font-semibold tracking-tight">
-          <div
-            className="grid h-8 w-8 place-items-center rounded-lg text-white font-mono text-sm"
-            style={{ background: "#0A0A0A" }}
-          >
-            Y
-          </div>
-          <span className="text-base">Yuvro Labs</span>
+        <Link to="/" className="flex items-center gap-2 font-semibold tracking-tight text-[#0A0A0A]">
+          <img src={YuvroLogo} alt="Yuvro" className="h-8 w-auto" />
+          <span className="text-base">Yuvro</span>
         </Link>
         <nav className="ml-10 hidden md:flex items-center gap-7 text-sm text-[#6B6B6B]">
           <ProductMegaMenu />

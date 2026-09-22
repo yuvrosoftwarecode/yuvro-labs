@@ -29,7 +29,7 @@ function BookDemoPage() {
         (window as any).Bookings.inlineEmbed({
           url: "https://yuvro.zohobookings.in/portal-embed#/democall",
           parent: "#inline-container",
-          height: "600px",
+          height: "700px",
         });
       }
       return;
@@ -44,7 +44,7 @@ function BookDemoPage() {
         (window as any).Bookings.inlineEmbed({
           url: "https://yuvro.zohobookings.in/portal-embed#/democall",
           parent: "#inline-container",
-          height: "600px",
+          height: "700px",
         });
       }
     };
@@ -56,7 +56,7 @@ function BookDemoPage() {
       <SiteNav />
 
       <main className="flex-1 px-6 py-20 lg:py-32">
-        <div className="mx-auto max-w-4xl">
+        <div className="mx-auto max-w-7xl">
           <div className="mb-16 text-center">
             <h1 className="mb-6 text-4xl font-bold tracking-tight text-[#0A0A0A] sm:text-5xl">
               Book a Yuvro Demo
@@ -74,7 +74,7 @@ function BookDemoPage() {
                 <Check className="h-5 w-5 text-[#0A0A0A]" strokeWidth={3} /> Live Product Demo
               </div>
               <div className="flex items-center gap-2">
-                <Check className="h-5 w-5 text-[#0A0A0A]" strokeWidth={3} /> See Yuvro Labs & AI
+                <Check className="h-5 w-5 text-[#0A0A0A]" strokeWidth={3} /> See Yuvro & AI
                 Interview
               </div>
               <div className="flex items-center gap-2">
@@ -84,8 +84,8 @@ function BookDemoPage() {
             </div>
           </div>
 
-          <div className="min-h-[600px] w-full rounded-2xl border border-[#E8E6E1] bg-white p-2 shadow-sm overflow-hidden">
-            <div id="inline-container" ref={containerRef} className="w-full h-full"></div>
+          <div className="w-full">
+            <div id="inline-container" ref={containerRef} className="w-full h-full min-h-[700px]"></div>
           </div>
         </div>
       </main>

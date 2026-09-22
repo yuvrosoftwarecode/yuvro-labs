@@ -24,7 +24,10 @@ function CareersIndex() {
       </div>
 
       <div className="space-y-6">
-        <div className="rounded-xl border border-[#E8E6E1] bg-white p-6 shadow-sm transition hover:shadow-md sm:p-8">
+        <Link
+          to="/careers/software-engineer-intern"
+          className="block rounded-xl border border-[#E8E6E1] bg-white p-6 shadow-sm transition hover:shadow-md sm:p-8"
+        >
           <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-4">
             <div>
               <h2 className="text-xl font-semibold text-[#0A0A0A]">Software Engineer Intern</h2>
@@ -43,14 +46,13 @@ function CareersIndex() {
                 including React, Next.js, Node.js, and more.
               </p>
             </div>
-            <Link
-              to="/careers/apply"
+            <div
               className="inline-flex shrink-0 items-center justify-center rounded-md bg-[#0A0A0A] px-5 py-2.5 text-sm font-medium text-white transition hover:brightness-95"
             >
               Apply Now
-            </Link>
+            </div>
           </div>
-        </div>
+        </Link>
       </div>
     </div>
   );
