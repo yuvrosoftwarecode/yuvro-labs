@@ -189,7 +189,7 @@ function PillPrimary({ children, to, href }: { children: ReactNode; to?: string;
       </a>
     );
   return (
-    <Link to={to ?? "/demo"} className={cls} style={style}>
+    <Link to={to ?? "/book-demo"} className={cls} style={style}>
       {children}
     </Link>
   );
@@ -483,7 +483,7 @@ function Hero() {
               conversation begins — then adapts every question based on what it hears.
             </p>
             <div className="mt-9 flex flex-wrap items-center gap-3">
-              <PillPrimary to="/demo">
+              <PillPrimary to="/book-demo">
                 Book a Demo
                 <ArrowRight size={16} />
               </PillPrimary>
@@ -1348,7 +1348,7 @@ function FinalCta() {
           </p>
           <div className="mt-10 flex flex-wrap items-center justify-center gap-4">
             <Link
-              to="/demo"
+              to="/book-demo"
               className="inline-flex items-center gap-2 rounded-full px-8 py-4 text-[15px] font-semibold transition-transform hover:-translate-y-0.5"
               style={{ background: "#FFFFFF", color: INK }}
             >

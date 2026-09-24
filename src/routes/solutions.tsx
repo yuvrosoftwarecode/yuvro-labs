@@ -887,7 +887,7 @@ function SolutionsPage() {
           </p>
           <div className="mt-9 flex flex-wrap items-center gap-3">
             <Link
-              to="/demo"
+              to="/book-demo"
               className="inline-flex items-center gap-2 rounded-sm px-6 py-3 text-[14px] font-medium transition hover:opacity-90"
               style={{ background: T.ink, color: T.raised, borderRadius: 2 }}
             >
@@ -916,13 +916,20 @@ function SolutionsPage() {
           exact role.
         </p>
         <Link
-          to="/auth"
-          search={{ tab: "signup" }}
-          className="mt-8 inline-flex items-center gap-2 rounded-sm px-7 py-3.5 text-[14px] font-medium transition hover:opacity-90"
-          style={{ background: T.gold, color: "#FFFDF6", borderRadius: 2 }}
+          to="/book-demo"
+          className="mt-8 inline-flex items-center gap-1.5 rounded-md px-4 py-2 text-[14px] font-medium text-white transition hover:brightness-95"
+          style={{ background: "black" }}
         >
-          Book a call
-          <ArrowRight className="h-4 w-4" />
+          Book a Demo
+          <svg width="13" height="10" viewBox="0 0 12 10" fill="none">
+            <path
+              d="M1 5h9M6.6 1.4 10.2 5l-3.6 3.6"
+              stroke="currentColor"
+              strokeWidth="1.4"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+            />
+          </svg>
         </Link>
       </section>
 

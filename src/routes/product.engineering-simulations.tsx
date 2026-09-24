@@ -216,7 +216,7 @@ function HeroSection() {
             ))}
           </div>
           <div className="mt-10 flex items-center justify-center gap-4">
-            <PillSecondary href="/demo">
+            <PillSecondary href="/book-demo">
               Talk to us
               <ArrowRight size={16} />
             </PillSecondary>
@@ -605,7 +605,7 @@ function CtaSection() {
               <ArrowRight size={16} />
             </Link>
             <a
-              href="/demo"
+              href="/book-demo"
               className="inline-flex items-center gap-2 rounded-full px-8 py-4 text-[15px] font-semibold text-white transition-colors"
               style={{ border: "1px solid rgba(255,255,255,0.28)" }}
             >

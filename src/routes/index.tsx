@@ -563,7 +563,7 @@ function PayForHire() {
               follow-ups are on us — you pay only when a candidate we send actually starts.
             </p>
             <Link
-              to="/demo"
+              to="/book-demo"
               className="mt-7 inline-flex items-center gap-2 rounded-md px-5 py-3 text-[14px] font-medium text-white transition hover:brightness-110"
               style={{ background: TEAL }}
             >

@@ -21,23 +21,8 @@ function Social({ label, href, path }: { label: string; href: string; path: stri
 const SOCIALS = [
   {
     label: "LinkedIn",
-    href: "https://www.linkedin.com/",
+    href: "https://www.linkedin.com/company/yuvro/",
     path: "M4.98 3.5A2.5 2.5 0 1 1 0 3.5a2.5 2.5 0 0 1 4.98 0ZM.24 8.02h4.49V24H.24V8.02Zm7.85 0h4.3v2.18h.06c.6-1.14 2.06-2.34 4.24-2.34 4.54 0 5.38 2.99 5.38 6.88V24h-4.49v-7.36c0-1.76-.03-4.03-2.45-4.03-2.46 0-2.83 1.92-2.83 3.9V24H8.09V8.02Z",
-  },
-  {
-    label: "X",
-    href: "https://x.com/",
-    path: "M18.24 2H21l-6.55 7.49L22.5 22h-6.09l-4.77-6.24L6.17 22H3.4l7.02-8.02L1.8 2h6.24l4.31 5.7L18.24 2Zm-1.07 18.3h1.53L7.1 3.6H5.46l11.71 16.7Z",
-  },
-  {
-    label: "GitHub",
-    href: "https://github.com/",
-    path: "M12 .5a11.5 11.5 0 0 0-3.64 22.42c.58.1.79-.25.79-.56v-2c-3.22.7-3.9-1.55-3.9-1.55-.53-1.35-1.3-1.71-1.3-1.71-1.06-.72.08-.71.08-.71 1.17.08 1.79 1.2 1.79 1.2 1.04 1.79 2.73 1.27 3.4.97.1-.76.4-1.27.73-1.56-2.57-.29-5.28-1.29-5.28-5.72 0-1.27.45-2.3 1.2-3.11-.12-.29-.52-1.47.11-3.06 0 0 .97-.31 3.2 1.19a11 11 0 0 1 5.82 0c2.22-1.5 3.19-1.19 3.19-1.19.63 1.59.23 2.77.12 3.06.75.81 1.19 1.84 1.19 3.11 0 4.44-2.71 5.42-5.3 5.71.42.36.79 1.07.79 2.16v3.2c0 .31.21.67.8.55A11.5 11.5 0 0 0 12 .5Z",
-  },
-  {
-    label: "YouTube",
-    href: "https://youtube.com/",
-    path: "M23.5 6.9a3 3 0 0 0-2.11-2.13C19.5 4.25 12 4.25 12 4.25s-7.5 0-9.39.52A3 3 0 0 0 .5 6.9C0 8.8 0 12 0 12s0 3.2.5 5.1a3 3 0 0 0 2.11 2.13c1.89.52 9.39.52 9.39.52s7.5 0 9.39-.52a3 3 0 0 0 2.11-.52 2.11 2.11 0 0 0 0-.01C24 15.2 24 12 24 12s0-3.2-.5-5.1ZM9.6 15.6V8.4l6.24 3.6-6.24 3.6Z",
   },
 ];
 
@@ -111,7 +96,7 @@ export function SiteFooter() {
                 </Link>
               </li>
               <li>
-                <Link to="/demo" className="text-white/65 transition hover:text-white">
+                <Link to="/book-demo" className="text-white/65 transition hover:text-white">
                   Book a demo
                 </Link>
               </li>
@@ -126,7 +111,7 @@ export function SiteFooter() {
           </p>
           <div className="flex items-center gap-3">
             <Link
-              to="/demo"
+              to="/book-demo"
               className="rounded-md bg-white px-4 py-2 text-sm font-medium text-[#0A0A0A] transition hover:opacity-90"
             >
               Book Demo

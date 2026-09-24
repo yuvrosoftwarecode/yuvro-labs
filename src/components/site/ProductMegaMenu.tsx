@@ -158,8 +158,7 @@ export function ProductMegaMenu() {
 
               {/* Right: CTA card */}
               <Link
-                to="/auth"
-                search={{ tab: "signup" }}
+                to="/book-demo"
                 onClick={() => setOpen(false)}
                 className="group relative flex min-h-[320px] flex-col overflow-hidden rounded-xl bg-[#0A0A0A] p-6"
               >
