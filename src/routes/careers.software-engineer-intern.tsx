@@ -139,45 +139,45 @@ function JDPage() {
         <div className="lg:col-span-1">
           <div className="sticky top-24 rounded-2xl border border-[#E8E6E1] bg-white text-[#0A0A0A] p-6 shadow-sm">
             <h3 className="text-xl font-bold tracking-tight mb-6 pb-4 border-b border-[#E8E6E1]">Position Overview</h3>
-            
-            <div className="space-y-6">
-              <div className="flex gap-4">
-                <div className="mt-1 flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-neutral-100 text-[#0A0A0A]">
+
+            <div className="flex flex-col">
+              <div className="flex gap-4 pb-4 border-b border-[#E8E6E1] mb-4">
+                <div className="mt-0.5 flex h-9 w-9 shrink-0 items-center justify-center rounded-full border border-[#E8E6E1] bg-[#FAFAF8] text-[#4A4A4A]">
                   <Briefcase className="h-4 w-4" />
                 </div>
                 <div>
-                  <p className="text-sm font-medium text-[#6B6B6B]">Role</p>
-                  <p className="mt-1 text-[15px] font-semibold text-[#0A0A0A] leading-tight">Software Engineer Intern (Full Stack)</p>
+                  <p className="text-[13px] font-medium text-[#6B6B6B]">Role</p>
+                  <p className="mt-0.5 text-[14.5px] font-semibold text-[#0A0A0A] leading-tight">Software Engineer Intern (Full Stack)</p>
                 </div>
               </div>
 
-              <div className="flex gap-4">
-                <div className="mt-1 flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-neutral-100 text-[#0A0A0A]">
+              <div className="flex gap-4 pb-4 border-b border-[#E8E6E1] mb-4">
+                <div className="mt-0.5 flex h-9 w-9 shrink-0 items-center justify-center rounded-full border border-[#E8E6E1] bg-[#FAFAF8] text-[#4A4A4A]">
                   <MapPin className="h-4 w-4" />
                 </div>
                 <div>
-                  <p className="text-sm font-medium text-[#6B6B6B]">Location / Mode</p>
-                  <p className="mt-1 text-[15px] font-semibold text-[#0A0A0A] leading-tight">Remote (Hyderabad Preference)</p>
+                  <p className="text-[13px] font-medium text-[#6B6B6B]">Location / Mode</p>
+                  <p className="mt-0.5 text-[14.5px] font-semibold text-[#0A0A0A] leading-tight">Remote (Hyderabad Preference)</p>
                 </div>
               </div>
 
-              <div className="flex gap-4">
-                <div className="mt-1 flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-neutral-100 text-[#0A0A0A]">
+              <div className="flex gap-4 pb-4 border-b border-[#E8E6E1] mb-4">
+                <div className="mt-0.5 flex h-9 w-9 shrink-0 items-center justify-center rounded-full border border-[#E8E6E1] bg-[#FAFAF8] text-[#4A4A4A]">
                   <Clock className="h-4 w-4" />
                 </div>
                 <div>
-                  <p className="text-sm font-medium text-[#6B6B6B]">Joining</p>
-                  <p className="mt-1 text-[15px] font-semibold text-[#0A0A0A] leading-tight">Immediate Joiners Preferred</p>
+                  <p className="text-[13px] font-medium text-[#6B6B6B]">Joining</p>
+                  <p className="mt-0.5 text-[14.5px] font-semibold text-[#0A0A0A] leading-tight">Immediate Joiners Preferred</p>
                 </div>
               </div>
 
-              <div className="flex gap-4">
-                <div className="mt-1 flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-neutral-100 text-[#0A0A0A]">
+              <div className="flex gap-4 pb-4 border-b border-[#E8E6E1]">
+                <div className="mt-0.5 flex h-9 w-9 shrink-0 items-center justify-center rounded-full border border-[#E8E6E1] bg-[#FAFAF8] text-[#4A4A4A]">
                   <Calendar className="h-4 w-4" />
                 </div>
                 <div>
-                  <p className="text-sm font-medium text-[#6B6B6B]">Duration</p>
-                  <p className="mt-1 text-[15px] font-semibold text-[#0A0A0A] leading-tight">3 Months</p>
+                  <p className="text-[13px] font-medium text-[#6B6B6B]">Duration</p>
+                  <p className="mt-0.5 text-[14.5px] font-semibold text-[#0A0A0A] leading-tight">3 Months</p>
                 </div>
               </div>
             </div>

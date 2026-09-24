@@ -1,0 +1,58 @@
+[
+  {
+    "label": "Full Name",
+    "id": "entry.1288130616"
+  },
+  {
+    "label": "Email Address",
+    "id": "entry.384970253"
+  },
+  {
+    "label": "Mobile Number",
+    "id": "entry.193872294"
+  },
+  {
+    "label": "WhatsApp Number",
+    "id": "entry.23574781"
+  },
+  {
+    "label": "City",
+    "id": "entry.2060196329"
+  },
+  {
+    "label": "State",
+    "id": "entry.1255244254"
+  },
+  {
+    "label": "LinkedIn Profile",
+    "id": "entry.1871068519"
+  },
+  {
+    "label": "GitHub Profile",
+    "id": "entry.648382259"
+  },
+  {
+    "label": "Resume Upload",
+    "id": "entry.289886417"
+  },
+  {
+    "label": "College / University",
+    "id": "entry.1059618250"
+  },
+  {
+    "label": "Degree",
+    "id": "entry.1527570730"
+  },
+  {
+    "label": "Graduation Year",
+    "id": "entry.25560551"
+  },
+  {
+    "label": "Share your LeetCode / CodeChef / Codeforces / HackerRank profile, if available.",
+    "id": "entry.1970145634"
+  },
+  {
+    "label": "Which AI coding/development tools have you used? ",
+    "id": "entry.1403359588"
+  }
+]

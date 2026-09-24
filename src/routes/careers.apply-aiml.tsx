@@ -2,10 +2,10 @@ import { createFileRoute, Link } from "@tanstack/react-router";
 import { useState, useRef } from "react";
 import { ArrowLeft, User, GraduationCap, Code, MessageSquare, Check } from "lucide-react";
 
-export const Route = createFileRoute("/careers/apply")({
+export const Route = createFileRoute("/careers/apply-aiml")({
   head: () => ({
     meta: [
-      { title: "Apply — Software Engineer Intern" },
+      { title: "Apply — AI/ML Engineer Intern" },
     ],
   }),
   component: ApplyPage,
@@ -25,7 +25,7 @@ function ApplyPage() {
   const formRef = useRef<HTMLFormElement>(null);
 
   const GOOGLE_FORM_ACTION_URL =
-    "https://docs.google.com/forms/d/e/1FAIpQLScalt2ECkb4zOqERxBEG7SnvASsV-OxMYmG7d12vbYYQBfoUw/formResponse";
+    "https://docs.google.com/forms/d/e/1FAIpQLSff50BIHKBEgjYKFBpYhDLpD_7G-RkVzPLfae8k6XLnSjZMYw/formResponse";
 
   const handleNext = () => {
     if (formRef.current) {
@@ -99,7 +99,7 @@ function ApplyPage() {
       <div className="mb-10 text-center">
         <h1 className="text-3xl font-bold tracking-tight text-[#0A0A0A] sm:text-4xl mb-3">Join Our Team</h1>
         <p className="text-[15px] text-[#6B6B6B]">
-          Complete the application below for <span className="font-medium text-[#0A0A0A]">Software Engineer Intern</span>
+          Complete the application below for <span className="font-medium text-[#0A0A0A]">AI/ML Engineer Intern</span>
         </p>
       </div>
 

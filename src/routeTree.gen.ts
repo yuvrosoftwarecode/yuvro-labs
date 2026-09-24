@@ -52,7 +52,11 @@ import { Route as CollaborationSquadsRouteImport } from './routes/collaboration.
 import { Route as CollaborationConnectionsRouteImport } from './routes/collaboration.connections'
 import { Route as CollaborationBrowseRouteImport } from './routes/collaboration.browse'
 import { Route as CareersSoftwareEngineerInternRouteImport } from './routes/careers.software-engineer-intern'
+import { Route as CareersForwardDeployedEngineerInternRouteImport } from './routes/careers.forward-deployed-engineer-intern'
+import { Route as CareersApplyFdeRouteImport } from './routes/careers.apply-fde'
+import { Route as CareersApplyAimlRouteImport } from './routes/careers.apply-aiml'
 import { Route as CareersApplyRouteImport } from './routes/careers.apply'
+import { Route as CareersAiMlEngineerInternRouteImport } from './routes/careers.ai-ml-engineer-intern'
 import { Route as AdminUsersRouteImport } from './routes/admin.users'
 import { Route as AdminTicketsRouteImport } from './routes/admin.tickets'
 import { Route as AdminSprintsRouteImport } from './routes/admin.sprints'
@@ -315,11 +319,33 @@ const CareersSoftwareEngineerInternRoute =
     path: '/software-engineer-intern',
     getParentRoute: () => CareersRoute,
   } as any)
+const CareersForwardDeployedEngineerInternRoute =
+  CareersForwardDeployedEngineerInternRouteImport.update({
+    id: '/forward-deployed-engineer-intern',
+    path: '/forward-deployed-engineer-intern',
+    getParentRoute: () => CareersRoute,
+  } as any)
+const CareersApplyFdeRoute = CareersApplyFdeRouteImport.update({
+  id: '/apply-fde',
+  path: '/apply-fde',
+  getParentRoute: () => CareersRoute,
+} as any)
+const CareersApplyAimlRoute = CareersApplyAimlRouteImport.update({
+  id: '/apply-aiml',
+  path: '/apply-aiml',
+  getParentRoute: () => CareersRoute,
+} as any)
 const CareersApplyRoute = CareersApplyRouteImport.update({
   id: '/apply',
   path: '/apply',
   getParentRoute: () => CareersRoute,
 } as any)
+const CareersAiMlEngineerInternRoute =
+  CareersAiMlEngineerInternRouteImport.update({
+    id: '/ai-ml-engineer-intern',
+    path: '/ai-ml-engineer-intern',
+    getParentRoute: () => CareersRoute,
+  } as any)
 const AdminUsersRoute = AdminUsersRouteImport.update({
   id: '/users',
   path: '/users',
@@ -585,7 +611,11 @@ export interface FileRoutesByFullPath {
   '/admin/sprints': typeof AdminSprintsRoute
   '/admin/tickets': typeof AdminTicketsRoute
   '/admin/users': typeof AdminUsersRouteWithChildren
+  '/careers/ai-ml-engineer-intern': typeof CareersAiMlEngineerInternRoute
   '/careers/apply': typeof CareersApplyRoute
+  '/careers/apply-aiml': typeof CareersApplyAimlRoute
+  '/careers/apply-fde': typeof CareersApplyFdeRoute
+  '/careers/forward-deployed-engineer-intern': typeof CareersForwardDeployedEngineerInternRoute
   '/careers/software-engineer-intern': typeof CareersSoftwareEngineerInternRoute
   '/collaboration/browse': typeof CollaborationBrowseRoute
   '/collaboration/connections': typeof CollaborationConnectionsRoute
@@ -667,7 +697,11 @@ export interface FileRoutesByTo {
   '/admin/sprints': typeof AdminSprintsRoute
   '/admin/tickets': typeof AdminTicketsRoute
   '/admin/users': typeof AdminUsersRouteWithChildren
+  '/careers/ai-ml-engineer-intern': typeof CareersAiMlEngineerInternRoute
   '/careers/apply': typeof CareersApplyRoute
+  '/careers/apply-aiml': typeof CareersApplyAimlRoute
+  '/careers/apply-fde': typeof CareersApplyFdeRoute
+  '/careers/forward-deployed-engineer-intern': typeof CareersForwardDeployedEngineerInternRoute
   '/careers/software-engineer-intern': typeof CareersSoftwareEngineerInternRoute
   '/collaboration/browse': typeof CollaborationBrowseRoute
   '/collaboration/connections': typeof CollaborationConnectionsRoute
@@ -756,7 +790,11 @@ export interface FileRoutesById {
   '/admin/sprints': typeof AdminSprintsRoute
   '/admin/tickets': typeof AdminTicketsRoute
   '/admin/users': typeof AdminUsersRouteWithChildren
+  '/careers/ai-ml-engineer-intern': typeof CareersAiMlEngineerInternRoute
   '/careers/apply': typeof CareersApplyRoute
+  '/careers/apply-aiml': typeof CareersApplyAimlRoute
+  '/careers/apply-fde': typeof CareersApplyFdeRoute
+  '/careers/forward-deployed-engineer-intern': typeof CareersForwardDeployedEngineerInternRoute
   '/careers/software-engineer-intern': typeof CareersSoftwareEngineerInternRoute
   '/collaboration/browse': typeof CollaborationBrowseRoute
   '/collaboration/connections': typeof CollaborationConnectionsRoute
@@ -847,7 +885,11 @@ export interface FileRouteTypes {
     | '/admin/sprints'
     | '/admin/tickets'
     | '/admin/users'
+    | '/careers/ai-ml-engineer-intern'
     | '/careers/apply'
+    | '/careers/apply-aiml'
+    | '/careers/apply-fde'
+    | '/careers/forward-deployed-engineer-intern'
     | '/careers/software-engineer-intern'
     | '/collaboration/browse'
     | '/collaboration/connections'
@@ -929,7 +971,11 @@ export interface FileRouteTypes {
     | '/admin/sprints'
     | '/admin/tickets'
     | '/admin/users'
+    | '/careers/ai-ml-engineer-intern'
     | '/careers/apply'
+    | '/careers/apply-aiml'
+    | '/careers/apply-fde'
+    | '/careers/forward-deployed-engineer-intern'
     | '/careers/software-engineer-intern'
     | '/collaboration/browse'
     | '/collaboration/connections'
@@ -1017,7 +1063,11 @@ export interface FileRouteTypes {
     | '/admin/sprints'
     | '/admin/tickets'
     | '/admin/users'
+    | '/careers/ai-ml-engineer-intern'
     | '/careers/apply'
+    | '/careers/apply-aiml'
+    | '/careers/apply-fde'
+    | '/careers/forward-deployed-engineer-intern'
     | '/careers/software-engineer-intern'
     | '/collaboration/browse'
     | '/collaboration/connections'
@@ -1403,11 +1453,39 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof CareersSoftwareEngineerInternRouteImport
       parentRoute: typeof CareersRoute
     }
+    '/careers/forward-deployed-engineer-intern': {
+      id: '/careers/forward-deployed-engineer-intern'
+      path: '/forward-deployed-engineer-intern'
+      fullPath: '/careers/forward-deployed-engineer-intern'
+      preLoaderRoute: typeof CareersForwardDeployedEngineerInternRouteImport
+      parentRoute: typeof CareersRoute
+    }
+    '/careers/apply-fde': {
+      id: '/careers/apply-fde'
+      path: '/apply-fde'
+      fullPath: '/careers/apply-fde'
+      preLoaderRoute: typeof CareersApplyFdeRouteImport
+      parentRoute: typeof CareersRoute
+    }
+    '/careers/apply-aiml': {
+      id: '/careers/apply-aiml'
+      path: '/apply-aiml'
+      fullPath: '/careers/apply-aiml'
+      preLoaderRoute: typeof CareersApplyAimlRouteImport
+      parentRoute: typeof CareersRoute
+    }
     '/careers/apply': {
       id: '/careers/apply'
       path: '/apply'
       fullPath: '/careers/apply'
       preLoaderRoute: typeof CareersApplyRouteImport
+      parentRoute: typeof CareersRoute
+    }
+    '/careers/ai-ml-engineer-intern': {
+      id: '/careers/ai-ml-engineer-intern'
+      path: '/ai-ml-engineer-intern'
+      fullPath: '/careers/ai-ml-engineer-intern'
+      preLoaderRoute: typeof CareersAiMlEngineerInternRouteImport
       parentRoute: typeof CareersRoute
     }
     '/admin/users': {
@@ -1812,13 +1890,22 @@ const AdminRouteChildren: AdminRouteChildren = {
 const AdminRouteWithChildren = AdminRoute._addFileChildren(AdminRouteChildren)
 
 interface CareersRouteChildren {
+  CareersAiMlEngineerInternRoute: typeof CareersAiMlEngineerInternRoute
   CareersApplyRoute: typeof CareersApplyRoute
+  CareersApplyAimlRoute: typeof CareersApplyAimlRoute
+  CareersApplyFdeRoute: typeof CareersApplyFdeRoute
+  CareersForwardDeployedEngineerInternRoute: typeof CareersForwardDeployedEngineerInternRoute
   CareersSoftwareEngineerInternRoute: typeof CareersSoftwareEngineerInternRoute
   CareersIndexRoute: typeof CareersIndexRoute
 }
 
 const CareersRouteChildren: CareersRouteChildren = {
+  CareersAiMlEngineerInternRoute: CareersAiMlEngineerInternRoute,
   CareersApplyRoute: CareersApplyRoute,
+  CareersApplyAimlRoute: CareersApplyAimlRoute,
+  CareersApplyFdeRoute: CareersApplyFdeRoute,
+  CareersForwardDeployedEngineerInternRoute:
+    CareersForwardDeployedEngineerInternRoute,
   CareersSoftwareEngineerInternRoute: CareersSoftwareEngineerInternRoute,
   CareersIndexRoute: CareersIndexRoute,
 }
