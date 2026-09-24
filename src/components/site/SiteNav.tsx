@@ -29,13 +29,7 @@ export function SiteNav() {
           </Link>
         </nav>
         <div className="ml-auto flex items-center gap-3">
-          <Link
-            to="/auth"
-            search={{ tab: "signin" }}
-            className="text-sm text-[#6B6B6B] hover:text-[#0A0A0A] transition"
-          >
-            Sign In
-          </Link>
+
           <Link
             to="/book-demo"
             className="inline-flex items-center gap-1.5 rounded-md px-4 py-2 text-sm font-medium text-white transition hover:brightness-95"

@@ -113,7 +113,7 @@ function ApplyPage() {
             const Icon = step.icon;
             return (
               <div key={step.id} className="relative z-10 flex flex-col items-center">
-                <div className={`flex h-12 w-12 items-center justify-center rounded-xl border-2 bg-white transition-all duration-300 shadow-sm ${isActive ? "border-[#0A0A0A] text-[#0A0A0A] scale-110" : isCompleted ? "border-[#0A0A0A] bg-[#0A0A0A] text-white" : "border-[#E8E6E1] text-[#A3A3A3]"}`}>
+                <div className={`flex h-12 w-12 items-center justify-center rounded-xl border-2 transition-all duration-300 shadow-sm ${isActive ? "bg-white border-[#0A0A0A] text-[#0A0A0A] scale-110" : isCompleted ? "border-[#0A0A0A] bg-[#0A0A0A] text-white" : "bg-white border-[#E8E6E1] text-[#A3A3A3]"}`}>
                   {isCompleted ? <Check className="h-5 w-5" strokeWidth={2.5} /> : <Icon className="h-5 w-5" strokeWidth={isActive ? 2.5 : 2} />}
                 </div>
                 <div className={`absolute -bottom-8 w-28 text-center text-[13px] font-medium transition-colors duration-300 ${isActive || isCompleted ? "text-[#0A0A0A]" : "text-[#A3A3A3]"}`}>

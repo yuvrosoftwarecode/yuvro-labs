@@ -208,14 +208,7 @@ function Hero() {
             Assessments and Vitarka AI Interviews.
           </p>
           <div className="mt-16 flex flex-wrap items-center gap-3">
-            <Link
-              to="/auth"
-              search={{ tab: "signup" }}
-              className="inline-flex items-center gap-2 rounded-md px-5 py-3 text-[14px] font-medium text-white transition hover:brightness-95"
-              style={{ background: "black" }}
-            >
-              Start Free Trial <ArrowRight className="h-4 w-4" />
-            </Link>
+
             <Link
               to="/book-demo"
               className="inline-flex items-center gap-2 rounded-md border border-[#E8E6E1] bg-white px-5 py-3 text-[14px] font-medium text-[#0A0A0A] hover:border-[#0A0A0A] transition"
