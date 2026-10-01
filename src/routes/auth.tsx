@@ -18,15 +18,24 @@ function AuthPage() {
   const setTab = (t: "signin" | "signup") => nav({ to: "/auth", search: { tab: t } });
   return (
     <div
-      className="min-h-screen flex flex-col items-center justify-center px-4 py-12"
+      className="relative min-h-screen overflow-hidden flex flex-col items-center justify-center px-4 py-12"
       style={{
         background:
-          "radial-gradient(900px 480px at 15% -10%, rgba(43,92,230,0.16), transparent 60%), radial-gradient(700px 420px at 90% 110%, rgba(43,92,230,0.10), transparent 60%), #0B0B0D",
-        color: "#EDEDF0",
+          "linear-gradient(135deg, #0E1E4B 0%, #16307E 28%, #2B5CE6 62%, #4F8BE8 82%, #6FB3D9 100%)",
+        color: "#F5F7FB",
         fontFamily: "ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif",
       }}
     >
-      <div className="w-full max-w-sm">
+      {/* Ambient gradient glows */}
+      <div
+        className="pointer-events-none absolute inset-0"
+        style={{
+          background:
+            "radial-gradient(760px 420px at 12% -8%, rgba(111,179,217,0.35), transparent 60%), radial-gradient(700px 420px at 92% 112%, rgba(37,211,160,0.22), transparent 60%), radial-gradient(520px 320px at 78% 8%, rgba(255,255,255,0.10), transparent 65%)",
+        }}
+      />
+
+      <div className="relative w-full max-w-sm">
         {/* Logo + wordmark */}
         <div className="flex flex-col items-center">
           <Link to="/" className="flex items-center gap-2.5">
@@ -36,8 +45,11 @@ function AuthPage() {
         </div>
 
         {/* Card */}
-        <div className="mt-8 rounded-2xl border p-7" style={{ background: "#141416", borderColor: "rgba(255,255,255,0.08)" }}>
-          <h2 className="text-[20px] font-semibold tracking-tight text-white">
+        <div
+          className="mt-8 rounded-2xl border border-black/5 p-7 shadow-[0_24px_70px_-24px_rgba(6,20,60,0.55)]"
+          style={{ background: "#FFFFFF", borderColor: "rgba(255,255,255,0.9)" }}
+        >
+          <h2 className="text-[20px] font-semibold tracking-tight" style={{ color: "#0F172A" }}>
             {tab === "signin" ? "Sign in to Yuvro" : "Create your account"}
           </h2>
           {tab === "signin" ? <SignInForm /> : <SignUpForm />}
@@ -45,10 +57,10 @@ function AuthPage() {
           {/* Divider + social */}
           <div className="relative my-6">
             <div className="absolute inset-0 flex items-center">
-              <div className="w-full border-t" style={{ borderColor: "rgba(255,255,255,0.08)" }} />
+              <div className="w-full border-t" style={{ borderColor: "#E5E7EB" }} />
             </div>
             <div className="relative flex justify-center">
-              <span className="px-3 text-[11px]" style={{ background: "#141416", color: "#71717A" }}>
+              <span className="px-3 text-[11px]" style={{ background: "#FFFFFF", color: "#6B7280" }}>
                 or continue with
               </span>
             </div>
@@ -56,15 +68,15 @@ function AuthPage() {
           <div className="grid grid-cols-2 gap-3">
             <button
               type="button"
-              className="inline-flex items-center justify-center gap-2 rounded-lg border px-3 py-2.5 text-sm font-medium text-white transition hover:bg-white/5"
-              style={{ borderColor: "rgba(255,255,255,0.14)" }}
+              className="inline-flex items-center justify-center gap-2 rounded-lg border bg-white px-3 py-2.5 text-sm font-medium transition hover:bg-gray-50"
+              style={{ borderColor: "#E1E4EA", color: "#1F2937" }}
             >
               <GoogleIcon /> Google
             </button>
             <button
               type="button"
-              className="inline-flex items-center justify-center gap-2 rounded-lg border px-3 py-2.5 text-sm font-medium text-white transition hover:bg-white/5"
-              style={{ borderColor: "rgba(255,255,255,0.14)" }}
+              className="inline-flex items-center justify-center gap-2 rounded-lg border bg-white px-3 py-2.5 text-sm font-medium transition hover:bg-gray-50"
+              style={{ borderColor: "#E1E4EA", color: "#1F2937" }}
             >
               <Github className="h-4 w-4" /> GitHub
             </button>
@@ -73,22 +85,22 @@ function AuthPage() {
 
         {/* Below the card */}
         {tab === "signin" ? (
-          <p className="mt-6 text-center text-sm" style={{ color: "#A1A1AA" }}>
+          <p className="mt-6 text-center text-sm text-white/85">
             Don't have an account?{" "}
-            <button onClick={() => setTab("signup")} className="font-medium text-white hover:underline">
+            <button onClick={() => setTab("signup")} className="font-semibold text-white hover:underline">
               Create an account
             </button>
           </p>
         ) : (
-          <p className="mt-6 text-center text-sm" style={{ color: "#A1A1AA" }}>
+          <p className="mt-6 text-center text-sm text-white/85">
             Already have an account?{" "}
-            <button onClick={() => setTab("signin")} className="font-medium text-white hover:underline">
+            <button onClick={() => setTab("signin")} className="font-semibold text-white hover:underline">
               Sign in
             </button>
           </p>
         )}
         <p className="mt-4 text-center text-xs">
-          <Link to="/" className="hover:underline" style={{ color: "#71717A" }}>
+          <Link to="/" className="hover:underline text-white/60">
             ← Back to home
           </Link>
         </p>
@@ -127,8 +139,8 @@ function SignInForm() {
           value={email}
           onChange={(e) => setEmail(e.target.value)}
           placeholder="you@yuvrolabs.com"
-          className="w-full rounded-lg border px-3.5 py-2.5 text-sm outline-none transition"
-          style={{ background: "#1A1A1E", borderColor: "rgba(255,255,255,0.10)", color: "#EDEDF0" }}
+          className="w-full rounded-lg border bg-white px-3.5 py-2.5 text-sm outline-none transition focus:border-[#2B5CE6] focus:ring-2 focus:ring-[#2B5CE6]/15"
+          style={{ borderColor: "#E1E4EA", color: "#0F172A" }}
         />
       </Field>
       <Field label="Password">
@@ -139,22 +151,22 @@ function SignInForm() {
             value={password}
             onChange={(e) => setPassword(e.target.value)}
             placeholder="••••••••"
-            className="w-full rounded-lg border px-3.5 py-2.5 pr-10 text-sm outline-none transition"
-            style={{ background: "#1A1A1E", borderColor: "rgba(255,255,255,0.10)", color: "#EDEDF0" }}
+            className="w-full rounded-lg border bg-white px-3.5 py-2.5 pr-10 text-sm outline-none transition focus:border-[#2B5CE6] focus:ring-2 focus:ring-[#2B5CE6]/15"
+            style={{ borderColor: "#E1E4EA", color: "#0F172A" }}
           />
           <button
             type="button"
             onClick={() => setShow(!show)}
             aria-label="Toggle password visibility"
             className="absolute right-2.5 top-1/2 -translate-y-1/2"
-            style={{ color: "#71717A" }}
+            style={{ color: "#6B7280" }}
           >
             {show ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
           </button>
         </div>
       </Field>
       <div className="flex items-center justify-between text-xs">
-        <label className="flex cursor-pointer items-center gap-2" style={{ color: "#A1A1AA" }}>
+        <label className="flex cursor-pointer items-center gap-2" style={{ color: "#4B5563" }}>
           <input
             type="checkbox"
             checked={remember}
@@ -163,12 +175,12 @@ function SignInForm() {
           />{" "}
           Remember me
         </label>
-        <a href="#" className="font-medium hover:underline" style={{ color: "#7CA2FF" }}>
+        <a href="#" className="font-medium hover:underline" style={{ color: "#2B5CE6" }}>
           Forgot password?
         </a>
       </div>
       {err && (
-        <div className="rounded-lg px-3 py-2 text-xs" style={{ background: "rgba(239,68,68,0.12)", color: "#F87171" }}>
+        <div className="rounded-lg px-3 py-2 text-xs" style={{ background: "#FEF2F2", color: "#DC2626" }}>
           {err}
         </div>
       )}
@@ -205,9 +217,9 @@ function SignUpForm() {
   };
 
   const chip = (active: boolean) => ({
-    background: active ? "rgba(43,92,230,0.18)" : "#1A1A1E",
-    borderColor: active ? "rgba(43,92,230,0.6)" : "rgba(255,255,255,0.10)",
-    color: active ? "#8FAFFF" : "#A1A1AA",
+    background: active ? "#EEF3FE" : "#FFFFFF",
+    borderColor: active ? "#2B5CE6" : "#E1E4EA",
+    color: active ? "#2B5CE6" : "#4B5563",
   });
 
   return (
@@ -217,8 +229,8 @@ function SignUpForm() {
           required
           value={name}
           onChange={(e) => setName(e.target.value)}
-          className="w-full rounded-lg border px-3.5 py-2.5 text-sm outline-none transition"
-          style={{ background: "#1A1A1E", borderColor: "rgba(255,255,255,0.10)", color: "#EDEDF0" }}
+          className="w-full rounded-lg border bg-white px-3.5 py-2.5 text-sm outline-none transition focus:border-[#2B5CE6] focus:ring-2 focus:ring-[#2B5CE6]/15"
+          style={{ borderColor: "#E1E4EA", color: "#0F172A" }}
           placeholder="Ada Lovelace"
         />
       </Field>
@@ -228,8 +240,8 @@ function SignUpForm() {
           required
           value={email}
           onChange={(e) => setEmail(e.target.value)}
-          className="w-full rounded-lg border px-3.5 py-2.5 text-sm outline-none transition"
-          style={{ background: "#1A1A1E", borderColor: "rgba(255,255,255,0.10)", color: "#EDEDF0" }}
+          className="w-full rounded-lg border bg-white px-3.5 py-2.5 text-sm outline-none transition focus:border-[#2B5CE6] focus:ring-2 focus:ring-[#2B5CE6]/15"
+          style={{ borderColor: "#E1E4EA", color: "#0F172A" }}
           placeholder="you@example.com"
         />
       </Field>
@@ -240,8 +252,8 @@ function SignUpForm() {
             required
             value={pwd}
             onChange={(e) => setPwd(e.target.value)}
-            className="w-full rounded-lg border px-3.5 py-2.5 text-sm outline-none transition"
-            style={{ background: "#1A1A1E", borderColor: "rgba(255,255,255,0.10)", color: "#EDEDF0" }}
+            className="w-full rounded-lg border bg-white px-3.5 py-2.5 text-sm outline-none transition focus:border-[#2B5CE6] focus:ring-2 focus:ring-[#2B5CE6]/15"
+            style={{ borderColor: "#E1E4EA", color: "#0F172A" }}
             placeholder="••••••••"
           />
         </Field>
@@ -251,8 +263,8 @@ function SignUpForm() {
             required
             value={confirm}
             onChange={(e) => setConfirm(e.target.value)}
-            className="w-full rounded-lg border px-3.5 py-2.5 text-sm outline-none transition"
-            style={{ background: "#1A1A1E", borderColor: "rgba(255,255,255,0.10)", color: "#EDEDF0" }}
+            className="w-full rounded-lg border bg-white px-3.5 py-2.5 text-sm outline-none transition focus:border-[#2B5CE6] focus:ring-2 focus:ring-[#2B5CE6]/15"
+            style={{ borderColor: "#E1E4EA", color: "#0F172A" }}
             placeholder="••••••••"
           />
         </Field>
@@ -272,22 +284,22 @@ function SignUpForm() {
           ))}
         </div>
       </Field>
-      <label className="flex cursor-pointer items-start gap-2 text-xs" style={{ color: "#A1A1AA" }}>
+      <label className="flex cursor-pointer items-start gap-2 text-xs" style={{ color: "#4B5563" }}>
         <input type="checkbox" checked={agree} onChange={(e) => setAgree(e.target.checked)} className="mt-0.5 h-3.5 w-3.5 rounded" />
         <span>
           I agree to the{" "}
-          <a href="#" className="hover:underline" style={{ color: "#7CA2FF" }}>
+          <a href="#" className="hover:underline" style={{ color: "#2B5CE6" }}>
             terms
           </a>{" "}
           and{" "}
-          <a href="#" className="hover:underline" style={{ color: "#7CA2FF" }}>
+          <a href="#" className="hover:underline" style={{ color: "#2B5CE6" }}>
             privacy policy
           </a>
           .
         </span>
       </label>
       {err && (
-        <div className="rounded-lg px-3 py-2 text-xs" style={{ background: "rgba(239,68,68,0.12)", color: "#F87171" }}>
+        <div className="rounded-lg px-3 py-2 text-xs" style={{ background: "#FEF2F2", color: "#DC2626" }}>
           {err}
         </div>
       )}
@@ -305,7 +317,7 @@ function SignUpForm() {
 function Field({ label, children }: { label: string; children: React.ReactNode }) {
   return (
     <label className="block">
-      <span className="text-xs font-medium" style={{ color: "#A1A1AA" }}>
+      <span className="text-xs font-medium" style={{ color: "#374151" }}>
         {label}
       </span>
       <div className="mt-1.5">{children}</div>
