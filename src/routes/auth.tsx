@@ -21,19 +21,20 @@ function AuthPage() {
       className="relative min-h-screen overflow-hidden flex flex-col items-center justify-center px-4 py-12"
       style={{
         background:
-          "linear-gradient(135deg, #0E1E4B 0%, #16307E 28%, #2B5CE6 62%, #4F8BE8 82%, #6FB3D9 100%)",
-        color: "#F5F7FB",
+          "linear-gradient(150deg, #0A0A0C 0%, #12100E 35%, #1A130D 60%, #0E0C0A 85%, #0A0A0B 100%)",
+        color: "#EDEDF0",
         fontFamily: "ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif",
       }}
     >
-      {/* Ambient gradient glows */}
+      {/* Ambient warm glows (logo-inspired orange) */}
       <div
         className="pointer-events-none absolute inset-0"
         style={{
           background:
-            "radial-gradient(760px 420px at 12% -8%, rgba(111,179,217,0.35), transparent 60%), radial-gradient(700px 420px at 92% 112%, rgba(37,211,160,0.22), transparent 60%), radial-gradient(520px 320px at 78% 8%, rgba(255,255,255,0.10), transparent 65%)",
+            "radial-gradient(720px 420px at 14% -10%, rgba(224,138,43,0.16), transparent 60%), radial-gradient(700px 460px at 92% 112%, rgba(224,138,43,0.10), transparent 62%), radial-gradient(480px 300px at 80% 6%, rgba(255,214,163,0.06), transparent 65%)",
         }}
       />
+
 
       <div className="relative w-full max-w-sm">
         {/* Logo + wordmark */}
