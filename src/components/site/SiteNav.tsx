@@ -21,21 +21,17 @@ export function SiteNav() {
           <Link to="/pricing" className="hover:text-[#0A0A0A] transition">
             Pricing
           </Link>
-          <Link to="/yuvrolabs" className="hover:text-[#0A0A0A] transition">
-            Yuvro labs
-          </Link>
+          <a href="https://dev.yuvrolabs.com/student/dashboard" className="hover:text-[#0A0A0A] transition">
+            Yuvro Labs
+          </a>
+          <a href="https://marketplace.yuvro.ai" className="hover:text-[#0A0A0A] transition">
+            Market Place
+          </a>
           <Link to="/careers" className="hover:text-[#0A0A0A] transition">
             Open Roles
           </Link>
         </nav>
         <div className="ml-auto flex items-center gap-3">
-          <Link
-            to="/auth"
-            search={{ tab: "signin" }}
-            className="text-sm text-[#6B6B6B] hover:text-[#0A0A0A] transition"
-          >
-            Sign In
-          </Link>
           <Link
             to="/book-demo"
             className="inline-flex items-center gap-1.5 rounded-md px-4 py-2 text-sm font-medium text-white transition hover:brightness-95"
