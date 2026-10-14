@@ -249,7 +249,7 @@ function HldCanvas({ nodes, setNodes, onNodesChange, edges, setEdges, onEdgesCha
       </aside>
       <div ref={wrap} className="min-h-0" onDragOver={e => { e.preventDefault(); e.dataTransfer.dropEffect = "move"; }} onDrop={onDrop}>
         <ReactFlow nodes={nodes} edges={edges} onNodesChange={onNodesChange} onEdgesChange={onEdgesChange} onConnect={onConnect}
-          nodeTypes={nodeTypes} fitView deleteKeyCode={["Backspace", "Delete"]}>
+          nodeTypes={nodeTypes} fitView colorMode={typeof document !== "undefined" && document.documentElement.classList.contains("dark") ? "dark" : "light"} deleteKeyCode={["Backspace", "Delete"]}>
           <Background gap={16} />
           <Controls />
           <MiniMap pannable zoomable />
