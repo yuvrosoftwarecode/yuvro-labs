@@ -4,6 +4,9 @@ import { Button } from "@/components/ui/button";
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
 import { ArrowLeft, Boxes, GitBranch, Database, FileText, Download, Maximize2, Minimize2, Sparkles, X, Users } from "lucide-react";
+import { ApiDesigner, ApiDocs, type ApiEndpoint } from "@/components/sysdesign/ApiDesigner";
+import { ErdBoard } from "@/components/sysdesign/ErdBoard";
+import { NotesPanel, MarkdownPreview } from "@/components/sysdesign/MarkdownNotes";
 import { DiagramBoard, HldEditor, type SDNode, type SDEdge } from "@/components/sysdesign/DesignCanvas";
 
 export const Route = createFileRoute("/system-design-studio")({
@@ -11,11 +14,14 @@ export const Route = createFileRoute("/system-design-studio")({
   component: Studio,
 });
 
-type Tab = "hld" | "sequence" | "schema" | "lld";
+type Tab = "hld" | "sequence" | "schema" | "api";
+type Notes = Partial<Record<Tab, string>>;
 const LS = "yuvro-sds-v2";
 
-type Design = { nodes: SDNode[]; edges: SDEdge[]; seq: string; schema: string; lld: string; notes: string };
-const EMPTY: Design = { nodes: [], edges: [], seq: "", schema: "", lld: "", notes: "" };
+type Design = { nodes: SDNode[]; edges: SDEdge[]; seq: string; schema: string; apis: ApiEndpoint[]; notes: Notes };
+const EMPTY: Design = { nodes: [], edges: [], seq: "", schema: "", apis: [], notes: {} };
+const api = (id: string, method: string, path: string, summary: string, request: unknown, status: string, response: unknown): ApiEndpoint =>
+  ({ id, method, path, summary, request: request == null ? "" : JSON.stringify(request, null, 2), status, response: response == null ? "" : JSON.stringify(response, null, 2) });
 
 const n = (id: string, label: string, icon: string, x: number, y: number, tag?: string): SDNode => ({ id, kind: label.toLowerCase(), label, icon, x, y, tag });
 const e = (from: string, to: string, label?: string): SDEdge => ({ id: `${from}-${to}`, from, to, label });
@@ -60,29 +66,6 @@ Table clicks {
   country varchar
   clicked_at timestamp
 }`;
-
-const DEFAULT_LLD = `classDiagram
-  class UrlController {
-    +shorten(req) Response
-    +redirect(code) Response
-  }
-  class UrlService {
-    -CodeGenerator gen
-    -UrlRepository repo
-    -Cache cache
-    +create(longUrl, userId) Url
-    +resolve(code) String
-  }
-  class CodeGenerator {
-    +next() String
-  }
-  class UrlRepository {
-    +save(Url)
-    +findByCode(code) Url
-  }
-  UrlController --> UrlService
-  UrlService --> CodeGenerator
-  UrlService --> UrlRepository`;
 
 function loadState(key: string) {
   if (typeof window === "undefined") return null;
@@ -233,9 +216,25 @@ Table bookings {
   status varchar
   expires_at timestamp
 }`;
-  const lld = isUrl ? DEFAULT_LLD : DEFAULT_LLD.replaceAll("Url", slug === "systemdesign" ? "Order" : "Booking").replaceAll("shorten", "create").replaceAll("redirect", "lookup").replaceAll("longUrl", "request").replaceAll("CodeGenerator", "IdGenerator");
-  const notes = isUrl ? "## Requirements\n- Shorten URLs, redirect < 50ms p99\n- 100M URLs/month, read:write 100:1\n\n## Estimates\n- ~40 writes/s, ~4k reads/s\n" : `## ${subject} requirements\n- ${slug === "systemdesign" ? "Prevent overselling and duplicate payments" : "Prevent double booking and expire unpaid seat holds"}\n- Define availability, latency and capacity targets\n\n## APIs and trade-offs\n`;
-  return { nodes, edges, seq, schema, lld, notes };
+  const ent = design?.entity ?? "urls";
+  const apis = isUrl ? [
+    api("a1", "POST", "/api/v1/urls", "Create a short URL", { long_url: "https://example.com/very/long", custom_alias: null, expires_at: null }, "201 Created", { short_code: "abc123", short_url: "https://yu.vr/abc123" }),
+    api("a2", "GET", "/{short_code}", "Redirect to the long URL", null, "301 Moved Permanently", { Location: "https://example.com/very/long" }),
+    api("a3", "GET", "/api/v1/urls/{short_code}/stats", "Click analytics", null, "200 OK", { clicks: 1520, top_countries: ["IN", "US"] }),
+    api("a4", "DELETE", "/api/v1/urls/{short_code}", "Delete a short URL", null, "204 No Content", null),
+  ] : [
+    api("a1", "GET", slug === "systemdesign" ? "/api/v1/products?page=1" : "/api/v1/events/{id}/seats", slug === "systemdesign" ? "List catalog" : "Seat availability", null, "200 OK", slug === "systemdesign" ? { items: [{ id: 7, name: "Headphones", price: 59.0, stock: 12 }], next_page: 2 } : { seats: [{ id: 101, number: "A1", status: "available" }] }),
+    api("a2", "POST", `/api/v1/${ent}`, design?.action ?? "Create", slug === "systemdesign" ? { items: [{ product_id: 7, quantity: 1 }], idempotency_key: "c0ffee-42" } : { seat_ids: [101, 102], idempotency_key: "c0ffee-42" }, "201 Created", { id: 9001, status: slug === "systemdesign" ? "PENDING_PAYMENT" : "HELD", expires_at: "2026-10-14T16:10:00Z" }),
+    api("a3", "GET", `/api/v1/${ent}/{id}`, "Fetch status", null, "200 OK", { id: 9001, status: "CONFIRMED" }),
+    api("a4", "PATCH", `/api/v1/${ent}/{id}`, "Cancel", { status: "CANCELLED" }, "200 OK", { id: 9001, status: "CANCELLED" }),
+  ];
+  const notes: Notes = {
+    hld: isUrl ? "## Requirements\n- Shorten URLs, redirect < 50ms p99\n- 100M URLs/month, read:write 100:1\n\n## Estimates\n- ~40 writes/s, ~4k reads/s\n\n## Trade-offs\n- **Cache-aside Redis** in front of Postgres: fast reads, risk of stale entries on delete\n" : `## ${subject} requirements\n- ${slug === "systemdesign" ? "Prevent overselling and duplicate payments" : "Prevent double booking and expire unpaid seat holds"}\n- Define availability, latency and capacity targets\n\n## Trade-offs\n- Stateless services behind a load balancer scale horizontally\n`,
+    sequence: "## Flow notes\n- Cache miss path adds one DB round-trip\n- Use **idempotency keys** on writes so retries are safe\n",
+    schema: "## Schema decisions\n- Unique index on the natural key\n- Shard by `id` hash once a single node is not enough\n",
+    api: "## API decisions\n- Version in the path (`/api/v1`)\n- `POST` returns **201** with the created resource\n- Cursor pagination for list endpoints\n",
+  };
+  return { nodes, edges, seq, schema, apis, notes };
 }
 
 const USERS_TASKS_SAMPLE: Design = {
@@ -283,45 +282,26 @@ Table user_tasks {
   due_at timestamp
   created_at timestamp
 }`,
-  lld: `classDiagram
-  class User {
-    +Long id
-    +String email
-    +String name
-  }
-  class UserTask {
-    +Long id
-    +Long userId
-    +String title
-    +TaskStatus status
-    +markDone()
-  }
-  class TaskService {
-    +createTask(userId, title, dueAt) UserTask
-    +listTasks(userId, status) List~UserTask~
-    +updateStatus(taskId, status)
-  }
-  class TaskRepository {
-    <<interface>>
-    +save(task) UserTask
-    +findByUser(userId) List~UserTask~
-  }
-  User "1" --> "*" UserTask : owns
-  TaskService --> TaskRepository
-  TaskService --> UserTask`,
-  notes: `## users & user_tasks — requirements
+  apis: [
+    api("s1", "POST", "/api/v1/users", "Sign up", { email: "asha@example.com", name: "Asha" }, "201 Created", { id: 42, email: "asha@example.com" }),
+    api("s2", "POST", "/api/v1/users/{id}/tasks", "Create a task", { title: "Write HLD", priority: 2, due_at: "2026-10-20T10:00:00Z" }, "201 Created", { id: 1001, status: "todo" }),
+    api("s3", "GET", "/api/v1/users/{id}/tasks?status=todo&cursor=", "List tasks", null, "200 OK", { items: [{ id: 1001, title: "Write HLD", status: "todo" }], next_cursor: null }),
+    api("s4", "PATCH", "/api/v1/tasks/{task_id}", "Update status", { status: "done" }, "200 OK", { id: 1001, status: "done" }),
+    api("s5", "DELETE", "/api/v1/tasks/{task_id}", "Delete a task", null, "204 No Content", null),
+  ],
+  notes: {
+    hld: `## users & user_tasks — requirements
 - Users sign up, create tasks, filter by status, get reminders before due_at
 - 1M users, ~20 tasks/user, read:write 10:1
 
-## APIs
-- POST /users/{id}/tasks
-- GET  /users/{id}/tasks?status=todo
-- PATCH /tasks/{id} { status }
-
 ## Trade-offs
-- Index (user_id, status) on user_tasks
 - Cache task lists per user in Redis, invalidate on write
+- SQS decouples notifications from the write path
 `,
+    sequence: "## Notes\n- JWT verified at the gateway, services trust `user_id`\n- Event published **after** commit (outbox pattern)\n",
+    schema: "## Indexes\n- `(user_id, status)` on user_tasks\n- `email` unique on users\n",
+    api: "## Notes\n- Tasks nested under users for creation and listing\n- Cursor pagination on list\n",
+  },
 };
 
 function ExamplesDialog({ tab, scenario, subject, onClose, onUseTab, onLoadAll }: {
@@ -330,9 +310,8 @@ function ExamplesDialog({ tab, scenario, subject, onClose, onUseTab, onLoadAll }
 }) {
   const [src, setSrc] = useState<"scenario" | "users">("scenario");
   const d = src === "scenario" ? scenario : USERS_TASKS_SAMPLE;
-  const code = tab === "sequence" ? d.seq : tab === "schema" ? d.schema : tab === "lld" ? d.lld : JSON.stringify({ components: d.nodes.map(x => x.label), connections: d.edges.map(x => `${d.nodes.find(y => y.id === x.from)?.label} → ${d.nodes.find(y => y.id === x.to)?.label}${x.label ? ` (${x.label})` : ""}`) }, null, 2);
-  const er = dbmlToMermaid(d.schema);
-  const label = { hld: "HLD · Architecture", sequence: "Sequence diagram", schema: "DB schema", lld: "LLD · Classes" }[tab];
+  const code = tab === "sequence" ? d.seq : tab === "schema" ? d.schema : tab === "api" ? d.apis.map(a => `${a.method} ${a.path}${a.summary ? `  # ${a.summary}` : ""}${a.request ? `\nRequest:\n${a.request}` : ""}${a.response ? `\nResponse ${a.status ?? ""}:\n${a.response}` : ""}`).join("\n\n") : JSON.stringify({ components: d.nodes.map(x => x.label), connections: d.edges.map(x => `${d.nodes.find(y => y.id === x.from)?.label} → ${d.nodes.find(y => y.id === x.to)?.label}${x.label ? ` (${x.label})` : ""}`) }, null, 2);
+  const label = { hld: "HLD · Architecture", sequence: "Sequence diagram", schema: "DB schema", api: "REST API" }[tab];
   return (
     <div className="fixed inset-0 z-[60] grid place-items-center bg-background/70 p-4 backdrop-blur-sm" onClick={onClose}>
       <div className="flex h-[85vh] w-full max-w-6xl flex-col overflow-hidden rounded-xl border bg-card shadow-2xl" onClick={ev => ev.stopPropagation()}>
@@ -352,9 +331,11 @@ function ExamplesDialog({ tab, scenario, subject, onClose, onUseTab, onLoadAll }
           </div>
           <div className="min-h-0 bg-background">
             {tab === "hld" ? <DiagramBoard key={src} nodes={d.nodes} edges={d.edges} readOnly />
-              : tab === "schema" ? <MermaidView code={er.code} />
-              : <MermaidView code={tab === "sequence" ? d.seq : d.lld} />}
+              : tab === "schema" ? <ErdBoard key={src} src={d.schema} />
+              : tab === "api" ? <ApiDocs apis={d.apis} />
+              : <MermaidView code={d.seq} />}
           </div>
+          {d.notes[tab] && <div className="max-h-40 overflow-auto border-t bg-card p-3 md:col-span-2"><div className="mb-1 text-[10px] uppercase tracking-wider text-muted-foreground">Solution notes</div><MarkdownPreview src={d.notes[tab]!} /></div>}
         </div>
         <div className="flex flex-wrap items-center justify-end gap-2 border-t px-4 py-3">
           <Button variant="outline" size="sm" onClick={() => onUseTab(d)}>Use for this tab only</Button>
@@ -387,31 +368,32 @@ export function SystemDesignStudio({ slug, ticketId, taskOverride }: {
   const [edges, setEdges] = useState<SDEdge[]>(saved?.edges ?? EMPTY.edges);
   const [seq, setSeq] = useState<string>(saved?.seq ?? "");
   const [schema, setSchema] = useState<string>(saved?.schema ?? "");
-  const [lld, setLld] = useState<string>(saved?.lld ?? "");
-  const [notes, setNotes] = useState<string>(saved?.notes ?? "");
+  const [apis, setApis] = useState<ApiEndpoint[]>(Array.isArray(saved?.apis) ? saved!.apis! : []);
+  const [notes, setNotes] = useState<Notes>(() => { const n = saved?.notes as unknown; return typeof n === "string" ? { hld: n } : (n as Notes) ?? {}; });
+  const setNote = (v: string) => setNotes(ns => ({ ...ns, [tab]: v }));
   const [full, setFull] = useState(false);
   const [showEx, setShowEx] = useState(false);
   const [savedAt, setSavedAt] = useState<string>("");
 
   useEffect(() => {
     const t = setTimeout(() => {
-      localStorage.setItem(storageKey, JSON.stringify({ nodes, edges, seq, schema, lld, notes }));
+      localStorage.setItem(storageKey, JSON.stringify({ nodes, edges, seq, schema, apis, notes }));
       setSavedAt(new Date().toLocaleTimeString());
     }, 500);
     return () => clearTimeout(t);
-  }, [nodes, edges, seq, schema, lld, notes, storageKey]);
+  }, [nodes, edges, seq, schema, apis, notes, storageKey]);
 
-  const apply = (d: Design) => { setNodes(d.nodes); setEdges(d.edges); setSeq(d.seq); setSchema(d.schema); setLld(d.lld); setNotes(d.notes); };
+  const apply = (d: Design) => { setNodes(d.nodes); setEdges(d.edges); setSeq(d.seq); setSchema(d.schema); setApis(d.apis); setNotes(d.notes); };
   const useTab = (d: Design) => {
     if (tab === "hld") { setNodes(d.nodes); setEdges(d.edges); }
     if (tab === "sequence") setSeq(d.seq);
     if (tab === "schema") setSchema(d.schema);
-    if (tab === "lld") { setLld(d.lld); setNotes(d.notes); }
+    if (tab === "api") setApis(d.apis);
+    setNotes(ns => ({ ...ns, [tab]: d.notes[tab] ?? "" }));
     setShowEx(false);
   };
-  const er = dbmlToMermaid(schema);
   const exportJson = () => {
-    const blob = new Blob([JSON.stringify({ nodes, edges, seq, schema, lld, notes }, null, 2)], { type: "application/json" });
+    const blob = new Blob([JSON.stringify({ nodes, edges, seq, schema, apis, notes }, null, 2)], { type: "application/json" });
     const a = document.createElement("a"); a.href = URL.createObjectURL(blob); a.download = `${slug}-${ticketId ?? "design"}.json`; a.click();
   };
   const reset = () => { if (confirm("Clear everything and start from an empty workspace?")) apply(EMPTY); };
@@ -421,7 +403,7 @@ export function SystemDesignStudio({ slug, ticketId, taskOverride }: {
     { id: "hld", label: "HLD · Architecture", icon: <Boxes className="h-3.5 w-3.5" />, sub: "Drag & drop" },
     { id: "sequence", label: "Sequence", icon: <GitBranch className="h-3.5 w-3.5" />, sub: "Mermaid" },
     { id: "schema", label: "DB Schema", icon: <Database className="h-3.5 w-3.5" />, sub: "DBML" },
-    { id: "lld", label: "LLD · Classes", icon: <FileText className="h-3.5 w-3.5" />, sub: "Mermaid + notes" },
+    { id: "api", label: "REST API", icon: <FileText className="h-3.5 w-3.5" />, sub: "Endpoints" },
   ];
 
   return (
@@ -448,22 +430,14 @@ export function SystemDesignStudio({ slug, ticketId, taskOverride }: {
           </Button>
         ))}
       </nav>
-      <div className="min-h-0 flex-1">
-        {tab === "hld" && <HldEditor nodes={nodes} edges={edges} setNodes={setNodes} setEdges={setEdges} />}
-        {tab === "sequence" && <SplitEditor value={seq} onChange={setSeq} hint="Mermaid sequenceDiagram — live preview" preview={seq.trim() ? <MermaidView code={seq} /> : empty("a sequenceDiagram")} />}
-        {tab === "schema" && (
-          <SplitEditor value={schema} onChange={setSchema} hint="dbdiagram.io-style DBML: Table name { col type [pk, unique, ref: > other.id] }"
-            preview={!schema.trim() ? empty("tables in DBML") : er.error ? <div className="p-6 text-xs text-muted-foreground">{er.error}</div> : <MermaidView code={er.code} />} />
-        )}
-        {tab === "lld" && (
-          <div className="grid h-full grid-rows-[1fr_180px]">
-            <SplitEditor value={lld} onChange={setLld} hint="Mermaid classDiagram — classes, methods, relationships" preview={lld.trim() ? <MermaidView code={lld} /> : empty("a classDiagram")} />
-            <div className="flex flex-col border-t">
-              <div className="border-b px-3 py-1.5 text-[11px] text-muted-foreground">Design notes — requirements, estimates, APIs, trade-offs</div>
-              <textarea value={notes} onChange={ev => setNotes(ev.target.value)} placeholder="Requirements, capacity estimates, APIs, trade-offs…" className="flex-1 resize-none bg-transparent p-3 font-mono text-xs outline-none" />
-            </div>
-          </div>
-        )}
+      <div className="flex min-h-0 flex-1 flex-col">
+        <div className="min-h-0 flex-1">
+          {tab === "hld" && <HldEditor nodes={nodes} edges={edges} setNodes={setNodes} setEdges={setEdges} />}
+          {tab === "sequence" && <SplitEditor value={seq} onChange={setSeq} hint="Mermaid sequenceDiagram — live preview" preview={seq.trim() ? <MermaidView code={seq} /> : empty("a sequenceDiagram")} />}
+          {tab === "schema" && <SplitEditor value={schema} onChange={setSchema} hint="dbdiagram.io-style DBML: Table name { col type [pk, unique, ref: > other.id] }" preview={schema.trim() ? <ErdBoard src={schema} /> : empty("tables in DBML")} />}
+          {tab === "api" && <ApiDesigner key={apis.map(a => a.id).join() ? "has" : "none"} apis={apis} setApis={setApis} />}
+        </div>
+        <NotesPanel key={tab} value={notes[tab] ?? ""} onChange={setNote} title={TABS.find(t => t.id === tab)!.label} />
       </div>
       {showEx && <ExamplesDialog tab={tab} scenario={scenarioExample(slug)} subject={subject} onClose={() => setShowEx(false)}
         onUseTab={useTab} onLoadAll={d => { apply(d); setShowEx(false); }} />}
