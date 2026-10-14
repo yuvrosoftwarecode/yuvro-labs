@@ -131,6 +131,16 @@ function LabDashboard() {
           <span>/</span><span className="text-foreground">{lab.name}</span>
         </div>
 
+        {slug === "systemdesign" && (
+          <div className="mb-4 flex flex-wrap items-center justify-between gap-3 rounded-xl border border-primary/30 bg-primary/5 p-4">
+            <div>
+              <div className="font-semibold">System Design Studio</div>
+              <div className="text-xs text-muted-foreground">Drag & drop architecture (HLD), Mermaid sequence diagrams and DB schema (LLD) in one workspace.</div>
+            </div>
+            <Link to="/system-design-studio" className="rounded-md bg-primary px-4 py-2 text-sm font-medium text-primary-foreground hover:opacity-90">Open Studio →</Link>
+          </div>
+        )}
+
         <div className="grid gap-4 lg:grid-cols-[260px_1fr_300px]">
           {/* LEFT */}
           <aside className="space-y-4">
