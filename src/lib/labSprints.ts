@@ -1,3 +1,4 @@
+import { getSystemDesignLab, SYSTEM_DESIGN_SPRINTS } from "@/lib/systemDesign";
 // Per-lab sprints & tasks store (localStorage).
 export type EditorKind = "code" | "sql" | "none";
 export const EDITORS: { value: EditorKind; label: string }[] = [
@@ -256,10 +257,10 @@ function ticketToTask(t: Ticket, lang: Language, editor: EditorKind, allowed?: L
 }
 
 export function seedSprintsFromCatalog(slug: string): LabSprint[] {
-  const groups = SPRINT_GROUPS[slug];
+  const groups = getSystemDesignLab(slug) ? SYSTEM_DESIGN_SPRINTS : SPRINT_GROUPS[slug];
   if (!groups) return [];
   const lang = SLUG_LANGUAGE[slug] ?? "python";
-  const editor: EditorKind = SLUG_EDITOR[slug] ?? (lang === "sql" ? "sql" : "code");
+  const editor: EditorKind = getSystemDesignLab(slug) ? "none" : SLUG_EDITOR[slug] ?? (lang === "sql" ? "sql" : "code");
   const allowed = MULTI_LANG_SLUGS[slug];
   return groups.map(g => ({
     id: g.id, name: g.name, description: g.goal,

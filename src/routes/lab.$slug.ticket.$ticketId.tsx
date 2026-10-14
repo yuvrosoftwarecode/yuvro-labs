@@ -1,3 +1,5 @@
+import { getSystemDesignLab } from "@/lib/systemDesign";
+import { SystemDesignStudio } from "@/routes/system-design-studio";
 import { createFileRoute, Link, Outlet, useMatch, useNavigate, useParams } from "@tanstack/react-router";
 import { useEffect, useMemo, useRef, useState } from "react";
 import { TopNav } from "@/components/TopNav";
@@ -664,7 +666,14 @@ function getKit(slug: string, tag: string): Kit {
 type TestResult = { name: string; pass: boolean; time: string; expected?: string; got?: string };
 type BottomTab = "output" | "errors" | "tests" | "quality" | "preview" | "terminal";
 
-export function StudentTicketView({
+export function StudentTicketView(props: { slug: string; ticketId: string; previewOverride?: StudentPreviewOverride | null }) {
+  if (getSystemDesignLab(props.slug)) {
+    return <SystemDesignStudio key={`${props.slug}:${props.ticketId}`} slug={props.slug} ticketId={props.ticketId} taskOverride={props.previewOverride ?? undefined} />;
+  }
+  return <CodeTicketView {...props} />;
+}
+
+function CodeTicketView({
   slug,
   ticketId,
   previewOverride,
