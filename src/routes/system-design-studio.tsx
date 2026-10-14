@@ -1,3 +1,6 @@
+import { getSystemDesignLab } from "@/lib/systemDesign";
+import { labs, tickets } from "@/lib/dummy";
+import { Button } from "@/components/ui/button";
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useCallback, useEffect, useRef, useState } from "react";
 import {
@@ -116,9 +119,9 @@ const DEFAULT_LLD = `classDiagram
   UrlService --> CodeGenerator
   UrlService --> UrlRepository`;
 
-function loadState() {
+function loadState(key: string) {
   if (typeof window === "undefined") return null;
-  try { return JSON.parse(localStorage.getItem(LS) || "null"); } catch { return null; }
+  try { return JSON.parse(localStorage.getItem(key) || "null"); } catch { return null; }
 }
 
 // ---------- DBML -> mermaid erDiagram ----------
@@ -230,7 +233,7 @@ function HldCanvas({ nodes, setNodes, onNodesChange, edges, setEdges, onEdgesCha
   const selEdge = edges.find((e: Edge) => e.selected);
 
   return (
-    <div className="grid h-full grid-cols-[200px_1fr_220px]">
+    <div className="grid h-full grid-cols-[150px_minmax(0,1fr)] lg:grid-cols-[200px_minmax(0,1fr)_220px]">
       <aside className="overflow-y-auto border-r p-3">
         <div className="mb-2 text-[10px] uppercase tracking-wider text-muted-foreground">Components — drag onto canvas</div>
         {PALETTE.map(g => (
@@ -255,15 +258,15 @@ function HldCanvas({ nodes, setNodes, onNodesChange, edges, setEdges, onEdgesCha
           <MiniMap pannable zoomable />
         </ReactFlow>
       </div>
-      <aside className="overflow-y-auto border-l p-3 text-xs">
+      <aside className="hidden overflow-y-auto border-l p-3 text-xs lg:block">
         <div className="mb-2 text-[10px] uppercase tracking-wider text-muted-foreground">Inspector</div>
         {selected ? (
           <div className="space-y-2">
             <label className="block text-muted-foreground">Label</label>
             <input value={(selected.data as any).label} onChange={e => setNodes((ns: Node[]) => ns.map(n => n.id === selected.id ? { ...n, data: { ...n.data, label: e.target.value } } : n))}
               className="w-full rounded-md border bg-transparent px-2 py-1.5 outline-none focus:border-primary" />
-            <button onClick={() => setNodes((ns: Node[]) => ns.filter(n => n.id !== selected.id))}
-              className="inline-flex items-center gap-1 rounded-md border border-destructive/40 px-2 py-1 text-destructive"><Trash2 className="h-3 w-3" />Delete node</button>
+            <Button variant="ghost" size="sm" onClick={() => setNodes((ns: Node[]) => ns.filter(n => n.id !== selected.id))}
+              className="inline-flex items-center gap-1 rounded-md border border-destructive/40 px-2 py-1 text-destructive"><Trash2 className="h-3 w-3" />Delete node</Button>
           </div>
         ) : selEdge ? (
           <div className="space-y-2">
@@ -271,8 +274,8 @@ function HldCanvas({ nodes, setNodes, onNodesChange, edges, setEdges, onEdgesCha
             <input value={(selEdge.label as string) ?? ""} placeholder="e.g. HTTPS, async"
               onChange={e => setEdges((es: Edge[]) => es.map(x => x.id === selEdge.id ? { ...x, label: e.target.value } : x))}
               className="w-full rounded-md border bg-transparent px-2 py-1.5 outline-none focus:border-primary" />
-            <button onClick={() => setEdges((es: Edge[]) => es.filter(x => x.id !== selEdge.id))}
-              className="inline-flex items-center gap-1 rounded-md border border-destructive/40 px-2 py-1 text-destructive"><Trash2 className="h-3 w-3" />Delete connection</button>
+            <Button variant="ghost" size="sm" onClick={() => setEdges((es: Edge[]) => es.filter(x => x.id !== selEdge.id))}
+              className="inline-flex items-center gap-1 rounded-md border border-destructive/40 px-2 py-1 text-destructive"><Trash2 className="h-3 w-3" />Delete connection</Button>
           </div>
         ) : (
           <p className="text-muted-foreground leading-relaxed">Select a component or connection to edit it. Drag from a node's right/bottom dot to another node to connect. Press Delete to remove.</p>
@@ -284,33 +287,107 @@ function HldCanvas({ nodes, setNodes, onNodesChange, edges, setEdges, onEdgesCha
 }
 
 function Studio() {
-  const saved = loadState();
+  return <SystemDesignStudio slug="systemdesign-url-shortener" />;
+}
+
+export function SystemDesignStudio({ slug, ticketId, taskOverride }: {
+  slug: string;
+  ticketId?: string;
+  taskOverride?: { title?: string; description?: string };
+}) {
+  const design = getSystemDesignLab(slug) ?? getSystemDesignLab("systemdesign-url-shortener");
+  const lab = labs.find(l => l.slug === slug);
+  const task = tickets.find(t => t.id === ticketId);
+  const storageKey = `${LS}:${slug}:${ticketId ?? "sandbox"}`;
+  const [saved] = useState(() => loadState(storageKey));
+  const subject = design?.subject ?? "URL Shortener";
+  const service = design?.service ?? "URL Service";
+  const isUrl = slug === "systemdesign-url-shortener";
+  const initialNodes = DEFAULT_NODES.map(node => ({ ...node, data: { ...node.data, label: node.data.label === "URL Service" ? service : node.data.label } }));
+  const initialSeq = isUrl ? DEFAULT_SEQ : `sequenceDiagram
+  autonumber
+  actor U as User
+  participant A as API Gateway
+  participant S as ${service}
+  participant D as Database
+  participant Q as Event Queue
+  U->>A: ${design?.action ?? "Create request"}
+  A->>S: Validate request
+  S->>D: Check availability and create record
+  D-->>S: Confirm transaction
+  S->>Q: Publish confirmation event
+  S-->>U: Return confirmation`;
+  const initialSchema = isUrl ? DEFAULT_SCHEMA : slug === "systemdesign" ? `Table users {
+  id bigint [pk]
+  email varchar [unique]
+}
+Table products {
+  id bigint [pk]
+  name varchar
+  stock int
+  price decimal
+}
+Table orders {
+  id bigint [pk]
+  user_id bigint [ref: > users.id]
+  status varchar
+}
+Table order_items {
+  id bigint [pk]
+  order_id bigint [ref: > orders.id]
+  product_id bigint [ref: > products.id]
+  quantity int
+}` : `Table users {
+  id bigint [pk]
+  email varchar [unique]
+}
+Table events {
+  id bigint [pk]
+  name varchar
+  starts_at timestamp
+}
+Table seats {
+  id bigint [pk]
+  event_id bigint [ref: > events.id]
+  seat_number varchar
+}
+Table bookings {
+  id bigint [pk]
+  user_id bigint [ref: > users.id]
+  seat_id bigint [ref: > seats.id]
+  status varchar
+  expires_at timestamp
+}`;
+  const initialLld = isUrl ? DEFAULT_LLD : DEFAULT_LLD.replaceAll("Url", slug === "systemdesign" ? "Order" : "Booking").replaceAll("shorten", "create").replaceAll("redirect", "lookup").replaceAll("longUrl", "request").replaceAll("CodeGenerator", "IdGenerator");
+  const initialNotes = isUrl ? "## Requirements\n- Shorten URLs, redirect < 50ms p99\n- 100M URLs/month, read:write 100:1\n\n## Estimates\n- ~40 writes/s, ~4k reads/s\n" : `## ${subject} requirements\n- ${slug === "systemdesign" ? "Prevent overselling and duplicate payments" : "Prevent double booking and expire unpaid seat holds"}\n- Define availability, latency and capacity targets\n\n## APIs and trade-offs\n`;
+  const taskTitle = taskOverride?.title ?? task?.title ?? `Design ${subject}`;
+  const taskDescription = taskOverride?.description ?? task?.description;
   const [tab, setTab] = useState<Tab>("hld");
-  const [nodes, setNodes, onNodesChange] = useNodesState<Node>(saved?.nodes ?? DEFAULT_NODES);
+  const [nodes, setNodes, onNodesChange] = useNodesState<Node>(saved?.nodes ?? initialNodes);
   const [edges, setEdges, onEdgesChange] = useEdgesState<Edge>(saved?.edges ?? DEFAULT_EDGES);
-  const [seq, setSeq] = useState<string>(saved?.seq ?? DEFAULT_SEQ);
-  const [schema, setSchema] = useState<string>(saved?.schema ?? DEFAULT_SCHEMA);
-  const [lld, setLld] = useState<string>(saved?.lld ?? DEFAULT_LLD);
-  const [notes, setNotes] = useState<string>(saved?.notes ?? "## Requirements\n- Shorten URLs, redirect < 50ms p99\n- 100M URLs/month, read:write 100:1\n\n## Estimates\n- ~40 writes/s, ~4k reads/s\n");
+  const [seq, setSeq] = useState<string>(saved?.seq ?? initialSeq);
+  const [schema, setSchema] = useState<string>(saved?.schema ?? initialSchema);
+  const [lld, setLld] = useState<string>(saved?.lld ?? initialLld);
+  const [notes, setNotes] = useState<string>(saved?.notes ?? initialNotes);
   const [full, setFull] = useState(false);
   const [savedAt, setSavedAt] = useState<string>("");
 
   useEffect(() => {
     const t = setTimeout(() => {
       const clean = (ns: Node[]) => ns.map(({ id, type, position, data }) => ({ id, type, position, data }));
-      localStorage.setItem(LS, JSON.stringify({ nodes: clean(nodes), edges, seq, schema, lld, notes }));
+      localStorage.setItem(storageKey, JSON.stringify({ nodes: clean(nodes), edges, seq, schema, lld, notes }));
       setSavedAt(new Date().toLocaleTimeString());
     }, 500);
     return () => clearTimeout(t);
-  }, [nodes, edges, seq, schema, lld, notes]);
+  }, [nodes, edges, seq, schema, lld, notes, storageKey]);
 
   const er = dbmlToMermaid(schema);
   const exportJson = () => {
     const blob = new Blob([JSON.stringify({ nodes, edges, seq, schema, lld, notes }, null, 2)], { type: "application/json" });
-    const a = document.createElement("a"); a.href = URL.createObjectURL(blob); a.download = "system-design.json"; a.click();
+    const a = document.createElement("a"); a.href = URL.createObjectURL(blob); a.download = `${slug}-${ticketId ?? "design"}.json`; a.click();
   };
   const reset = () => { if (!confirm("Reset everything to the example design?")) return;
-    setNodes(DEFAULT_NODES); setEdges(DEFAULT_EDGES); setSeq(DEFAULT_SEQ); setSchema(DEFAULT_SCHEMA); setLld(DEFAULT_LLD); };
+    setNodes(initialNodes); setEdges(DEFAULT_EDGES); setSeq(initialSeq); setSchema(initialSchema); setLld(initialLld); setNotes(initialNotes); };
 
   const TABS: { id: Tab; label: string; icon: React.ReactNode; sub: string }[] = [
     { id: "hld", label: "HLD · Architecture", icon: <Boxes className="h-3.5 w-3.5" />, sub: "Drag & drop" },
@@ -321,24 +398,25 @@ function Studio() {
 
   return (
     <div className={`flex h-screen flex-col bg-background ${full ? "fixed inset-0 z-50" : ""}`}>
-      <header className="flex items-center gap-3 border-b px-4 py-2">
-        <Link to="/lab/$slug" params={{ slug: "systemdesign" }} className="inline-flex items-center gap-1 text-xs text-muted-foreground hover:text-foreground"><ArrowLeft className="h-3.5 w-3.5" />System Design Lab</Link>
+      <header className="flex flex-wrap items-center gap-3 border-b px-4 py-2">
+        <Link to="/lab/$slug" params={{ slug }} className="inline-flex items-center gap-1 text-xs text-muted-foreground hover:text-foreground"><ArrowLeft className="h-3.5 w-3.5" />{lab?.name ?? "System Design Lab"}</Link>
         <div className="h-4 w-px bg-border" />
-        <div className="text-sm font-semibold">🏛️ System Design Studio <span className="ml-2 text-xs font-normal text-muted-foreground">Design a URL Shortener</span></div>
+        <div className="text-sm font-semibold">🏛️ System Design Studio <span className="ml-2 text-xs font-normal text-muted-foreground">{taskTitle}</span></div>
         <div className="ml-auto flex items-center gap-2 text-xs">
           {savedAt && <span className="text-muted-foreground">Saved {savedAt}</span>}
-          <button onClick={reset} className="rounded-md border px-2 py-1 hover:bg-accent">Reset</button>
-          <button onClick={exportJson} className="inline-flex items-center gap-1 rounded-md border px-2 py-1 hover:bg-accent"><Download className="h-3.5 w-3.5" />Export</button>
-          <button onClick={() => setFull(f => !f)} className="rounded-md border p-1 hover:bg-accent" aria-label="Toggle fullscreen">{full ? <Minimize2 className="h-3.5 w-3.5" /> : <Maximize2 className="h-3.5 w-3.5" />}</button>
-          <button className="rounded-md bg-primary px-3 py-1 font-medium text-primary-foreground hover:opacity-90">Submit design</button>
+          <Button variant="ghost" size="sm" onClick={reset} className="rounded-md border px-2 py-1 hover:bg-accent">Reset</Button>
+          <Button variant="ghost" size="sm" onClick={exportJson} className="inline-flex items-center gap-1 rounded-md border px-2 py-1 hover:bg-accent"><Download className="h-3.5 w-3.5" />Export</Button>
+          <Button variant="ghost" size="sm" onClick={() => setFull(f => !f)} className="rounded-md border p-1 hover:bg-accent" aria-label="Toggle fullscreen">{full ? <Minimize2 className="h-3.5 w-3.5" /> : <Maximize2 className="h-3.5 w-3.5" />}</Button>
+          
         </div>
       </header>
-      <nav className="flex gap-1 border-b px-3">
+      {taskDescription && <div className="border-b bg-card px-4 py-2 text-xs text-muted-foreground"><span className="mr-2 font-medium text-foreground">{ticketId}</span>{taskDescription}</div>}
+      <nav className="flex flex-wrap gap-1 border-b px-3">
         {TABS.map(t => (
-          <button key={t.id} onClick={() => setTab(t.id)}
+          <Button variant="ghost" size="sm" key={t.id} onClick={() => setTab(t.id)}
             className={`-mb-px inline-flex items-center gap-1.5 border-b-2 px-3 py-2 text-xs ${tab === t.id ? "border-primary text-foreground font-medium" : "border-transparent text-muted-foreground hover:text-foreground"}`}>
             {t.icon}{t.label}<span className="text-[10px] text-muted-foreground">· {t.sub}</span>
-          </button>
+          </Button>
         ))}
       </nav>
       <div className="min-h-0 flex-1">

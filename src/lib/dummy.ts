@@ -1,3 +1,5 @@
+import { SYSTEM_DESIGN_LABS } from "@/lib/systemDesign";
+
 export type Difficulty = "Beginner" | "Intermediate" | "Advanced";
 export type Status = "Not Started" | "In Progress" | "Completed";
 
@@ -64,9 +66,11 @@ export const labs: Lab[] = [
   { slug: "datastructures", name: "Data Structures Lab", icon: "🧩", color: "ds", difficulty: "Intermediate", completed: 0, total: 30, hoursLeft: 28, description: "Core data structures: arrays, lists, trees, graphs, heaps and more.", skills: [
     { name: "Arrays/Lists", pct: 30 }, { name: "Trees", pct: 15 }, { name: "Graphs", pct: 10 }, { name: "Hashing", pct: 20 }
   ]},
-  { slug: "systemdesign", name: "System Design Lab", icon: "🏛️", color: "sysd", difficulty: "Advanced", completed: 0, total: 16, hoursLeft: 32, description: "Design scalable systems: load balancing, caching, sharding, queues and event-driven architectures.", skills: [
-    { name: "Scalability", pct: 20 }, { name: "Caching", pct: 15 }, { name: "Databases", pct: 25 }, { name: "Messaging", pct: 10 }
-  ]},
+  ...SYSTEM_DESIGN_LABS.map((design): Lab => ({
+    slug: design.slug, name: design.name, icon: "🏛️", color: "sysd", difficulty: "Advanced",
+    completed: 0, total: 16, hoursLeft: 32, description: design.description,
+    skills: [{ name: "HLD", pct: 0 }, { name: "Sequence Diagrams", pct: 0 }, { name: "DB Schema", pct: 0 }, { name: "LLD", pct: 0 }],
+  })),
   { slug: "cybersecurity", name: "Cyber Security Lab", icon: "🛡️", color: "sec", difficulty: "Advanced", completed: 0, total: 18, hoursLeft: 30, description: "Hands-on offensive and defensive security: OWASP, auth, crypto, network and cloud hardening.", skills: [
     { name: "OWASP Top 10", pct: 20 }, { name: "AuthN/AuthZ", pct: 15 }, { name: "Cryptography", pct: 10 }, { name: "Network Sec", pct: 10 }
   ]},

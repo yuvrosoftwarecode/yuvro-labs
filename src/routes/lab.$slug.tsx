@@ -1,3 +1,4 @@
+import { getSystemDesignLab, SYSTEM_DESIGN_SPRINTS } from "@/lib/systemDesign";
 import { createFileRoute, Link, Outlet, useMatch, useParams } from "@tanstack/react-router";
 import { TopNav } from "@/components/TopNav";
 import { DiffBadge, StatusBadge } from "@/components/Badges";
@@ -74,6 +75,7 @@ function buildSprints(slug: string, allTickets: Ticket[]): Sprint[] {
     { id: "DS10", name: "Sprint 10 · Searching", goal: "Binary search and rotated array search", range: "May 20 – May 23", tags: ["DS Searching"] },
   ];
   const groups =
+    getSystemDesignLab(slug) ? SYSTEM_DESIGN_SPRINTS.map(g => ({ ...g, range: "Self-paced" })) :
     slug === "python" ? pythonGroups :
     slug === "ui" ? uiGroups :
     slug === "sql" ? sqlGroups :
@@ -98,10 +100,11 @@ function LabDashboard() {
   const [activeSprint, setActiveSprint] = useState<string | null>(null);
   const [payOpen, setPayOpen] = useState(false);
   const [unlockBump, setUnlockBump] = useState(0);
-  const sprints = useMemo(() => buildSprints(slug, tickets), [slug]);
+  const labTickets = useMemo(() => getSystemDesignLab(slug) ? tickets.filter(t => t.id.startsWith("SD-")) : tickets, [slug]);
+  const sprints = useMemo(() => buildSprints(slug, labTickets), [slug, labTickets]);
   const sprint = sprints.find((s) => s.id === activeSprint) ?? null;
   const activeSprintIndex = sprint ? sprints.findIndex(s => s.id === sprint.id) : -1;
-  const sprintTickets = sprint ? tickets.filter((t) => sprint.ticketIds.includes(t.id)) : tickets;
+  const sprintTickets = sprint ? labTickets.filter((t) => sprint.ticketIds.includes(t.id)) : labTickets;
   const cols: { key: "Not Started" | "In Progress" | "Completed"; }[] = [{ key: "Not Started" }, { key: "In Progress" }, { key: "Completed" }];
   const pct = Math.round((lab.completed / lab.total) * 100);
 
@@ -131,15 +134,7 @@ function LabDashboard() {
           <span>/</span><span className="text-foreground">{lab.name}</span>
         </div>
 
-        {slug === "systemdesign" && (
-          <div className="mb-4 flex flex-wrap items-center justify-between gap-3 rounded-xl border border-primary/30 bg-primary/5 p-4">
-            <div>
-              <div className="font-semibold">System Design Studio</div>
-              <div className="text-xs text-muted-foreground">Drag & drop architecture (HLD), Mermaid sequence diagrams and DB schema (LLD) in one workspace.</div>
-            </div>
-            <Link to="/system-design-studio" className="rounded-md bg-primary px-4 py-2 text-sm font-medium text-primary-foreground hover:opacity-90">Open Studio →</Link>
-          </div>
-        )}
+
 
         <div className="grid gap-4 lg:grid-cols-[260px_1fr_300px]">
           {/* LEFT */}
@@ -231,11 +226,11 @@ function LabDashboard() {
                       {tier !== "free" && unlocked && "Full track unlocked. Enjoy every sprint."}
                     </p>
                   </div>
-                  <span className="text-xs text-muted-foreground">{sprints.length} sprints · {tickets.length} tickets</span>
+                  <span className="text-xs text-muted-foreground">{sprints.length} sprints · {labTickets.length} tickets</span>
                 </div>
                 <div className="grid gap-3 md:grid-cols-2">
                   {sprints.map((s, i) => {
-                    const items = tickets.filter((t) => s.ticketIds.includes(t.id));
+                    const items = labTickets.filter((t) => s.ticketIds.includes(t.id));
                     const done = items.filter((t) => t.status === "Completed").length;
                     const pctS = items.length ? Math.round((done / items.length) * 100) : 0;
                     const xp = items.reduce((a, t) => a + t.xp, 0);
