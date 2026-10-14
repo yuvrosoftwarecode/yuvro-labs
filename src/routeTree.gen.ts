@@ -9,6 +9,7 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
+import { Route as SystemDesignStudioRouteImport } from './routes/system-design-studio'
 import { Route as SolutionsRouteImport } from './routes/solutions'
 import { Route as RecruiterLoginRouteImport } from './routes/recruiter-login'
 import { Route as RecruiterRouteImport } from './routes/recruiter'
@@ -101,6 +102,11 @@ import { Route as CollaborationSprintIdReportTeamRouteImport } from './routes/co
 import { Route as CollaborationSprintIdReportIndividualRouteImport } from './routes/collaboration.sprint.$id.report.individual'
 import { Route as AdminLabsIdSprintsSprintIdRouteImport } from './routes/admin.labs.$id.sprints.$sprintId'
 
+const SystemDesignStudioRoute = SystemDesignStudioRouteImport.update({
+  id: '/system-design-studio',
+  path: '/system-design-studio',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const SolutionsRoute = SolutionsRouteImport.update({
   id: '/solutions',
   path: '/solutions',
@@ -596,6 +602,7 @@ export interface FileRoutesByFullPath {
   '/recruiter': typeof RecruiterRouteWithChildren
   '/recruiter-login': typeof RecruiterLoginRoute
   '/solutions': typeof SolutionsRoute
+  '/system-design-studio': typeof SystemDesignStudioRoute
   '/admin/ai-mentor': typeof AdminAiMentorRoute
   '/admin/collaboration': typeof AdminCollaborationRoute
   '/admin/hackathons': typeof AdminHackathonsRouteWithChildren
@@ -684,6 +691,7 @@ export interface FileRoutesByTo {
   '/profile': typeof ProfileRoute
   '/recruiter-login': typeof RecruiterLoginRoute
   '/solutions': typeof SolutionsRoute
+  '/system-design-studio': typeof SystemDesignStudioRoute
   '/admin/ai-mentor': typeof AdminAiMentorRoute
   '/admin/collaboration': typeof AdminCollaborationRoute
   '/admin/incidents': typeof AdminIncidentsRoute
@@ -775,6 +783,7 @@ export interface FileRoutesById {
   '/recruiter': typeof RecruiterRouteWithChildren
   '/recruiter-login': typeof RecruiterLoginRoute
   '/solutions': typeof SolutionsRoute
+  '/system-design-studio': typeof SystemDesignStudioRoute
   '/admin/ai-mentor': typeof AdminAiMentorRoute
   '/admin/collaboration': typeof AdminCollaborationRoute
   '/admin/hackathons': typeof AdminHackathonsRouteWithChildren
@@ -870,6 +879,7 @@ export interface FileRouteTypes {
     | '/recruiter'
     | '/recruiter-login'
     | '/solutions'
+    | '/system-design-studio'
     | '/admin/ai-mentor'
     | '/admin/collaboration'
     | '/admin/hackathons'
@@ -958,6 +968,7 @@ export interface FileRouteTypes {
     | '/profile'
     | '/recruiter-login'
     | '/solutions'
+    | '/system-design-studio'
     | '/admin/ai-mentor'
     | '/admin/collaboration'
     | '/admin/incidents'
@@ -1048,6 +1059,7 @@ export interface FileRouteTypes {
     | '/recruiter'
     | '/recruiter-login'
     | '/solutions'
+    | '/system-design-studio'
     | '/admin/ai-mentor'
     | '/admin/collaboration'
     | '/admin/hackathons'
@@ -1142,6 +1154,7 @@ export interface RootRouteChildren {
   RecruiterRoute: typeof RecruiterRouteWithChildren
   RecruiterLoginRoute: typeof RecruiterLoginRoute
   SolutionsRoute: typeof SolutionsRoute
+  SystemDesignStudioRoute: typeof SystemDesignStudioRoute
   LabSlugRoute: typeof LabSlugRouteWithChildren
   ProductSlugRoute: typeof ProductSlugRoute
   ProductEngineeringSimulationsRoute: typeof ProductEngineeringSimulationsRoute
@@ -1152,6 +1165,13 @@ export interface RootRouteChildren {
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
+    '/system-design-studio': {
+      id: '/system-design-studio'
+      path: '/system-design-studio'
+      fullPath: '/system-design-studio'
+      preLoaderRoute: typeof SystemDesignStudioRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/solutions': {
       id: '/solutions'
       path: '/solutions'
@@ -2096,6 +2116,7 @@ const rootRouteChildren: RootRouteChildren = {
   RecruiterRoute: RecruiterRouteWithChildren,
   RecruiterLoginRoute: RecruiterLoginRoute,
   SolutionsRoute: SolutionsRoute,
+  SystemDesignStudioRoute: SystemDesignStudioRoute,
   LabSlugRoute: LabSlugRouteWithChildren,
   ProductSlugRoute: ProductSlugRoute,
   ProductEngineeringSimulationsRoute: ProductEngineeringSimulationsRoute,
