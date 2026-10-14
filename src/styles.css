@@ -407,3 +407,7 @@
 /* Emerald success accents stay legible */
 .dark .eval-theme .bg-emerald-50 { background-color: rgba(16,185,129,0.12) !important; }
 .dark .eval-theme .text-emerald-600 { color: #34d399 !important; }
+
+.sd-flow { animation: sd-dash 1.2s linear infinite; }
+@keyframes sd-dash { to { stroke-dashoffset: -20; } }
+@media (prefers-reduced-motion: reduce) { .sd-flow { animation: none; } }
