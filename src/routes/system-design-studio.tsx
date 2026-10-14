@@ -2,13 +2,9 @@ import { getSystemDesignLab } from "@/lib/systemDesign";
 import { labs, tickets } from "@/lib/dummy";
 import { Button } from "@/components/ui/button";
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { useCallback, useEffect, useRef, useState } from "react";
-import {
-  ReactFlow, ReactFlowProvider, Background, Controls, MiniMap, addEdge, useNodesState, useEdgesState,
-  useReactFlow, Handle, Position, MarkerType, type Connection, type Edge, type Node, type NodeProps,
-} from "@xyflow/react";
-import "@xyflow/react/dist/style.css";
-import { ArrowLeft, Boxes, GitBranch, Database, FileText, Trash2, Download, Maximize2, Minimize2 } from "lucide-react";
+import { useEffect, useState } from "react";
+import { ArrowLeft, Boxes, GitBranch, Database, FileText, Download, Maximize2, Minimize2, Sparkles, X, Users } from "lucide-react";
+import { DiagramBoard, HldEditor, type SDNode, type SDEdge } from "@/components/sysdesign/DesignCanvas";
 
 export const Route = createFileRoute("/system-design-studio")({
   head: () => ({ meta: [{ title: "System Design Studio · Yuvro Labs" }] }),
@@ -16,44 +12,13 @@ export const Route = createFileRoute("/system-design-studio")({
 });
 
 type Tab = "hld" | "sequence" | "schema" | "lld";
-const LS = "yuvro-sds-v1";
+const LS = "yuvro-sds-v2";
 
-const PALETTE: { group: string; items: { kind: string; label: string; icon: string }[] }[] = [
-  { group: "Clients", items: [
-    { kind: "client", label: "Web Client", icon: "🖥️" }, { kind: "mobile", label: "Mobile App", icon: "📱" } ] },
-  { group: "Edge", items: [
-    { kind: "dns", label: "DNS", icon: "🌐" }, { kind: "cdn", label: "CDN", icon: "🛰️" },
-    { kind: "lb", label: "Load Balancer", icon: "⚖️" }, { kind: "gateway", label: "API Gateway", icon: "🚪" } ] },
-  { group: "Compute", items: [
-    { kind: "service", label: "Service", icon: "⚙️" }, { kind: "worker", label: "Worker", icon: "🛠️" },
-    { kind: "lambda", label: "Serverless Fn", icon: "λ" }, { kind: "auth", label: "Auth Service", icon: "🔐" } ] },
-  { group: "Data", items: [
-    { kind: "sql", label: "SQL DB", icon: "🗄️" }, { kind: "nosql", label: "NoSQL DB", icon: "🍃" },
-    { kind: "cache", label: "Cache (Redis)", icon: "⚡" }, { kind: "blob", label: "Object Storage", icon: "🪣" },
-    { kind: "search", label: "Search Index", icon: "🔎" } ] },
-  { group: "Messaging", items: [
-    { kind: "queue", label: "Message Queue", icon: "📬" }, { kind: "stream", label: "Event Stream", icon: "🌊" },
-    { kind: "pubsub", label: "Pub/Sub", icon: "📣" } ] },
-  { group: "Ops", items: [
-    { kind: "monitor", label: "Monitoring", icon: "📈" }, { kind: "logs", label: "Logging", icon: "🧾" } ] },
-];
+type Design = { nodes: SDNode[]; edges: SDEdge[]; seq: string; schema: string; lld: string; notes: string };
+const EMPTY: Design = { nodes: [], edges: [], seq: "", schema: "", lld: "", notes: "" };
 
-const DEFAULT_NODES: Node[] = [
-  { id: "n1", type: "comp", position: { x: 40, y: 160 }, data: { label: "Web Client", icon: "🖥️" } },
-  { id: "n2", type: "comp", position: { x: 260, y: 160 }, data: { label: "Load Balancer", icon: "⚖️" } },
-  { id: "n3", type: "comp", position: { x: 480, y: 80 }, data: { label: "URL Service", icon: "⚙️" } },
-  { id: "n4", type: "comp", position: { x: 480, y: 240 }, data: { label: "URL Service", icon: "⚙️" } },
-  { id: "n5", type: "comp", position: { x: 720, y: 60 }, data: { label: "Cache (Redis)", icon: "⚡" } },
-  { id: "n6", type: "comp", position: { x: 720, y: 240 }, data: { label: "SQL DB", icon: "🗄️" } },
-];
-const edgeDefaults = { type: "smoothstep", markerEnd: { type: MarkerType.ArrowClosed }, animated: true };
-const DEFAULT_EDGES: Edge[] = [
-  { id: "e1", source: "n1", target: "n2", ...edgeDefaults },
-  { id: "e2", source: "n2", target: "n3", ...edgeDefaults },
-  { id: "e3", source: "n2", target: "n4", ...edgeDefaults },
-  { id: "e4", source: "n3", target: "n5", ...edgeDefaults },
-  { id: "e5", source: "n4", target: "n6", ...edgeDefaults, label: "write" },
-];
+const n = (id: string, label: string, icon: string, x: number, y: number, tag?: string): SDNode => ({ id, kind: label.toLowerCase(), label, icon, x, y, tag });
+const e = (from: string, to: string, label?: string): SDEdge => ({ id: `${from}-${to}`, from, to, label });
 
 const DEFAULT_SEQ = `sequenceDiagram
   autonumber
@@ -202,109 +167,19 @@ function SplitEditor({ value, onChange, preview, hint }: { value: string; onChan
   );
 }
 
-// ---------- HLD canvas ----------
-function CompNode({ data, selected }: NodeProps) {
-  const d = data as { label: string; icon: string };
-  return (
-    <div className={`rounded-lg border bg-card px-3 py-2 text-xs shadow-sm min-w-[120px] ${selected ? "border-primary ring-2 ring-primary/30" : ""}`}>
-      <Handle type="target" position={Position.Left} />
-      <Handle type="target" position={Position.Top} id="t" />
-      <div className="flex items-center gap-2"><span className="text-lg">{d.icon}</span><span className="font-medium">{d.label}</span></div>
-      <Handle type="source" position={Position.Right} />
-      <Handle type="source" position={Position.Bottom} id="b" />
-    </div>
-  );
-}
-const nodeTypes = { comp: CompNode };
-
-function HldCanvas({ nodes, setNodes, onNodesChange, edges, setEdges, onEdgesChange }: any) {
-  const wrap = useRef<HTMLDivElement>(null);
-  const { screenToFlowPosition } = useReactFlow();
-  const onConnect = useCallback((c: Connection) => setEdges((es: Edge[]) => addEdge({ ...c, ...edgeDefaults }, es)), [setEdges]);
-  const onDrop = (e: React.DragEvent) => {
-    e.preventDefault();
-    const raw = e.dataTransfer.getData("application/sds");
-    if (!raw) return;
-    const item = JSON.parse(raw);
-    const position = screenToFlowPosition({ x: e.clientX, y: e.clientY });
-    setNodes((ns: Node[]) => [...ns, { id: `n${Date.now()}`, type: "comp", position, data: { label: item.label, icon: item.icon } }]);
-  };
-  const selected = nodes.find((n: Node) => n.selected);
-  const selEdge = edges.find((e: Edge) => e.selected);
-
-  return (
-    <div className="grid h-full grid-cols-[150px_minmax(0,1fr)] lg:grid-cols-[200px_minmax(0,1fr)_220px]">
-      <aside className="overflow-y-auto border-r p-3">
-        <div className="mb-2 text-[10px] uppercase tracking-wider text-muted-foreground">Components — drag onto canvas</div>
-        {PALETTE.map(g => (
-          <div key={g.group} className="mb-3">
-            <div className="mb-1 text-[11px] font-semibold">{g.group}</div>
-            <div className="space-y-1">
-              {g.items.map(it => (
-                <div key={it.kind} draggable onDragStart={e => { e.dataTransfer.setData("application/sds", JSON.stringify(it)); e.dataTransfer.effectAllowed = "move"; }}
-                  className="flex cursor-grab items-center gap-2 rounded-md border bg-card px-2 py-1.5 text-xs hover:border-primary active:cursor-grabbing">
-                  <span>{it.icon}</span>{it.label}
-                </div>
-              ))}
-            </div>
-          </div>
-        ))}
-      </aside>
-      <div ref={wrap} className="min-h-0" onDragOver={e => { e.preventDefault(); e.dataTransfer.dropEffect = "move"; }} onDrop={onDrop}>
-        <ReactFlow nodes={nodes} edges={edges} onNodesChange={onNodesChange} onEdgesChange={onEdgesChange} onConnect={onConnect}
-          nodeTypes={nodeTypes} fitView colorMode={typeof document !== "undefined" && document.documentElement.classList.contains("dark") ? "dark" : "light"} deleteKeyCode={["Backspace", "Delete"]}>
-          <Background gap={16} />
-          <Controls />
-          <MiniMap pannable zoomable />
-        </ReactFlow>
-      </div>
-      <aside className="hidden overflow-y-auto border-l p-3 text-xs lg:block">
-        <div className="mb-2 text-[10px] uppercase tracking-wider text-muted-foreground">Inspector</div>
-        {selected ? (
-          <div className="space-y-2">
-            <label className="block text-muted-foreground">Label</label>
-            <input value={(selected.data as any).label} onChange={e => setNodes((ns: Node[]) => ns.map(n => n.id === selected.id ? { ...n, data: { ...n.data, label: e.target.value } } : n))}
-              className="w-full rounded-md border bg-transparent px-2 py-1.5 outline-none focus:border-primary" />
-            <Button variant="ghost" size="sm" onClick={() => setNodes((ns: Node[]) => ns.filter(n => n.id !== selected.id))}
-              className="inline-flex items-center gap-1 rounded-md border border-destructive/40 px-2 py-1 text-destructive"><Trash2 className="h-3 w-3" />Delete node</Button>
-          </div>
-        ) : selEdge ? (
-          <div className="space-y-2">
-            <label className="block text-muted-foreground">Connection label</label>
-            <input value={(selEdge.label as string) ?? ""} placeholder="e.g. HTTPS, async"
-              onChange={e => setEdges((es: Edge[]) => es.map(x => x.id === selEdge.id ? { ...x, label: e.target.value } : x))}
-              className="w-full rounded-md border bg-transparent px-2 py-1.5 outline-none focus:border-primary" />
-            <Button variant="ghost" size="sm" onClick={() => setEdges((es: Edge[]) => es.filter(x => x.id !== selEdge.id))}
-              className="inline-flex items-center gap-1 rounded-md border border-destructive/40 px-2 py-1 text-destructive"><Trash2 className="h-3 w-3" />Delete connection</Button>
-          </div>
-        ) : (
-          <p className="text-muted-foreground leading-relaxed">Select a component or connection to edit it. Drag from a node's right/bottom dot to another node to connect. Press Delete to remove.</p>
-        )}
-        <div className="mt-6 border-t pt-3 text-muted-foreground">{nodes.length} components · {edges.length} connections</div>
-      </aside>
-    </div>
-  );
-}
-
-function Studio() {
-  return <SystemDesignStudio slug="systemdesign-url-shortener" />;
-}
-
-export function SystemDesignStudio({ slug, ticketId, taskOverride }: {
-  slug: string;
-  ticketId?: string;
-  taskOverride?: { title?: string; description?: string };
-}) {
-  const design = getSystemDesignLab(slug) ?? getSystemDesignLab("systemdesign-url-shortener");
-  const lab = labs.find(l => l.slug === slug);
-  const task = tickets.find(t => t.id === ticketId);
-  const storageKey = `${LS}:${slug}:${ticketId ?? "sandbox"}`;
-  const [saved] = useState(() => loadState(storageKey));
-  const subject = design?.subject ?? "URL Shortener";
+// ---------- Examples ----------
+function scenarioExample(slug: string): Design {
+  const design = getSystemDesignLab(slug);
   const service = design?.service ?? "URL Service";
+  const subject = design?.subject ?? "URL Shortener";
   const isUrl = slug === "systemdesign-url-shortener";
-  const initialNodes = DEFAULT_NODES.map(node => ({ ...node, data: { ...node.data, label: node.data.label === "URL Service" ? service : node.data.label } }));
-  const initialSeq = isUrl ? DEFAULT_SEQ : `sequenceDiagram
+  const nodes = [
+    n("n1", "Web Client", "🖥️", 0, 160), n("n2", "Load Balancer", "⚖️", 220, 160),
+    n("n3", service, "⚙️", 440, 70), n("n4", service, "⚙️", 440, 250),
+    n("n5", "Redis", "⚡", 680, 70), n("n6", "PostgreSQL", "🐘", 680, 250),
+  ];
+  const edges = [e("n1", "n2", "HTTPS"), e("n2", "n3"), e("n2", "n4"), e("n3", "n5", "read"), e("n4", "n6", "write")];
+  const seq = isUrl ? DEFAULT_SEQ : `sequenceDiagram
   autonumber
   actor U as User
   participant A as API Gateway
@@ -317,7 +192,7 @@ export function SystemDesignStudio({ slug, ticketId, taskOverride }: {
   D-->>S: Confirm transaction
   S->>Q: Publish confirmation event
   S-->>U: Return confirmation`;
-  const initialSchema = isUrl ? DEFAULT_SCHEMA : slug === "systemdesign" ? `Table users {
+  const schema = isUrl ? DEFAULT_SCHEMA : slug === "systemdesign" ? `Table users {
   id bigint [pk]
   email varchar [unique]
 }
@@ -358,36 +233,189 @@ Table bookings {
   status varchar
   expires_at timestamp
 }`;
-  const initialLld = isUrl ? DEFAULT_LLD : DEFAULT_LLD.replaceAll("Url", slug === "systemdesign" ? "Order" : "Booking").replaceAll("shorten", "create").replaceAll("redirect", "lookup").replaceAll("longUrl", "request").replaceAll("CodeGenerator", "IdGenerator");
-  const initialNotes = isUrl ? "## Requirements\n- Shorten URLs, redirect < 50ms p99\n- 100M URLs/month, read:write 100:1\n\n## Estimates\n- ~40 writes/s, ~4k reads/s\n" : `## ${subject} requirements\n- ${slug === "systemdesign" ? "Prevent overselling and duplicate payments" : "Prevent double booking and expire unpaid seat holds"}\n- Define availability, latency and capacity targets\n\n## APIs and trade-offs\n`;
+  const lld = isUrl ? DEFAULT_LLD : DEFAULT_LLD.replaceAll("Url", slug === "systemdesign" ? "Order" : "Booking").replaceAll("shorten", "create").replaceAll("redirect", "lookup").replaceAll("longUrl", "request").replaceAll("CodeGenerator", "IdGenerator");
+  const notes = isUrl ? "## Requirements\n- Shorten URLs, redirect < 50ms p99\n- 100M URLs/month, read:write 100:1\n\n## Estimates\n- ~40 writes/s, ~4k reads/s\n" : `## ${subject} requirements\n- ${slug === "systemdesign" ? "Prevent overselling and duplicate payments" : "Prevent double booking and expire unpaid seat holds"}\n- Define availability, latency and capacity targets\n\n## APIs and trade-offs\n`;
+  return { nodes, edges, seq, schema, lld, notes };
+}
+
+const USERS_TASKS_SAMPLE: Design = {
+  nodes: [
+    n("u1", "Web Client", "🖥️", 0, 60), n("u2", "Mobile App", "📱", 0, 220),
+    n("u3", "CloudFront", "🛰️", 210, 60, "AWS"), n("u4", "API Gateway", "🚪", 210, 220, "AWS"),
+    n("u5", "Auth Service", "🔐", 430, 60), n("u6", "Task Service", "⚙️", 430, 220),
+    n("u7", "Redis", "⚡", 650, 140), n("u8", "PostgreSQL", "🐘", 650, 300),
+    n("u9", "SQS", "📬", 430, 380, "AWS"), n("u10", "Notification Service", "🔔", 650, 440),
+  ],
+  edges: [
+    e("u1", "u3", "HTTPS"), e("u3", "u4"), e("u2", "u4", "HTTPS"), e("u4", "u5", "JWT"), e("u4", "u6", "REST"),
+    e("u6", "u7", "cache"), e("u6", "u8", "SQL"), e("u5", "u8"), e("u6", "u9", "task.assigned"), e("u9", "u10", "consume"),
+  ],
+  seq: `sequenceDiagram
+  autonumber
+  actor U as User
+  participant G as API Gateway
+  participant A as Auth Service
+  participant T as Task Service
+  participant DB as PostgreSQL
+  participant Q as SQS
+  U->>G: POST /users/42/tasks
+  G->>A: Verify JWT
+  A-->>G: user_id = 42
+  G->>T: createTask(user_id, title, due_at)
+  T->>DB: INSERT INTO user_tasks
+  DB-->>T: task_id = 1001
+  T->>Q: publish task.assigned
+  T-->>U: 201 Created { id: 1001 }`,
+  schema: `// users & user_tasks — dbdiagram-style
+Table users {
+  id bigint [pk]
+  email varchar [unique]
+  name varchar
+  created_at timestamp
+}
+
+Table user_tasks {
+  id bigint [pk]
+  user_id bigint [ref: > users.id]
+  title varchar
+  status varchar // todo | in_progress | done
+  priority int
+  due_at timestamp
+  created_at timestamp
+}`,
+  lld: `classDiagram
+  class User {
+    +Long id
+    +String email
+    +String name
+  }
+  class UserTask {
+    +Long id
+    +Long userId
+    +String title
+    +TaskStatus status
+    +markDone()
+  }
+  class TaskService {
+    +createTask(userId, title, dueAt) UserTask
+    +listTasks(userId, status) List~UserTask~
+    +updateStatus(taskId, status)
+  }
+  class TaskRepository {
+    <<interface>>
+    +save(task) UserTask
+    +findByUser(userId) List~UserTask~
+  }
+  User "1" --> "*" UserTask : owns
+  TaskService --> TaskRepository
+  TaskService --> UserTask`,
+  notes: `## users & user_tasks — requirements
+- Users sign up, create tasks, filter by status, get reminders before due_at
+- 1M users, ~20 tasks/user, read:write 10:1
+
+## APIs
+- POST /users/{id}/tasks
+- GET  /users/{id}/tasks?status=todo
+- PATCH /tasks/{id} { status }
+
+## Trade-offs
+- Index (user_id, status) on user_tasks
+- Cache task lists per user in Redis, invalidate on write
+`,
+};
+
+function ExamplesDialog({ tab, scenario, subject, onClose, onUseTab, onLoadAll }: {
+  tab: Tab; scenario: Design; subject: string; onClose: () => void;
+  onUseTab: (d: Design) => void; onLoadAll: (d: Design) => void;
+}) {
+  const [src, setSrc] = useState<"scenario" | "users">("scenario");
+  const d = src === "scenario" ? scenario : USERS_TASKS_SAMPLE;
+  const code = tab === "sequence" ? d.seq : tab === "schema" ? d.schema : tab === "lld" ? d.lld : JSON.stringify({ components: d.nodes.map(x => x.label), connections: d.edges.map(x => `${d.nodes.find(y => y.id === x.from)?.label} → ${d.nodes.find(y => y.id === x.to)?.label}${x.label ? ` (${x.label})` : ""}`) }, null, 2);
+  const er = dbmlToMermaid(d.schema);
+  const label = { hld: "HLD · Architecture", sequence: "Sequence diagram", schema: "DB schema", lld: "LLD · Classes" }[tab];
+  return (
+    <div className="fixed inset-0 z-[60] grid place-items-center bg-background/70 p-4 backdrop-blur-sm" onClick={onClose}>
+      <div className="flex h-[85vh] w-full max-w-6xl flex-col overflow-hidden rounded-xl border bg-card shadow-2xl" onClick={ev => ev.stopPropagation()}>
+        <div className="flex flex-wrap items-center gap-3 border-b px-4 py-3">
+          <Sparkles className="h-4 w-4 text-primary" />
+          <div className="text-sm font-semibold">Example · {label}</div>
+          <div className="ml-2 inline-flex rounded-md border p-0.5 text-xs">
+            <button onClick={() => setSrc("scenario")} className={`rounded px-2 py-1 ${src === "scenario" ? "bg-primary text-primary-foreground" : "text-muted-foreground"}`}>{subject}</button>
+            <button onClick={() => setSrc("users")} className={`rounded px-2 py-1 ${src === "users" ? "bg-primary text-primary-foreground" : "text-muted-foreground"}`}>users & user_tasks</button>
+          </div>
+          <button onClick={onClose} className="ml-auto rounded p-1 hover:bg-accent" aria-label="Close"><X className="h-4 w-4" /></button>
+        </div>
+        <div className="grid min-h-0 flex-1 grid-cols-1 md:grid-cols-[minmax(300px,38%)_1fr]">
+          <div className="flex min-h-0 flex-col border-r">
+            <div className="border-b px-3 py-1.5 text-[11px] text-muted-foreground">{tab === "hld" ? "Components & connections" : "Code"}</div>
+            <pre className="min-h-0 flex-1 overflow-auto bg-[#1E1E1E] p-3 font-mono text-[12px] leading-relaxed text-[#D4D4D4]">{code}</pre>
+          </div>
+          <div className="min-h-0 bg-background">
+            {tab === "hld" ? <DiagramBoard key={src} nodes={d.nodes} edges={d.edges} readOnly />
+              : tab === "schema" ? <MermaidView code={er.code} />
+              : <MermaidView code={tab === "sequence" ? d.seq : d.lld} />}
+          </div>
+        </div>
+        <div className="flex flex-wrap items-center justify-end gap-2 border-t px-4 py-3">
+          <Button variant="outline" size="sm" onClick={() => onUseTab(d)}>Use for this tab only</Button>
+          <Button size="sm" onClick={() => onLoadAll(d)}>{src === "users" ? <Users className="h-3.5 w-3.5" /> : <Sparkles className="h-3.5 w-3.5" />}Load full sample (all tabs)</Button>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function Studio() {
+  return <SystemDesignStudio slug="systemdesign-url-shortener" />;
+}
+
+export function SystemDesignStudio({ slug, ticketId, taskOverride }: {
+  slug: string;
+  ticketId?: string;
+  taskOverride?: { title?: string; description?: string };
+}) {
+  const design = getSystemDesignLab(slug) ?? getSystemDesignLab("systemdesign-url-shortener");
+  const lab = labs.find(l => l.slug === slug);
+  const task = tickets.find(t => t.id === ticketId);
+  const storageKey = `${LS}:${slug}:${ticketId ?? "sandbox"}`;
+  const [saved] = useState<Partial<Design> | null>(() => loadState(storageKey));
+  const subject = design?.subject ?? "URL Shortener";
   const taskTitle = taskOverride?.title ?? task?.title ?? `Design ${subject}`;
   const taskDescription = taskOverride?.description ?? task?.description;
   const [tab, setTab] = useState<Tab>("hld");
-  const [nodes, setNodes, onNodesChange] = useNodesState<Node>(saved?.nodes ?? initialNodes);
-  const [edges, setEdges, onEdgesChange] = useEdgesState<Edge>(saved?.edges ?? DEFAULT_EDGES);
-  const [seq, setSeq] = useState<string>(saved?.seq ?? initialSeq);
-  const [schema, setSchema] = useState<string>(saved?.schema ?? initialSchema);
-  const [lld, setLld] = useState<string>(saved?.lld ?? initialLld);
-  const [notes, setNotes] = useState<string>(saved?.notes ?? initialNotes);
+  const [nodes, setNodes] = useState<SDNode[]>(saved?.nodes ?? EMPTY.nodes);
+  const [edges, setEdges] = useState<SDEdge[]>(saved?.edges ?? EMPTY.edges);
+  const [seq, setSeq] = useState<string>(saved?.seq ?? "");
+  const [schema, setSchema] = useState<string>(saved?.schema ?? "");
+  const [lld, setLld] = useState<string>(saved?.lld ?? "");
+  const [notes, setNotes] = useState<string>(saved?.notes ?? "");
   const [full, setFull] = useState(false);
+  const [showEx, setShowEx] = useState(false);
   const [savedAt, setSavedAt] = useState<string>("");
 
   useEffect(() => {
     const t = setTimeout(() => {
-      const clean = (ns: Node[]) => ns.map(({ id, type, position, data }) => ({ id, type, position, data }));
-      localStorage.setItem(storageKey, JSON.stringify({ nodes: clean(nodes), edges, seq, schema, lld, notes }));
+      localStorage.setItem(storageKey, JSON.stringify({ nodes, edges, seq, schema, lld, notes }));
       setSavedAt(new Date().toLocaleTimeString());
     }, 500);
     return () => clearTimeout(t);
   }, [nodes, edges, seq, schema, lld, notes, storageKey]);
 
+  const apply = (d: Design) => { setNodes(d.nodes); setEdges(d.edges); setSeq(d.seq); setSchema(d.schema); setLld(d.lld); setNotes(d.notes); };
+  const useTab = (d: Design) => {
+    if (tab === "hld") { setNodes(d.nodes); setEdges(d.edges); }
+    if (tab === "sequence") setSeq(d.seq);
+    if (tab === "schema") setSchema(d.schema);
+    if (tab === "lld") { setLld(d.lld); setNotes(d.notes); }
+    setShowEx(false);
+  };
   const er = dbmlToMermaid(schema);
   const exportJson = () => {
     const blob = new Blob([JSON.stringify({ nodes, edges, seq, schema, lld, notes }, null, 2)], { type: "application/json" });
     const a = document.createElement("a"); a.href = URL.createObjectURL(blob); a.download = `${slug}-${ticketId ?? "design"}.json`; a.click();
   };
-  const reset = () => { if (!confirm("Reset everything to the example design?")) return;
-    setNodes(initialNodes); setEdges(DEFAULT_EDGES); setSeq(initialSeq); setSchema(initialSchema); setLld(initialLld); setNotes(initialNotes); };
+  const reset = () => { if (confirm("Clear everything and start from an empty workspace?")) apply(EMPTY); };
+  const empty = (what: string) => <div className="grid h-full place-items-center p-6 text-center text-sm text-muted-foreground"><div>Nothing to preview yet.<br />Write {what} on the left, or click <b>Examples</b>.</div></div>;
 
   const TABS: { id: Tab; label: string; icon: React.ReactNode; sub: string }[] = [
     { id: "hld", label: "HLD · Architecture", icon: <Boxes className="h-3.5 w-3.5" />, sub: "Drag & drop" },
@@ -404,42 +432,41 @@ Table bookings {
         <div className="text-sm font-semibold">🏛️ System Design Studio <span className="ml-2 text-xs font-normal text-muted-foreground">{taskTitle}</span></div>
         <div className="ml-auto flex items-center gap-2 text-xs">
           {savedAt && <span className="text-muted-foreground">Saved {savedAt}</span>}
-          <Button variant="ghost" size="sm" onClick={reset} className="rounded-md border px-2 py-1 hover:bg-accent">Reset</Button>
-          <Button variant="ghost" size="sm" onClick={exportJson} className="inline-flex items-center gap-1 rounded-md border px-2 py-1 hover:bg-accent"><Download className="h-3.5 w-3.5" />Export</Button>
-          <Button variant="ghost" size="sm" onClick={() => setFull(f => !f)} className="rounded-md border p-1 hover:bg-accent" aria-label="Toggle fullscreen">{full ? <Minimize2 className="h-3.5 w-3.5" /> : <Maximize2 className="h-3.5 w-3.5" />}</Button>
-          
+          <Button size="sm" onClick={() => setShowEx(true)}><Sparkles className="h-3.5 w-3.5" />Examples</Button>
+          <Button variant="outline" size="sm" onClick={() => apply(USERS_TASKS_SAMPLE)} title="Load users & user_tasks into every tab"><Users className="h-3.5 w-3.5" />Load sample</Button>
+          <Button variant="ghost" size="sm" onClick={reset} className="border">Clear</Button>
+          <Button variant="ghost" size="sm" onClick={exportJson} className="border"><Download className="h-3.5 w-3.5" />Export</Button>
+          <Button variant="ghost" size="sm" onClick={() => setFull(f => !f)} className="border px-2" aria-label="Toggle fullscreen">{full ? <Minimize2 className="h-3.5 w-3.5" /> : <Maximize2 className="h-3.5 w-3.5" />}</Button>
         </div>
       </header>
       {taskDescription && <div className="border-b bg-card px-4 py-2 text-xs text-muted-foreground"><span className="mr-2 font-medium text-foreground">{ticketId}</span>{taskDescription}</div>}
       <nav className="flex flex-wrap gap-1 border-b px-3">
         {TABS.map(t => (
           <Button variant="ghost" size="sm" key={t.id} onClick={() => setTab(t.id)}
-            className={`-mb-px inline-flex items-center gap-1.5 border-b-2 px-3 py-2 text-xs ${tab === t.id ? "border-primary text-foreground font-medium" : "border-transparent text-muted-foreground hover:text-foreground"}`}>
+            className={`-mb-px inline-flex items-center gap-1.5 rounded-none border-b-2 px-3 py-2 text-xs ${tab === t.id ? "border-primary text-foreground font-medium" : "border-transparent text-muted-foreground hover:text-foreground"}`}>
             {t.icon}{t.label}<span className="text-[10px] text-muted-foreground">· {t.sub}</span>
           </Button>
         ))}
       </nav>
       <div className="min-h-0 flex-1">
-        {tab === "hld" && (
-          <ReactFlowProvider>
-            <HldCanvas nodes={nodes} setNodes={setNodes} onNodesChange={onNodesChange} edges={edges} setEdges={setEdges} onEdgesChange={onEdgesChange} />
-          </ReactFlowProvider>
-        )}
-        {tab === "sequence" && <SplitEditor value={seq} onChange={setSeq} hint="Mermaid sequenceDiagram — live preview" preview={<MermaidView code={seq} />} />}
+        {tab === "hld" && <HldEditor nodes={nodes} edges={edges} setNodes={setNodes} setEdges={setEdges} />}
+        {tab === "sequence" && <SplitEditor value={seq} onChange={setSeq} hint="Mermaid sequenceDiagram — live preview" preview={seq.trim() ? <MermaidView code={seq} /> : empty("a sequenceDiagram")} />}
         {tab === "schema" && (
           <SplitEditor value={schema} onChange={setSchema} hint="dbdiagram.io-style DBML: Table name { col type [pk, unique, ref: > other.id] }"
-            preview={er.error ? <div className="p-6 text-xs text-muted-foreground">{er.error}</div> : <MermaidView code={er.code} />} />
+            preview={!schema.trim() ? empty("tables in DBML") : er.error ? <div className="p-6 text-xs text-muted-foreground">{er.error}</div> : <MermaidView code={er.code} />} />
         )}
         {tab === "lld" && (
           <div className="grid h-full grid-rows-[1fr_180px]">
-            <SplitEditor value={lld} onChange={setLld} hint="Mermaid classDiagram — classes, methods, relationships" preview={<MermaidView code={lld} />} />
+            <SplitEditor value={lld} onChange={setLld} hint="Mermaid classDiagram — classes, methods, relationships" preview={lld.trim() ? <MermaidView code={lld} /> : empty("a classDiagram")} />
             <div className="flex flex-col border-t">
               <div className="border-b px-3 py-1.5 text-[11px] text-muted-foreground">Design notes — requirements, estimates, APIs, trade-offs</div>
-              <textarea value={notes} onChange={e => setNotes(e.target.value)} className="flex-1 resize-none bg-transparent p-3 font-mono text-xs outline-none" />
+              <textarea value={notes} onChange={ev => setNotes(ev.target.value)} placeholder="Requirements, capacity estimates, APIs, trade-offs…" className="flex-1 resize-none bg-transparent p-3 font-mono text-xs outline-none" />
             </div>
           </div>
         )}
       </div>
+      {showEx && <ExamplesDialog tab={tab} scenario={scenarioExample(slug)} subject={subject} onClose={() => setShowEx(false)}
+        onUseTab={useTab} onLoadAll={d => { apply(d); setShowEx(false); }} />}
     </div>
   );
 }
