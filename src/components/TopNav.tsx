@@ -1,5 +1,5 @@
 import { Link, useRouterState, useNavigate } from "@tanstack/react-router";
-import { Flame, Zap, Trophy, User, Users, LayoutDashboard, MessagesSquare, Award, BarChart3, Sun, Moon, LogOut, Rocket, ChevronDown, MoreHorizontal } from "lucide-react";
+import { Flame, Zap, Trophy, User, Users, LayoutDashboard, MessagesSquare, Award, BarChart3, Sun, Moon, LogOut, Rocket, ChevronDown, MoreHorizontal, Mic } from "lucide-react";
 import { useTheme } from "@/hooks/use-theme";
 import { me } from "@/lib/dummy";
 import { useAuth } from "@/lib/auth";
@@ -9,6 +9,7 @@ import YuvroLogo from "@/assets/YuvroLogo.png";
 
 const primaryLinks = [
   { to: "/dashboard", label: "Individual Hub", icon: LayoutDashboard },
+  { to: "/mock-interviews", label: "Vitarka Mock Interviews", icon: Mic },
   { to: "/hackathons", label: "Hackathons", icon: Rocket },
 ];
 

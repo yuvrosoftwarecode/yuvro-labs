@@ -15,6 +15,7 @@ import { Route as RecruiterLoginRouteImport } from './routes/recruiter-login'
 import { Route as RecruiterRouteImport } from './routes/recruiter'
 import { Route as ProfileRouteImport } from './routes/profile'
 import { Route as PricingRouteImport } from './routes/pricing'
+import { Route as MockInterviewsRouteImport } from './routes/mock-interviews'
 import { Route as LeaderboardRouteImport } from './routes/leaderboard'
 import { Route as HackathonsRouteImport } from './routes/hackathons'
 import { Route as ForumRouteImport } from './routes/forum'
@@ -130,6 +131,11 @@ const ProfileRoute = ProfileRouteImport.update({
 const PricingRoute = PricingRouteImport.update({
   id: '/pricing',
   path: '/pricing',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const MockInterviewsRoute = MockInterviewsRouteImport.update({
+  id: '/mock-interviews',
+  path: '/mock-interviews',
   getParentRoute: () => rootRouteImport,
 } as any)
 const LeaderboardRoute = LeaderboardRouteImport.update({
@@ -597,6 +603,7 @@ export interface FileRoutesByFullPath {
   '/forum': typeof ForumRoute
   '/hackathons': typeof HackathonsRouteWithChildren
   '/leaderboard': typeof LeaderboardRoute
+  '/mock-interviews': typeof MockInterviewsRoute
   '/pricing': typeof PricingRoute
   '/profile': typeof ProfileRoute
   '/recruiter': typeof RecruiterRouteWithChildren
@@ -687,6 +694,7 @@ export interface FileRoutesByTo {
   '/forum': typeof ForumRoute
   '/hackathons': typeof HackathonsRouteWithChildren
   '/leaderboard': typeof LeaderboardRoute
+  '/mock-interviews': typeof MockInterviewsRoute
   '/pricing': typeof PricingRoute
   '/profile': typeof ProfileRoute
   '/recruiter-login': typeof RecruiterLoginRoute
@@ -778,6 +786,7 @@ export interface FileRoutesById {
   '/forum': typeof ForumRoute
   '/hackathons': typeof HackathonsRouteWithChildren
   '/leaderboard': typeof LeaderboardRoute
+  '/mock-interviews': typeof MockInterviewsRoute
   '/pricing': typeof PricingRoute
   '/profile': typeof ProfileRoute
   '/recruiter': typeof RecruiterRouteWithChildren
@@ -874,6 +883,7 @@ export interface FileRouteTypes {
     | '/forum'
     | '/hackathons'
     | '/leaderboard'
+    | '/mock-interviews'
     | '/pricing'
     | '/profile'
     | '/recruiter'
@@ -964,6 +974,7 @@ export interface FileRouteTypes {
     | '/forum'
     | '/hackathons'
     | '/leaderboard'
+    | '/mock-interviews'
     | '/pricing'
     | '/profile'
     | '/recruiter-login'
@@ -1054,6 +1065,7 @@ export interface FileRouteTypes {
     | '/forum'
     | '/hackathons'
     | '/leaderboard'
+    | '/mock-interviews'
     | '/pricing'
     | '/profile'
     | '/recruiter'
@@ -1149,6 +1161,7 @@ export interface RootRouteChildren {
   ForumRoute: typeof ForumRoute
   HackathonsRoute: typeof HackathonsRouteWithChildren
   LeaderboardRoute: typeof LeaderboardRoute
+  MockInterviewsRoute: typeof MockInterviewsRoute
   PricingRoute: typeof PricingRoute
   ProfileRoute: typeof ProfileRoute
   RecruiterRoute: typeof RecruiterRouteWithChildren
@@ -1205,6 +1218,13 @@ declare module '@tanstack/react-router' {
       path: '/pricing'
       fullPath: '/pricing'
       preLoaderRoute: typeof PricingRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/mock-interviews': {
+      id: '/mock-interviews'
+      path: '/mock-interviews'
+      fullPath: '/mock-interviews'
+      preLoaderRoute: typeof MockInterviewsRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/leaderboard': {
@@ -2111,6 +2131,7 @@ const rootRouteChildren: RootRouteChildren = {
   ForumRoute: ForumRoute,
   HackathonsRoute: HackathonsRouteWithChildren,
   LeaderboardRoute: LeaderboardRoute,
+  MockInterviewsRoute: MockInterviewsRoute,
   PricingRoute: PricingRoute,
   ProfileRoute: ProfileRoute,
   RecruiterRoute: RecruiterRouteWithChildren,
