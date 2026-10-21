@@ -126,10 +126,6 @@ function InterviewScreen() {
     }
     if (idx < questions.length - 1) add.push({ who: "ai", text: questions[idx + 1].text });
     setLog(l => [...l, ...add]);
-    if (false && next.length % 2 === 1 && idx < questions.length - 1) {
-      setFollowUp(FOLLOWUPS[idx % FOLLOWUPS.length]);
-      return;
-    }
     setFollowUp(null);
     if (idx >= questions.length - 1) setPhase("done");
     else setIdx(idx + 1);
