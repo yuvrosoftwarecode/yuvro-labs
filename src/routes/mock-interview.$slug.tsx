@@ -92,6 +92,8 @@ function InterviewScreen() {
   const [cam, setCam] = useState(true);
   const [speaking, setSpeaking] = useState(false);
   const [followUp, setFollowUp] = useState<string | null>(null);
+  const [log, setLog] = useState<{ who: "ai" | "me"; text: string }[]>([]);
+  useEffect(() => { if (phase === "live" && log.length === 0) setLog([{ who: "ai", text: questions[0].text }]); }, [phase]);
   const [left, setLeft] = useState(iv.minutes * 60);
   const endRef = useRef<HTMLDivElement>(null);
 
@@ -108,14 +110,23 @@ function InterviewScreen() {
     return () => clearTimeout(t);
   }, [idx, followUp, phase]);
 
-  useEffect(() => { endRef.current?.scrollIntoView({ behavior: "smooth" }); }, [answers, followUp, idx]);
+  useEffect(() => { endRef.current?.scrollIntoView({ behavior: "smooth" }); }, [log]);
 
   const submit = () => {
     if (!draft.trim()) return;
     const next = [...answers, draft.trim()];
     setAnswers(next);
     setDraft("");
+    const add: { who: "ai" | "me"; text: string }[] = [{ who: "me", text: draft.trim() }];
     if (!followUp && next.length % 2 === 1 && idx < questions.length - 1) {
+      const f = FOLLOWUPS[idx % FOLLOWUPS.length];
+      setLog(l => [...l, ...add, { who: "ai", text: f }]);
+      setFollowUp(f);
+      return;
+    }
+    if (idx < questions.length - 1) add.push({ who: "ai", text: questions[idx + 1].text });
+    setLog(l => [...l, ...add]);
+    if (false && next.length % 2 === 1 && idx < questions.length - 1) {
       setFollowUp(FOLLOWUPS[idx % FOLLOWUPS.length]);
       return;
     }
@@ -175,7 +186,7 @@ function InterviewScreen() {
               ))}
             </div>
             <div className="mt-6 flex gap-2">
-              <button onClick={() => { setPhase("lobby"); setIdx(0); setAnswers([]); setFollowUp(null); setLeft(iv.minutes * 60); }} className="inline-flex items-center gap-1 rounded-md border px-3 py-2 text-sm hover:bg-muted"><RotateCcw className="h-4 w-4" /> Retake</button>
+              <button onClick={() => { setPhase("lobby"); setIdx(0); setAnswers([]); setLog([]); setFollowUp(null); setLeft(iv.minutes * 60); }} className="inline-flex items-center gap-1 rounded-md border px-3 py-2 text-sm hover:bg-muted"><RotateCcw className="h-4 w-4" /> Retake</button>
               <Link to="/mock-interviews" className="inline-flex items-center gap-1 rounded-md bg-primary px-3 py-2 text-sm font-medium text-primary-foreground">Back to interviews</Link>
             </div>
           </div>
@@ -218,11 +229,7 @@ function InterviewScreen() {
             <div className="mt-2 h-1 rounded-full bg-muted"><div className="h-1 rounded-full bg-primary transition-all" style={{ width: `${((idx + 1) / questions.length) * 100}%` }} /></div>
           </div>
           <div className="flex-1 space-y-3 overflow-y-auto p-5 text-sm">
-            {questions.slice(0, idx + 1).map((x, k) => (
-              <Bubble key={k} who="ai">{x.text}</Bubble>
-            ))}
-            {answers.map((a, k) => <Bubble key={`a${k}`} who="me">{a}</Bubble>)}
-            {followUp && <Bubble who="ai">{followUp}</Bubble>}
+            {log.map((m, k) => <Bubble key={k} who={m.who}>{m.text}</Bubble>)}
             <div ref={endRef} />
           </div>
           <div className="border-t p-4">
