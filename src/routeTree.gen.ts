@@ -42,6 +42,7 @@ import { Route as RecruiterReportsRouteImport } from './routes/recruiter.reports
 import { Route as ProductVitarkaAiRouteImport } from './routes/product.vitarka-ai'
 import { Route as ProductEngineeringSimulationsRouteImport } from './routes/product.engineering-simulations'
 import { Route as ProductSlugRouteImport } from './routes/product.$slug'
+import { Route as MockInterviewSlugRouteImport } from './routes/mock-interview.$slug'
 import { Route as LabSlugRouteImport } from './routes/lab.$slug'
 import { Route as HackathonsIdRouteImport } from './routes/hackathons.$id'
 import { Route as EvaluationWorkspaceRouteImport } from './routes/evaluation.workspace'
@@ -267,6 +268,11 @@ const ProductEngineeringSimulationsRoute =
 const ProductSlugRoute = ProductSlugRouteImport.update({
   id: '/product/$slug',
   path: '/product/$slug',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const MockInterviewSlugRoute = MockInterviewSlugRouteImport.update({
+  id: '/mock-interview/$slug',
+  path: '/mock-interview/$slug',
   getParentRoute: () => rootRouteImport,
 } as any)
 const LabSlugRoute = LabSlugRouteImport.update({
@@ -642,6 +648,7 @@ export interface FileRoutesByFullPath {
   '/evaluation/workspace': typeof EvaluationWorkspaceRoute
   '/hackathons/$id': typeof HackathonsIdRoute
   '/lab/$slug': typeof LabSlugRouteWithChildren
+  '/mock-interview/$slug': typeof MockInterviewSlugRoute
   '/product/$slug': typeof ProductSlugRoute
   '/product/engineering-simulations': typeof ProductEngineeringSimulationsRoute
   '/product/vitarka-ai': typeof ProductVitarkaAiRoute
@@ -730,6 +737,7 @@ export interface FileRoutesByTo {
   '/evaluation/workspace': typeof EvaluationWorkspaceRoute
   '/hackathons/$id': typeof HackathonsIdRoute
   '/lab/$slug': typeof LabSlugRouteWithChildren
+  '/mock-interview/$slug': typeof MockInterviewSlugRoute
   '/product/$slug': typeof ProductSlugRoute
   '/product/engineering-simulations': typeof ProductEngineeringSimulationsRoute
   '/product/vitarka-ai': typeof ProductVitarkaAiRoute
@@ -825,6 +833,7 @@ export interface FileRoutesById {
   '/evaluation/workspace': typeof EvaluationWorkspaceRoute
   '/hackathons/$id': typeof HackathonsIdRoute
   '/lab/$slug': typeof LabSlugRouteWithChildren
+  '/mock-interview/$slug': typeof MockInterviewSlugRoute
   '/product/$slug': typeof ProductSlugRoute
   '/product/engineering-simulations': typeof ProductEngineeringSimulationsRoute
   '/product/vitarka-ai': typeof ProductVitarkaAiRoute
@@ -922,6 +931,7 @@ export interface FileRouteTypes {
     | '/evaluation/workspace'
     | '/hackathons/$id'
     | '/lab/$slug'
+    | '/mock-interview/$slug'
     | '/product/$slug'
     | '/product/engineering-simulations'
     | '/product/vitarka-ai'
@@ -1010,6 +1020,7 @@ export interface FileRouteTypes {
     | '/evaluation/workspace'
     | '/hackathons/$id'
     | '/lab/$slug'
+    | '/mock-interview/$slug'
     | '/product/$slug'
     | '/product/engineering-simulations'
     | '/product/vitarka-ai'
@@ -1104,6 +1115,7 @@ export interface FileRouteTypes {
     | '/evaluation/workspace'
     | '/hackathons/$id'
     | '/lab/$slug'
+    | '/mock-interview/$slug'
     | '/product/$slug'
     | '/product/engineering-simulations'
     | '/product/vitarka-ai'
@@ -1169,6 +1181,7 @@ export interface RootRouteChildren {
   SolutionsRoute: typeof SolutionsRoute
   SystemDesignStudioRoute: typeof SystemDesignStudioRoute
   LabSlugRoute: typeof LabSlugRouteWithChildren
+  MockInterviewSlugRoute: typeof MockInterviewSlugRoute
   ProductSlugRoute: typeof ProductSlugRoute
   ProductEngineeringSimulationsRoute: typeof ProductEngineeringSimulationsRoute
   ProductVitarkaAiRoute: typeof ProductVitarkaAiRoute
@@ -1407,6 +1420,13 @@ declare module '@tanstack/react-router' {
       path: '/product/$slug'
       fullPath: '/product/$slug'
       preLoaderRoute: typeof ProductSlugRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/mock-interview/$slug': {
+      id: '/mock-interview/$slug'
+      path: '/mock-interview/$slug'
+      fullPath: '/mock-interview/$slug'
+      preLoaderRoute: typeof MockInterviewSlugRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/lab/$slug': {
@@ -2139,6 +2159,7 @@ const rootRouteChildren: RootRouteChildren = {
   SolutionsRoute: SolutionsRoute,
   SystemDesignStudioRoute: SystemDesignStudioRoute,
   LabSlugRoute: LabSlugRouteWithChildren,
+  MockInterviewSlugRoute: MockInterviewSlugRoute,
   ProductSlugRoute: ProductSlugRoute,
   ProductEngineeringSimulationsRoute: ProductEngineeringSimulationsRoute,
   ProductVitarkaAiRoute: ProductVitarkaAiRoute,
