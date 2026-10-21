@@ -1,4 +1,4 @@
-import { createFileRoute } from "@tanstack/react-router";
+import { createFileRoute, Link } from "@tanstack/react-router";
 import { useEffect, useMemo, useState } from "react";
 import { TopNav } from "@/components/TopNav";
 import { ProgressRing } from "@/components/ProgressRing";
@@ -11,36 +11,7 @@ export const Route = createFileRoute("/mock-interviews")({
   component: MockHub,
 });
 
-type Category = "Backend" | "Frontend" | "Data" | "DevOps & Cloud" | "System Design" | "AI/ML" | "Security" | "Behavioural";
-const CATEGORIES: Category[] = ["Backend", "Frontend", "Data", "DevOps & Cloud", "System Design", "AI/ML", "Security", "Behavioural"];
-const DIFFICULTIES = ["Beginner", "Intermediate", "Advanced"] as const;
-type Diff = typeof DIFFICULTIES[number];
-const ROLES = ["Fresher", "SDE I", "SDE II", "Senior"] as const;
-
-interface Interview {
-  slug: string; name: string; icon: string; color: string; description: string;
-  category: Category; difficulty: Diff; role: typeof ROLES[number];
-  questions: number; minutes: number; completed: number; featured?: boolean;
-}
-
-const INTERVIEWS: Interview[] = [
-  { slug: "java-backend", name: "Java Backend Engineer", icon: "☕", color: "warning", description: "Core Java, Spring Boot, REST APIs and JVM tuning questions with follow-ups.", category: "Backend", difficulty: "Intermediate", role: "SDE I", questions: 12, minutes: 30, completed: 1, featured: true },
-  { slug: "python-django", name: "Python & Django", icon: "🐍", color: "info", description: "ORM, middleware, async views and Python internals.", category: "Backend", difficulty: "Intermediate", role: "SDE I", questions: 10, minutes: 25, completed: 0 },
-  { slug: "node-api", name: "Node.js API Developer", icon: "🟩", color: "success", description: "Event loop, streams, Express design and API security.", category: "Backend", difficulty: "Intermediate", role: "SDE II", questions: 10, minutes: 25, completed: 0 },
-  { slug: "react-frontend", name: "React Frontend Engineer", icon: "⚛️", color: "info", description: "Hooks, rendering, state management and performance.", category: "Frontend", difficulty: "Intermediate", role: "SDE I", questions: 12, minutes: 30, completed: 2, featured: true },
-  { slug: "web-fundamentals", name: "Web Fundamentals", icon: "🌐", color: "primary", description: "HTML, CSS, JavaScript and browser basics for freshers.", category: "Frontend", difficulty: "Beginner", role: "Fresher", questions: 8, minutes: 20, completed: 0 },
-  { slug: "sql-data", name: "SQL & Data Analyst", icon: "🗄️", color: "primary", description: "Joins, window functions, indexing and query optimization.", category: "Data", difficulty: "Beginner", role: "Fresher", questions: 10, minutes: 20, completed: 0, featured: true },
-  { slug: "data-engineer", name: "Data Engineer", icon: "🔀", color: "warning", description: "Pipelines, Spark, Kafka, warehousing and data modelling.", category: "Data", difficulty: "Advanced", role: "SDE II", questions: 12, minutes: 35, completed: 0 },
-  { slug: "devops-k8s", name: "DevOps & Kubernetes", icon: "☸️", color: "info", description: "CI/CD, Docker, Kubernetes, observability and incidents.", category: "DevOps & Cloud", difficulty: "Advanced", role: "SDE II", questions: 12, minutes: 30, completed: 0, featured: true },
-  { slug: "aws-cloud", name: "AWS Cloud Engineer", icon: "☁️", color: "warning", description: "VPC, IAM, EC2, Lambda, S3 and cost-aware architecture.", category: "DevOps & Cloud", difficulty: "Intermediate", role: "SDE II", questions: 10, minutes: 30, completed: 0 },
-  { slug: "sd-hld", name: "System Design – HLD", icon: "🏛️", color: "primary", description: "Design scalable systems: URL shortener, feeds, payments.", category: "System Design", difficulty: "Advanced", role: "Senior", questions: 6, minutes: 45, completed: 0, featured: true },
-  { slug: "sd-lld", name: "System Design – LLD", icon: "🧩", color: "success", description: "Object modelling, design patterns and API contracts.", category: "System Design", difficulty: "Intermediate", role: "SDE II", questions: 6, minutes: 40, completed: 0 },
-  { slug: "ml-engineer", name: "ML Engineer", icon: "🤖", color: "info", description: "Model training, evaluation, feature stores and MLOps.", category: "AI/ML", difficulty: "Advanced", role: "SDE II", questions: 10, minutes: 35, completed: 0, featured: true },
-  { slug: "genai-llm", name: "GenAI & LLM Apps", icon: "✨", color: "primary", description: "RAG, prompting, embeddings, evals and guardrails.", category: "AI/ML", difficulty: "Intermediate", role: "SDE I", questions: 10, minutes: 30, completed: 0 },
-  { slug: "appsec", name: "Application Security", icon: "🛡️", color: "destructive", description: "OWASP Top 10, auth flows, JWT and threat modelling.", category: "Security", difficulty: "Advanced", role: "SDE II", questions: 10, minutes: 30, completed: 0 },
-  { slug: "qa-automation", name: "QA Automation", icon: "🧪", color: "success", description: "Test strategy, Selenium/Playwright and flaky tests.", category: "Backend", difficulty: "Beginner", role: "Fresher", questions: 8, minutes: 20, completed: 0 },
-  { slug: "behavioural", name: "Behavioural & HR", icon: "🗣️", color: "warning", description: "STAR answers, ownership, conflict and career goals.", category: "Behavioural", difficulty: "Beginner", role: "Fresher", questions: 8, minutes: 20, completed: 0, featured: true },
-];
+import { INTERVIEWS, CATEGORIES, DIFFICULTIES, ROLES, type Category, type Diff, type Interview } from "@/lib/mockInterviews";
 
 const KEY = "yuvro-mock-interviews-enrolled";
 const load = (): string[] => { try { return JSON.parse(localStorage.getItem(KEY) || '["java-backend","react-frontend"]'); } catch { return []; } };
@@ -121,13 +92,13 @@ function MockHub() {
                 <div className="relative overflow-hidden rounded-xl border bg-gradient-to-br from-card via-card to-accent/20 p-5 hover:border-primary/50 transition">
                   <div className="absolute -right-8 -top-8 h-24 w-24 rounded-full blur-2xl opacity-30" style={{ background: `var(--${i.color})` }} />
                   <span className="inline-flex items-center gap-1 rounded-full border border-warning/30 bg-warning/10 px-2 py-0.5 text-[10px] font-medium text-warning"><Star className="h-3 w-3" /> Featured</span>
-                  <div className="mt-3 flex items-start gap-3">
+                  <Link to="/mock-interview/$slug" params={{ slug: i.slug }} className="mt-3 flex items-start gap-3">
                     <div className="text-3xl">{i.icon}</div>
                     <div className="min-w-0">
                       <h3 className="font-semibold truncate">{i.name}</h3>
                       <p className="text-xs text-muted-foreground line-clamp-2 mt-0.5">{i.description}</p>
                     </div>
-                  </div>
+                  </Link>
                   <Meta i={i} />
                   <div className="mt-4"><AddBtn on={enrolled.includes(i.slug)} onClick={() => toggle(i.slug)} full /></div>
                 </div>
@@ -164,13 +135,13 @@ function MockHub() {
                   <div className="grid gap-3 sm:grid-cols-2">
                     {filtered.map(i => (
                       <div key={i.slug} className="rounded-xl border bg-card p-4 hover:border-primary/40 transition">
-                        <div className="flex items-start gap-2.5 min-w-0">
+                        <Link to="/mock-interview/$slug" params={{ slug: i.slug }} className="flex items-start gap-2.5 min-w-0">
                           <div className="text-xl">{i.icon}</div>
                           <div className="min-w-0">
                             <div className="font-medium text-sm truncate">{i.name}</div>
                             <div className="text-[11px] text-muted-foreground line-clamp-2 mt-0.5">{i.description}</div>
                           </div>
-                        </div>
+                        </Link>
                         <div className="mt-3 flex items-center justify-between text-[11px]">
                           <div className="flex items-center gap-2"><DiffBadge value={i.difficulty} /><span className="text-muted-foreground">{i.role} · {i.minutes}m</span></div>
                           <AddBtn on={enrolled.includes(i.slug)} onClick={() => toggle(i.slug)} />
@@ -211,9 +182,9 @@ function MineCard({ i }: { i: Interview }) {
         <ProgressRing value={pct} color={`var(--${i.color})`} />
       </div>
       <Meta i={i} />
-      <button className="mt-4 w-full inline-flex items-center justify-center gap-1 rounded-md bg-primary px-3 py-1.5 text-xs font-medium text-primary-foreground hover:opacity-90">
+      <Link to="/mock-interview/$slug" params={{ slug: i.slug }} className="mt-4 w-full inline-flex items-center justify-center gap-1 rounded-md bg-primary px-3 py-1.5 text-xs font-medium text-primary-foreground hover:opacity-90">
         {i.completed > 0 ? "Retake interview" : "Start interview"} <ArrowRight className="h-3.5 w-3.5" />
-      </button>
+      </Link>
     </div>
   );
 }
