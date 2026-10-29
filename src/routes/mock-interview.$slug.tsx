@@ -1,6 +1,22 @@
 import { createFileRoute, Link, notFound } from "@tanstack/react-router";
 import { useEffect, useMemo, useRef, useState } from "react";
-import { ArrowLeft, Mic, MicOff, Video, VideoOff, Clock, ChevronRight, PhoneOff, MessageSquare, CheckCircle2, RotateCcw } from "lucide-react";
+import { ArrowLeft, Mic, MicOff, Video, VideoOff, Clock, ChevronRight, PhoneOff, MessageSquare, CheckCircle2, RotateCcw, Code2 } from "lucide-react";
+import CodeMirror from "@uiw/react-codemirror";
+import { vscodeDark } from "@uiw/codemirror-theme-vscode";
+import { javascript } from "@codemirror/lang-javascript";
+import { python } from "@codemirror/lang-python";
+import { java } from "@codemirror/lang-java";
+import { cpp } from "@codemirror/lang-cpp";
+import { sql } from "@codemirror/lang-sql";
+import { ResizablePanelGroup, ResizablePanel, ResizableHandle } from "@/components/ui/resizable";
+
+const LANGS = {
+  javascript: { label: "JavaScript", ext: "js", ext_fn: () => javascript({ typescript: true }), starter: "function solve(input) {\n  // write your solution\n}\n" },
+  python: { label: "Python", ext: "py", ext_fn: () => python(), starter: "def solve(data):\n    # write your solution\n    pass\n" },
+  java: { label: "Java", ext: "java", ext_fn: () => java(), starter: "class Solution {\n    public void solve() {\n        // write your solution\n    }\n}\n" },
+  cpp: { label: "C++", ext: "cpp", ext_fn: () => cpp(), starter: "#include <bits/stdc++.h>\nusing namespace std;\n\nint main() {\n    return 0;\n}\n" },
+  sql: { label: "SQL", ext: "sql", ext_fn: () => sql(), starter: "SELECT *\nFROM users;\n" },
+};
 import { INTERVIEWS, type Category } from "@/lib/mockInterviews";
 
 export const Route = createFileRoute("/mock-interview/$slug")({
@@ -112,12 +128,13 @@ function InterviewScreen() {
 
   useEffect(() => { { const el = endRef.current?.parentElement; el?.scrollTo({ top: el.scrollHeight, behavior: "smooth" }); }; }, [log]);
 
-  const submit = () => {
-    if (!draft.trim()) return;
-    const next = [...answers, draft.trim()];
+  const submit = (override?: string) => {
+    const text = (typeof override === "string" ? override : draft).trim();
+    if (!text) return;
+    const next = [...answers, text];
     setAnswers(next);
     setDraft("");
-    const add: { who: "ai" | "me"; text: string }[] = [{ who: "me", text: draft.trim() }];
+    const add: { who: "ai" | "me"; text: string }[] = [{ who: "me", text }];
     if (!followUp && next.length % 2 === 1 && idx < questions.length - 1) {
       const f = FOLLOWUPS[idx % FOLLOWUPS.length];
       setLog(l => [...l, ...add, { who: "ai", text: f }]);
@@ -224,28 +241,71 @@ function LiveRoom(p: {
   draft: string; setDraft: (v: string) => void; submit: () => void; onEnd: () => void;
   progress: string; endRef: React.RefObject<HTMLDivElement | null>;
 }) {
-  const videoRef = useRef<HTMLVideoElement>(null);
+  const streamRef = useRef<MediaStream | null>(null);
   const [chat, setChat] = useState(false);
   const [camErr, setCamErr] = useState(false);
+  const [codeMode, setCodeMode] = useState(false);
+  const [lang, setLang] = useState<keyof typeof LANGS>("javascript");
+  const [code, setCode] = useState<Record<string, string>>({});
+
+  const videoRef = (el: HTMLVideoElement | null) => {
+    if (el && streamRef.current && el.srcObject !== streamRef.current) el.srcObject = streamRef.current;
+  };
 
   useEffect(() => {
     let stream: MediaStream | null = null;
     if (p.cam && navigator.mediaDevices?.getUserMedia) {
       navigator.mediaDevices.getUserMedia({ video: true }).then(s => {
-        stream = s; setCamErr(false);
-        if (videoRef.current) videoRef.current.srcObject = s;
+        stream = s; streamRef.current = s; setCamErr(false);
+        document.querySelectorAll<HTMLVideoElement>("video[data-self]").forEach(v => { v.srcObject = s; });
       }).catch(() => setCamErr(true));
     }
-    return () => stream?.getTracks().forEach(t => t.stop());
+    return () => { stream?.getTracks().forEach(t => t.stop()); streamRef.current = null; };
   }, [p.cam]);
 
   const lastAi = p.log.map(m => m.who).lastIndexOf("ai");
+
+  const transcript = (compact: boolean) => (
+    <div
+      className={`${compact ? "flex-1 min-h-0" : "max-h-[300px]"} space-y-7 overflow-y-auto pr-2 [scrollbar-width:none]`}
+      style={compact ? undefined : { maskImage: "linear-gradient(to bottom, transparent 0, black 30%)", WebkitMaskImage: "linear-gradient(to bottom, transparent 0, black 30%)" }}
+    >
+      {p.log.map((m, k) => (
+        <div key={k} className="space-y-2">
+          {m.who === "ai" ? <Dots active={p.speaking && k === lastAi} /> : <div className="text-[10px] uppercase tracking-widest text-muted-foreground">You</div>}
+          <p className={`${compact ? "text-sm" : "text-[15px]"} leading-relaxed ${m.who === "ai" ? "text-foreground" : "text-muted-foreground"}`}>{m.text}</p>
+        </div>
+      ))}
+      <div ref={p.endRef} />
+    </div>
+  );
+
+  const camera = (
+    <div className="relative aspect-video overflow-hidden rounded-xl border bg-card shadow-2xl">
+      {p.cam && !camErr ? (
+        <video data-self ref={videoRef} autoPlay muted playsInline className="h-full w-full -scale-x-100 object-cover" />
+      ) : (
+        <div className="grid h-full place-items-center text-sm text-muted-foreground">{camErr ? "Camera unavailable" : "Camera off"}</div>
+      )}
+      <div className="absolute bottom-3 right-3 flex h-7 items-end gap-[3px] rounded-md bg-background/70 px-1.5 py-1">
+        {[6, 10, 8, 14].map((h, k) => (
+          <span key={k} className={`w-[3px] rounded-sm ${p.mic ? "bg-primary" : "bg-muted-foreground"}`} style={{ height: p.mic ? h : 4 }} />
+        ))}
+      </div>
+    </div>
+  );
+
+  const current = code[lang] ?? LANGS[lang].starter;
+  const submitCode = () => {
+    p.setDraft(`\`\`\`${lang}\n${current}\n\`\`\``);
+    setTimeout(p.submit, 0);
+  };
 
   return (
     <div className="dark">
       <div className="fixed inset-0 flex flex-col overflow-hidden bg-background text-foreground">
         {/* top bar */}
-        <div className="relative z-10 flex items-center justify-between px-6 py-4 text-xs text-muted-foreground">
+        <div className="relative z-10 flex items-center justify-between border-b border-border/60 px-6 py-3 text-xs text-muted-foreground">
           <div className="flex items-center gap-3">
             <Link to="/mock-interviews" className="rounded-md p-1.5 hover:bg-muted"><ArrowLeft className="h-4 w-4" /></Link>
             <span className="font-medium text-foreground">Vitarka · {p.title}</span>
@@ -254,37 +314,44 @@ function LiveRoom(p: {
           <span className="inline-flex items-center gap-1 rounded-md border px-2 py-1 font-mono"><Clock className="h-3.5 w-3.5" /> {fmt(p.left)}</span>
         </div>
 
-        {/* stage */}
-        <div className="relative z-10 mx-auto grid w-full max-w-6xl flex-1 items-center gap-10 px-6 pb-40 lg:grid-cols-2">
-          <div
-            className="max-h-[300px] space-y-7 overflow-y-auto pr-2 [scrollbar-width:none]"
-            style={{ maskImage: "linear-gradient(to bottom, transparent 0, black 30%)", WebkitMaskImage: "linear-gradient(to bottom, transparent 0, black 30%)" }}
-          >
-            {p.log.map((m, k) => (
-              <div key={k} className="space-y-2">
-                {m.who === "ai" ? <Dots active={p.speaking && k === lastAi} /> : <div className="text-[10px] uppercase tracking-widest text-muted-foreground">You</div>}
-                <p className={`text-[15px] leading-relaxed ${m.who === "ai" ? "text-foreground" : "text-muted-foreground"}`}>{m.text}</p>
+        {codeMode ? (
+          <ResizablePanelGroup orientation="horizontal" className="relative z-10 flex-1 pb-20">
+            <ResizablePanel defaultSize="34%" minSize="22%" maxSize="60%">
+              <div className="flex h-full flex-col gap-5 p-5">
+                {camera}
+                <div className="text-[10px] uppercase tracking-widest text-muted-foreground">Conversation</div>
+                {transcript(true)}
               </div>
-            ))}
-            <div ref={p.endRef} />
-          </div>
-
-          <div className="relative aspect-video overflow-hidden rounded-xl border bg-card shadow-2xl">
-            {p.cam && !camErr ? (
-              <video ref={videoRef} autoPlay muted playsInline className="h-full w-full -scale-x-100 object-cover" />
-            ) : (
-              <div className="grid h-full place-items-center text-sm text-muted-foreground">{camErr ? "Camera unavailable" : "Camera off"}</div>
-            )}
-            <div className="absolute bottom-3 right-3 flex h-7 items-end gap-[3px] rounded-md bg-background/70 px-1.5 py-1">
-              {[6, 10, 8, 14].map((h, k) => (
-                <span key={k} className={`w-[3px] rounded-sm ${p.mic ? "bg-primary" : "bg-muted-foreground"}`} style={{ height: p.mic ? h : 4 }} />
-              ))}
+            </ResizablePanel>
+            <ResizableHandle withHandle />
+            <ResizablePanel defaultSize="66%" minSize="35%">
+              <div className="flex h-full flex-col">
+                <div className="flex items-center justify-between border-b border-border/60 px-4 py-2 text-xs">
+                  <div className="flex items-center gap-2 text-muted-foreground">
+                    <span className="font-mono">solution.{LANGS[lang].ext}</span>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <select value={lang} onChange={e => setLang(e.target.value as keyof typeof LANGS)} className="rounded-md border bg-background px-2 py-1 text-xs outline-none">
+                      {Object.entries(LANGS).map(([k, v]) => <option key={k} value={k}>{v.label}</option>)}
+                    </select>
+                    <button onClick={submitCode} className="inline-flex items-center gap-1 rounded-md bg-primary px-3 py-1 font-medium text-primary-foreground hover:opacity-90">Submit code <ChevronRight className="h-3.5 w-3.5" /></button>
+                  </div>
+                </div>
+                <div className="min-h-0 flex-1 overflow-auto">
+                  <CodeMirror value={current} onChange={v => setCode(c => ({ ...c, [lang]: v }))} theme={vscodeDark} extensions={[LANGS[lang].ext_fn()]} height="100%" className="h-full text-sm [&_.cm-editor]:h-full" basicSetup={{ lineNumbers: true, foldGutter: true }} />
+                </div>
+              </div>
+            </ResizablePanel>
+          </ResizablePanelGroup>
+        ) : (
+          <>
+            <div className="relative z-10 mx-auto grid w-full max-w-6xl flex-1 items-center gap-10 px-6 pb-40 lg:grid-cols-2">
+              {transcript(false)}
+              {camera}
             </div>
-          </div>
-        </div>
-
-        {/* voice terrain */}
-        <VoiceTerrain speaking={p.speaking} listening={p.mic && !p.speaking} />
+            <VoiceTerrain speaking={p.speaking} listening={p.mic && !p.speaking} />
+          </>
+        )}
 
         {/* answer box */}
         {chat && (
@@ -298,10 +365,11 @@ function LiveRoom(p: {
         )}
 
         {/* controls */}
-        <div className="absolute bottom-6 left-1/2 z-20 flex -translate-x-1/2 items-center gap-2 rounded-xl border bg-card/90 p-1.5 backdrop-blur">
+        <div className="absolute bottom-5 left-1/2 z-20 flex -translate-x-1/2 items-center gap-2 rounded-xl border bg-card/90 p-1.5 backdrop-blur">
           <CtrlBtn label={p.mic ? "Mute" : "Unmute"} on={p.mic} onClick={() => p.setMic(!p.mic)}>{p.mic ? <Mic className="h-4 w-4" /> : <MicOff className="h-4 w-4" />}</CtrlBtn>
           <CtrlBtn label={p.cam ? "Turn camera off" : "Turn camera on"} on={p.cam} onClick={() => p.setCam(!p.cam)}>{p.cam ? <Video className="h-4 w-4" /> : <VideoOff className="h-4 w-4" />}</CtrlBtn>
           <CtrlBtn label="Type answer" on={!chat} onClick={() => setChat(!chat)}><MessageSquare className="h-4 w-4" /></CtrlBtn>
+          <CtrlBtn label={codeMode ? "Close code editor" : "Open code editor"} on={!codeMode} onClick={() => setCodeMode(!codeMode)}><Code2 className="h-4 w-4" /></CtrlBtn>
           <button onClick={p.onEnd} aria-label="End interview" className="grid h-9 w-11 place-items-center rounded-lg bg-destructive text-destructive-foreground hover:opacity-90"><PhoneOff className="h-4 w-4" /></button>
         </div>
       </div>
