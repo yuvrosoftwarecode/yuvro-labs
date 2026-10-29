@@ -359,7 +359,7 @@ function VoiceTerrain({ speaking, listening }: { speaking: boolean; listening: b
     const c = ref.current; if (!c) return;
     const ctx = c.getContext("2d"); if (!ctx) return;
     const css = getComputedStyle(c);
-    const primary = css.getPropertyValue("--primary").trim() || "orange";
+    const primary = "#F97316"; // Yuvro brand orange
     const fg = css.getPropertyValue("--foreground").trim() || "white";
     const reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
     let raf = 0; let t = 0;
