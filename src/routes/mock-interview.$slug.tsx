@@ -128,12 +128,13 @@ function InterviewScreen() {
 
   useEffect(() => { { const el = endRef.current?.parentElement; el?.scrollTo({ top: el.scrollHeight, behavior: "smooth" }); }; }, [log]);
 
-  const submit = () => {
-    if (!draft.trim()) return;
-    const next = [...answers, draft.trim()];
+  const submit = (override?: string) => {
+    const text = (typeof override === "string" ? override : draft).trim();
+    if (!text) return;
+    const next = [...answers, text];
     setAnswers(next);
     setDraft("");
-    const add: { who: "ai" | "me"; text: string }[] = [{ who: "me", text: draft.trim() }];
+    const add: { who: "ai" | "me"; text: string }[] = [{ who: "me", text }];
     if (!followUp && next.length % 2 === 1 && idx < questions.length - 1) {
       const f = FOLLOWUPS[idx % FOLLOWUPS.length];
       setLog(l => [...l, ...add, { who: "ai", text: f }]);
