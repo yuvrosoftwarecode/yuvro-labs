@@ -347,3 +347,61 @@ function Toggle({ on, onClick, onIcon, offIcon, label }: { on: boolean; onClick:
     </button>
   );
 }
+
+/** Perspective dot-matrix landscape that ripples with the conversation. */
+function VoiceTerrain({ speaking, listening }: { speaking: boolean; listening: boolean }) {
+  const ref = useRef<HTMLCanvasElement>(null);
+  const state = useRef({ speaking, listening, energy: 0 });
+  state.current.speaking = speaking;
+  state.current.listening = listening;
+
+  useEffect(() => {
+    const c = ref.current; if (!c) return;
+    const ctx = c.getContext("2d"); if (!ctx) return;
+    const css = getComputedStyle(c);
+    const primary = css.getPropertyValue("--primary").trim() || "orange";
+    const fg = css.getPropertyValue("--foreground").trim() || "white";
+    const reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    let raf = 0; let t = 0;
+    const resize = () => { const d = window.devicePixelRatio || 1; c.width = c.offsetWidth * d; c.height = c.offsetHeight * d; ctx.setTransform(d, 0, 0, d, 0, 0); };
+    resize(); window.addEventListener("resize", resize);
+    const ROWS = 22, COLS = 72;
+    const draw = () => {
+      const s = state.current;
+      const target = s.speaking ? 1 : s.listening ? 0.35 : 0.12;
+      s.energy += (target - s.energy) * 0.05;
+      const w = c.offsetWidth, h = c.offsetHeight;
+      ctx.clearRect(0, 0, w, h);
+      for (let r = 0; r < ROWS; r++) {
+        const z = r / (ROWS - 1);
+        const persp = 0.25 + z * 0.75;
+        const baseY = h * 0.25 + Math.pow(z, 1.6) * h * 0.75;
+        for (let i = 0; i < COLS; i++) {
+          const u = i / (COLS - 1) - 0.5;
+          const x = w / 2 + u * w * (0.7 + persp * 1.1);
+          const d = Math.hypot(u * 2.2, (1 - z) * 1.4);
+          const wave = Math.sin(d * 9 - t * 3) * Math.exp(-d * 1.6);
+          const lift = wave * 46 * s.energy * persp + Math.sin(u * 6 + t * 0.6 + r) * 3 * persp;
+          const glow = Math.max(0, wave) * s.energy;
+          ctx.globalAlpha = (0.08 + z * 0.35) * (0.6 + glow * 1.4);
+          ctx.fillStyle = glow > 0.25 ? primary : fg;
+          ctx.beginPath(); ctx.arc(x, baseY - lift, 0.6 + persp * 1.3 + glow * 1.2, 0, Math.PI * 2); ctx.fill();
+        }
+      }
+      ctx.globalAlpha = 1;
+      t += reduce ? 0 : 0.016;
+      raf = requestAnimationFrame(draw);
+    };
+    draw();
+    return () => { cancelAnimationFrame(raf); window.removeEventListener("resize", resize); };
+  }, []);
+
+  return (
+    <canvas
+      ref={ref}
+      aria-hidden
+      className="pointer-events-none absolute inset-x-0 bottom-0 h-[42vh] w-full"
+      style={{ maskImage: "linear-gradient(to top, black 55%, transparent)", WebkitMaskImage: "linear-gradient(to top, black 55%, transparent)" }}
+    />
+  );
+}
