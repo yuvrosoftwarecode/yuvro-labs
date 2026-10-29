@@ -192,54 +192,135 @@ function InterviewScreen() {
   }
 
   return (
-    <Shell title={iv.name} right={<span className="inline-flex items-center gap-1 rounded-md border px-2 py-1 font-mono text-xs"><Clock className="h-3.5 w-3.5" /> {fmt(left)}</span>}>
-      <div className="mx-auto grid h-[calc(100vh-56px)] max-w-6xl gap-4 p-4 lg:grid-cols-[1fr_1.3fr]">
-        <div className="flex flex-col gap-4">
-          <div className="relative grid flex-1 place-items-center overflow-hidden rounded-2xl border bg-card">
-            <div className="flex flex-col items-center">
-              <div className={`grid h-28 w-28 place-items-center rounded-full bg-primary/15 ${speaking ? "animate-pulse" : ""}`}>
-                <div className="grid h-16 w-16 place-items-center rounded-full bg-primary text-primary-foreground"><Sparkles className="h-7 w-7" /></div>
-              </div>
-              <div className="mt-4 flex h-8 items-end gap-1">
-                {Array.from({ length: 14 }).map((_, k) => (
-                  <span key={k} className="w-1 rounded-full bg-primary transition-all duration-300" style={{ height: speaking ? `${8 + ((k * 37) % 24)}px` : "4px", animation: speaking ? `pulse 0.${4 + (k % 5)}s ease-in-out infinite` : undefined }} />
-                ))}
-              </div>
-              <div className="mt-2 text-sm font-medium">Vitarka</div>
-              <div className="text-xs text-muted-foreground">{speaking ? "Speaking…" : "Listening"}</div>
-            </div>
-            <div className="absolute bottom-3 right-3 grid h-24 w-36 place-items-center rounded-lg border bg-muted text-[11px] text-muted-foreground">{cam ? "You" : "Camera off"}</div>
+    <LiveRoom
+      title={iv.name}
+      left={left}
+      log={log}
+      speaking={speaking}
+      mic={mic} setMic={setMic}
+      cam={cam} setCam={setCam}
+      draft={draft} setDraft={setDraft}
+      submit={submit}
+      onEnd={() => setPhase("done")}
+      progress={`Question ${idx + 1} of ${questions.length} · ${q.skill}`}
+      endRef={endRef}
+    />
+  );
+}
+
+function Dots({ active }: { active?: boolean }) {
+  return (
+    <div className="grid w-3.5 grid-cols-3 gap-[2px]">
+      {Array.from({ length: 9 }).map((_, k) => (
+        <span key={k} className={`h-[3px] w-[3px] rounded-full bg-success ${active ? "animate-pulse" : ""}`} style={{ animationDelay: `${k * 90}ms` }} />
+      ))}
+    </div>
+  );
+}
+
+function LiveRoom(p: {
+  title: string; left: number; log: { who: "ai" | "me"; text: string }[]; speaking: boolean;
+  mic: boolean; setMic: (v: boolean) => void; cam: boolean; setCam: (v: boolean) => void;
+  draft: string; setDraft: (v: string) => void; submit: () => void; onEnd: () => void;
+  progress: string; endRef: React.RefObject<HTMLDivElement | null>;
+}) {
+  const videoRef = useRef<HTMLVideoElement>(null);
+  const [chat, setChat] = useState(false);
+  const [camErr, setCamErr] = useState(false);
+
+  useEffect(() => {
+    let stream: MediaStream | null = null;
+    if (p.cam && navigator.mediaDevices?.getUserMedia) {
+      navigator.mediaDevices.getUserMedia({ video: true }).then(s => {
+        stream = s; setCamErr(false);
+        if (videoRef.current) videoRef.current.srcObject = s;
+      }).catch(() => setCamErr(true));
+    }
+    return () => stream?.getTracks().forEach(t => t.stop());
+  }, [p.cam]);
+
+  const lastAi = p.log.map(m => m.who).lastIndexOf("ai");
+
+  return (
+    <div className="dark">
+      <div className="relative flex h-screen flex-col overflow-hidden bg-background text-foreground">
+        {/* top bar */}
+        <div className="relative z-10 flex items-center justify-between px-6 py-4 text-xs text-muted-foreground">
+          <div className="flex items-center gap-3">
+            <Link to="/mock-interviews" className="rounded-md p-1.5 hover:bg-muted"><ArrowLeft className="h-4 w-4" /></Link>
+            <span className="font-medium text-foreground">Vitarka · {p.title}</span>
+            <span className="hidden sm:inline">{p.progress}</span>
           </div>
-          <div className="flex items-center justify-center gap-2">
-            <Toggle on={mic} onClick={() => setMic(!mic)} onIcon={<Mic className="h-4 w-4" />} offIcon={<MicOff className="h-4 w-4" />} label="Mic" />
-            <Toggle on={cam} onClick={() => setCam(!cam)} onIcon={<Video className="h-4 w-4" />} offIcon={<VideoOff className="h-4 w-4" />} label="Camera" />
-            <button onClick={() => setPhase("done")} className="inline-flex items-center gap-1.5 rounded-md bg-destructive px-3 py-2 text-xs font-medium text-destructive-foreground"><PhoneOff className="h-4 w-4" /> End</button>
+          <span className="inline-flex items-center gap-1 rounded-md border px-2 py-1 font-mono"><Clock className="h-3.5 w-3.5" /> {fmt(p.left)}</span>
+        </div>
+
+        {/* stage */}
+        <div className="relative z-10 mx-auto grid w-full max-w-6xl flex-1 items-center gap-10 px-6 pb-40 lg:grid-cols-2">
+          <div
+            className="max-h-[300px] space-y-7 overflow-y-auto pr-2 [scrollbar-width:none]"
+            style={{ maskImage: "linear-gradient(to bottom, transparent 0, black 30%)", WebkitMaskImage: "linear-gradient(to bottom, transparent 0, black 30%)" }}
+          >
+            {p.log.map((m, k) => (
+              <div key={k} className="space-y-2">
+                {m.who === "ai" ? <Dots active={p.speaking && k === lastAi} /> : <div className="text-[10px] uppercase tracking-widest text-muted-foreground">You</div>}
+                <p className={`text-[15px] leading-relaxed ${m.who === "ai" ? "text-foreground" : "text-muted-foreground"}`}>{m.text}</p>
+              </div>
+            ))}
+            <div ref={p.endRef} />
+          </div>
+
+          <div className="relative aspect-video overflow-hidden rounded-xl border bg-card shadow-2xl">
+            {p.cam && !camErr ? (
+              <video ref={videoRef} autoPlay muted playsInline className="h-full w-full -scale-x-100 object-cover" />
+            ) : (
+              <div className="grid h-full place-items-center text-sm text-muted-foreground">{camErr ? "Camera unavailable" : "Camera off"}</div>
+            )}
+            <div className="absolute bottom-3 right-3 flex h-7 items-end gap-[3px] rounded-md bg-background/70 px-1.5 py-1">
+              {[6, 10, 8, 14].map((h, k) => (
+                <span key={k} className={`w-[3px] rounded-sm ${p.mic ? "bg-primary" : "bg-muted-foreground"}`} style={{ height: p.mic ? h : 4 }} />
+              ))}
+            </div>
           </div>
         </div>
 
-        <div className="flex min-h-0 flex-col rounded-2xl border bg-card">
-          <div className="border-b px-5 py-3">
-            <div className="flex items-center justify-between text-[11px] uppercase tracking-widest text-muted-foreground">
-              <span>Question {idx + 1} of {questions.length}</span><span>{q.skill}</span>
-            </div>
-            <div className="mt-2 h-1 rounded-full bg-muted"><div className="h-1 rounded-full bg-primary transition-all" style={{ width: `${((idx + 1) / questions.length) * 100}%` }} /></div>
-          </div>
-          <div className="flex-1 space-y-3 overflow-y-auto p-5 text-sm">
-            {log.map((m, k) => <Bubble key={k} who={m.who}>{m.text}</Bubble>)}
-            <div ref={endRef} />
-          </div>
-          <div className="border-t p-4">
-            <textarea value={draft} onChange={e => setDraft(e.target.value)} onKeyDown={e => { if (e.key === "Enter" && (e.metaKey || e.ctrlKey)) submit(); }} rows={3} placeholder={mic ? "Speak or type your answer…" : "Type your answer…"} className="w-full resize-none rounded-md border bg-background p-3 text-sm outline-none focus:ring-2 focus:ring-ring" />
+        {/* horizon */}
+        <div
+          aria-hidden
+          className="pointer-events-none absolute -bottom-[78vw] left-1/2 h-[90vw] w-[160vw] -translate-x-1/2 rounded-[50%] border-t border-foreground/30"
+          style={{
+            background: "repeating-linear-gradient(90deg, hsl(var(--foreground) / 0.06) 0 1px, transparent 1px 6px), radial-gradient(ellipse at top, hsl(var(--foreground) / 0.12), transparent 40%)",
+            boxShadow: "0 -20px 60px -20px hsl(var(--foreground) / 0.15)",
+          }}
+        />
+
+        {/* answer box */}
+        {chat && (
+          <div className="absolute bottom-24 left-1/2 z-20 w-[min(640px,92vw)] -translate-x-1/2 rounded-xl border bg-card p-3 shadow-2xl">
+            <textarea autoFocus value={p.draft} onChange={e => p.setDraft(e.target.value)} onKeyDown={e => { if (e.key === "Enter" && (e.metaKey || e.ctrlKey)) p.submit(); }} rows={3} placeholder="Type your answer…" className="w-full resize-none rounded-md border bg-background p-3 text-sm outline-none focus:ring-2 focus:ring-ring" />
             <div className="mt-2 flex items-center justify-between">
               <span className="text-[11px] text-muted-foreground">Ctrl/⌘ + Enter to send</span>
-              <button onClick={submit} disabled={!draft.trim()} className="inline-flex items-center gap-1 rounded-md bg-primary px-3 py-1.5 text-xs font-medium text-primary-foreground disabled:opacity-40">
-                {idx >= questions.length - 1 && !followUp ? "Finish" : "Submit answer"} <ChevronRight className="h-3.5 w-3.5" />
-              </button>
+              <button onClick={p.submit} disabled={!p.draft.trim()} className="inline-flex items-center gap-1 rounded-md bg-primary px-3 py-1.5 text-xs font-medium text-primary-foreground disabled:opacity-40">Send <ChevronRight className="h-3.5 w-3.5" /></button>
             </div>
           </div>
+        )}
+
+        {/* controls */}
+        <div className="absolute bottom-6 left-1/2 z-20 flex -translate-x-1/2 items-center gap-2 rounded-xl border bg-card/90 p-1.5 backdrop-blur">
+          <CtrlBtn label={p.mic ? "Mute" : "Unmute"} on={p.mic} onClick={() => p.setMic(!p.mic)}>{p.mic ? <Mic className="h-4 w-4" /> : <MicOff className="h-4 w-4" />}</CtrlBtn>
+          <CtrlBtn label={p.cam ? "Turn camera off" : "Turn camera on"} on={p.cam} onClick={() => p.setCam(!p.cam)}>{p.cam ? <Video className="h-4 w-4" /> : <VideoOff className="h-4 w-4" />}</CtrlBtn>
+          <CtrlBtn label="Type answer" on={!chat} onClick={() => setChat(!chat)}><MessageSquare className="h-4 w-4" /></CtrlBtn>
+          <button onClick={p.onEnd} aria-label="End interview" className="grid h-9 w-11 place-items-center rounded-lg bg-destructive text-destructive-foreground hover:opacity-90"><PhoneOff className="h-4 w-4" /></button>
         </div>
       </div>
-    </Shell>
+    </div>
+  );
+}
+
+function CtrlBtn({ on, onClick, label, children }: { on: boolean; onClick: () => void; label: string; children: React.ReactNode }) {
+  return (
+    <button onClick={onClick} aria-label={label} title={label} className={`grid h-9 w-11 place-items-center rounded-lg border transition-colors ${on ? "bg-muted/40 text-foreground hover:bg-muted" : "bg-muted text-muted-foreground"}`}>
+      {children}
+    </button>
   );
 }
 
