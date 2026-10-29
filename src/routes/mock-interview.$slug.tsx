@@ -283,15 +283,8 @@ function LiveRoom(p: {
           </div>
         </div>
 
-        {/* horizon */}
-        <div
-          aria-hidden
-          className="pointer-events-none absolute -bottom-[78vw] left-1/2 h-[90vw] w-[160vw] -translate-x-1/2 rounded-[50%] border-t border-foreground/30"
-          style={{
-            background: "repeating-linear-gradient(90deg, color-mix(in oklch, var(--foreground) 6%, transparent) 0 1px, transparent 1px 6px), radial-gradient(ellipse at top, color-mix(in oklch, var(--foreground) 12%, transparent), transparent 40%)",
-            boxShadow: "0 -20px 60px -20px color-mix(in oklch, var(--foreground) 15%, transparent)",
-          }}
-        />
+        {/* voice terrain */}
+        <VoiceTerrain speaking={p.speaking} listening={p.mic && !p.speaking} />
 
         {/* answer box */}
         {chat && (
