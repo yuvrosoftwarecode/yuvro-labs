@@ -315,8 +315,8 @@ function LiveRoom(p: {
         </div>
 
         {codeMode ? (
-          <ResizablePanelGroup direction="horizontal" className="relative z-10 flex-1 pb-20">
-            <ResizablePanel defaultSize={34} minSize={22} maxSize={60}>
+          <ResizablePanelGroup orientation="horizontal" className="relative z-10 flex-1 pb-20">
+            <ResizablePanel defaultSize="34%" minSize="22%" maxSize="60%">
               <div className="flex h-full flex-col gap-5 p-5">
                 {camera}
                 <div className="text-[10px] uppercase tracking-widest text-muted-foreground">Conversation</div>
@@ -324,7 +324,7 @@ function LiveRoom(p: {
               </div>
             </ResizablePanel>
             <ResizableHandle withHandle />
-            <ResizablePanel defaultSize={66} minSize={35}>
+            <ResizablePanel defaultSize="66%" minSize="35%">
               <div className="flex h-full flex-col">
                 <div className="flex items-center justify-between border-b border-border/60 px-4 py-2 text-xs">
                   <div className="flex items-center gap-2 text-muted-foreground">
