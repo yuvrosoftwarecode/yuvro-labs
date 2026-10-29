@@ -1,6 +1,6 @@
 import { createFileRoute, Link, notFound } from "@tanstack/react-router";
 import { useEffect, useMemo, useRef, useState } from "react";
-import { ArrowLeft, Mic, MicOff, Video, VideoOff, Clock, ChevronRight, PhoneOff, Sparkles, CheckCircle2, RotateCcw } from "lucide-react";
+import { ArrowLeft, Mic, MicOff, Video, VideoOff, Clock, ChevronRight, PhoneOff, MessageSquare, CheckCircle2, RotateCcw } from "lucide-react";
 import { INTERVIEWS, type Category } from "@/lib/mockInterviews";
 
 export const Route = createFileRoute("/mock-interview/$slug")({
@@ -170,7 +170,7 @@ function InterviewScreen() {
       <Shell title={iv.name}>
         <div className="mx-auto max-w-3xl px-6 py-10">
           <div className="rounded-2xl border bg-card p-6">
-            <div className="flex items-center gap-2 text-xs uppercase tracking-widest text-muted-foreground"><Sparkles className="h-3.5 w-3.5 text-primary" /> Vitarka summary</div>
+            <div className="flex items-center gap-2 text-xs uppercase tracking-widest text-muted-foreground">Vitarka summary</div>
             <div className="mt-3 flex items-end gap-3"><div className="text-5xl font-semibold">{score}</div><div className="pb-2 text-sm text-muted-foreground">/ 100 practice score</div></div>
             <p className="mt-2 text-sm text-muted-foreground">You answered {answers.length} prompts across {Math.min(idx + 1, questions.length)} topics. Longer, example-driven answers score higher.</p>
             <div className="mt-5 grid gap-2 sm:grid-cols-2">
@@ -288,7 +288,7 @@ function LiveRoom(p: {
           aria-hidden
           className="pointer-events-none absolute -bottom-[78vw] left-1/2 h-[90vw] w-[160vw] -translate-x-1/2 rounded-[50%] border-t border-foreground/30"
           style={{
-            background: "repeating-linear-gradient(90deg, color-mix(in oklch, var(--foreground) 06%, transparent) 0 1px, transparent 1px 6px), radial-gradient(ellipse at top, color-mix(in oklch, var(--foreground) 12%, transparent), transparent 40%)",
+            background: "repeating-linear-gradient(90deg, color-mix(in oklch, var(--foreground) 6%, transparent) 0 1px, transparent 1px 6px), radial-gradient(ellipse at top, color-mix(in oklch, var(--foreground) 12%, transparent), transparent 40%)",
             boxShadow: "0 -20px 60px -20px color-mix(in oklch, var(--foreground) 15%, transparent)",
           }}
         />
