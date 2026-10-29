@@ -315,18 +315,17 @@ function LiveRoom(p: {
         </div>
 
         {codeMode ? (
-          <ResizablePanelGroup orientation="horizontal" className="relative z-10 flex-1 pb-20">
-            <ResizablePanel defaultSize="34%" minSize="22%" maxSize="60%">
-              <div className="flex h-full flex-col gap-5 p-5">
-                {camera}
+          <ResizablePanelGroup orientation="horizontal" className="relative z-10 min-h-0 flex-1 pb-20">
+            <ResizablePanel defaultSize="28%" minSize="20%" maxSize="50%">
+              <div className="flex h-full flex-col gap-4 overflow-hidden p-5">
                 <div className="text-[10px] uppercase tracking-widest text-muted-foreground">Conversation</div>
                 {transcript(true)}
               </div>
             </ResizablePanel>
             <ResizableHandle withHandle />
-            <ResizablePanel defaultSize="66%" minSize="35%">
-              <div className="flex h-full flex-col">
-                <div className="flex items-center justify-between border-b border-border/60 px-4 py-2 text-xs">
+            <ResizablePanel defaultSize="72%" minSize="40%">
+              <div className="flex h-full min-w-0 flex-col">
+                <div className="flex shrink-0 items-center justify-between gap-2 border-b border-border/60 px-4 py-2 text-xs">
                   <div className="flex items-center gap-2 text-muted-foreground">
                     <span className="font-mono">solution.{LANGS[lang].ext}</span>
                   </div>
