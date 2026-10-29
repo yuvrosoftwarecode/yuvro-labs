@@ -110,7 +110,7 @@ function InterviewScreen() {
     return () => clearTimeout(t);
   }, [idx, followUp, phase]);
 
-  useEffect(() => { endRef.current?.scrollIntoView({ behavior: "smooth" }); }, [log]);
+  useEffect(() => { { const el = endRef.current?.parentElement; el?.scrollTo({ top: el.scrollHeight, behavior: "smooth" }); }; }, [log]);
 
   const submit = () => {
     if (!draft.trim()) return;
@@ -243,7 +243,7 @@ function LiveRoom(p: {
 
   return (
     <div className="dark">
-      <div className="relative flex h-screen flex-col overflow-hidden bg-background text-foreground">
+      <div className="fixed inset-0 flex flex-col overflow-hidden bg-background text-foreground">
         {/* top bar */}
         <div className="relative z-10 flex items-center justify-between px-6 py-4 text-xs text-muted-foreground">
           <div className="flex items-center gap-3">
