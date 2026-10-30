@@ -14,7 +14,7 @@ import YuvroLogo from "@/assets/YuvroLogo.png";
 const LANGS = {
   javascript: { label: "JavaScript", ext: "js", ext_fn: () => javascript({ typescript: true }), starter: "function solve(input) {\n  // write your solution\n}\n" },
   python: { label: "Python", ext: "py", ext_fn: () => python(), starter: "def solve(data):\n    # write your solution\n    pass\n" },
-  java: { label: "Java", ext: "java", ext_fn: () => java(), starter: "class Solution {\n    public void solve() {\n        // write your solution\n    }\n}\n" },
+  java: { label: "Java", ext: "java", ext_fn: () => java(), starter: "public class Solution {\n  // write your solution\n}\n" },
   cpp: { label: "C++", ext: "cpp", ext_fn: () => cpp(), starter: "#include <bits/stdc++.h>\nusing namespace std;\n\nint main() {\n    return 0;\n}\n" },
   sql: { label: "SQL", ext: "sql", ext_fn: () => sql(), starter: "SELECT *\nFROM users;\n" },
 };
@@ -219,7 +219,7 @@ function LiveRoom(p: {
   const [chat, setChat] = useState(false);
   const [camErr, setCamErr] = useState(false);
   const [codeMode, setCodeMode] = useState(false);
-  const [lang, setLang] = useState<keyof typeof LANGS>("javascript");
+  const [lang, setLang] = useState<keyof typeof LANGS>("java");
   const [code, setCode] = useState<Record<string, string>>({});
 
   const videoRef = (el: HTMLVideoElement | null) => {
