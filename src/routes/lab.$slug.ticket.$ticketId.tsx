@@ -688,7 +688,11 @@ function CodeTicketView({
   const navigate = useNavigate();
   const reviewMatch = useMatch({ from: "/lab/$slug/ticket/$ticketId/review", shouldThrow: false });
   const lab = labs.find((l) => l.slug === slug) ?? labs[0];
-  const baseTicket = tickets.find((t) => t.id === ticketId) ?? tickets[0];
+  const baseTicket = tickets.find((t) => t.id === ticketId) ?? {
+    id: ticketId, title: "Ticket requirements unavailable", description: "This ticket has no configured requirements. Evaluation is pending until its task definition is available.",
+    difficulty: lab.difficulty, xp: 0, estMin: 0, tag: lab.name, status: "Not Started" as const,
+    acceptanceCriteria: undefined, evaluationCriteria: undefined,
+  };
 
 
   const ticket = useMemo(() => {
