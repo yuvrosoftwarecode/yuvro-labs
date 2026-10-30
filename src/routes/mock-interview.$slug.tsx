@@ -496,7 +496,7 @@ function Lobby({ iv, mic, cam, setMic, setCam, onStart }: {
       <div className="mx-auto mt-8 grid max-w-6xl gap-8 px-6 pb-12 md:grid-cols-2">
         <div>
           <h1 className="font-bold leading-[1] tracking-tight">
-            <span className="inline-block -rotate-2 rounded-lg bg-[#7C3AED] px-3 pb-1 text-4xl text-white md:text-5xl">{first}</span>
+            <span className="inline-block -rotate-2 rounded-lg bg-[#F97316] px-3 pb-1 text-4xl text-white md:text-5xl">{first}</span>
             {rest && <span className="mt-1 block text-4xl md:text-5xl">{rest}</span>}
           </h1>
           <p className="mt-4 max-w-md text-sm text-[#1B1340]/70">Your first round is a friendly chat, not an exam. Talk it out like you would with a teammate.</p>
