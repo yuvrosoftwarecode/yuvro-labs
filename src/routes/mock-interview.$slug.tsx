@@ -151,34 +151,7 @@ function InterviewScreen() {
   const q = questions[idx];
 
   if (phase === "lobby") {
-    return (
-      <Shell title={iv.name}>
-        <div className="mx-auto grid max-w-4xl gap-6 px-6 py-10 md:grid-cols-[1.2fr_1fr]">
-          <div className="rounded-2xl border bg-card p-6">
-            <div className="text-4xl">{iv.icon}</div>
-            <h1 className="mt-3 text-2xl font-semibold">{iv.name}</h1>
-            <p className="mt-1 text-sm text-muted-foreground">{iv.description}</p>
-            <ul className="mt-5 space-y-2 text-sm">
-              <li className="flex gap-2"><CheckCircle2 className="h-4 w-4 text-primary" /> {questions.length} core questions with follow-ups</li>
-              <li className="flex gap-2"><CheckCircle2 className="h-4 w-4 text-primary" /> {iv.minutes} minutes · {iv.difficulty} · {iv.role}</li>
-              <li className="flex gap-2"><CheckCircle2 className="h-4 w-4 text-primary" /> Speak or type your answers</li>
-            </ul>
-            <button onClick={() => setPhase("live")} className="mt-6 inline-flex w-full items-center justify-center gap-1 rounded-md bg-primary px-4 py-2.5 text-sm font-medium text-primary-foreground hover:opacity-90">
-              Start interview <ChevronRight className="h-4 w-4" />
-            </button>
-          </div>
-          <div className="flex flex-col gap-3">
-            <div className="grid aspect-video place-items-center rounded-2xl border bg-muted/40 text-sm text-muted-foreground">
-              {cam ? "Camera preview" : "Camera off"}
-            </div>
-            <div className="flex gap-2">
-              <Toggle on={mic} onClick={() => setMic(!mic)} onIcon={<Mic className="h-4 w-4" />} offIcon={<MicOff className="h-4 w-4" />} label="Mic" />
-              <Toggle on={cam} onClick={() => setCam(!cam)} onIcon={<Video className="h-4 w-4" />} offIcon={<VideoOff className="h-4 w-4" />} label="Camera" />
-            </div>
-          </div>
-        </div>
-      </Shell>
-    );
+    return <Lobby iv={iv} mic={mic} cam={cam} setMic={setMic} setCam={setCam} onStart={() => setPhase("live")} />;
   }
 
   if (phase === "done") {
