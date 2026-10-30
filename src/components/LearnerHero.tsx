@@ -10,7 +10,7 @@ const CSS = `
 @media(max-width:820px){.lh-hero{grid-template-columns:1fr;padding:34px 22px}.lh-tag{right:2%!important}}
 .lh-hi{font-size:17px;font-weight:500;color:var(--muted);margin:0 0 14px;display:flex;align-items:center;gap:8px}
 .lh-hi b{color:var(--brand);font-weight:700}
-.lh h1{font-family:"Fraunces",Georgia,serif;font-weight:600;font-size:clamp(38px,5.6vw,64px);line-height:1.04;letter-spacing:-.025em;margin:0 0 30px;color:var(--ink)}
+.lh h1{font-family:"Fraunces",Georgia,serif;font-weight:600;font-size:clamp(34px,4.9vw,56px);line-height:1.06;letter-spacing:-.025em;margin:0 0 30px;color:var(--ink)}
 .lh h1 i{font-weight:500;position:relative;white-space:nowrap}
 .lh h1 svg{position:absolute;left:-2%;bottom:-.18em;width:104%;height:.3em;overflow:visible}
 .lh h1 path{fill:none;stroke:var(--brand);stroke-width:5;stroke-linecap:round;stroke-dasharray:300;stroke-dashoffset:300;animation:lh-draw 1.2s .5s ease-out forwards}
