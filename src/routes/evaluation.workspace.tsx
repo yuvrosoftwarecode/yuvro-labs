@@ -1,5 +1,8 @@
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { useEffect, useMemo, useRef, useState, type ReactNode } from "react";
+import { EvaluationDrawer } from "@/components/evaluation/EvaluationDrawer";
+import { Button } from "@/components/ui/button";
+import { pendingEvaluation, type EvaluationReport } from "@/lib/evaluation";
 
 export const Route = createFileRoute("/evaluation/workspace")({
   head: () => ({ meta: [{ title: "Evaluation workspace — Yuvro Labs" }, { name: "robots", content: "noindex" }] }),
@@ -148,6 +151,8 @@ const DISCUSSION_LOCK_SECONDS = 15 * 60;
 // ────────────────────────────────────────────────────────────────────────────
 
 function Workspace() {
+  const [evaluationReport, setEvaluationReport] = useState<EvaluationReport | null>(null);
+  const [evaluationOpen, setEvaluationOpen] = useState(false);
   const nav = useNavigate();
   const [remaining, setRemaining] = useState(TOTAL_SECONDS);
   const [section, setSection] = useState<SectionId>("labs");
@@ -295,14 +300,8 @@ function Workspace() {
   };
   const runCode = () => {
     setCodingResults(null);
-    setTimeout(() => {
-      setCodingResults([
-        { name: "twoSum([2,7,11,15], 9)", pass: true },
-        { name: "twoSum([3,2,4], 6)", pass: true },
-        { name: "twoSum([3,3], 6)", pass: true },
-        { name: "edge case: empty array", pass: /return \[\]/.test(codingCode) },
-      ]);
-    }, 500);
+    setEvaluationReport(pendingEvaluation({ project: "Candidate evaluation", labType: "coding", sprint: "Coding Challenge", ticketId: "two-sum", title: "Two-sum, adapted", description: "Given an array of integers and a target, return the two indices that sum to the target.", acceptanceCriteria: ["Return indices whose values sum to the target.", "Handle the specified input constraints."] }));
+    setEvaluationOpen(true);
   };
   const confirmSubmitCoding = () => {
     setCodingSubmitted(true);
@@ -344,6 +343,7 @@ function Workspace() {
         />
 
         <main className="min-w-0 flex-1 overflow-y-auto">
+          {section === "labs" && openLab && <div className="flex justify-end border-b px-5 py-2"><Button variant="outline" size="sm" onClick={() => { const lab = LABS.find(l => l.id === openLab); if (!lab) return; setEvaluationReport(pendingEvaluation({ project: "Candidate evaluation", labType: lab.id, sprint: "Engineering Labs", ticketId: lab.id, title: lab.title, description: lab.problem, acceptanceCriteria: lab.tasks })); setEvaluationOpen(true); }}>Evaluate task</Button></div>}
           {section === "labs" && (
             openLab ? (
               <LabDetail
@@ -477,6 +477,7 @@ function Workspace() {
           onConfirm={() => setModal(null)}
         />
       )}
+      {evaluationReport && <EvaluationDrawer report={evaluationReport} open={evaluationOpen} onClose={() => setEvaluationOpen(false)} />}
     </div>
   );
 }

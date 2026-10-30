@@ -1,30 +1,38 @@
 import { test } from "node:test";
 import assert from "node:assert/strict";
 import { evaluateSystemDesign, type EvaluationDesign } from "./systemDesignEvaluation";
-
+import { getSystemDesignCriteria } from "./systemDesign";
+import { pendingEvaluation, type EvaluationContext } from "./evaluation";
 const empty: EvaluationDesign = { nodes: [], edges: [], seq: "", schema: "", apis: [], notes: {} };
-const nodes = ["Web Client", "Load Balancer", "URL Service", "PostgreSQL", "Redis"].map((label, i) => ({ id: String(i), label, kind: label }));
-const evaluate = (d: EvaluationDesign) => evaluateSystemDesign("systemdesign-url-shortener", d);
-test("an empty design earns 0 of 100 points", () => {
-  assert.equal(evaluate(empty).score, 0);
-  assert.equal(evaluate(empty).title, "Design Not Started");
+const context = (id: string): EvaluationContext => ({ project: "System Design", labType: "system-design", ticketId: id, title: id, description: id, evaluationCriteria: getSystemDesignCriteria(id, id, id) });
+test("CAP task and URL shortener have genuinely different relevant criteria", () => {
+  const cap = evaluateSystemDesign(context("SD-101"), empty);
+  const url = evaluateSystemDesign(context("SD-115"), empty);
+  assert.equal(cap.checks.length, 3);
+  assert.equal(url.checks.length, 5);
+  assert.ok(cap.checks.every(c => c.tabs.length === 1 && c.tabs[0] === "notes"));
+  assert.ok(url.checks.some(c => c.title.includes("short-code")));
+  assert.ok(cap.checks.every(c => !c.title.includes("Redis")));
 });
-test("required four components earn 25 points; an unrelated service cannot pass", () => {
-  assert.equal(evaluate({ ...empty, nodes }).checks[0].earned, 25);
-  assert.equal(evaluate({ ...empty, nodes: nodes.filter(n => n.label !== "URL Service") }).checks[0].earned, 0);
+test("unvalidated reasoning remains pending without fabricated scores", () => {
+  const result = evaluateSystemDesign(context("SD-101"), { ...empty, notes: { hld: "CAP explanation" } });
+  assert.equal(result.score, null);
+  assert.equal(result.pending, 3);
+  assert.ok(result.checks.every(c => c.marks === null));
 });
-test("request flow earns 25 points only with all directed links", () => {
-  const edges = [{ from: "0", to: "1" }, { from: "1", to: "2" }, { from: "2", to: "3" }];
-  assert.equal(evaluate({ ...empty, nodes, edges }).checks[1].earned, 25);
-  assert.equal(evaluate({ ...empty, nodes, edges: [...edges.slice(0, 2), { from: "3", to: "2" }] }).checks[1].earned, 0);
+test("API methods and paths are validated only for the API task", () => {
+  assert.equal(evaluateSystemDesign(context("SD-103"), empty).failed, 1);
+  const result = evaluateSystemDesign(context("SD-103"), { ...empty, apis: [{ method: "POST", path: "/v1/bookings" }] });
+  assert.equal(result.passed, 1);
+  assert.equal(result.score, null);
+  assert.equal(evaluateSystemDesign(context("SD-103"), { ...empty, apis: [{ method: "BOGUS", path: "bad path" }] }).passed, 0);
 });
-test("Redis earns 25 points only when connected to the service", () => {
-  assert.equal(evaluate({ ...empty, nodes }).checks[2].earned, 0);
-  assert.equal(evaluate({ ...empty, nodes, edges: [{ from: "2", to: "4" }] }).checks[2].earned, 25);
-});
-test("both read and write labels earn 25 points; dangling edges do not count", () => {
-  const edges = [{ from: "2", to: "4", label: "read" }, { from: "2", to: "3", label: "write" }];
-  assert.equal(evaluate({ ...empty, nodes, edges }).checks[3].earned, 25);
-  assert.equal(evaluate({ ...empty, nodes, edges: edges.slice(0, 1) }).checks[3].earned, 0);
-  assert.equal(evaluate({ ...empty, nodes, edges: [edges[0], { from: "missing", to: "3", label: "write" }] }).checks[3].earned, 0);
+test("code criteria follow actual ticket requirements instead of Java checks", () => {
+  const a = pendingEvaluation({ ...context("SQL-105"), evaluationCriteria: undefined, description: "Join orders to users. Group sales by category." });
+  const b = pendingEvaluation({ ...context("DJ-107"), evaluationCriteria: undefined, description: "Optimize N+1 queries with select_related()." });
+  assert.equal(a.checks.length, 2);
+  assert.equal(b.checks.length, 1);
+  assert.equal(b.score, null);
+  assert.ok(b.checks[0].title.includes("select_related"));
+  assert.ok(a.checks.every(c => !c.title.includes("Variables")));
 });

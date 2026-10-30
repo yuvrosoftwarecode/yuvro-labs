@@ -1,5 +1,8 @@
 import { getSystemDesignLab } from "@/lib/systemDesign";
 import { SystemDesignStudio } from "@/routes/system-design-studio";
+import { EvaluationDrawer } from "@/components/evaluation/EvaluationDrawer";
+import { Button } from "@/components/ui/button";
+import { pendingEvaluation, type EvaluationReport } from "@/lib/evaluation";
 import { createFileRoute, Link, Outlet, useMatch, useNavigate, useParams } from "@tanstack/react-router";
 import { useEffect, useMemo, useRef, useState } from "react";
 import { TopNav } from "@/components/TopNav";
@@ -685,7 +688,11 @@ function CodeTicketView({
   const navigate = useNavigate();
   const reviewMatch = useMatch({ from: "/lab/$slug/ticket/$ticketId/review", shouldThrow: false });
   const lab = labs.find((l) => l.slug === slug) ?? labs[0];
-  const baseTicket = tickets.find((t) => t.id === ticketId) ?? tickets[0];
+  const baseTicket = tickets.find((t) => t.id === ticketId) ?? {
+    id: ticketId, title: "Ticket requirements unavailable", description: "This ticket has no configured requirements. Evaluation is pending until its task definition is available.",
+    difficulty: lab.difficulty, xp: 0, estMin: 0, tag: lab.name, status: "Not Started" as const,
+    acceptanceCriteria: undefined, evaluationCriteria: undefined,
+  };
 
 
   const ticket = useMemo(() => {
@@ -904,6 +911,9 @@ function CodeTicketView({
   }
   const [output, setOutput] = useState<string>("");
   const [running, setRunning] = useState(false);
+  const [evaluationReport, setEvaluationReport] = useState<EvaluationReport | null>(null);
+  const [evaluationOpen, setEvaluationOpen] = useState(false);
+  const evaluationContext = { project: lab.name, projectDescription: lab.description, labType: slug, sprint: ticket.tag, ticketId: ticket.id, title: ticket.title, description: ticket.description, acceptanceCriteria: ticket.acceptanceCriteria, evaluationCriteria: ticket.evaluationCriteria };
   const [tests, setTests] = useState<TestResult[]>([
     { name: "Test 1 · Variables Declaration", pass: false, time: "—" },
     { name: "Test 2 · Type Casting (implicit)", pass: false, time: "—" },
@@ -952,6 +962,8 @@ function CodeTicketView({
   }
 
   function handleRun() {
+    setEvaluationReport(pendingEvaluation(evaluationContext));
+    setEvaluationOpen(true);
     setRunning(true);
     setBottomTab(isSql || isMongo ? "preview" : "output");
     const src = files[activeFile] ?? "";
@@ -1056,6 +1068,9 @@ function CodeTicketView({
 
 
   function handleRunTests() {
+    if (ticket.id !== "JAVA-101" || previewOverride) {
+      setEvaluationReport(pendingEvaluation(evaluationContext)); setEvaluationOpen(true); return;
+    }
     setBottomTab("tests");
     setTests((ts) => ts.map((t) => ({ ...t, time: "…", pass: false })));
     setTimeout(() => {
@@ -1073,6 +1088,9 @@ function CodeTicketView({
   }
 
   function handleSubmit() {
+    if (ticket.id !== "JAVA-101" || previewOverride) {
+      setEvaluationReport(pendingEvaluation(evaluationContext)); setEvaluationOpen(true); return;
+    }
     setBottomTab("tests");
     setTests((ts) => ts.map((t) => ({ ...t, time: "…", pass: false })));
     setTimeout(() => {
@@ -1178,6 +1196,7 @@ function CodeTicketView({
           <button onClick={handleRun} disabled={running} className="inline-flex items-center gap-1 rounded-md bg-success/20 text-success border border-success/40 px-3 py-1 hover:bg-success/30 font-medium disabled:opacity-60">
             <Play className="h-3 w-3" />{running ? "Running…" : "Run"} <kbd className="hidden md:inline rounded bg-success/20 px-1 text-[10px]">⌘↵</kbd>
           </button>
+          <Button size="sm" variant="outline" onClick={() => { setEvaluationReport(pendingEvaluation(evaluationContext)); setEvaluationOpen(true); }}>Evaluation</Button>
           <button onClick={handleSubmit}
             className="inline-flex items-center gap-1 rounded-md px-3 py-1 font-medium bg-primary text-primary-foreground hover:opacity-90">
             <Send className="h-3 w-3" />Submit
@@ -1186,6 +1205,7 @@ function CodeTicketView({
       </div>
 
       {/* MAIN IDE */}
+      {evaluationReport && <EvaluationDrawer report={evaluationReport} open={evaluationOpen} onClose={() => setEvaluationOpen(false)} />}
       <div className="flex flex-1 min-h-0">
         {/* Activity bar */}
         <div className="flex w-11 flex-col items-center gap-1 border-r bg-editor-panel py-2 text-muted-foreground">

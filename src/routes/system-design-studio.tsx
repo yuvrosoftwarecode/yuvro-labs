@@ -1,4 +1,4 @@
-import { getSystemDesignLab } from "@/lib/systemDesign";
+import { getSystemDesignLab, getSystemDesignCriteria, SYSTEM_DESIGN_SPRINTS } from "@/lib/systemDesign";
 import { evaluateSystemDesign, type DesignEvaluation } from "@/lib/systemDesignEvaluation";
 import { EvaluationResults } from "@/components/sysdesign/EvaluationResults";
 import { labs, tickets } from "@/lib/dummy";
@@ -377,6 +377,12 @@ export function SystemDesignStudio({ slug, ticketId, taskOverride }: {
   const [showEx, setShowEx] = useState(false);
   const [savedAt, setSavedAt] = useState<string>("");
   const [evaluation, setEvaluation] = useState<DesignEvaluation | null>(null);
+  const evaluationContext = {
+    project: lab?.name ?? subject, projectDescription: lab?.description, labType: "system-design",
+    sprint: SYSTEM_DESIGN_SPRINTS.find(s => s.tags.some(tag => tag === task?.tag))?.name,
+    ticketId: ticketId ?? "sandbox", title: taskTitle, description: taskDescription ?? design?.description ?? taskTitle,
+    evaluationCriteria: taskOverride ? undefined : getSystemDesignCriteria(ticketId ?? "sandbox", taskTitle, taskDescription ?? design?.description ?? taskTitle),
+  };
 
   useEffect(() => {
     const t = setTimeout(() => {
@@ -417,7 +423,7 @@ export function SystemDesignStudio({ slug, ticketId, taskOverride }: {
         <div className="text-sm font-semibold">🏛️ System Design Studio <span className="ml-2 text-xs font-normal text-muted-foreground">{taskTitle}</span></div>
         <div className="ml-auto flex items-center gap-2 text-xs">
           {savedAt && <span className="text-muted-foreground">Saved {savedAt}</span>}
-          <Button size="sm" onClick={() => setEvaluation(evaluateSystemDesign(slug, { nodes, edges, seq, schema, apis, notes }))}><Play className="h-3.5 w-3.5" />Run</Button>
+          <Button size="sm" onClick={() => setEvaluation(evaluateSystemDesign(evaluationContext, { nodes, edges, seq, schema, apis, notes }))}><Play className="h-3.5 w-3.5" />Run</Button>
           <Button size="sm" onClick={() => setShowEx(true)}><Sparkles className="h-3.5 w-3.5" />Examples</Button>
           <Button variant="outline" size="sm" onClick={() => apply(USERS_TASKS_SAMPLE)} title="Load users & user_tasks into every tab"><Users className="h-3.5 w-3.5" />Load sample</Button>
           <Button variant="ghost" size="sm" onClick={reset} className="border">Clear</Button>
@@ -445,7 +451,7 @@ export function SystemDesignStudio({ slug, ticketId, taskOverride }: {
       </div>
       {showEx && <ExamplesDialog tab={tab} scenario={scenarioExample(slug)} subject={subject} onClose={() => setShowEx(false)}
         onUseTab={useTab} onLoadAll={d => { apply(d); setShowEx(false); }} />}
-      {evaluation && <EvaluationResults result={evaluation} taskTitle={taskTitle} ticketId={ticketId} open onClose={() => setEvaluation(null)} />}
+      {evaluation && <EvaluationResults report={evaluation} open onClose={() => setEvaluation(null)} />}
     </div>
   );
 }
