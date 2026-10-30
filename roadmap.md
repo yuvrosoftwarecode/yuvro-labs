@@ -4,7 +4,8 @@
 - [x] Verify catalog, sprint-to-task navigation, and studio editing.
 - [x] Add Run results with structural scores, detailed checks, and design artifact counts.
 - [x] Test evaluation checks and verify Run in the task workspace.
-- [ ] Replace evaluation modal with a shared right-side drawer and expandable feedback.
-- [ ] Resolve criteria from each ticket and remove unrelated generic scoring in code labs.
-- [ ] Verify different system-design and code tickets, drawer closing, and mobile sizing.
-- [ ] Confirm backend evaluation availability and report any unavailable validators honestly.
+- [x] Replace evaluation modal with a shared right-side drawer and expandable feedback.
+- [x] Resolve criteria from each ticket and remove unrelated Java scoring from non-Java tasks.
+- [x] Verify system-design, SQL, Django and candidate coding drawers, closing, downloads and mobile sizing.
+- [x] Inspect evaluation service availability; no grading API was found in the existing flows.
+- [ ] Connect real grading and persisted reports across all assessment/report surfaces — blocked by unavailable grading service, validator configuration and report API.
