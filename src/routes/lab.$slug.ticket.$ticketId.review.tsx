@@ -3,6 +3,7 @@ import { useState } from "react";
 import { ArrowLeft, Code2, File, FileCode2, GitCompareArrows } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { tickets } from "@/lib/dummy";
+import { TopNav } from "@/components/TopNav";
 
 export const Route = createFileRoute("/lab/$slug/ticket/$ticketId/review")({ component: Review });
 
