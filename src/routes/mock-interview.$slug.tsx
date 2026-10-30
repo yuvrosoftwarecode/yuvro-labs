@@ -326,7 +326,7 @@ function LiveRoom(p: {
                 </div>
                 <div className="flex gap-1.5">
                   <input value={p.draft} onChange={e => p.setDraft(e.target.value)} onKeyDown={e => { if (e.key === "Enter") p.submit(); }} placeholder="Type your answer, or just speak" className="h-9 min-w-0 flex-1 rounded-lg border border-white/5 bg-[#121827] px-3 text-sm text-white outline-none placeholder:text-[#6b7285] focus:border-[#6b8cf5]/50" />
-                  <button onClick={p.submit} disabled={!p.draft.trim()} className="h-9 rounded-lg bg-[#6b8cf5] px-3.5 text-sm font-semibold text-[#0b0f17] hover:bg-[#7d9bff] disabled:opacity-60">Send</button>
+                  <button onClick={p.submit} disabled={!p.draft.trim()} className="h-9 rounded-lg bg-[#6b8cf5] px-3.5 text-sm font-semibold text-white hover:bg-[#7d9bff] disabled:opacity-60">Send</button>
                 </div>
               </div>
             </div>
@@ -340,7 +340,7 @@ function LiveRoom(p: {
                   <select value={lang} onChange={e => setLang(e.target.value as keyof typeof LANGS)} className="h-8 w-[100px] rounded-md border border-white/10 bg-[#1e1e1e] px-2 text-sm text-white outline-none">
                     {Object.entries(LANGS).map(([k, v]) => <option key={k} value={k}>{v.label}</option>)}
                   </select>
-                  <button onClick={submitCode} className="h-8 rounded-md bg-[#6b8cf5] px-3 text-sm font-semibold text-[#0b0f17] hover:bg-[#7d9bff]">Submit code</button>
+                  <button onClick={submitCode} className="h-8 rounded-md bg-[#6b8cf5] px-3 text-sm font-semibold text-white hover:bg-[#7d9bff]">Submit code</button>
                 </div>
               </div>
               <div className="min-h-0 flex-1 overflow-auto">
@@ -435,7 +435,7 @@ function LiveRoom(p: {
             </div>
             <div className="flex gap-1.5">
               <input autoFocus value={p.draft} onChange={e => p.setDraft(e.target.value)} onKeyDown={e => { if (e.key === "Enter") p.submit(); }} placeholder="Type your answer, or just speak" className="h-9 min-w-0 flex-1 rounded-lg border border-white/5 bg-[#121827] px-3 text-sm text-white outline-none placeholder:text-[#6b7285] focus:border-[#6b8cf5]/50" />
-              <button onClick={p.submit} disabled={!p.draft.trim()} className="h-9 rounded-lg bg-[#6b8cf5] px-3.5 text-sm font-semibold text-[#0b0f17] hover:bg-[#7d9bff] disabled:opacity-60">Send</button>
+              <button onClick={p.submit} disabled={!p.draft.trim()} className="h-9 rounded-lg bg-[#6b8cf5] px-3.5 text-sm font-semibold text-white hover:bg-[#7d9bff] disabled:opacity-60">Send</button>
             </div>
           </div>
         )}
