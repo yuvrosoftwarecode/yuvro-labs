@@ -1,4 +1,4 @@
-import { useEffect, useRef } from "react";
+import { useEffect, useMemo, useRef } from "react";
 
 const CSS = `
 @import url('https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,600;1,9..144,500&family=DM+Sans:wght@400;500;700&family=JetBrains+Mono:wght@500&display=swap');
@@ -44,14 +44,29 @@ const CSS = `
 @keyframes lh-steam{0%{stroke-dashoffset:60;opacity:0}30%{opacity:.85}100%{stroke-dashoffset:-120;opacity:0}}
 .lh-mug{animation:lh-bob 4s ease-in-out infinite;transform-origin:50% 90%}
 @keyframes lh-bob{50%{transform:translateY(-4px) rotate(-.8deg)}}
+.lh-ice{transform-box:fill-box;transform-origin:center;animation:lh-ice 3s ease-in-out infinite}
+@keyframes lh-ice{50%{transform:translateY(-5px) rotate(7deg)}}
+.lh-bub{opacity:0;animation:lh-bub 3.4s ease-in infinite}
+@keyframes lh-bub{0%{transform:translateY(0);opacity:0}20%{opacity:.85}100%{transform:translateY(-80px);opacity:0}}
+.lh-dunk{transform-box:fill-box;transform-origin:center;animation:lh-dunk 3.6s ease-in-out infinite}
+@keyframes lh-dunk{50%{transform:translate(-9px,-9px) rotate(-14deg)}}
+.lh-glow{animation:lh-glow 4s ease-in-out infinite}
+@keyframes lh-glow{50%{opacity:.07}}
+.lh-tw{animation:lh-tw 2.6s ease-in-out infinite}
+@keyframes lh-tw{50%{opacity:.2}}
+.lh-z{opacity:0;animation:lh-z 3.5s ease-in infinite}
+@keyframes lh-z{0%{transform:translate(0,6px);opacity:0}30%{opacity:.9}100%{transform:translate(10px,-22px);opacity:0}}
+.lh-cur{animation:lh-cur 1s steps(2) infinite}
+@keyframes lh-cur{50%{opacity:0}}
 .lh-tag{position:absolute;right:-6px;top:8%;background:var(--tag);color:var(--tagink);font-family:"JetBrains Mono",monospace;font-size:12px;font-weight:500;padding:9px 12px;border-radius:6px;box-shadow:2px 3px 0 rgba(0,0,0,.12);transform:rotate(4deg);animation:lh-wob 5s ease-in-out infinite}
 @keyframes lh-wob{50%{transform:rotate(-2deg) translateY(-4px)}}
 @media(prefers-reduced-motion:reduce){.lh *{animation:none!important}.lh h1 path{stroke-dashoffset:0}.lh mark{background-size:100% 100%}}
 `;
 
 type Expr = "grin" | "wink" | "calm" | "cool" | "wow";
+type Bucket = "morning" | "afternoon" | "evening" | "night";
 
-const QUOTES: [string, Expr][] = [
+const GENERAL: [string, Expr][] = [
   ["Tutorials show you the happy path. <mark>Tickets show you the actual job.</mark>", "cool"],
   ["Debug it. Optimise it. Ship it. <mark>That’s one sprint closer to hired.</mark>", "grin"],
   ["Solve it here, commit it, and <mark>let your GitHub do the talking.</mark>", "wink"],
@@ -62,6 +77,13 @@ const QUOTES: [string, Expr][] = [
   ["Scale, latency, failure: <mark>system design is where juniors turn into seniors.</mark>", "wink"],
 ];
 
+const META: Record<Bucket, { greet: string; emoji: string; note: string; quote: [string, Expr] }> = {
+  morning: { greet: "Good morning", emoji: "☀️", note: 'println("you’ve got this");', quote: ["Fresh coffee, fresh branch. <mark>Make the first commit before the second sip.</mark>", "grin"] },
+  afternoon: { greet: "Good afternoon", emoji: "🌤️", note: "// second wind loading...", quote: ["Post-lunch slump? <mark>One small ticket wakes you up faster than coffee.</mark>", "wow"] },
+  evening: { greet: "Good evening", emoji: "🌇", note: 'git commit -m "before dinner"', quote: ["Day’s almost done. <mark>One more commit before dinner?</mark>", "wink"] },
+  night: { greet: "Burning the midnight oil", emoji: "🌙", note: "git push && sleep;", quote: ["Quiet hours, loud progress. <mark>Every night you code, future-you says thanks.</mark>", "calm"] },
+};
+
 const E: Record<Expr, [string, string]> = {
   grin: ['<ellipse class="eye" cx="17" cy="21" rx="3" ry="4" fill="#4a3c00"/><ellipse class="eye" cx="33" cy="21" rx="3" ry="4" fill="#4a3c00"/>', "M15 30 q10 11 20 0"],
   wink: ['<ellipse class="eye" cx="17" cy="21" rx="3" ry="4" fill="#4a3c00"/><path d="M29 21 q4 -4 8 0" fill="none" stroke="#4a3c00" stroke-width="2.6" stroke-linecap="round"/>', "M16 31 q9 8 18 -1"],
@@ -70,47 +92,201 @@ const E: Record<Expr, [string, string]> = {
   wow: ['<ellipse class="eye" cx="17" cy="21" rx="3.4" ry="4.6" fill="#4a3c00"/><ellipse class="eye" cx="33" cy="21" rx="3.4" ry="4.6" fill="#4a3c00"/>', "M21 33 q4 -6 8 0 q-4 4 -8 0"],
 };
 
-export default function LearnerHero({ userName = "Alex", onContinue }: { userName?: string; onContinue?: () => void }) {
+const getBucket = (h: number): Bucket => (h < 12 ? "morning" : h < 17 ? "afternoon" : h < 21 ? "evening" : "night");
+
+/* ---------- scene pieces ---------- */
+function Steam() {
+  return (
+    <g className="lh-steam">
+      <path d="M120 120 C 105 95, 140 80, 125 50" />
+      <path d="M165 125 C 150 95, 185 75, 168 40" />
+      <path d="M210 120 C 196 98, 228 84, 214 56" />
+    </g>
+  );
+}
+
+function Face({ x1, x2, y }: { x1: number; x2: number; y: number }) {
+  const w = x2 - x1 - 16;
+  return (
+    <g>
+      <ellipse className="blink" cx={x1} cy={y} rx="9" ry="11" fill="#fff" />
+      <ellipse className="blink" cx={x2} cy={y} rx="9" ry="11" fill="#fff" />
+      <circle cx={x1 + 2} cy={y + 2} r="4.5" fill="#14192b" />
+      <circle cx={x2 + 2} cy={y + 2} r="4.5" fill="#14192b" />
+      <path d={`M${x1 + 8} ${y + 29} q${w / 2} 22 ${w} 0`} fill="none" stroke="#fff" strokeWidth="5" strokeLinecap="round" />
+      <circle cx={x1 - 20} cy={y + 23} r="8" fill="#ff9a8a" opacity=".55" />
+      <circle cx={x2 + 20} cy={y + 23} r="8" fill="#ff9a8a" opacity=".55" />
+    </g>
+  );
+}
+
+/* ---------- 4 scenes ---------- */
+function MorningScene() {
+  return (
+    <>
+      <Steam />
+      <ellipse cx="165" cy="270" rx="125" ry="20" fill="var(--line)" />
+      <g className="lh-mug">
+        <path d="M244 160 h22 a30 30 0 0 1 0 62 h-30" fill="none" stroke="var(--mugdark)" strokeWidth="16" strokeLinecap="round" />
+        <path d="M80 138 h170 v70 a58 58 0 0 1 -58 58 h-54 a58 58 0 0 1 -58 -58z" fill="var(--mug)" />
+        <path d="M80 138 h170 v22 h-170z" fill="var(--mugdark)" opacity=".35" />
+        <ellipse cx="165" cy="138" rx="85" ry="13" fill="var(--mugdark)" />
+        <ellipse cx="165" cy="139" rx="73" ry="8" fill="#5a3a2a" />
+        <Face x1={135} x2={195} y={195} />
+      </g>
+    </>
+  );
+}
+
+function AfternoonScene() {
+  return (
+    <>
+      <ellipse cx="165" cy="270" rx="110" ry="18" fill="var(--line)" />
+      <g className="lh-mug">
+        <path d="M96 118 h138 l-17 140 a10 10 0 0 1 -10 9 h-84 a10 10 0 0 1 -10 -9z" fill="var(--mug)" opacity=".22" />
+        <path d="M104 146 h122 l-12 112 a8 8 0 0 1 -8 7 h-82 a8 8 0 0 1 -8 -7z" fill="#6b4128" />
+        <path d="M104 146 h122 l-2 20 h-118z" fill="#d9b48a" opacity=".85" />
+        <rect className="lh-ice" x="112" y="124" width="30" height="30" rx="7" fill="#fff" opacity=".55" />
+        <rect className="lh-ice" x="150" y="130" width="28" height="28" rx="7" fill="#fff" opacity=".5" style={{ animationDelay: "-1s" }} />
+        <rect className="lh-ice" x="200" y="128" width="26" height="26" rx="7" fill="#fff" opacity=".55" style={{ animationDelay: "-2s" }} />
+        <path d="M216 44 L197 60 L180 206" fill="none" stroke="var(--brand)" strokeWidth="9" strokeLinecap="round" strokeLinejoin="round" />
+        <path d="M216 44 L197 60 L180 206" fill="none" stroke="#fff" strokeWidth="9" strokeLinecap="round" strokeLinejoin="round" strokeDasharray="7 9" opacity=".55" />
+        <circle className="lh-bub" cx="121" cy="252" r="4" fill="#fff" />
+        <circle className="lh-bub" cx="209" cy="250" r="3.2" fill="#fff" style={{ animationDelay: "-1.6s" }} />
+        <path d="M96 118 h138 l-17 140 a10 10 0 0 1 -10 9 h-84 a10 10 0 0 1 -10 -9z" fill="none" stroke="var(--mugdark)" strokeWidth="4" strokeLinejoin="round" />
+        <Face x1={140} x2={190} y={205} />
+        <circle cx="236" cy="124" r="17" fill="#ffd54a" />
+        <circle cx="236" cy="124" r="12" fill="#fff3b0" />
+        <path d="M236 112v24M224 124h24" stroke="#ffd54a" strokeWidth="2" />
+      </g>
+    </>
+  );
+}
+
+function EveningScene() {
+  return (
+    <>
+      <Steam />
+      <ellipse cx="165" cy="272" rx="112" ry="17" fill="var(--line)" />
+      <g className="lh-mug">
+        <path d="M92 120 h146 l-24 142 a10 10 0 0 1 -10 8 h-78 a10 10 0 0 1 -10 -8z" fill="#c8693a" />
+        <path d="M101 164 h128 M108 248 h114" stroke="#a8502a" strokeWidth="5" strokeLinecap="round" opacity=".45" />
+        <ellipse cx="165" cy="120" rx="73" ry="12" fill="#a8502a" />
+        <ellipse cx="165" cy="121" rx="62" ry="7.5" fill="#d9a066" />
+        <Face x1={140} x2={190} y={192} />
+      </g>
+      <g className="lh-dunk">
+        <rect x="238" y="230" width="46" height="32" rx="8" fill="#e6b573" />
+        <circle cx="252" cy="242" r="2.6" fill="#c98f4a" />
+        <circle cx="266" cy="238" r="2.6" fill="#c98f4a" />
+        <circle cx="272" cy="252" r="2.6" fill="#c98f4a" />
+        <circle cx="254" cy="254" r="2.6" fill="#c98f4a" />
+      </g>
+    </>
+  );
+}
+
+function NightScene() {
+  return (
+    <>
+      <circle cx="58" cy="62" r="22" fill="#f4eec8" />
+      <circle cx="68" cy="55" r="19" fill="var(--card)" />
+      <circle className="lh-tw" cx="112" cy="40" r="2.5" fill="#f4eec8" />
+      <circle className="lh-tw" cx="30" cy="118" r="2" fill="#f4eec8" style={{ animationDelay: "-1s" }} />
+      <circle className="lh-tw" cx="104" cy="92" r="2" fill="#f4eec8" style={{ animationDelay: "-2s" }} />
+      <ellipse cx="165" cy="268" rx="125" ry="16" fill="var(--line)" />
+      <path className="lh-glow" d="M234 148 L278 132 L296 262 L196 262z" fill="#ffd54a" opacity=".16" />
+      <g className="lh-mug">
+        <rect x="82" y="116" width="156" height="104" rx="9" fill="#1b2340" stroke="var(--mugdark)" strokeWidth="6" />
+        <rect x="98" y="130" width="52" height="5" rx="2.5" fill="#4a7bdc" />
+        <rect x="98" y="141" width="34" height="5" rx="2.5" fill="#7fa6ff" opacity=".7" />
+        <rect className="lh-cur" x="136" y="140" width="3" height="8" fill="#ffd54a" />
+        <path d="M128 170 q8 8 16 0 M176 170 q8 8 16 0" fill="none" stroke="#cfe0ff" strokeWidth="4" strokeLinecap="round" />
+        <path d="M150 192 q10 8 20 0" fill="none" stroke="#cfe0ff" strokeWidth="4" strokeLinecap="round" />
+        <circle cx="118" cy="186" r="7" fill="#ff9a8a" opacity=".5" />
+        <circle cx="202" cy="186" r="7" fill="#ff9a8a" opacity=".5" />
+        <text className="lh-z" x="204" y="152" fill="#9db8ff" fontSize="16" fontWeight="700" fontFamily="DM Sans, sans-serif">z</text>
+        <text className="lh-z" x="214" y="140" fill="#9db8ff" fontSize="20" fontWeight="700" fontFamily="DM Sans, sans-serif" style={{ animationDelay: "-1.7s" }}>Z</text>
+        <path d="M64 224 h192 l10 14 a6 6 0 0 1 -6 8 h-200 a6 6 0 0 1 -6 -8z" fill="var(--mugdark)" />
+      </g>
+      <ellipse cx="280" cy="258" rx="20" ry="6" fill="var(--mugdark)" />
+      <path d="M280 256 L280 196 L252 140" fill="none" stroke="var(--mug)" strokeWidth="7" strokeLinecap="round" strokeLinejoin="round" />
+      <path d="M226 118 L266 102 L278 132 L234 148z" fill="var(--mug)" />
+      <circle cx="252" cy="142" r="6" fill="#ffd54a" />
+    </>
+  );
+}
+
+const SCENES = { morning: MorningScene, afternoon: AfternoonScene, evening: EveningScene, night: NightScene };
+
+/* ---------- component ---------- */
+export default function LearnerHero({
+  userName = "Alex",
+  onContinue,
+  previewAs,
+}: {
+  userName?: string;
+  onContinue?: () => void;
+  previewAs?: Bucket;
+}) {
   const q = useRef<HTMLParagraphElement>(null);
   const face = useRef<SVGSVGElement>(null);
   const eyes = useRef<SVGGElement>(null);
   const mouth = useRef<SVGPathElement>(null);
 
-  const h = new Date().getHours();
-  const [greet, emoji] =
-    h < 12 ? ["Good morning", "☀️"] : h < 17 ? ["Good afternoon", "🌤️"] : h < 21 ? ["Good evening", "🌇"] : ["Burning the midnight oil", "🌙"];
+  const b = useMemo<Bucket>(() => previewAs ?? getBucket(new Date().getHours()), [previewAs]);
+  const meta = META[b];
+  const Scene = SCENES[b];
 
   useEffect(() => {
+    const quotes: [string, Expr][] = [meta.quote, ...GENERAL];
     let i = 0;
     const timeouts: number[] = [];
     const show = (n: number, first = false) => {
       i = n;
-      const [t, e] = QUOTES[n];
+      const [t, e0] = quotes[n];
+      const e: Expr = b === "night" ? "calm" : e0;
       if (!q.current || !face.current || !eyes.current || !mouth.current) return;
       q.current.className = "lh-q out";
-      timeouts.push(window.setTimeout(() => {
-        if (!q.current || !face.current || !eyes.current || !mouth.current) return;
-        q.current.innerHTML = t;
-        q.current.className = "lh-q in";
-        eyes.current.innerHTML = E[e][0];
-        mouth.current.setAttribute("d", E[e][1]);
-        face.current.classList.remove("hop");
-        void face.current.getBoundingClientRect();
-        face.current.classList.add("hop");
-      }, first ? 0 : 280));
+      timeouts.push(
+        window.setTimeout(() => {
+          if (!q.current || !face.current || !eyes.current || !mouth.current) return;
+          q.current.innerHTML = t;
+          q.current.className = "lh-q in";
+          eyes.current.innerHTML = E[e][0];
+          mouth.current.setAttribute("d", E[e][1]);
+          face.current.classList.remove("hop");
+          void face.current.getBoundingClientRect();
+          face.current.classList.add("hop");
+        }, first ? 0 : 280)
+      );
     };
     show(0, true);
-    const iv = window.setInterval(() => show((i + 1) % QUOTES.length), 5200);
-    return () => { clearInterval(iv); timeouts.forEach(clearTimeout); };
-  }, []);
+    const iv = window.setInterval(() => show((i + 1) % quotes.length), 5200);
+    return () => {
+      clearInterval(iv);
+      timeouts.forEach(clearTimeout);
+    };
+  }, [b, meta]);
 
   return (
     <div className="lh">
       <style>{CSS}</style>
       <section className="lh-hero">
         <div>
-          <p className="lh-hi"><span>{greet}</span>, <b>{userName}</b> <span aria-hidden="true">{emoji}</span></p>
-          <h1>Let’s write some <i>code<svg viewBox="0 0 100 12" preserveAspectRatio="none"><path d="M2 8 C 15 2, 25 12, 40 6 S 65 2, 80 7 S 95 5, 98 6" /></svg></i> today.</h1>
+          <p className="lh-hi">
+            <span>{meta.greet}</span>, <b>{userName}</b> <span aria-hidden="true">{meta.emoji}</span>
+          </p>
+          <h1>
+            Let’s write some{" "}
+            <i>
+              code
+              <svg viewBox="0 0 100 12" preserveAspectRatio="none">
+                <path d="M2 8 C 15 2, 25 12, 40 6 S 65 2, 80 7 S 95 5, 98 6" />
+              </svg>
+            </i>{" "}
+            today.
+          </h1>
 
           <div className="lh-say">
             <svg ref={face} className="lh-face" viewBox="0 0 50 50" aria-hidden="true">
@@ -120,39 +296,24 @@ export default function LearnerHero({ userName = "Alex", onContinue }: { userNam
               <circle cx="11" cy="30" r="3.2" fill="#ff9a8a" opacity=".6" />
               <circle cx="39" cy="30" r="3.2" fill="#ff9a8a" opacity=".6" />
             </svg>
-            <div className="lh-win" aria-live="polite"><p ref={q} className="lh-q" /></div>
+            <div className="lh-win" aria-live="polite">
+              <p ref={q} className="lh-q" />
+            </div>
           </div>
 
           <button className="lh-cta" onClick={onContinue}>
             Continue Java Lab
-            <svg viewBox="0 0 24 24"><path d="M5 12h14M13 6l6 6-6 6" /></svg>
+            <svg viewBox="0 0 24 24">
+              <path d="M5 12h14M13 6l6 6-6 6" />
+            </svg>
           </button>
         </div>
 
         <div className="lh-scene" aria-hidden="true">
           <svg viewBox="0 0 320 300">
-            <g className="lh-steam">
-              <path d="M120 120 C 105 95, 140 80, 125 50" />
-              <path d="M165 125 C 150 95, 185 75, 168 40" />
-              <path d="M210 120 C 196 98, 228 84, 214 56" />
-            </g>
-            <ellipse cx="165" cy="270" rx="125" ry="20" fill="var(--line)" />
-            <g className="lh-mug">
-              <path d="M244 160 h22 a30 30 0 0 1 0 62 h-30" fill="none" stroke="var(--mugdark)" strokeWidth="16" strokeLinecap="round" />
-              <path d="M80 138 h170 v70 a58 58 0 0 1 -58 58 h-54 a58 58 0 0 1 -58 -58z" fill="var(--mug)" />
-              <path d="M80 138 h170 v22 h-170z" fill="var(--mugdark)" opacity=".35" />
-              <ellipse cx="165" cy="138" rx="85" ry="13" fill="var(--mugdark)" />
-              <ellipse cx="165" cy="139" rx="73" ry="8" fill="#5a3a2a" />
-              <ellipse className="blink" cx="135" cy="195" rx="9" ry="11" fill="#fff" />
-              <ellipse className="blink" cx="195" cy="195" rx="9" ry="11" fill="#fff" />
-              <circle cx="137" cy="197" r="4.5" fill="#14192b" />
-              <circle cx="197" cy="197" r="4.5" fill="#14192b" />
-              <path d="M143 224 q22 22 44 0" fill="none" stroke="#fff" strokeWidth="5" strokeLinecap="round" />
-              <circle cx="115" cy="218" r="8" fill="#ff9a8a" opacity=".55" />
-              <circle cx="215" cy="218" r="8" fill="#ff9a8a" opacity=".55" />
-            </g>
+            <Scene />
           </svg>
-          <div className="lh-tag">{'println("you’ve got this");'}</div>
+          <div className="lh-tag">{meta.note}</div>
         </div>
       </section>
     </div>
