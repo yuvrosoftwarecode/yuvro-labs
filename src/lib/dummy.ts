@@ -1,4 +1,5 @@
 import { SYSTEM_DESIGN_LABS } from "@/lib/systemDesign";
+import type { EvaluationCriterion } from "./evaluation";
 
 export type Difficulty = "Beginner" | "Intermediate" | "Advanced";
 export type Status = "Not Started" | "In Progress" | "Completed";
@@ -14,6 +15,8 @@ export interface Ticket {
   progress?: number;
   score?: number;
   description: string;
+  acceptanceCriteria?: string[];
+  evaluationCriteria?: EvaluationCriterion[];
 }
 
 export interface Lab {

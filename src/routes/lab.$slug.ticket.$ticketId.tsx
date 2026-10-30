@@ -909,11 +909,7 @@ function CodeTicketView({
   const [running, setRunning] = useState(false);
   const [evaluationReport, setEvaluationReport] = useState<EvaluationReport | null>(null);
   const [evaluationOpen, setEvaluationOpen] = useState(false);
-  const evaluationContext = { project: lab.name, projectDescription: lab.description, labType: slug, sprint: ticket.tag, ticketId: ticket.id, title: ticket.title, description: ticket.description };
-  useEffect(() => {
-    if (!running || !evaluationOpen) return;
-    setEvaluationReport(pendingEvaluation(evaluationContext));
-  }, [running, evaluationOpen, ticket.id, ticket.title, ticket.description]);
+  const evaluationContext = { project: lab.name, projectDescription: lab.description, labType: slug, sprint: ticket.tag, ticketId: ticket.id, title: ticket.title, description: ticket.description, acceptanceCriteria: ticket.acceptanceCriteria, evaluationCriteria: ticket.evaluationCriteria };
   const [tests, setTests] = useState<TestResult[]>([
     { name: "Test 1 · Variables Declaration", pass: false, time: "—" },
     { name: "Test 2 · Type Casting (implicit)", pass: false, time: "—" },
