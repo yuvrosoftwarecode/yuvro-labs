@@ -199,15 +199,6 @@ function InterviewScreen() {
   );
 }
 
-function Dots({ active }: { active?: boolean }) {
-  return (
-    <div className="grid w-3.5 grid-cols-3 gap-[2px]">
-      {Array.from({ length: 9 }).map((_, k) => (
-        <span key={k} className={`h-[3px] w-[3px] rounded-full bg-success ${active ? "animate-pulse" : ""}`} style={{ animationDelay: `${k * 90}ms` }} />
-      ))}
-    </div>
-  );
-}
 
 function LiveRoom(p: {
   title: string; left: number; log: { who: "ai" | "me"; text: string }[]; speaking: boolean;
@@ -266,8 +257,8 @@ function LiveRoom(p: {
     >
       {p.log.map((m, k) => (
         <div key={k} className="space-y-2">
-          {m.who === "ai" ? <Dots active={p.speaking && k === lastAi} /> : <div className="text-[10px] uppercase tracking-widest text-muted-foreground">You</div>}
-          <p className={`${compact ? "text-sm" : "text-[15px]"} leading-relaxed ${m.who === "ai" ? "text-foreground" : "text-muted-foreground"}`}>{m.text}</p>
+          {m.who === "ai" ? <div className="text-xs font-medium text-[#f59e42]">Vitarka AI</div> : <div className="text-[10px] uppercase tracking-widest text-muted-foreground">You</div>}
+          <p className={`${compact ? "text-sm" : "text-[15px]"} leading-relaxed ${m.who === "ai" ? "text-foreground" : "text-muted-foreground"}`}>{m.text}{m.who === "ai" && p.speaking && k === lastAi && <span className="ml-0.5 inline-block h-4 w-2 translate-y-0.5 animate-pulse bg-[#f59e42]" />}</p>
         </div>
       ))}
       <div ref={p.endRef} />
@@ -378,7 +369,7 @@ function LiveRoom(p: {
 
   return (
     <div className="dark">
-      <div className="fixed inset-0 flex flex-col overflow-hidden bg-background text-foreground">
+      <div className="fixed inset-0 flex flex-col overflow-hidden bg-[#0e1322] text-foreground" style={{ backgroundImage: "radial-gradient(60% 40% at 0% 100%, rgba(120,60,40,0.22), transparent 70%), radial-gradient(50% 35% at 100% 15%, rgba(60,70,120,0.18), transparent 70%)" }}>
         {/* top bar */}
         <div className="relative z-10 flex items-center justify-between border-b border-border/60 px-6 py-3 text-xs text-muted-foreground">
           <div className="flex items-center gap-3">
