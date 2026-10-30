@@ -1,11 +1,13 @@
-import { createFileRoute, Link } from "@tanstack/react-router";
+import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { useEffect, useMemo, useState } from "react";
 import { TopNav } from "@/components/TopNav";
+import LearnerHero from "@/components/LearnerHero";
+import { useAuth } from "@/lib/auth";
 import { ProgressRing } from "@/components/ProgressRing";
 import { DiffBadge } from "@/components/Badges";
-import { labs, me, type Lab } from "@/lib/dummy";
+import { labs, type Lab } from "@/lib/dummy";
 import { getEnrolled, enroll, unenroll } from "@/lib/enrollment";
-import { ArrowRight, Check, Plus, Star, Search, Github, Lock } from "lucide-react";
+import { ArrowRight, Check, Plus, Star, Search, Lock } from "lucide-react";
 import { getLabTier, TIER_META } from "@/lib/labAccess";
 
 function TierBadge({ slug }: { slug: string }) {
@@ -55,6 +57,8 @@ const LAB_LANGUAGES: Record<string, string[]> = {
 const ALL_LANGUAGES = Array.from(new Set(Object.values(LAB_LANGUAGES).flat())).sort();
 
 function Hub() {
+  const { user } = useAuth();
+  const navigate = useNavigate();
   const [enrolled, setEnrolled] = useState<string[]>([]);
   const [q, setQ] = useState("");
   const [cats, setCats] = useState<Category[]>([]);
@@ -89,30 +93,10 @@ function Hub() {
     <div className="min-h-screen">
       <TopNav />
       <main className="mx-auto max-w-[1200px] px-4 py-8">
-        {/* Individual Hub welcome */}
-        <section className="border bg-card p-5 md:p-8">
-          <div>
-            <div className="min-w-0">
-              <p className="text-sm font-medium text-primary">
-                Welcome back, {me.name.split(" ")[0]}
-              </p>
-              <h1 className="mt-3 text-2xl sm:text-3xl md:text-4xl font-semibold">
-                Your <span className="text-primary">Individual Hub</span>
-              </h1>
-              <p className="mt-2 text-sm text-muted-foreground max-w-xl hidden sm:block">
-                Continue enrolled labs, explore featured tracks and dive into any lab in the catalog.
-              </p>
-              <div className="mt-5 flex flex-wrap items-center gap-2">
-                <button type="button" className="inline-flex items-center gap-2 rounded-md border border-border bg-card px-3 py-2 text-xs sm:text-sm font-medium hover:bg-accent">
-                  <Github className="h-4 w-4" /> Connect GitHub
-                </button>
-                <Link to="/lab/$slug" params={{ slug: "java" }} className="inline-flex items-center gap-2 rounded-md bg-primary px-3 py-2 text-xs sm:text-sm font-medium text-primary-foreground hover:opacity-90">
-                  Continue Java Lab <ArrowRight className="h-4 w-4" />
-                </Link>
-              </div>
-            </div>
-          </div>
-        </section>
+        <LearnerHero
+          userName={user?.name.trim().split(/\s+/)[0]}
+          onContinue={() => navigate({ href: "/java-lab" })}
+        />
 
         <div className="mt-8 space-y-10">
           {/* My labs — horizontal scroll */}
