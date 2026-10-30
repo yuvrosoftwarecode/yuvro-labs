@@ -587,7 +587,7 @@ function Lobby({ iv, mic, cam, setMic, setCam, onStart }: {
         <Link to="/mock-interviews" className="inline-flex items-center gap-1 rounded-full px-2 py-1 text-sm text-[#1B1340]/70 hover:bg-[#1B1340]/5"><ArrowLeft className="h-4 w-4" /> Back</Link>
       </div>
       <div className="mx-auto mt-2 max-w-6xl px-6">
-        <div className="flex items-center gap-4 rounded-2xl border border-[#F0D45C] bg-[#FFF8DB] px-5 py-3">
+        <div className="flex items-center justify-center gap-4 rounded-2xl px-5 py-3 text-center">
           <span className="text-3xl leading-none">😊</span>
           <div>
             <div className="text-base font-semibold md:text-lg">All the best, buddy! You've got this.</div>
@@ -604,9 +604,9 @@ function Lobby({ iv, mic, cam, setMic, setCam, onStart }: {
           <p className="mt-4 max-w-md text-sm text-[#1B1340]/70">Your first round is a friendly chat, not an exam. Talk it out like you would with a teammate.</p>
           <div className="mt-5 grid grid-cols-2 gap-3">
             {FEATURES.map(f => (
-              <div key={f.title} className={`rounded-xl p-4 text-[#1B1340] transition-transform hover:-translate-y-0.5 ${f.cls}`}>
+              <div key={f.title} className={`rounded-xl p-4 text-white transition-transform hover:-translate-y-0.5 ${f.cls}`}>
                 <div className="text-sm font-semibold">{f.title}</div>
-                <div className="mt-1 text-xs leading-snug text-[#1B1340]/80">{f.body}</div>
+                <div className="mt-1 text-xs leading-snug text-white/85">{f.body}</div>
               </div>
             ))}
           </div>
