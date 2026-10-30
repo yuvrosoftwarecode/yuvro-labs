@@ -6,7 +6,7 @@ import { useAuth } from "@/lib/auth";
 import { ProgressRing } from "@/components/ProgressRing";
 import { labs, type Lab } from "@/lib/dummy";
 import { getEnrolled, enroll, unenroll } from "@/lib/enrollment";
-import { ArrowRight, Check, Plus, Star, Search } from "lucide-react";
+import { ArrowRight, Check, Plus, Lock, Search } from "lucide-react";
 
 export const Route = createFileRoute("/dashboard")({ component: Hub });
 
@@ -113,7 +113,7 @@ function Hub() {
           <section>
             <div className="mb-4 flex items-end justify-between">
               <div className="min-w-0">
-                <h2 className="text-xl font-semibold flex items-center gap-2"><Star className="h-4 w-4 text-warning" /> Featured labs</h2>
+<h2 className="text-xl font-semibold flex items-center gap-2"><Lock className="h-4 w-4 text-muted-foreground" /> Premium labs</h2>
                 <p className="text-xs text-muted-foreground mt-0.5">Handpicked tracks trending this month.</p>
               </div>
             </div>
@@ -218,10 +218,9 @@ function CheckRow({ checked, onChange, label }: { checked: boolean; onChange: ()
 function FeaturedCard({ lab, isEnrolled, onToggle }: { lab: Lab; isEnrolled: boolean; onToggle: () => void }) {
 
   return (
-    <div className="group relative overflow-hidden rounded-xl border bg-gradient-to-br from-card via-card to-accent/20 p-5 hover:border-primary/50 transition">
-      <div className="absolute -right-8 -top-8 h-24 w-24 rounded-full blur-2xl opacity-30" style={{ background: `var(--${lab.color})` }} />
-      <span className="inline-flex items-center gap-1 rounded-full border border-warning/30 bg-warning/10 px-2 py-0.5 text-[10px] font-medium text-warning">
-        <Star className="h-3 w-3" /> Featured
+    <div className="group relative overflow-hidden rounded-xl border bg-card p-5 hover:border-primary/50 transition">
+      <span className="text-[10px] font-medium uppercase tracking-wide text-muted-foreground inline-flex items-center gap-1">
+        <Lock className="h-3 w-3" /> Premium
       </span>
       <div className="mt-3 min-w-0">
         <h3 className="font-semibold truncate">{lab.name}</h3>
