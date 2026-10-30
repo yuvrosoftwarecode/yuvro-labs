@@ -68,7 +68,7 @@ function Review() {
           <h1 className="text-lg font-semibold tracking-tight sm:text-xl">{ticketId}: {title}</h1>
         </header>
 
-        <div className="grid items-start gap-8 lg:grid-cols-[minmax(0,230px)_minmax(0,1fr)] lg:gap-10">
+        <div className="grid items-start gap-8 lg:grid-cols-[minmax(0,264px)_minmax(0,1fr)] lg:gap-10">
           <section aria-labelledby="performance-heading" className="rounded-2xl border bg-card p-5 shadow-sm">
             <h2 id="performance-heading" className="text-lg font-semibold text-foreground sm:text-xl">Performance Summary</h2>
             <dl className="mt-4 grid grid-cols-2 gap-3">
