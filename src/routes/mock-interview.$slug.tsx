@@ -274,6 +274,89 @@ function LiveRoom(p: {
     setTimeout(p.submit, 0);
   };
 
+  if (codeMode) {
+    const lastAiText = lastAi >= 0 ? p.log[lastAi].text : "";
+    const step = Math.max(0, p.log.filter(m => m.who === "me").length);
+    return (
+      <div className="fixed inset-0 flex flex-col overflow-hidden bg-[#0b0f17] text-[#e6e8ee]">
+        <div className="flex h-12 shrink-0 items-center justify-between border-b border-white/5 bg-[#0b0f17] px-3">
+          <div className="flex items-center gap-3">
+            <Link to="/mock-interviews" className="flex items-center rounded-md bg-white px-2 py-1"><img src={YuvroLogo} alt="Yuvro" className="h-5 w-auto" /></Link>
+            <span className="text-sm font-semibold text-white">{p.title}</span>
+            <div className="ml-2 flex gap-1.5">
+              {Array.from({ length: 5 }).map((_, k) => (
+                <span key={k} className={`h-[3px] w-5 rounded-full ${k <= Math.min(4, Math.floor(step / 2)) ? "bg-[#6b8cf5]" : "bg-white/15"}`} />
+              ))}
+            </div>
+          </div>
+          <span className="inline-flex items-center gap-1.5 rounded-md border border-white/10 bg-[#111622] px-2.5 py-1 font-mono text-xs text-white"><Clock className="h-3.5 w-3.5" /> {fmt(p.left)}</span>
+        </div>
+
+        <ResizablePanelGroup orientation="horizontal" className="min-h-0 flex-1">
+          <ResizablePanel defaultSize="38%" minSize="25%" maxSize="55%">
+            <div className="relative flex h-full flex-col overflow-hidden bg-[#0e1322]" style={{ backgroundImage: "radial-gradient(60% 40% at 0% 100%, rgba(120,60,40,0.22), transparent 70%), radial-gradient(50% 35% at 100% 15%, rgba(60,70,120,0.18), transparent 70%)" }}>
+              <div className="px-3 pt-4 text-[11px] font-semibold uppercase tracking-wider text-[#8b93a7]">Conversation</div>
+              <div className="min-h-0 flex-1 overflow-y-auto px-3 pt-4 [scrollbar-width:none]">
+                <div className="text-xs font-medium text-[#f59e42]">Vitarka AI</div>
+                <p className="mt-1.5 text-[15px] leading-relaxed text-white">{lastAiText}{p.speaking && <span className="ml-0.5 inline-block h-4 w-2 translate-y-0.5 animate-pulse bg-[#f59e42]" />}</p>
+                <div ref={p.endRef} />
+              </div>
+              <div className="space-y-2 p-2.5">
+                <div className="flex items-center gap-4 rounded-xl border border-white/5 bg-[#121827] px-4 py-3.5">
+                  <span className={`h-8 w-8 shrink-0 rounded-full ${p.speaking ? "bg-[radial-gradient(circle_at_35%_30%,#ffd08a,#f59e42_55%,#b8661c)]" : "bg-[radial-gradient(circle_at_35%_30%,#a9bcff,#6b8cf5_55%,#3a55c4)]"}`} />
+                  <div className="min-w-0 flex-1">
+                    <div className="text-sm font-semibold text-white">{p.speaking ? "Vitarka AI is speaking" : "Listening to you"}</div>
+                    <div className="text-xs text-[#8b93a7]">{p.speaking ? "Listen to the full question first" : "Take your time. Speak or type your answer."}</div>
+                  </div>
+                  <div className="flex h-7 items-center gap-[3px]">
+                    {Array.from({ length: 22 }).map((_, k) => (
+                      <span key={k} className={`w-[2px] rounded-full ${p.speaking ? "animate-pulse bg-[#f59e42]" : "bg-[#6b8cf5]/70"}`} style={{ height: p.speaking ? 6 + ((k * 7) % 18) : 2, animationDelay: `${k * 60}ms` }} />
+                    ))}
+                  </div>
+                </div>
+                <div className="flex gap-1.5">
+                  <input value={p.draft} onChange={e => p.setDraft(e.target.value)} onKeyDown={e => { if (e.key === "Enter") p.submit(); }} placeholder="Type your answer, or just speak" className="h-9 min-w-0 flex-1 rounded-lg border border-white/5 bg-[#121827] px-3 text-sm text-white outline-none placeholder:text-[#6b7285] focus:border-[#6b8cf5]/50" />
+                  <button onClick={p.submit} disabled={!p.draft.trim()} className="h-9 rounded-lg bg-[#6b8cf5] px-3.5 text-sm font-semibold text-[#0b0f17] hover:bg-[#7d9bff] disabled:opacity-60">Send</button>
+                </div>
+              </div>
+            </div>
+          </ResizablePanel>
+          <ResizableHandle className="bg-white/5" />
+          <ResizablePanel defaultSize="62%" minSize="40%">
+            <div className="flex h-full min-w-0 flex-col bg-[#1e1e1e]">
+              <div className="flex h-12 shrink-0 items-center justify-between gap-2 border-b border-black/40 bg-[#181818] px-3">
+                <span className="font-mono text-sm text-[#a0a6b4]">Solution.{LANGS[lang].ext}</span>
+                <div className="flex items-center gap-2">
+                  <select value={lang} onChange={e => setLang(e.target.value as keyof typeof LANGS)} className="h-8 w-[100px] rounded-md border border-white/10 bg-[#1e1e1e] px-2 text-sm text-white outline-none">
+                    {Object.entries(LANGS).map(([k, v]) => <option key={k} value={k}>{v.label}</option>)}
+                  </select>
+                  <button onClick={submitCode} className="h-8 rounded-md bg-[#6b8cf5] px-3 text-sm font-semibold text-[#0b0f17] hover:bg-[#7d9bff]">Submit code</button>
+                </div>
+              </div>
+              <div className="min-h-0 flex-1 overflow-auto">
+                <CodeMirror value={current} onChange={v => setCode(c => ({ ...c, [lang]: v }))} theme={vscodeDark} extensions={[LANGS[lang].ext_fn()]} height="100%" className="h-full text-sm [&_.cm-editor]:h-full [&_.cm-gutters]:!bg-[#1e1e1e] [&_.cm-gutters]:!border-0" basicSetup={{ lineNumbers: true, foldGutter: false, highlightActiveLine: false }} />
+              </div>
+            </div>
+          </ResizablePanel>
+        </ResizablePanelGroup>
+
+        <div className="flex h-[74px] shrink-0 items-center justify-center bg-[#0b0f17]">
+          <div className="flex items-center gap-2 rounded-xl border border-white/10 bg-[#0e1320] p-1.5">
+            {[
+              { l: p.mic ? "Mute" : "Unmute", f: () => p.setMic(!p.mic), i: p.mic ? <Mic className="h-4 w-4" /> : <MicOff className="h-4 w-4 text-[#e06c6c]" /> },
+              { l: p.cam ? "Turn camera off" : "Turn camera on", f: () => p.setCam(!p.cam), i: p.cam ? <Video className="h-4 w-4" /> : <VideoOff className="h-4 w-4 text-[#e06c6c]" /> },
+              { l: "Type answer", f: () => setChat(!chat), i: <MessageSquare className="h-4 w-4" /> },
+              { l: "Close code editor", f: () => setCodeMode(false), i: <Code2 className="h-4 w-4" /> },
+            ].map(b => (
+              <button key={b.l} onClick={b.f} aria-label={b.l} title={b.l} className="grid h-10 w-11 place-items-center rounded-lg border border-white/5 bg-[#1a2030] text-white hover:bg-[#232a3d]">{b.i}</button>
+            ))}
+            <button onClick={p.onEnd} aria-label="End interview" className="grid h-10 w-11 place-items-center rounded-lg bg-[#c94b4b] text-white hover:bg-[#d65a5a]"><PhoneOff className="h-4 w-4" /></button>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div className="dark">
       <div className="fixed inset-0 flex flex-col overflow-hidden bg-background text-foreground">
