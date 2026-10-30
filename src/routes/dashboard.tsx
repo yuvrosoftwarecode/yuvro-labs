@@ -4,7 +4,6 @@ import { TopNav } from "@/components/TopNav";
 import LearnerHero from "@/components/LearnerHero";
 import { useAuth } from "@/lib/auth";
 import { ProgressRing } from "@/components/ProgressRing";
-import { DiffBadge } from "@/components/Badges";
 import { labs, type Lab } from "@/lib/dummy";
 import { getEnrolled, enroll, unenroll } from "@/lib/enrollment";
 import { ArrowRight, Check, Plus, Star, Search, Lock } from "lucide-react";
