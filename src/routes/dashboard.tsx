@@ -281,7 +281,6 @@ function EnrolledCard({ lab }: { lab: Lab }) {
   const pct = Math.round((lab.completed / lab.total) * 100);
   return (
     <div className="group relative overflow-hidden rounded-xl border bg-card p-5 hover:border-primary/50 hover:ring-glow transition">
-      <div className="absolute inset-x-0 top-0 h-1" style={{ background: `var(--${lab.color})` }} />
       <div className="flex items-start justify-between">
         <div className="min-w-0">
           <span className="text-[10px] font-medium uppercase tracking-wide text-muted-foreground">Free</span>
