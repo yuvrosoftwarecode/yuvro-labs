@@ -9,6 +9,7 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
+import { Route as TestHeroRouteImport } from './routes/test-hero'
 import { Route as SystemDesignStudioRouteImport } from './routes/system-design-studio'
 import { Route as SolutionsRouteImport } from './routes/solutions'
 import { Route as RecruiterLoginRouteImport } from './routes/recruiter-login'
@@ -104,6 +105,11 @@ import { Route as CollaborationSprintIdReportTeamRouteImport } from './routes/co
 import { Route as CollaborationSprintIdReportIndividualRouteImport } from './routes/collaboration.sprint.$id.report.individual'
 import { Route as AdminLabsIdSprintsSprintIdRouteImport } from './routes/admin.labs.$id.sprints.$sprintId'
 
+const TestHeroRoute = TestHeroRouteImport.update({
+  id: '/test-hero',
+  path: '/test-hero',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const SystemDesignStudioRoute = SystemDesignStudioRouteImport.update({
   id: '/system-design-studio',
   path: '/system-design-studio',
@@ -616,6 +622,7 @@ export interface FileRoutesByFullPath {
   '/recruiter-login': typeof RecruiterLoginRoute
   '/solutions': typeof SolutionsRoute
   '/system-design-studio': typeof SystemDesignStudioRoute
+  '/test-hero': typeof TestHeroRoute
   '/admin/ai-mentor': typeof AdminAiMentorRoute
   '/admin/collaboration': typeof AdminCollaborationRoute
   '/admin/hackathons': typeof AdminHackathonsRouteWithChildren
@@ -707,6 +714,7 @@ export interface FileRoutesByTo {
   '/recruiter-login': typeof RecruiterLoginRoute
   '/solutions': typeof SolutionsRoute
   '/system-design-studio': typeof SystemDesignStudioRoute
+  '/test-hero': typeof TestHeroRoute
   '/admin/ai-mentor': typeof AdminAiMentorRoute
   '/admin/collaboration': typeof AdminCollaborationRoute
   '/admin/incidents': typeof AdminIncidentsRoute
@@ -801,6 +809,7 @@ export interface FileRoutesById {
   '/recruiter-login': typeof RecruiterLoginRoute
   '/solutions': typeof SolutionsRoute
   '/system-design-studio': typeof SystemDesignStudioRoute
+  '/test-hero': typeof TestHeroRoute
   '/admin/ai-mentor': typeof AdminAiMentorRoute
   '/admin/collaboration': typeof AdminCollaborationRoute
   '/admin/hackathons': typeof AdminHackathonsRouteWithChildren
@@ -899,6 +908,7 @@ export interface FileRouteTypes {
     | '/recruiter-login'
     | '/solutions'
     | '/system-design-studio'
+    | '/test-hero'
     | '/admin/ai-mentor'
     | '/admin/collaboration'
     | '/admin/hackathons'
@@ -990,6 +1000,7 @@ export interface FileRouteTypes {
     | '/recruiter-login'
     | '/solutions'
     | '/system-design-studio'
+    | '/test-hero'
     | '/admin/ai-mentor'
     | '/admin/collaboration'
     | '/admin/incidents'
@@ -1083,6 +1094,7 @@ export interface FileRouteTypes {
     | '/recruiter-login'
     | '/solutions'
     | '/system-design-studio'
+    | '/test-hero'
     | '/admin/ai-mentor'
     | '/admin/collaboration'
     | '/admin/hackathons'
@@ -1180,6 +1192,7 @@ export interface RootRouteChildren {
   RecruiterLoginRoute: typeof RecruiterLoginRoute
   SolutionsRoute: typeof SolutionsRoute
   SystemDesignStudioRoute: typeof SystemDesignStudioRoute
+  TestHeroRoute: typeof TestHeroRoute
   LabSlugRoute: typeof LabSlugRouteWithChildren
   MockInterviewSlugRoute: typeof MockInterviewSlugRoute
   ProductSlugRoute: typeof ProductSlugRoute
@@ -1191,6 +1204,13 @@ export interface RootRouteChildren {
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
+    '/test-hero': {
+      id: '/test-hero'
+      path: '/test-hero'
+      fullPath: '/test-hero'
+      preLoaderRoute: typeof TestHeroRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/system-design-studio': {
       id: '/system-design-studio'
       path: '/system-design-studio'
@@ -2158,6 +2178,7 @@ const rootRouteChildren: RootRouteChildren = {
   RecruiterLoginRoute: RecruiterLoginRoute,
   SolutionsRoute: SolutionsRoute,
   SystemDesignStudioRoute: SystemDesignStudioRoute,
+  TestHeroRoute: TestHeroRoute,
   LabSlugRoute: LabSlugRouteWithChildren,
   MockInterviewSlugRoute: MockInterviewSlugRoute,
   ProductSlugRoute: ProductSlugRoute,
