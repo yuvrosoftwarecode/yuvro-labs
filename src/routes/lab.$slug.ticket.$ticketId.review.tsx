@@ -59,7 +59,7 @@ function Review() {
           <h1 className="text-lg font-semibold tracking-tight sm:text-xl">{ticketId}: {title}</h1>
         </header>
 
-        <div className="grid items-start gap-8 lg:grid-cols-[minmax(0,32%)_minmax(0,1fr)] lg:gap-10">
+        <div className="grid items-start gap-8 lg:grid-cols-[minmax(0,21%)_minmax(0,1fr)] lg:gap-10">
           <section aria-labelledby="performance-heading" className="lg:py-1">
             <h2 id="performance-heading" className="text-base font-semibold text-foreground sm:text-lg">Performance Summary</h2>
             <dl className="mt-4 grid grid-cols-2 gap-x-4 gap-y-5 sm:grid-cols-2 sm:gap-x-0">
@@ -84,7 +84,7 @@ function Review() {
                 <GitCompareArrows />{showDiff ? "View Files" : "View Diff"}
               </Button>
             </div>
-            <div className="grid min-h-[260px] grid-cols-[minmax(140px,25%)_minmax(0,1fr)] overflow-hidden rounded-md border bg-muted/20 sm:min-h-[290px]">
+            <div className="grid min-h-[380px] grid-cols-[minmax(120px,17%)_minmax(0,1fr)] overflow-hidden rounded-md border bg-muted/20">
               <aside className="min-w-0 border-r" aria-label="Submitted files">
                 <h3 className="border-b px-3 py-2.5 text-sm font-semibold">Files</h3>
                 {hasFiles ? (
