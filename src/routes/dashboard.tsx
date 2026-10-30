@@ -231,7 +231,7 @@ function FeaturedCard({ lab, isEnrolled, onToggle }: { lab: Lab; isEnrolled: boo
       </div>
       <div className="mt-4 flex gap-2">
         <Link to="/lab/$slug" params={{ slug: lab.slug }}
-          className="inline-flex items-center justify-center rounded-md border px-3 py-1.5 text-xs font-medium hover:bg-accent/50 transition">
+          className="inline-flex items-center justify-center rounded-md border px-4 py-1.5 text-xs font-medium hover:bg-accent/50 transition">
           View
         </Link>
         <button onClick={onToggle}
@@ -281,7 +281,7 @@ function CatalogCard({ lab, isEnrolled, onToggle }: { lab: Lab; isEnrolled: bool
         <span className="text-muted-foreground">{lab.total} tickets</span>
         <div className="flex items-center gap-1.5">
           <Link to="/lab/$slug" params={{ slug: lab.slug }}
-            className="inline-flex items-center rounded-md border px-2 py-1 font-medium hover:bg-accent/50 transition">
+            className="inline-flex items-center rounded-md border px-2.5 py-1 font-medium hover:bg-accent/50 transition">
             View
           </Link>
           <button onClick={onToggle}
