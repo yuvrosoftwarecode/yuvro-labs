@@ -1105,6 +1105,10 @@ function CodeTicketView({
       setTests(next);
       setTestsRan(true);
       if (next.every((t) => t.pass)) {
+        // Keep the actual submitted source for the immediately following review.
+        sessionStorage.setItem(`ticket-submission:${slug}:${ticketId}`, JSON.stringify({
+          title: ticket.title, files, starters, elapsed,
+        }));
         navigate({ to: "/lab/$slug/ticket/$ticketId/review", params: { slug, ticketId } });
       } else {
         showToast("Fix failing tests before submitting");
