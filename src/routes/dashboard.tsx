@@ -5,7 +5,7 @@ import { ProgressRing } from "@/components/ProgressRing";
 import { DiffBadge } from "@/components/Badges";
 import { labs, me, type Lab } from "@/lib/dummy";
 import { getEnrolled, enroll, unenroll } from "@/lib/enrollment";
-import { ArrowRight, Sparkles, Flame, Zap, Trophy, Check, Plus, Star, Search, Github, Lock } from "lucide-react";
+import { ArrowRight, Check, Plus, Star, Search, Github, Lock } from "lucide-react";
 import { getLabTier, TIER_META } from "@/lib/labAccess";
 
 function TierBadge({ slug }: { slug: string }) {
@@ -89,16 +89,14 @@ function Hub() {
     <div className="min-h-screen">
       <TopNav />
       <main className="mx-auto max-w-[1200px] px-4 py-8">
-        {/* Header row: title left, quick stats right — right-aligned from sm+ */}
-        <section className="relative overflow-hidden rounded-2xl border bg-gradient-to-br from-accent/40 via-card to-background p-5 md:p-8">
-          <div className="absolute -right-20 -top-20 h-64 w-64 rounded-full bg-primary/20 blur-3xl" />
-          <div className="absolute -bottom-24 left-1/3 h-64 w-64 rounded-full bg-ui/20 blur-3xl" />
-          <div className="relative grid grid-cols-[minmax(0,1fr)_auto] items-start gap-4 sm:gap-6">
+        {/* Individual Hub welcome */}
+        <section className="border bg-card p-5 md:p-8">
+          <div>
             <div className="min-w-0">
-              <span className="inline-flex items-center gap-1.5 rounded-full border border-primary/30 bg-primary/10 px-3 py-1 text-xs font-medium text-primary">
-                <Sparkles className="h-3 w-3" /> Welcome back, {me.name.split(" ")[0]}
-              </span>
-              <h1 className="mt-3 text-2xl sm:text-3xl md:text-4xl font-semibold tracking-tight truncate">
+              <p className="text-sm font-medium text-primary">
+                Welcome back, {me.name.split(" ")[0]}
+              </p>
+              <h1 className="mt-3 text-2xl sm:text-3xl md:text-4xl font-semibold">
                 Your <span className="text-primary">Individual Hub</span>
               </h1>
               <p className="mt-2 text-sm text-muted-foreground max-w-xl hidden sm:block">
@@ -112,11 +110,6 @@ function Hub() {
                   Continue Java Lab <ArrowRight className="h-4 w-4" />
                 </Link>
               </div>
-            </div>
-            <div className="shrink-0 grid grid-cols-1 sm:grid-cols-3 gap-2 sm:min-w-[380px] md:min-w-[420px]">
-              <MiniStat icon={<Flame className="h-3.5 w-3.5 text-warning" />} label="Day streak" value={`${me.streak}d`} accent="warning" />
-              <MiniStat icon={<Zap className="h-3.5 w-3.5 text-primary" />} label="YP" value="+450" accent="primary" />
-              <MiniStat icon={<Trophy className="h-3.5 w-3.5 text-info" />} label="Rank" value={`#${me.rank}`} accent="info" />
             </div>
           </div>
         </section>
@@ -342,13 +335,4 @@ function CatalogCard({ lab, isEnrolled, onToggle }: { lab: Lab; isEnrolled: bool
   );
 }
 
-function MiniStat({ icon, label, value, accent }: { icon: React.ReactNode; label: string; value: string; accent: string }) {
-  return (
-    <div className="relative overflow-hidden rounded-xl border bg-card/70 backdrop-blur px-3 py-2.5">
-      <div className="absolute -right-4 -top-4 h-10 w-10 rounded-full blur-2xl opacity-30" style={{ background: `var(--${accent})` }} />
-      <div className="flex items-center gap-1.5 text-[10px] uppercase tracking-wide text-muted-foreground">{icon}{label}</div>
-      <div className="mt-0.5 text-lg font-semibold leading-tight">{value}</div>
-    </div>
-  );
-}
 
