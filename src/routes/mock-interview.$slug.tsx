@@ -298,7 +298,7 @@ function LiveRoom(p: {
   if (codeMode) {
     const lastAiText = lastAi >= 0 ? p.log[lastAi].text : "";
     const userTalking = !p.speaking && p.mic && micLevel > 0.06;
-    const orb = p.speaking ? "bg-[radial-gradient(circle_at_35%_30%,#ffd08a,#f59e42_55%,#b8661c)]" : userTalking ? "bg-[radial-gradient(circle_at_35%_30%,#a8f0c6,#34d399_55%,#0f8a5f)]" : "bg-[radial-gradient(circle_at_35%_30%,#a9bcff,#6b8cf5_55%,#3a55c4)]";
+    const orb = p.speaking ? "bg-[radial-gradient(circle_at_35%_30%,#ffd08a,#f59e42_55%,#b8661c)]" : userTalking ? "bg-[radial-gradient(circle_at_35%_30%,#ffd08a,#f59e42_55%,#b8661c)]" : "bg-[radial-gradient(circle_at_35%_30%,#a9bcff,#6b8cf5_55%,#3a55c4)]";
     return (
       <div className="fixed inset-0 flex flex-col overflow-hidden bg-[#0b0f17] text-[#e6e8ee]">
         <div className="relative flex h-12 shrink-0 items-center justify-between border-b border-white/5 bg-[#0b0f17] px-3">
@@ -320,8 +320,8 @@ function LiveRoom(p: {
                 <div ref={p.endRef} />
               </div>
               <div className="space-y-2 p-2.5">
-                <div className={`flex items-center gap-4 rounded-xl border px-4 py-3.5 transition-colors ${userTalking ? "border-[#34d399]/30 bg-[#0f1f1c]" : "border-white/5 bg-[#121827]"}`}>
-                  <span className={`h-8 w-8 shrink-0 rounded-full transition-transform ${orb}`} style={{ transform: userTalking ? `scale(${1 + Math.min(0.25, micLevel)})` : undefined, boxShadow: userTalking ? "0 0 18px rgba(52,211,153,0.5)" : undefined }} />
+                <div className={`flex items-center gap-4 rounded-xl border px-4 py-3.5 transition-colors ${userTalking ? "border-[#f59e42]/30 bg-[#1f150a]" : "border-white/5 bg-[#121827]"}`}>
+                  <span className={`h-8 w-8 shrink-0 rounded-full transition-transform ${orb}`} style={{ transform: userTalking ? `scale(${1 + Math.min(0.25, micLevel)})` : undefined, boxShadow: userTalking ? "0 0 18px rgba(245,158,66,0.5)" : undefined }} />
                   <div className="min-w-0 flex-1">
                     <div className="text-sm font-semibold text-white">{p.speaking ? "Vitarka AI is speaking" : userTalking ? "You're speaking" : p.mic ? "Listening to you" : "Mic is off"}</div>
                     <div className="text-xs text-[#8b93a7]">{p.speaking ? "Listen to the full question first" : userTalking ? "Go on, Vitarka is listening." : p.mic ? "Take your time. Speak or type your answer." : "Turn on your mic or type your answer."}</div>
@@ -329,7 +329,7 @@ function LiveRoom(p: {
                   <div className="flex h-7 items-center gap-[3px]">
                     {Array.from({ length: 22 }).map((_, k) => {
                       const h = p.speaking ? 6 + ((k * 7) % 18) : userTalking ? Math.max(3, Math.min(26, micLevel * 90 * (0.5 + Math.abs(Math.sin(k * 1.7 + Date.now() / 120))))) : 2;
-                      return <span key={k} className={`w-[2px] rounded-full ${p.speaking ? "animate-pulse bg-[#f59e42]" : userTalking ? "bg-[#34d399]" : "bg-[#6b8cf5]/70"}`} style={{ height: h, animationDelay: `${k * 60}ms` }} />;
+                      return <span key={k} className={`w-[2px] rounded-full ${p.speaking ? "animate-pulse bg-[#f59e42]" : userTalking ? "bg-[#f59e42]" : "bg-[#6b8cf5]/70"}`} style={{ height: h, animationDelay: `${k * 60}ms` }} />;
                     })}
                   </div>
                 </div>
