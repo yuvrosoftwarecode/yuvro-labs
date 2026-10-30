@@ -3,6 +3,7 @@ import { useState } from "react";
 import { ArrowLeft, Code2, File, FileCode2, GitCompareArrows } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { tickets } from "@/lib/dummy";
+import { TopNav } from "@/components/TopNav";
 
 export const Route = createFileRoute("/lab/$slug/ticket/$ticketId/review")({ component: Review });
 
@@ -49,26 +50,27 @@ function Review() {
 
   return (
     <div className="min-h-screen bg-card text-card-foreground">
+      <TopNav />
       <main className="mx-auto max-w-[1280px] px-5 py-7 sm:px-10 sm:py-8">
         <Button asChild variant="ghost" className="-ml-3 text-muted-foreground">
           <Link to="/lab/$slug" params={{ slug }}><ArrowLeft />Back to Reports</Link>
         </Button>
-        <header className="border-b pb-6 pt-4">
+        <header className="pb-5 pt-4">
           <h1 className="text-xl font-semibold tracking-tight sm:text-2xl">{ticketId}: {title}</h1>
         </header>
 
-        <section aria-labelledby="performance-heading" className="border-b py-6">
-          <h2 id="performance-heading" className="text-base font-semibold sm:text-lg">Performance Summary</h2>
+        <section aria-labelledby="performance-heading" className="py-6">
+          <h2 id="performance-heading" className="text-base font-semibold text-orange-500 sm:text-lg">Performance Summary</h2>
           <dl className="mt-4 grid grid-cols-2 gap-x-4 gap-y-5 sm:grid-cols-4 sm:gap-x-0">
             {[
-              { label: "Score", value: "40%" },
-              { label: "Grade", value: "F" },
-              { label: "Time Spent", value: "30m" },
-              { label: "YP Earned", value: "0/5" },
+              { label: "Score", value: "40%", tone: "text-red-500" },
+              { label: "Grade", value: "F", tone: "text-red-500" },
+              { label: "Time Spent", value: "30m", tone: "" },
+              { label: "YP Earned", value: "0/5", tone: "" },
             ].map((stat, i) => (
               <div key={stat.label} className={`min-w-0 ${i ? "border-l pl-5 sm:pl-8" : ""} ${i === 2 ? "max-sm:border-l-0 max-sm:pl-0" : ""}`}>
                 <dt className="text-xs font-medium uppercase tracking-wide text-muted-foreground">{stat.label}</dt>
-                <dd className="mt-1 text-lg font-semibold tabular-nums sm:text-xl">{stat.value}</dd>
+                <dd className={`mt-1 text-lg font-semibold tabular-nums sm:text-xl ${stat.tone}`}>{stat.value}</dd>
               </div>
             ))}
           </dl>
@@ -76,7 +78,7 @@ function Review() {
 
         <section aria-labelledby="solution-heading" className="pt-6">
           <div className="mb-3 flex items-center justify-between gap-4">
-            <h2 id="solution-heading" className="text-base font-semibold sm:text-lg">Submitted Solution</h2>
+            <h2 id="solution-heading" className="text-base font-semibold text-orange-500 sm:text-lg">Submitted Solution</h2>
             <Button variant="outline" onClick={() => setShowDiff(value => !value)} aria-pressed={showDiff}>
               <GitCompareArrows />{showDiff ? "View Files" : "View Diff"}
             </Button>
