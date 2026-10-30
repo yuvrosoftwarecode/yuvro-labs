@@ -480,58 +480,58 @@ function Lobby({ iv, mic, cam, setMic, setCam, onStart }: {
   }, [cam]);
 
   return (
-    <div className="min-h-screen bg-white text-[#1B1340]">
+    <div className="min-h-screen bg-white font-sans text-[#1B1340]">
       <div className="px-6 pt-4">
         <Link to="/mock-interviews" className="inline-flex items-center gap-1 rounded-full px-2 py-1 text-sm text-[#1B1340]/70 hover:bg-[#1B1340]/5"><ArrowLeft className="h-4 w-4" /> Back</Link>
       </div>
-      <div className="flex justify-center">
-        <div className="inline-flex items-center gap-3 rounded-full bg-[#F0D45C] px-6 py-2.5 text-lg font-extrabold shadow-[0_4px_0_#1B1340] md:text-2xl">
-          <span>😊</span> All the best, buddy! You've got this.
+      <div className="mx-auto mt-2 max-w-6xl px-6">
+        <div className="flex items-center gap-4 rounded-2xl border border-[#F0D45C] bg-[#FFF8DB] px-5 py-3">
+          <span className="text-3xl leading-none">😊</span>
+          <div>
+            <div className="text-base font-semibold md:text-lg">All the best, buddy! You've got this.</div>
+            <div className="text-xs text-[#1B1340]/60">Take a breath — this is practice, so every answer helps you grow.</div>
+          </div>
         </div>
       </div>
-      <div className="mx-auto mt-6 grid max-w-6xl gap-8 px-6 pb-12 md:grid-cols-2">
+      <div className="mx-auto mt-8 grid max-w-6xl gap-8 px-6 pb-12 md:grid-cols-2">
         <div>
-          <h1 className="font-black leading-[0.95] tracking-tight">
-            <span className="inline-block -rotate-2 rounded-xl bg-[#7C3AED] px-3 pb-1 text-5xl text-white md:text-6xl">{first}</span>
-            {rest && <span className="block text-5xl md:text-6xl">{rest}</span>}
+          <h1 className="font-bold leading-[1] tracking-tight">
+            <span className="inline-block -rotate-2 rounded-lg bg-[#7C3AED] px-3 pb-1 text-4xl text-white md:text-5xl">{first}</span>
+            {rest && <span className="mt-1 block text-4xl md:text-5xl">{rest}</span>}
           </h1>
-          <p className="mt-4 max-w-md text-[15px] text-[#1B1340]/70">Your first round is a friendly chat, not an exam. Talk it out like you would with a teammate.</p>
+          <p className="mt-4 max-w-md text-sm text-[#1B1340]/70">Your first round is a friendly chat, not an exam. Talk it out like you would with a teammate.</p>
           <div className="mt-5 grid grid-cols-2 gap-3">
             {FEATURES.map(f => (
-              <div key={f.title} className={`rounded-2xl p-4 text-[#1B1340] transition-transform hover:-translate-y-0.5 ${f.cls}`}>
-                <div className="text-xl">{f.icon}</div>
-                <div className="mt-1 font-extrabold">{f.title}</div>
-                <div className="mt-1 text-xs leading-snug text-[#1B1340]/85">{f.body}</div>
+              <div key={f.title} className={`rounded-xl p-4 text-[#1B1340] transition-transform hover:-translate-y-0.5 ${f.cls}`}>
+                <div className="text-sm font-semibold">{f.title}</div>
+                <div className="mt-1 text-xs leading-snug text-[#1B1340]/80">{f.body}</div>
               </div>
             ))}
           </div>
-          <div className="mt-4 rounded-2xl border-2 border-dashed border-[#7C3AED]/60 bg-white p-4">
-            <div className="text-xs font-semibold text-[#1B1340]/70">Learner fuel</div>
-            <div key={fuel} className="mt-1 animate-fade-in font-semibold">{FUEL[fuel]}</div>
-          </div>
-          <div className="mt-5 flex items-center gap-4">
-            <button onClick={onStart} className="rounded-2xl bg-[#1B1340] px-6 py-3 text-lg font-extrabold text-white shadow-[0_5px_0_#7C3AED] transition-transform hover:-translate-y-0.5 active:translate-y-0.5">Start interview</button>
-            <span className="text-sm text-[#1B1340]/60">Speak or type. Pause any time.</span>
+          <div className="mt-4 rounded-xl border border-dashed border-[#1B1340]/25 bg-white p-4">
+            <div className="text-[11px] font-medium uppercase tracking-wide text-[#1B1340]/60">Learner fuel</div>
+            <div key={fuel} className="mt-1 animate-fade-in text-sm font-medium">{FUEL[fuel]}</div>
           </div>
         </div>
         <div>
-          <div className="relative aspect-[4/3] overflow-hidden rounded-3xl bg-[#1B1340] shadow-[0_8px_0_#7C3AED]">
+          <div className="relative aspect-[4/3] overflow-hidden rounded-2xl bg-[#1B1340]">
             <video ref={vid} autoPlay muted playsInline className={`h-full w-full scale-x-[-1] object-cover ${live ? "" : "hidden"}`} />
             {!live && (
               <div className="absolute inset-0 grid place-items-center text-center">
                 <div>
-                  <div className="mx-auto grid h-16 w-16 place-items-center rounded-full bg-[#7C3AED] text-3xl">🙂</div>
+                  <div className="text-5xl">🙂</div>
                   <p className="mt-4 text-sm text-white/80">{cam ? "Waiting for camera…" : "Camera is off. Turn it on to practise eye contact."}</p>
                 </div>
               </div>
             )}
-            <span className="absolute bottom-4 left-4 rounded-full bg-black/70 px-3 py-1 text-xs font-semibold text-white">You</span>
+            <span className="absolute bottom-4 left-4 rounded-full bg-black/70 px-3 py-1 text-xs font-medium text-white">You</span>
           </div>
-          <div className="mt-5 flex gap-3">
+          <div className="mt-4 flex flex-wrap items-center gap-3">
             <LobbyToggle on={mic} onClick={() => setMic(!mic)} icon={mic ? <Mic className="h-4 w-4" /> : <MicOff className="h-4 w-4" />} label={mic ? "Mic on" : "Mic off"} />
             <LobbyToggle on={cam} onClick={() => setCam(!cam)} icon={cam ? <Video className="h-4 w-4" /> : <VideoOff className="h-4 w-4" />} label={cam ? "Camera on" : "Camera off"} />
+            <button onClick={onStart} className="ml-auto rounded-md bg-primary px-6 py-2.5 text-sm font-semibold text-primary-foreground shadow-sm transition hover:opacity-90">Start interview</button>
           </div>
-          <p className="mt-3 text-xs text-[#1B1340]/60">Tip: sit near a window, look at the lens, and smile once before you start.</p>
+          <p className="mt-3 text-xs text-[#1B1340]/60">Tip: sit near a window, look at the lens, and smile once before you start. Speak or type — pause any time.</p>
         </div>
       </div>
     </div>
@@ -540,7 +540,7 @@ function Lobby({ iv, mic, cam, setMic, setCam, onStart }: {
 
 function LobbyToggle({ on, onClick, icon, label }: { on: boolean; onClick: () => void; icon: React.ReactNode; label: string }) {
   return (
-    <button onClick={onClick} className="inline-flex items-center gap-2 rounded-full border-2 border-[#1B1340] bg-white px-4 py-1.5 text-sm font-bold">
+    <button onClick={onClick} className="inline-flex items-center gap-2 rounded-full border border-[#1B1340]/20 bg-white px-4 py-1.5 text-sm font-medium hover:bg-[#1B1340]/5">
       {icon} {label} <span className={`h-2 w-2 rounded-full ${on ? "bg-emerald-500" : "bg-[#E87565]"}`} />
     </button>
   );
