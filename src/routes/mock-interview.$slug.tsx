@@ -207,7 +207,7 @@ function LiveRoom(p: {
   progress: string; endRef: React.RefObject<HTMLDivElement | null>;
 }) {
   const streamRef = useRef<MediaStream | null>(null);
-  const [chat, setChat] = useState(false);
+  const [chat, setChat] = useState(true);
   const [camErr, setCamErr] = useState(false);
   const [codeMode, setCodeMode] = useState(false);
   const [lang, setLang] = useState<keyof typeof LANGS>("java");
