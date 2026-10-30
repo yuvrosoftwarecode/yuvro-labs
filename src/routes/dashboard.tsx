@@ -4,23 +4,9 @@ import { TopNav } from "@/components/TopNav";
 import LearnerHero from "@/components/LearnerHero";
 import { useAuth } from "@/lib/auth";
 import { ProgressRing } from "@/components/ProgressRing";
-import { DiffBadge } from "@/components/Badges";
 import { labs, type Lab } from "@/lib/dummy";
 import { getEnrolled, enroll, unenroll } from "@/lib/enrollment";
-import { ArrowRight, Check, Plus, Star, Search, Lock } from "lucide-react";
-import { getLabTier, TIER_META } from "@/lib/labAccess";
-
-function TierBadge({ slug }: { slug: string }) {
-  const t = getLabTier(slug);
-  const m = TIER_META[t];
-  return (
-    <span className="inline-flex items-center gap-1 rounded-md border px-1.5 py-0.5 text-[10px] font-medium"
-      style={{ color: `var(--${m.tone})`, borderColor: `color-mix(in oklab, var(--${m.tone}) 40%, transparent)`, background: `color-mix(in oklab, var(--${m.tone}) 12%, transparent)` }}>
-      {t === "premium" ? <Lock className="h-3 w-3" /> : t === "freemium" ? <Star className="h-3 w-3" /> : <Check className="h-3 w-3" />}
-      {m.short}
-    </span>
-  );
-}
+import { ArrowRight, Check, Plus, Star, Search } from "lucide-react";
 
 export const Route = createFileRoute("/dashboard")({ component: Hub });
 
@@ -237,21 +223,14 @@ function FeaturedCard({ lab, isEnrolled, onToggle }: { lab: Lab; isEnrolled: boo
       <span className="inline-flex items-center gap-1 rounded-full border border-warning/30 bg-warning/10 px-2 py-0.5 text-[10px] font-medium text-warning">
         <Star className="h-3 w-3" /> Featured
       </span>
-      <div className="mt-3 flex items-start gap-3">
-        <div className="text-3xl">{lab.icon}</div>
-        <div className="min-w-0">
-          <h3 className="font-semibold truncate">{lab.name}</h3>
-          <p className="text-xs text-muted-foreground line-clamp-2 mt-0.5">{lab.description}</p>
-        </div>
+      <div className="mt-3 min-w-0">
+        <h3 className="font-semibold truncate">{lab.name}</h3>
+        <p className="text-xs text-muted-foreground line-clamp-2 mt-0.5">{lab.description}</p>
       </div>
-      <div className="mt-4 flex items-center justify-between text-xs">
-        <div className="flex items-center gap-1.5"><DiffBadge value={lab.difficulty} /><TierBadge slug={lab.slug} /></div>
+      <div className="mt-4 flex items-center justify-end text-xs">
         <span className="text-muted-foreground">{lab.total} tickets</span>
       </div>
       <div className="mt-4 flex gap-2">
-        <Link to="/lab/$slug" params={{ slug: lab.slug }} className="flex-1 inline-flex items-center justify-center gap-1 rounded-md border border-border px-3 py-1.5 text-xs hover:bg-accent">
-          View
-        </Link>
         <button onClick={onToggle}
           className={`flex-1 inline-flex items-center justify-center gap-1 rounded-md px-3 py-1.5 text-xs font-medium transition ${isEnrolled ? "border border-success/40 bg-success/10 text-success" : "bg-primary text-primary-foreground hover:opacity-90"}`}>
           {isEnrolled ? (<><Check className="h-3.5 w-3.5" /> Enrolled</>) : (<><Plus className="h-3.5 w-3.5" /> Enroll</>)}
@@ -291,28 +270,16 @@ function EnrolledCard({ lab }: { lab: Lab }) {
 function CatalogCard({ lab, isEnrolled, onToggle }: { lab: Lab; isEnrolled: boolean; onToggle: () => void }) {
   return (
     <div className="rounded-xl border bg-card p-4 hover:border-primary/40 transition">
-      <div className="flex items-start justify-between gap-3">
-        <div className="flex items-start gap-2.5 min-w-0">
-          <div className="text-xl">{lab.icon}</div>
-          <div className="min-w-0">
-            <div className="font-medium text-sm truncate">{lab.name}</div>
-            <div className="text-[11px] text-muted-foreground line-clamp-2 mt-0.5">{lab.description}</div>
-          </div>
-        </div>
+      <div className="min-w-0">
+        <div className="font-medium text-sm truncate">{lab.name}</div>
+        <div className="text-[11px] text-muted-foreground line-clamp-2 mt-0.5">{lab.description}</div>
       </div>
       <div className="mt-3 flex items-center justify-between text-[11px]">
-        <div className="flex items-center gap-2">
-          <DiffBadge value={lab.difficulty} />
-          <TierBadge slug={lab.slug} />
-          <span className="text-muted-foreground">{lab.total} tickets</span>
-        </div>
-        <div className="flex items-center gap-1.5">
-          <Link to="/lab/$slug" params={{ slug: lab.slug }} className="rounded-md border border-border px-2 py-1 hover:bg-accent">View</Link>
-          <button onClick={onToggle}
-            className={`inline-flex items-center gap-1 rounded-md px-2 py-1 font-medium transition ${isEnrolled ? "border border-success/40 bg-success/10 text-success" : "bg-primary text-primary-foreground hover:opacity-90"}`}>
-            {isEnrolled ? (<><Check className="h-3 w-3" /> Enrolled</>) : (<><Plus className="h-3 w-3" /> Enroll</>)}
-          </button>
-        </div>
+        <span className="text-muted-foreground">{lab.total} tickets</span>
+        <button onClick={onToggle}
+          className={`inline-flex items-center gap-1 rounded-md px-2 py-1 font-medium transition ${isEnrolled ? "border border-success/40 bg-success/10 text-success" : "bg-primary text-primary-foreground hover:opacity-90"}`}>
+          {isEnrolled ? (<><Check className="h-3 w-3" /> Enrolled</>) : (<><Plus className="h-3 w-3" /> Enroll</>)}
+        </button>
       </div>
     </div>
   );
