@@ -1,11 +1,18 @@
 import { Link, useRouterState, useNavigate } from "@tanstack/react-router";
-import { Flame, Zap, Trophy, User, Users, LayoutDashboard, MessagesSquare, Award, BarChart3, Sun, Moon, LogOut, Rocket, ChevronDown, MoreHorizontal, Mic } from "lucide-react";
+import { Trophy, User, Users, LayoutDashboard, MessagesSquare, Award, BarChart3, Sun, Moon, LogOut, Rocket, ChevronDown, MoreHorizontal, Mic } from "lucide-react";
 import { useTheme } from "@/hooks/use-theme";
 import { me } from "@/lib/dummy";
 import { useAuth } from "@/lib/auth";
 import { useEffect, useRef, useState } from "react";
 
 import YuvroLogo from "@/assets/YuvroLogo.png";
+
+const headerStats = [
+  { label: "Streak", value: "1" },
+  { label: "Points", value: "1000 XP" },
+  { label: "AI Credits", value: "35,371" },
+];
+
 
 const primaryLinks = [
   { to: "/dashboard", label: "Individual Hub", icon: LayoutDashboard },
@@ -85,9 +92,14 @@ export function TopNav({ rightSlot, activeOverride }: { rightSlot?: React.ReactN
             className="grid h-8 w-8 place-items-center rounded-md border hover:bg-accent text-muted-foreground hover:text-foreground transition-colors">
             {theme === "dark" ? <Sun className="h-4 w-4" /> : <Moon className="h-4 w-4" />}
           </button>
-          <span className="hidden sm:flex items-center gap-1 text-warning"><Flame className="h-4 w-4" />{me.streak}</span>
-          <span className="hidden sm:flex items-center gap-1 text-primary"><Zap className="h-4 w-4" />{me.xp.toLocaleString()} XP</span>
-          <span className="rounded-full bg-accent px-2 py-0.5 text-xs">Lv {me.level}</span>
+          <div className="hidden md:flex items-center rounded-lg border border-border bg-accent/40 divide-x divide-border text-xs" role="group" aria-label="Your stats">
+            {headerStats.map((s) => (
+              <div key={s.label} className="flex items-baseline gap-1.5 px-3 py-1">
+                <span className="text-muted-foreground">{s.label}</span>
+                <span className="font-semibold text-foreground tabular-nums">{s.value}</span>
+              </div>
+            ))}
+          </div>
           <ProfileMenu onLogout={() => { logout(); nav({ to: "/" }); }} userName={user?.name ?? me.name} userEmail={user?.email} />
         </div>
       </div>
