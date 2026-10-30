@@ -41,7 +41,7 @@ function Source({ content, label }: { content: string; label: string }) {
 function SectionHeading({ id, children }: { id: string; children: string }) {
   return (
     <h2 id={id} className="flex items-center gap-2 text-base font-semibold text-foreground sm:text-lg">
-      <span aria-hidden className="h-4 w-1 rounded-full bg-primary" />
+      <span aria-hidden className="h-4 w-1 rounded-full bg-brand-orange" />
       {children}
     </h2>
   );
@@ -69,18 +69,20 @@ function Review() {
         </header>
 
         <div className="grid items-start gap-8 lg:grid-cols-[minmax(0,264px)_minmax(0,1fr)] lg:gap-10">
-          <section aria-labelledby="performance-heading" className="rounded-2xl border bg-card p-5 shadow-sm">
-            <h2 id="performance-heading" className="text-lg font-semibold text-foreground sm:text-xl">Performance Summary</h2>
-            <dl className="mt-4 grid grid-cols-2 gap-3">
+          <section aria-labelledby="performance-heading">
+            <div className="mb-3 flex min-h-9 items-center">
+              <SectionHeading id="performance-heading">Performance Summary</SectionHeading>
+            </div>
+            <dl className="grid grid-cols-2 gap-2.5">
               {[
                 { label: "Score", value: "40%", tone: "text-red-500" },
                 { label: "Grade", value: "F", tone: "text-red-500" },
                 { label: "Time Spent", value: "30m", tone: "text-foreground" },
                 { label: "YP Earned", value: "0/5", tone: "text-foreground" },
               ].map(stat => (
-                <div key={stat.label} className="min-w-0 rounded-xl bg-primary/[0.06] px-3.5 py-3.5">
-                  <dt className="truncate text-sm text-muted-foreground">{stat.label}</dt>
-                  <dd className={`mt-1 text-xl font-bold tabular-nums ${stat.tone}`}>{stat.value}</dd>
+                <div key={stat.label} className="min-w-0 rounded-lg bg-primary/[0.06] px-3 py-2.5">
+                  <dt className="truncate text-xs text-muted-foreground">{stat.label}</dt>
+                  <dd className={`mt-1 text-lg font-bold tabular-nums ${stat.tone}`}>{stat.value}</dd>
                 </div>
               ))}
             </dl>
