@@ -230,6 +230,10 @@ function FeaturedCard({ lab, isEnrolled, onToggle }: { lab: Lab; isEnrolled: boo
         <span className="text-muted-foreground">{lab.total} tickets</span>
       </div>
       <div className="mt-4 flex gap-2">
+        <Link to="/lab/$slug" params={{ slug: lab.slug }}
+          className="inline-flex items-center justify-center rounded-md border px-3 py-1.5 text-xs font-medium hover:bg-accent/50 transition">
+          View
+        </Link>
         <button onClick={onToggle}
           className={`flex-1 inline-flex items-center justify-center gap-1 rounded-md px-3 py-1.5 text-xs font-medium transition ${isEnrolled ? "border border-success/40 bg-success/10 text-success" : "bg-primary text-primary-foreground hover:opacity-90"}`}>
           {isEnrolled ? (<><Check className="h-3.5 w-3.5" /> Enrolled</>) : (<><Plus className="h-3.5 w-3.5" /> Enroll</>)}
@@ -275,10 +279,16 @@ function CatalogCard({ lab, isEnrolled, onToggle }: { lab: Lab; isEnrolled: bool
       </div>
       <div className="mt-3 flex items-center justify-between text-[11px]">
         <span className="text-muted-foreground">{lab.total} tickets</span>
-        <button onClick={onToggle}
-          className={`inline-flex items-center gap-1 rounded-md px-2 py-1 font-medium transition ${isEnrolled ? "border border-success/40 bg-success/10 text-success" : "bg-primary text-primary-foreground hover:opacity-90"}`}>
-          {isEnrolled ? (<><Check className="h-3 w-3" /> Enrolled</>) : (<><Plus className="h-3 w-3" /> Enroll</>)}
-        </button>
+        <div className="flex items-center gap-1.5">
+          <Link to="/lab/$slug" params={{ slug: lab.slug }}
+            className="inline-flex items-center rounded-md border px-2 py-1 font-medium hover:bg-accent/50 transition">
+            View
+          </Link>
+          <button onClick={onToggle}
+            className={`inline-flex items-center gap-1 rounded-md px-2 py-1 font-medium transition ${isEnrolled ? "border border-success/40 bg-success/10 text-success" : "bg-primary text-primary-foreground hover:opacity-90"}`}>
+            {isEnrolled ? (<><Check className="h-3 w-3" /> Enrolled</>) : (<><Plus className="h-3 w-3" /> Enroll</>)}
+          </button>
+        </div>
       </div>
     </div>
   );
