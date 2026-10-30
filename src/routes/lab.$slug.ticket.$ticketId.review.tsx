@@ -50,6 +50,7 @@ function Review() {
 
   return (
     <div className="min-h-screen bg-card text-card-foreground">
+      <TopNav />
       <main className="mx-auto max-w-[1280px] px-5 py-7 sm:px-10 sm:py-8">
         <Button asChild variant="ghost" className="-ml-3 text-muted-foreground">
           <Link to="/lab/$slug" params={{ slug }}><ArrowLeft />Back to Reports</Link>
