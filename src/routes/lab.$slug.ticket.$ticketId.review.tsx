@@ -78,8 +78,8 @@ function Review() {
                 { label: "Time Spent", value: "30m", tone: "text-foreground" },
                 { label: "YP Earned", value: "0/5", tone: "text-foreground" },
               ].map(stat => (
-                <div key={stat.label} className="rounded-xl bg-primary/[0.06] px-4 py-3.5">
-                  <dt className="text-sm text-muted-foreground">{stat.label}</dt>
+                <div key={stat.label} className="min-w-0 rounded-xl bg-primary/[0.06] px-3.5 py-3.5">
+                  <dt className="truncate text-sm text-muted-foreground">{stat.label}</dt>
                   <dd className={`mt-1 text-xl font-bold tabular-nums ${stat.tone}`}>{stat.value}</dd>
                 </div>
               ))}
