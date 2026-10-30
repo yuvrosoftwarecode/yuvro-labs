@@ -151,34 +151,7 @@ function InterviewScreen() {
   const q = questions[idx];
 
   if (phase === "lobby") {
-    return (
-      <Shell title={iv.name}>
-        <div className="mx-auto grid max-w-4xl gap-6 px-6 py-10 md:grid-cols-[1.2fr_1fr]">
-          <div className="rounded-2xl border bg-card p-6">
-            <div className="text-4xl">{iv.icon}</div>
-            <h1 className="mt-3 text-2xl font-semibold">{iv.name}</h1>
-            <p className="mt-1 text-sm text-muted-foreground">{iv.description}</p>
-            <ul className="mt-5 space-y-2 text-sm">
-              <li className="flex gap-2"><CheckCircle2 className="h-4 w-4 text-primary" /> {questions.length} core questions with follow-ups</li>
-              <li className="flex gap-2"><CheckCircle2 className="h-4 w-4 text-primary" /> {iv.minutes} minutes · {iv.difficulty} · {iv.role}</li>
-              <li className="flex gap-2"><CheckCircle2 className="h-4 w-4 text-primary" /> Speak or type your answers</li>
-            </ul>
-            <button onClick={() => setPhase("live")} className="mt-6 inline-flex w-full items-center justify-center gap-1 rounded-md bg-primary px-4 py-2.5 text-sm font-medium text-primary-foreground hover:opacity-90">
-              Start interview <ChevronRight className="h-4 w-4" />
-            </button>
-          </div>
-          <div className="flex flex-col gap-3">
-            <div className="grid aspect-video place-items-center rounded-2xl border bg-muted/40 text-sm text-muted-foreground">
-              {cam ? "Camera preview" : "Camera off"}
-            </div>
-            <div className="flex gap-2">
-              <Toggle on={mic} onClick={() => setMic(!mic)} onIcon={<Mic className="h-4 w-4" />} offIcon={<MicOff className="h-4 w-4" />} label="Mic" />
-              <Toggle on={cam} onClick={() => setCam(!cam)} onIcon={<Video className="h-4 w-4" />} offIcon={<VideoOff className="h-4 w-4" />} label="Camera" />
-            </div>
-          </div>
-        </div>
-      </Shell>
-    );
+    return <Lobby iv={iv} mic={mic} cam={cam} setMic={setMic} setCam={setCam} onStart={() => setPhase("live")} />;
   }
 
   if (phase === "done") {
@@ -470,5 +443,105 @@ function VoiceTerrain({ speaking, listening }: { speaking: boolean; listening: b
       className="pointer-events-none absolute inset-x-0 bottom-0 h-[42vh] w-full"
       style={{ maskImage: "linear-gradient(to top, black 55%, transparent)", WebkitMaskImage: "linear-gradient(to top, black 55%, transparent)" }}
     />
+  );
+}
+
+const FUEL = [
+  "One mock interview teaches more than three hours of passive videos.",
+  "Your future production bug is practising on you today. Be kind to it.",
+  "Interviewers remember clear thinking more than perfect answers.",
+  "Saying \"I'm not sure, but here's how I'd find out\" is a great answer.",
+];
+
+const FEATURES = [
+  { icon: "🎙️", title: "AI voice interviewer", body: "It speaks, listens and reacts to your voice in real time.", cls: "bg-[#86E0A8]" },
+  { icon: "🎯", title: "Feels like the real thing", body: "Same pace and pressure as a live panel, minus the sweaty palms.", cls: "bg-[#E87565]" },
+  { icon: "🔁", title: "Smart follow-ups", body: "Say \"HashMap\" and it will ask what happens on a collision.", cls: "bg-[#7B9CF2]" },
+  { icon: "📝", title: "Detailed feedback", body: "Get a clear report: what you nailed and exactly what to improve.", cls: "bg-[#F0D45C]" },
+];
+
+function Lobby({ iv, mic, cam, setMic, setCam, onStart }: {
+  iv: { name: string; icon: string }; mic: boolean; cam: boolean;
+  setMic: (v: boolean) => void; setCam: (v: boolean) => void; onStart: () => void;
+}) {
+  const words = iv.name.replace(/\s+(Engineer|Developer|Interview)$/i, "").split(" ");
+  const [first, rest] = [words[0], words.slice(1).join(" ")];
+  const [fuel, setFuel] = useState(0);
+  const vid = useRef<HTMLVideoElement>(null);
+  const [live, setLive] = useState(false);
+  useEffect(() => { const t = setInterval(() => setFuel(f => (f + 1) % FUEL.length), 4000); return () => clearInterval(t); }, []);
+  useEffect(() => {
+    if (!cam) { setLive(false); return; }
+    let stream: MediaStream | null = null;
+    navigator.mediaDevices?.getUserMedia({ video: true }).then(s => {
+      stream = s; if (vid.current) { vid.current.srcObject = s; setLive(true); }
+    }).catch(() => setLive(false));
+    return () => stream?.getTracks().forEach(t => t.stop());
+  }, [cam]);
+
+  return (
+    <div className="min-h-screen bg-white text-[#1B1340]">
+      <div className="px-6 pt-4">
+        <Link to="/mock-interviews" className="inline-flex items-center gap-1 rounded-full px-2 py-1 text-sm text-[#1B1340]/70 hover:bg-[#1B1340]/5"><ArrowLeft className="h-4 w-4" /> Back</Link>
+      </div>
+      <div className="flex justify-center">
+        <div className="inline-flex items-center gap-3 rounded-full bg-[#F0D45C] px-6 py-2.5 text-lg font-extrabold shadow-[0_4px_0_#1B1340] md:text-2xl">
+          <span>😊</span> All the best, buddy! You've got this.
+        </div>
+      </div>
+      <div className="mx-auto mt-6 grid max-w-6xl gap-8 px-6 pb-12 md:grid-cols-2">
+        <div>
+          <h1 className="font-black leading-[0.95] tracking-tight">
+            <span className="inline-block -rotate-2 rounded-xl bg-[#7C3AED] px-3 pb-1 text-5xl text-white md:text-6xl">{first}</span>
+            {rest && <span className="block text-5xl md:text-6xl">{rest}</span>}
+          </h1>
+          <p className="mt-4 max-w-md text-[15px] text-[#1B1340]/70">Your first round is a friendly chat, not an exam. Talk it out like you would with a teammate.</p>
+          <div className="mt-5 grid grid-cols-2 gap-3">
+            {FEATURES.map(f => (
+              <div key={f.title} className={`rounded-2xl p-4 text-[#1B1340] transition-transform hover:-translate-y-0.5 ${f.cls}`}>
+                <div className="text-xl">{f.icon}</div>
+                <div className="mt-1 font-extrabold">{f.title}</div>
+                <div className="mt-1 text-xs leading-snug text-[#1B1340]/85">{f.body}</div>
+              </div>
+            ))}
+          </div>
+          <div className="mt-4 rounded-2xl border-2 border-dashed border-[#7C3AED]/60 bg-white p-4">
+            <div className="text-xs font-semibold text-[#1B1340]/70">Learner fuel</div>
+            <div key={fuel} className="mt-1 animate-fade-in font-semibold">{FUEL[fuel]}</div>
+          </div>
+          <div className="mt-5 flex items-center gap-4">
+            <button onClick={onStart} className="rounded-2xl bg-[#1B1340] px-6 py-3 text-lg font-extrabold text-white shadow-[0_5px_0_#7C3AED] transition-transform hover:-translate-y-0.5 active:translate-y-0.5">Start interview</button>
+            <span className="text-sm text-[#1B1340]/60">Speak or type. Pause any time.</span>
+          </div>
+        </div>
+        <div>
+          <div className="relative aspect-[4/3] overflow-hidden rounded-3xl bg-[#1B1340] shadow-[0_8px_0_#7C3AED]">
+            <video ref={vid} autoPlay muted playsInline className={`h-full w-full scale-x-[-1] object-cover ${live ? "" : "hidden"}`} />
+            {!live && (
+              <div className="absolute inset-0 grid place-items-center text-center">
+                <div>
+                  <div className="mx-auto grid h-16 w-16 place-items-center rounded-full bg-[#7C3AED] text-3xl">🙂</div>
+                  <p className="mt-4 text-sm text-white/80">{cam ? "Waiting for camera…" : "Camera is off. Turn it on to practise eye contact."}</p>
+                </div>
+              </div>
+            )}
+            <span className="absolute bottom-4 left-4 rounded-full bg-black/70 px-3 py-1 text-xs font-semibold text-white">You</span>
+          </div>
+          <div className="mt-5 flex gap-3">
+            <LobbyToggle on={mic} onClick={() => setMic(!mic)} icon={mic ? <Mic className="h-4 w-4" /> : <MicOff className="h-4 w-4" />} label={mic ? "Mic on" : "Mic off"} />
+            <LobbyToggle on={cam} onClick={() => setCam(!cam)} icon={cam ? <Video className="h-4 w-4" /> : <VideoOff className="h-4 w-4" />} label={cam ? "Camera on" : "Camera off"} />
+          </div>
+          <p className="mt-3 text-xs text-[#1B1340]/60">Tip: sit near a window, look at the lens, and smile once before you start.</p>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function LobbyToggle({ on, onClick, icon, label }: { on: boolean; onClick: () => void; icon: React.ReactNode; label: string }) {
+  return (
+    <button onClick={onClick} className="inline-flex items-center gap-2 rounded-full border-2 border-[#1B1340] bg-white px-4 py-1.5 text-sm font-bold">
+      {icon} {label} <span className={`h-2 w-2 rounded-full ${on ? "bg-emerald-500" : "bg-[#E87565]"}`} />
+    </button>
   );
 }
