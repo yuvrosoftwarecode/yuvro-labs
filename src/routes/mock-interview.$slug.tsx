@@ -286,10 +286,10 @@ function LiveRoom(p: {
     setTimeout(p.submit, 0);
   };
 
-  if (codeMode) {
-    const lastAiText = lastAi >= 0 ? p.log[lastAi].text : "";
     const userTalking = !p.speaking && p.mic && micLevel > 0.06;
     const orb = p.speaking ? "bg-[radial-gradient(circle_at_35%_30%,#ffd08a,#f59e42_55%,#b8661c)]" : userTalking ? "bg-[radial-gradient(circle_at_35%_30%,#ffd08a,#f59e42_55%,#b8661c)]" : "bg-[radial-gradient(circle_at_35%_30%,#a9bcff,#6b8cf5_55%,#3a55c4)]";
+  if (codeMode) {
+    const lastAiText = lastAi >= 0 ? p.log[lastAi].text : "";
     return (
       <div className="fixed inset-0 flex flex-col overflow-hidden bg-[#0b0f17] text-[#e6e8ee]">
         <div className="relative flex h-12 shrink-0 items-center justify-between border-b border-white/5 bg-[#0b0f17] px-3">
