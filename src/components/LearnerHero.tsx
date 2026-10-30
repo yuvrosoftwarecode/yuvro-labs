@@ -31,10 +31,10 @@ const CSS = `
 @media (prefers-color-scheme:dark){.lh mark{background-image:linear-gradient(transparent 52%,rgba(255,213,74,.4) 52%)}}
 .dark .lh mark{background-image:linear-gradient(transparent 52%,rgba(255,213,74,.4) 52%)}
 @keyframes lh-hl{to{background-size:100% 100%}}
-.lh-cta{display:inline-flex;align-items:center;gap:10px;font:inherit;font-weight:700;font-size:16px;background:#4a7bdc;color:#fff;border:0;border-radius:12px;padding:15px 26px;cursor:pointer;transition:transform .15s,box-shadow .15s}
+.lh-cta{display:inline-flex;align-items:center;gap:8px;font:inherit;font-weight:600;font-size:14px;background:#4a7bdc;color:#fff;border:0;border-radius:10px;padding:10px 18px;cursor:pointer;transition:transform .15s,box-shadow .15s}
 .lh-cta:hover{transform:translateY(-2px);box-shadow:0 8px 0 -2px rgba(74,123,220,.28)}
 .lh-cta:active{transform:translateY(0)}
-.lh-cta svg{width:18px;height:18px;stroke:currentColor;fill:none;stroke-width:2.4;stroke-linecap:round;stroke-linejoin:round;transition:transform .15s}
+.lh-cta svg{width:16px;height:16px;stroke:currentColor;fill:none;stroke-width:2.4;stroke-linecap:round;stroke-linejoin:round;transition:transform .15s}
 .lh-cta:hover svg{transform:translateX(4px)}
 .lh-cta:focus-visible{outline:3px solid #4a7bdc;outline-offset:3px}
 .lh-scene{position:relative;max-width:340px;width:100%;justify-self:center}
