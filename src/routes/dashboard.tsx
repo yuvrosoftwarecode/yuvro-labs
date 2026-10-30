@@ -284,28 +284,16 @@ function EnrolledCard({ lab }: { lab: Lab }) {
 function CatalogCard({ lab, isEnrolled, onToggle }: { lab: Lab; isEnrolled: boolean; onToggle: () => void }) {
   return (
     <div className="rounded-xl border bg-card p-4 hover:border-primary/40 transition">
-      <div className="flex items-start justify-between gap-3">
-        <div className="flex items-start gap-2.5 min-w-0">
-          <div className="text-xl">{lab.icon}</div>
-          <div className="min-w-0">
-            <div className="font-medium text-sm truncate">{lab.name}</div>
-            <div className="text-[11px] text-muted-foreground line-clamp-2 mt-0.5">{lab.description}</div>
-          </div>
-        </div>
+      <div className="min-w-0">
+        <div className="font-medium text-sm truncate">{lab.name}</div>
+        <div className="text-[11px] text-muted-foreground line-clamp-2 mt-0.5">{lab.description}</div>
       </div>
       <div className="mt-3 flex items-center justify-between text-[11px]">
-        <div className="flex items-center gap-2">
-          <DiffBadge value={lab.difficulty} />
-          <TierBadge slug={lab.slug} />
-          <span className="text-muted-foreground">{lab.total} tickets</span>
-        </div>
-        <div className="flex items-center gap-1.5">
-          <Link to="/lab/$slug" params={{ slug: lab.slug }} className="rounded-md border border-border px-2 py-1 hover:bg-accent">View</Link>
-          <button onClick={onToggle}
-            className={`inline-flex items-center gap-1 rounded-md px-2 py-1 font-medium transition ${isEnrolled ? "border border-success/40 bg-success/10 text-success" : "bg-primary text-primary-foreground hover:opacity-90"}`}>
-            {isEnrolled ? (<><Check className="h-3 w-3" /> Enrolled</>) : (<><Plus className="h-3 w-3" /> Enroll</>)}
-          </button>
-        </div>
+        <span className="text-muted-foreground">{lab.total} tickets</span>
+        <button onClick={onToggle}
+          className={`inline-flex items-center gap-1 rounded-md px-2 py-1 font-medium transition ${isEnrolled ? "border border-success/40 bg-success/10 text-success" : "bg-primary text-primary-foreground hover:opacity-90"}`}>
+          {isEnrolled ? (<><Check className="h-3 w-3" /> Enrolled</>) : (<><Plus className="h-3 w-3" /> Enroll</>)}
+        </button>
       </div>
     </div>
   );
