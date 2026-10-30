@@ -221,6 +221,26 @@ function LiveRoom(p: {
   const [codeMode, setCodeMode] = useState(false);
   const [lang, setLang] = useState<keyof typeof LANGS>("java");
   const [code, setCode] = useState<Record<string, string>>({});
+  const [micLevel, setMicLevel] = useState(0);
+  useEffect(() => {
+    if (!codeMode || !p.mic || !navigator.mediaDevices?.getUserMedia) { setMicLevel(0); return; }
+    let raf = 0, stream: MediaStream | null = null, ctx: AudioContext | null = null, alive = true;
+    navigator.mediaDevices.getUserMedia({ audio: true }).then(s => {
+      if (!alive) { s.getTracks().forEach(t => t.stop()); return; }
+      stream = s; ctx = new AudioContext();
+      const an = ctx.createAnalyser(); an.fftSize = 512;
+      ctx.createMediaStreamSource(s).connect(an);
+      const buf = new Uint8Array(an.fftSize);
+      const tick = () => {
+        an.getByteTimeDomainData(buf);
+        let sum = 0; for (const v of buf) { const x = (v - 128) / 128; sum += x * x; }
+        setMicLevel(Math.sqrt(sum / buf.length) * 3);
+        raf = requestAnimationFrame(tick);
+      };
+      tick();
+    }).catch(() => setMicLevel(0));
+    return () => { alive = false; cancelAnimationFrame(raf); stream?.getTracks().forEach(t => t.stop()); ctx?.close(); };
+  }, [codeMode, p.mic]);
 
   const videoRef = (el: HTMLVideoElement | null) => {
     if (el && streamRef.current && el.srcObject !== streamRef.current) el.srcObject = streamRef.current;
@@ -277,20 +297,17 @@ function LiveRoom(p: {
 
   if (codeMode) {
     const lastAiText = lastAi >= 0 ? p.log[lastAi].text : "";
-    const step = Math.max(0, p.log.filter(m => m.who === "me").length);
+    const userTalking = !p.speaking && p.mic && micLevel > 0.06;
+    const orb = p.speaking ? "bg-[radial-gradient(circle_at_35%_30%,#ffd08a,#f59e42_55%,#b8661c)]" : userTalking ? "bg-[radial-gradient(circle_at_35%_30%,#a8f0c6,#34d399_55%,#0f8a5f)]" : "bg-[radial-gradient(circle_at_35%_30%,#a9bcff,#6b8cf5_55%,#3a55c4)]";
     return (
       <div className="fixed inset-0 flex flex-col overflow-hidden bg-[#0b0f17] text-[#e6e8ee]">
-        <div className="flex h-12 shrink-0 items-center justify-between border-b border-white/5 bg-[#0b0f17] px-3">
+        <div className="relative flex h-12 shrink-0 items-center justify-between border-b border-white/5 bg-[#0b0f17] px-3">
           <div className="flex items-center gap-3">
             <Link to="/mock-interviews" className="flex items-center rounded-md bg-white px-2 py-1"><img src={YuvroLogo} alt="Yuvro" className="h-5 w-auto" /></Link>
             <span className="text-sm font-semibold text-white">{p.title}</span>
-            <div className="ml-2 flex gap-1.5">
-              {Array.from({ length: 5 }).map((_, k) => (
-                <span key={k} className={`h-[3px] w-5 rounded-full ${k <= Math.min(4, Math.floor(step / 2)) ? "bg-[#6b8cf5]" : "bg-white/15"}`} />
-              ))}
-            </div>
           </div>
-          <span className="inline-flex items-center gap-1.5 rounded-md border border-white/10 bg-[#111622] px-2.5 py-1 font-mono text-xs text-white"><Clock className="h-3.5 w-3.5" /> {fmt(p.left)}</span>
+          <span className="absolute left-1/2 -translate-x-1/2 inline-flex items-center gap-1.5 rounded-md border border-white/10 bg-[#111622] px-2.5 py-1 font-mono text-xs text-white"><Clock className="h-3.5 w-3.5" /> {fmt(p.left)}</span>
+          <span />
         </div>
 
         <ResizablePanelGroup orientation="horizontal" className="min-h-0 flex-1">
@@ -303,16 +320,17 @@ function LiveRoom(p: {
                 <div ref={p.endRef} />
               </div>
               <div className="space-y-2 p-2.5">
-                <div className="flex items-center gap-4 rounded-xl border border-white/5 bg-[#121827] px-4 py-3.5">
-                  <span className={`h-8 w-8 shrink-0 rounded-full ${p.speaking ? "bg-[radial-gradient(circle_at_35%_30%,#ffd08a,#f59e42_55%,#b8661c)]" : "bg-[radial-gradient(circle_at_35%_30%,#a9bcff,#6b8cf5_55%,#3a55c4)]"}`} />
+                <div className={`flex items-center gap-4 rounded-xl border px-4 py-3.5 transition-colors ${userTalking ? "border-[#34d399]/30 bg-[#0f1f1c]" : "border-white/5 bg-[#121827]"}`}>
+                  <span className={`h-8 w-8 shrink-0 rounded-full transition-transform ${orb}`} style={{ transform: userTalking ? `scale(${1 + Math.min(0.25, micLevel)})` : undefined, boxShadow: userTalking ? "0 0 18px rgba(52,211,153,0.5)" : undefined }} />
                   <div className="min-w-0 flex-1">
-                    <div className="text-sm font-semibold text-white">{p.speaking ? "Vitarka AI is speaking" : "Listening to you"}</div>
-                    <div className="text-xs text-[#8b93a7]">{p.speaking ? "Listen to the full question first" : "Take your time. Speak or type your answer."}</div>
+                    <div className="text-sm font-semibold text-white">{p.speaking ? "Vitarka AI is speaking" : userTalking ? "You're speaking" : p.mic ? "Listening to you" : "Mic is off"}</div>
+                    <div className="text-xs text-[#8b93a7]">{p.speaking ? "Listen to the full question first" : userTalking ? "Go on, Vitarka is listening." : p.mic ? "Take your time. Speak or type your answer." : "Turn on your mic or type your answer."}</div>
                   </div>
                   <div className="flex h-7 items-center gap-[3px]">
-                    {Array.from({ length: 22 }).map((_, k) => (
-                      <span key={k} className={`w-[2px] rounded-full ${p.speaking ? "animate-pulse bg-[#f59e42]" : "bg-[#6b8cf5]/70"}`} style={{ height: p.speaking ? 6 + ((k * 7) % 18) : 2, animationDelay: `${k * 60}ms` }} />
-                    ))}
+                    {Array.from({ length: 22 }).map((_, k) => {
+                      const h = p.speaking ? 6 + ((k * 7) % 18) : userTalking ? Math.max(3, Math.min(26, micLevel * 90 * (0.5 + Math.abs(Math.sin(k * 1.7 + Date.now() / 120))))) : 2;
+                      return <span key={k} className={`w-[2px] rounded-full ${p.speaking ? "animate-pulse bg-[#f59e42]" : userTalking ? "bg-[#34d399]" : "bg-[#6b8cf5]/70"}`} style={{ height: h, animationDelay: `${k * 60}ms` }} />;
+                    })}
                   </div>
                 </div>
                 <div className="flex gap-1.5">
