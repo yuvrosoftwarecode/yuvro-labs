@@ -588,10 +588,10 @@ function Lobby({ iv, mic, cam, setMic, setCam, onStart }: {
       </div>
       <div className="mx-auto mt-2 max-w-6xl px-6">
         <div className="flex items-center justify-center gap-4 rounded-2xl px-5 py-3 text-center">
-          <span className="text-3xl leading-none">😊</span>
+          <span className="text-4xl leading-none">😊</span>
           <div>
-            <div className="text-base font-semibold md:text-lg">All the best, buddy! You've got this.</div>
-            <div className="text-xs text-[#1B1340]/60">Take a breath — this is practice, so every answer helps you grow.</div>
+            <div className="text-lg font-semibold md:text-xl">All the best, buddy! You've got this.</div>
+            <div className="text-sm text-[#1B1340]/60">Take a breath — this is practice, so every answer helps you grow.</div>
           </div>
         </div>
       </div>
@@ -605,8 +605,8 @@ function Lobby({ iv, mic, cam, setMic, setCam, onStart }: {
           <div className="mt-5 grid grid-cols-2 gap-3">
             {FEATURES.map(f => (
               <div key={f.title} className={`rounded-xl p-4 text-white transition-transform hover:-translate-y-0.5 ${f.cls}`}>
-                <div className="text-sm font-semibold">{f.title}</div>
-                <div className="mt-1 text-xs leading-snug text-white/85">{f.body}</div>
+                <div className="text-base font-semibold">{f.title}</div>
+                <div className="mt-1 text-sm leading-snug text-white/85">{f.body}</div>
               </div>
             ))}
           </div>
