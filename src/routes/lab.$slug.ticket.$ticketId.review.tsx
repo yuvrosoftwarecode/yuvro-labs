@@ -96,7 +96,7 @@ function Review() {
                     ))}
                   </nav>
                 ) : (
-                  <div className="flex min-h-[205px] flex-col items-center justify-center gap-3 px-4 text-center">
+                  <div className="flex min-h-[330px] flex-col items-center justify-center gap-3 px-3 text-center">
                     <File className="h-7 w-7" strokeWidth={1.5} />
                     <p className="max-w-44 text-sm leading-6 text-muted-foreground">No files were submitted for this ticket.</p>
                   </div>
@@ -111,7 +111,7 @@ function Review() {
                     </div>
                   ) : <Source label={activeFile} content={submission.files[activeFile] ?? ""} />
                 ) : (
-                  <div className="flex h-full min-h-[260px] flex-col items-center justify-center gap-3 px-5 text-center">
+                  <div className="flex h-full min-h-[380px] flex-col items-center justify-center gap-3 px-5 text-center">
                     <Code2 className="h-10 w-10" strokeWidth={1.5} />
                     <p className="text-sm text-muted-foreground">No files were submitted for this ticket.</p>
                   </div>
