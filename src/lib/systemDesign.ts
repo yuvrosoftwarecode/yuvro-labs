@@ -8,6 +8,17 @@ export function getSystemDesignLab(slug: string) {
   return SYSTEM_DESIGN_LABS.find(lab => lab.slug === slug);
 }
 
+// Structural practice checks, not a replacement for a review of task-specific reasoning.
+export function getSystemDesignChecks(slug: string) {
+  const service = getSystemDesignLab(slug)?.service ?? "URL Service";
+  return [
+    { id: "components", title: `Add Web Client, Load Balancer, ${service}, and PostgreSQL to the HLD canvas.`, points: 25 },
+    { id: "flow", title: "Connect the components in a client → load balancer → service → database request flow.", points: 25 },
+    { id: "cache", title: "Add Redis and connect it to the service for frequently accessed data.", points: 25 },
+    { id: "labels", title: "Label read and write connections between components.", points: 25 },
+  ] as const;
+}
+
 export const SYSTEM_DESIGN_SPRINTS = [
   { id: "SD1", name: "Sprint 1 · Fundamentals", goal: "Requirements, SLOs and API contracts", tags: ["SD Fundamentals"] },
   { id: "SD2", name: "Sprint 2 · Scalability", goal: "Scaling, load balancing and rate limiting", tags: ["SD Scalability"] },

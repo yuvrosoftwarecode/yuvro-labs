@@ -1,9 +1,11 @@
 import { getSystemDesignLab } from "@/lib/systemDesign";
+import { evaluateSystemDesign, type DesignEvaluation } from "@/lib/systemDesignEvaluation";
+import { EvaluationResults } from "@/components/sysdesign/EvaluationResults";
 import { labs, tickets } from "@/lib/dummy";
 import { Button } from "@/components/ui/button";
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
-import { ArrowLeft, Boxes, GitBranch, Database, FileText, Download, Maximize2, Minimize2, Sparkles, X, Users } from "lucide-react";
+import { ArrowLeft, Boxes, GitBranch, Database, FileText, Download, Maximize2, Minimize2, Sparkles, X, Users, Play } from "lucide-react";
 import { ApiDesigner, ApiDocs, type ApiEndpoint } from "@/components/sysdesign/ApiDesigner";
 import { ErdBoard } from "@/components/sysdesign/ErdBoard";
 import { NotesPanel, MarkdownPreview } from "@/components/sysdesign/MarkdownNotes";
@@ -368,12 +370,13 @@ export function SystemDesignStudio({ slug, ticketId, taskOverride }: {
   const [edges, setEdges] = useState<SDEdge[]>(saved?.edges ?? EMPTY.edges);
   const [seq, setSeq] = useState<string>(saved?.seq ?? "");
   const [schema, setSchema] = useState<string>(saved?.schema ?? "");
-  const [apis, setApis] = useState<ApiEndpoint[]>(Array.isArray(saved?.apis) ? saved!.apis! : []);
+  const [apis, setApis] = useState<ApiEndpoint[]>(Array.isArray(saved?.apis) ? saved.apis : []);
   const [notes, setNotes] = useState<Notes>(() => { const n = saved?.notes as unknown; return typeof n === "string" ? { hld: n } : (n as Notes) ?? {}; });
   const setNote = (v: string) => setNotes(ns => ({ ...ns, [tab]: v }));
   const [full, setFull] = useState(false);
   const [showEx, setShowEx] = useState(false);
   const [savedAt, setSavedAt] = useState<string>("");
+  const [evaluation, setEvaluation] = useState<DesignEvaluation | null>(null);
 
   useEffect(() => {
     const t = setTimeout(() => {
@@ -414,6 +417,7 @@ export function SystemDesignStudio({ slug, ticketId, taskOverride }: {
         <div className="text-sm font-semibold">🏛️ System Design Studio <span className="ml-2 text-xs font-normal text-muted-foreground">{taskTitle}</span></div>
         <div className="ml-auto flex items-center gap-2 text-xs">
           {savedAt && <span className="text-muted-foreground">Saved {savedAt}</span>}
+          <Button size="sm" onClick={() => setEvaluation(evaluateSystemDesign(slug, { nodes, edges, seq, schema, apis, notes }))}><Play className="h-3.5 w-3.5" />Run</Button>
           <Button size="sm" onClick={() => setShowEx(true)}><Sparkles className="h-3.5 w-3.5" />Examples</Button>
           <Button variant="outline" size="sm" onClick={() => apply(USERS_TASKS_SAMPLE)} title="Load users & user_tasks into every tab"><Users className="h-3.5 w-3.5" />Load sample</Button>
           <Button variant="ghost" size="sm" onClick={reset} className="border">Clear</Button>
@@ -441,6 +445,7 @@ export function SystemDesignStudio({ slug, ticketId, taskOverride }: {
       </div>
       {showEx && <ExamplesDialog tab={tab} scenario={scenarioExample(slug)} subject={subject} onClose={() => setShowEx(false)}
         onUseTab={useTab} onLoadAll={d => { apply(d); setShowEx(false); }} />}
+      {evaluation && <EvaluationResults result={evaluation} taskTitle={taskTitle} ticketId={ticketId} open onClose={() => setEvaluation(null)} />}
     </div>
   );
 }
