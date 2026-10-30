@@ -9,6 +9,7 @@ import { java } from "@codemirror/lang-java";
 import { cpp } from "@codemirror/lang-cpp";
 import { sql } from "@codemirror/lang-sql";
 import { ResizablePanelGroup, ResizablePanel, ResizableHandle } from "@/components/ui/resizable";
+import YuvroLogo from "@/assets/YuvroLogo.png";
 
 const LANGS = {
   javascript: { label: "JavaScript", ext: "js", ext_fn: () => javascript({ typescript: true }), starter: "function solve(input) {\n  // write your solution\n}\n" },
