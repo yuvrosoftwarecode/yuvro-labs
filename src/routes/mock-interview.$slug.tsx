@@ -214,7 +214,7 @@ function LiveRoom(p: {
   const [code, setCode] = useState<Record<string, string>>({});
   const [micLevel, setMicLevel] = useState(0);
   useEffect(() => {
-    if (!codeMode || !p.mic || !navigator.mediaDevices?.getUserMedia) { setMicLevel(0); return; }
+    if (!(codeMode || chat) || !p.mic || !navigator.mediaDevices?.getUserMedia) { setMicLevel(0); return; }
     let raf = 0, stream: MediaStream | null = null, ctx: AudioContext | null = null, alive = true;
     navigator.mediaDevices.getUserMedia({ audio: true }).then(s => {
       if (!alive) { s.getTracks().forEach(t => t.stop()); return; }
@@ -231,7 +231,7 @@ function LiveRoom(p: {
       tick();
     }).catch(() => setMicLevel(0));
     return () => { alive = false; cancelAnimationFrame(raf); stream?.getTracks().forEach(t => t.stop()); ctx?.close(); };
-  }, [codeMode, p.mic]);
+  }, [codeMode, chat, p.mic]);
 
   const videoRef = (el: HTMLVideoElement | null) => {
     if (el && streamRef.current && el.srcObject !== streamRef.current) el.srcObject = streamRef.current;
