@@ -370,14 +370,13 @@ function LiveRoom(p: {
   return (
     <div className="dark">
       <div className="fixed inset-0 flex flex-col overflow-hidden bg-[#0e1322] text-foreground" style={{ backgroundImage: "radial-gradient(60% 40% at 0% 100%, rgba(120,60,40,0.22), transparent 70%), radial-gradient(50% 35% at 100% 15%, rgba(60,70,120,0.18), transparent 70%)" }}>
-        {/* top bar */}
-        <div className="relative z-10 flex items-center justify-between border-b border-border/60 px-6 py-3 text-xs text-muted-foreground">
+        <div className="relative z-10 flex h-12 shrink-0 items-center justify-between border-b border-white/5 px-3">
           <div className="flex items-center gap-3">
-            <Link to="/mock-interviews" className="rounded-md p-1.5 hover:bg-muted"><ArrowLeft className="h-4 w-4" /></Link>
-            <span className="font-medium text-foreground">Vitarka · {p.title}</span>
-            <span className="hidden sm:inline">{p.progress}</span>
+            <Link to="/mock-interviews" className="flex items-center rounded-md bg-white px-2 py-1"><img src={YuvroLogo} alt="Yuvro" className="h-5 w-auto" /></Link>
+            <span className="text-sm font-semibold text-white">{p.title}</span>
           </div>
-          <span className="inline-flex items-center gap-1 rounded-md border px-2 py-1 font-mono"><Clock className="h-3.5 w-3.5" /> {fmt(p.left)}</span>
+          <span className="absolute left-1/2 -translate-x-1/2 inline-flex items-center gap-1.5 rounded-md border border-white/10 bg-[#111622] px-2.5 py-1 font-mono text-xs text-white"><Clock className="h-3.5 w-3.5" /> {fmt(p.left)}</span>
+          <span />
         </div>
 
         {codeMode ? (
