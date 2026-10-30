@@ -284,15 +284,15 @@ function EnrolledCard({ lab }: { lab: Lab }) {
       <div className="absolute inset-x-0 top-0 h-1" style={{ background: `var(--${lab.color})` }} />
       <div className="flex items-start justify-between">
         <div className="min-w-0">
-          <div className="text-2xl">{lab.icon}</div>
-          <h3 className="mt-2 font-semibold truncate">{lab.name}</h3>
+          <span className="text-[10px] font-medium uppercase tracking-wide text-muted-foreground">Free</span>
+          <h3 className="mt-1 font-semibold truncate">{lab.name}</h3>
           <p className="text-xs text-muted-foreground line-clamp-2 mt-0.5">{lab.description}</p>
         </div>
         <ProgressRing value={pct} color={`var(--${lab.color})`} />
       </div>
       <div className="mt-3 flex items-center justify-between text-xs">
-        <div className="flex items-center gap-1.5"><DiffBadge value={lab.difficulty} /><TierBadge slug={lab.slug} /></div>
-        <span className="text-muted-foreground">{lab.completed}/{lab.total} · {lab.hoursLeft}h left</span>
+        <span className="text-muted-foreground">10 sprints · 100 tickets</span>
+        <span className="text-muted-foreground">{lab.completed}/{lab.total}</span>
       </div>
       <div className="mt-4">
         <Link to="/lab/$slug" params={{ slug: lab.slug }}
