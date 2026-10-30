@@ -4,6 +4,7 @@ import {
   Link,
   createRootRouteWithContext,
   useRouter,
+  redirect,
 } from "@tanstack/react-router";
 
 import { AuthProvider } from "@/lib/auth";
@@ -66,6 +67,11 @@ function ErrorComponent({ error, reset }: { error: Error; reset: () => void }) {
 }
 
 export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()({
+  beforeLoad: ({ location }) => {
+    if (location.pathname === "/java-lab") {
+      throw redirect({ to: "/lab/$slug", params: { slug: "java" } });
+    }
+  },
   component: RootComponent,
   notFoundComponent: NotFoundComponent,
   errorComponent: ErrorComponent,
