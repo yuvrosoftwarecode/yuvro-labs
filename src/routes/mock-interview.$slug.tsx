@@ -419,11 +419,23 @@ function LiveRoom(p: {
 
         {/* answer box */}
         {chat && (
-          <div className="absolute bottom-24 left-1/2 z-20 w-[min(640px,92vw)] -translate-x-1/2 rounded-xl border bg-card p-3 shadow-2xl">
-            <textarea autoFocus value={p.draft} onChange={e => p.setDraft(e.target.value)} onKeyDown={e => { if (e.key === "Enter" && (e.metaKey || e.ctrlKey)) p.submit(); }} rows={3} placeholder="Type your answer…" className="w-full resize-none rounded-md border bg-background p-3 text-sm outline-none focus:ring-2 focus:ring-ring" />
-            <div className="mt-2 flex items-center justify-between">
-              <span className="text-[11px] text-muted-foreground">Ctrl/⌘ + Enter to send</span>
-              <button onClick={p.submit} disabled={!p.draft.trim()} className="inline-flex items-center gap-1 rounded-md bg-primary px-3 py-1.5 text-xs font-medium text-primary-foreground disabled:opacity-40">Send <ChevronRight className="h-3.5 w-3.5" /></button>
+          <div className="absolute bottom-24 left-1/2 z-20 w-[min(560px,92vw)] -translate-x-1/2 space-y-2">
+            <div className={`flex items-center gap-4 rounded-xl border px-4 py-3.5 transition-colors ${userTalking ? "border-[#f59e42]/30 bg-[#1f150a]" : "border-white/5 bg-[#121827]"}`}>
+              <span className={`h-8 w-8 shrink-0 rounded-full transition-transform ${orb}`} style={{ transform: userTalking ? `scale(${1 + Math.min(0.25, micLevel)})` : undefined, boxShadow: userTalking ? "0 0 18px rgba(245,158,66,0.5)" : undefined }} />
+              <div className="min-w-0 flex-1">
+                <div className="text-sm font-semibold text-white">{p.speaking ? "Vitarka AI is speaking" : userTalking ? "You're speaking" : p.mic ? "Listening to you" : "Mic is off"}</div>
+                <div className="text-xs text-[#8b93a7]">{p.speaking ? "Listen to the full question first" : userTalking ? "Go on, Vitarka is listening." : p.mic ? "Take your time. Speak or type your answer." : "Turn on your mic or type your answer."}</div>
+              </div>
+              <div className="flex h-7 items-center gap-[3px]">
+                {Array.from({ length: 22 }).map((_, k) => {
+                  const h = p.speaking ? 6 + ((k * 7) % 18) : userTalking ? Math.max(3, Math.min(26, micLevel * 90 * (0.5 + Math.abs(Math.sin(k * 1.7 + Date.now() / 120))))) : 2;
+                  return <span key={k} className={`w-[2px] rounded-full ${p.speaking ? "animate-pulse bg-[#f59e42]" : userTalking ? "bg-[#f59e42]" : "bg-[#6b8cf5]/70"}`} style={{ height: h, animationDelay: `${k * 60}ms` }} />;
+                })}
+              </div>
+            </div>
+            <div className="flex gap-1.5">
+              <input autoFocus value={p.draft} onChange={e => p.setDraft(e.target.value)} onKeyDown={e => { if (e.key === "Enter") p.submit(); }} placeholder="Type your answer, or just speak" className="h-9 min-w-0 flex-1 rounded-lg border border-white/5 bg-[#121827] px-3 text-sm text-white outline-none placeholder:text-[#6b7285] focus:border-[#6b8cf5]/50" />
+              <button onClick={p.submit} disabled={!p.draft.trim()} className="h-9 rounded-lg bg-[#6b8cf5] px-3.5 text-sm font-semibold text-[#0b0f17] hover:bg-[#7d9bff] disabled:opacity-60">Send</button>
             </div>
           </div>
         )}
