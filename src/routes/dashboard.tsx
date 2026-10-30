@@ -253,7 +253,7 @@ function EnrolledCard({ lab }: { lab: Lab }) {
           <h3 className="mt-1 font-semibold truncate">{lab.name}</h3>
           <p className="text-xs text-muted-foreground line-clamp-2 mt-0.5">{lab.description}</p>
         </div>
-        <ProgressRing value={pct} color={`var(--${lab.color})`} />
+        <ProgressRing value={pct} color="#f7931e" />
       </div>
       <div className="mt-3 flex items-center justify-between text-xs">
         <span className="text-muted-foreground">10 sprints · 100 tickets</span>

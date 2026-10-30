@@ -179,7 +179,7 @@ function MineCard({ i }: { i: Interview }) {
           <h3 className="mt-2 font-semibold truncate">{i.name}</h3>
           <p className="text-xs text-muted-foreground line-clamp-2 mt-0.5">{i.description}</p>
         </div>
-        <ProgressRing value={pct} color={`var(--${i.color})`} />
+        <ProgressRing value={pct} color="#f7931e" />
       </div>
       <Meta i={i} />
       <Link to="/mock-interview/$slug" params={{ slug: i.slug }} className="mt-4 w-full inline-flex items-center justify-center gap-1 rounded-md bg-primary px-3 py-1.5 text-xs font-medium text-primary-foreground hover:opacity-90">
