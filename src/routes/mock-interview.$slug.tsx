@@ -1,4 +1,6 @@
 import InterviewReport, { type Report } from "@/components/InterviewReport";
+import { captureInterviewReport, readInterviewReport } from "@/lib/mockInterviewReports";
+import { Button } from "@/components/ui/button";
 import { createFileRoute, Link, notFound, useNavigate } from "@tanstack/react-router";
 import { useEffect, useMemo, useRef, useState } from "react";
 import { ArrowLeft, Mic, MicOff, Video, VideoOff, Clock, ChevronRight, PhoneOff, MessageSquare, CheckCircle2, RotateCcw, Code2 } from "lucide-react";
@@ -22,6 +24,7 @@ const LANGS = {
 import { INTERVIEWS, type Category } from "@/lib/mockInterviews";
 
 export const Route = createFileRoute("/mock-interview/$slug")({
+  validateSearch: (search: Record<string, unknown>) => ({ report: search.report === true || search.report === "true" }),
   head: () => ({ meta: [{ title: "Vitarka Interview | Yuvro" }, { name: "description", content: "Live AI mock interview with Vitarka." }] }),
   loader: ({ params }) => {
     const i = INTERVIEWS.find(x => x.slug === params.slug);
@@ -102,6 +105,8 @@ function fmt(s: number) { return `${String(Math.floor(s / 60)).padStart(2, "0")}
 function InterviewScreen() {
   const iv = Route.useLoaderData();
   const navigate = useNavigate();
+  const { report: showReport } = Route.useSearch();
+  const [savedReport, setSavedReport] = useState<Report | null>(() => readInterviewReport(iv.slug));
   const questions = useMemo(() => BANK[iv.category], [iv.category]);
   const [phase, setPhase] = useState<"lobby" | "live" | "done">("lobby");
   const [idx, setIdx] = useState(0);
@@ -153,6 +158,11 @@ function InterviewScreen() {
 
   const q = questions[idx];
 
+  if (showReport) {
+    if (savedReport) return <InterviewReport report={savedReport} onBack={() => navigate({ to: "/mock-interviews" })} onTryAgain={() => navigate({ to: "/mock-interview/$slug", params: { slug: iv.slug }, search: { report: false } })} />;
+    return <Shell title={iv.name}><div className="mx-auto max-w-xl px-6 py-16"><h1 className="text-xl font-medium">No saved report available</h1><p className="mt-3 text-sm text-muted-foreground">Earlier interview reports were not saved. Finish a new interview to view its report here during this browser session.</p><Button className="mt-6" onClick={() => navigate({ to: "/mock-interview/$slug", params: { slug: iv.slug }, search: { report: false } })}>Retake interview</Button></div></Shell>;
+  }
+
   if (phase === "lobby") {
     return <Lobby iv={iv} mic={mic} cam={cam} setMic={setMic} setCam={setCam} onStart={() => setPhase("live")} />;
   }
@@ -195,7 +205,7 @@ function InterviewScreen() {
     return (
       <InterviewReport
         report={report}
-        onBack={() => navigate({ to: "/mock-interviews" })}
+        onBack={() => { captureInterviewReport(iv.slug, report); setSavedReport(report); navigate({ to: "/mock-interviews" }); }}
         onTryAgain={() => { setPhase("lobby"); setIdx(0); setAnswers([]); setLog([]); setFollowUp(null); setLeft(iv.minutes * 60); }}
         onLearn={() => navigate({ to: "/mock-interviews" })}
       />

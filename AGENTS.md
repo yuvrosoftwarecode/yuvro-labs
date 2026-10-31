@@ -1,4 +1,5 @@
 # Architecture rules
+- Reopen mock interview reports through the existing InterviewReport view using slug-scoped session snapshots; never substitute sample scores for a missing past report.
 - Keep the supplied learner hero self-contained and verbatim; the dashboard supplies the signed-in first name and navigation, and `/java-lab` redirects to the existing Java lab to avoid duplicating its workspace.
 - Keep ticket review pages scoped by lab and ticket, render only captured submission files, and leave unrecorded performance metrics pending; temporary session snapshots are not persisted grading reports.
 - Keep system design lab metadata and sprint definitions in `src/lib/systemDesign.ts` so the catalog, admin seeds, and learner sprint view stay aligned.
