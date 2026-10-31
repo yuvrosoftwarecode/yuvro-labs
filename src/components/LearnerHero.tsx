@@ -1,20 +1,16 @@
 import { useEffect, useMemo, useRef } from "react";
 
 const CSS = `
-@import url('https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,600;1,9..144,500&family=DM+Sans:wght@400;500;700&family=JetBrains+Mono:wght@500&display=swap');
 .lh{--page:#f8f9fb;--card:#ffffff;--ink:#14192b;--muted:#666e84;--line:#e4e8f0;--brand:#4a7bdc;--sun:#ffd54a;--mug:#4a7bdc;--mugdark:#3a63b8;--steam:#aab4cc;--tag:#fff6c9;--tagink:#4a3c00}
 @media (prefers-color-scheme:dark){.lh{--page:#0d1120;--card:#151b30;--ink:#f1f4fc;--muted:#a1abc4;--line:#252d48;--steam:#6c7898;--tag:#3b3410;--tagink:#ffe9a0;--mug:#5c8ae6;--mugdark:#4572cf}}
 .dark .lh{--page:#0d1120;--card:#151b30;--ink:#f1f4fc;--muted:#a1abc4;--line:#252d48;--steam:#6c7898;--tag:#3b3410;--tagink:#ffe9a0;--mug:#5c8ae6;--mugdark:#4572cf}
 .lh,.lh *{box-sizing:border-box}
-.lh-hero{width:100%;background:var(--card);color:var(--ink);font-family:"DM Sans",system-ui,sans-serif;border:1px solid var(--line);border-radius:24px;display:grid;grid-template-columns:1.2fr .8fr;align-items:center;gap:20px;padding:54px 56px;overflow:hidden}
+.lh-hero{width:100%;background:var(--card);color:var(--ink);font-family:inherit;border:1px solid var(--line);border-radius:24px;display:grid;grid-template-columns:1.2fr .8fr;align-items:center;gap:20px;padding:54px 56px;overflow:hidden}
 @media(max-width:820px){.lh-hero{grid-template-columns:1fr;padding:34px 22px}.lh-tag{right:2%!important}}
 .lh-hi{font-size:17px;font-weight:500;color:var(--muted);margin:0 0 14px;display:flex;align-items:center;gap:8px}
 .lh-hi b{color:var(--brand);font-weight:700}
-.lh h1{font-family:"Fraunces",Georgia,serif;font-weight:600;font-size:clamp(34px,4.9vw,56px);line-height:1.06;letter-spacing:-.025em;margin:0 0 30px;color:var(--ink)}
-.lh h1 i{font-weight:500;position:relative;white-space:nowrap}
-.lh h1 svg{position:absolute;left:-2%;bottom:-.18em;width:104%;height:.3em;overflow:visible}
-.lh h1 path{fill:none;stroke:var(--brand);stroke-width:5;stroke-linecap:round;stroke-dasharray:300;stroke-dashoffset:300;animation:lh-draw 1.2s .5s ease-out forwards}
-@keyframes lh-draw{to{stroke-dashoffset:0}}
+.lh h1{font-family:inherit;font-weight:600;font-size:clamp(34px,4.9vw,56px);line-height:1.06;letter-spacing:-.025em;margin:0 0 30px;color:var(--ink)}
+.lh h1 i{font-weight:500;font-style:normal;white-space:nowrap}
 .lh-say{display:flex;gap:16px;align-items:flex-start;margin-bottom:30px;max-width:540px}
 .lh-face{flex:none;width:46px;height:46px}
 .lh-face .eye,.lh .blink{transform-box:fill-box;transform-origin:center;animation:lh-blink 4s infinite}
@@ -22,7 +18,7 @@ const CSS = `
 .lh-face.hop{animation:lh-hop .55s}
 @keyframes lh-hop{30%{transform:translateY(-8px) rotate(-8deg)}60%{transform:translateY(0) rotate(6deg)}}
 .lh-win{height:112px;overflow:hidden;flex:1}
-.lh-q{font-family:"Fraunces",Georgia,serif;font-style:italic;font-weight:500;font-size:clamp(19px,2.2vw,24px);line-height:1.3;margin:0;color:var(--ink)}
+.lh-q{font-family:inherit;font-style:italic;font-weight:500;font-size:clamp(19px,2.2vw,24px);line-height:1.3;margin:0;color:var(--ink)}
 .lh-q.in{animation:lh-up .5s cubic-bezier(.2,.8,.2,1)}
 .lh-q.out{animation:lh-away .3s ease-in forwards}
 @keyframes lh-up{from{transform:translateY(100%);opacity:0}to{transform:none;opacity:1}}
@@ -58,7 +54,7 @@ const CSS = `
 @keyframes lh-z{0%{transform:translate(0,6px);opacity:0}30%{opacity:.9}100%{transform:translate(10px,-22px);opacity:0}}
 .lh-cur{animation:lh-cur 1s steps(2) infinite}
 @keyframes lh-cur{50%{opacity:0}}
-.lh-tag{position:absolute;right:-6px;top:8%;background:var(--tag);color:var(--tagink);font-family:"JetBrains Mono",monospace;font-size:12px;font-weight:500;padding:9px 12px;border-radius:6px;box-shadow:2px 3px 0 rgba(0,0,0,.12);transform:rotate(4deg);animation:lh-wob 5s ease-in-out infinite}
+.lh-tag{position:absolute;right:-6px;top:8%;background:var(--tag);color:var(--tagink);font-family:inherit;font-size:12px;font-weight:500;padding:9px 12px;border-radius:6px;box-shadow:2px 3px 0 rgba(0,0,0,.12);transform:rotate(4deg);animation:lh-wob 5s ease-in-out infinite}
 @keyframes lh-wob{50%{transform:rotate(-2deg) translateY(-4px)}}
 @media(prefers-reduced-motion:reduce){.lh *{animation:none!important}.lh h1 path{stroke-dashoffset:0}.lh mark{background-size:100% 100%}}
 `;
@@ -205,8 +201,8 @@ function NightScene() {
         <path d="M150 192 q10 8 20 0" fill="none" stroke="#cfe0ff" strokeWidth="4" strokeLinecap="round" />
         <circle cx="118" cy="186" r="7" fill="#ff9a8a" opacity=".5" />
         <circle cx="202" cy="186" r="7" fill="#ff9a8a" opacity=".5" />
-        <text className="lh-z" x="204" y="152" fill="#9db8ff" fontSize="16" fontWeight="700" fontFamily="DM Sans, sans-serif">z</text>
-        <text className="lh-z" x="214" y="140" fill="#9db8ff" fontSize="20" fontWeight="700" fontFamily="DM Sans, sans-serif" style={{ animationDelay: "-1.7s" }}>Z</text>
+        <text className="lh-z" x="204" y="152" fill="#9db8ff" fontSize="16" fontWeight="700" >z</text>
+        <text className="lh-z" x="214" y="140" fill="#9db8ff" fontSize="20" fontWeight="700"  style={{ animationDelay: "-1.7s" }}>Z</text>
         <path d="M64 224 h192 l10 14 a6 6 0 0 1 -6 8 h-200 a6 6 0 0 1 -6 -8z" fill="var(--mugdark)" />
       </g>
       <ellipse cx="280" cy="258" rx="20" ry="6" fill="var(--mugdark)" />
@@ -278,14 +274,7 @@ export default function LearnerHero({
             <span>{meta.greet}</span>, <b>{userName}</b> <span aria-hidden="true">{meta.emoji}</span>
           </p>
           <h1>
-            Let’s write some{" "}
-            <i>
-              code
-              <svg viewBox="0 0 100 12" preserveAspectRatio="none">
-                <path d="M2 8 C 15 2, 25 12, 40 6 S 65 2, 80 7 S 95 5, 98 6" />
-              </svg>
-            </i>{" "}
-            today.
+            Let’s write some <i>code</i> today.
           </h1>
 
           <div className="lh-say">
