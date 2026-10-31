@@ -184,7 +184,14 @@ function InterviewScreen() {
         missing: r.a ? "More specifics: a real example, numbers, and trade-offs." : "This question was not reached.",
         tip: "Use a short structure: context, approach, trade-offs, result.",
       })),
-      transcript: log.map((m, k) => ({ from: m.who, text: m.text, time: fmt(Math.round((used * k) / Math.max(1, log.length - 1))) })),
+      transcript: (() => {
+        const turns: { from: "ai" | "me"; text: string }[] = [];
+        log.forEach((m, k) => {
+          turns.push({ from: m.who, text: m.text });
+          if (m.who === "ai" && log[k + 1]?.who !== "me") turns.push({ from: "me", text: "No answer recorded." });
+        });
+        return turns.map((m, k) => ({ ...m, time: fmt(Math.round((used * k) / Math.max(1, turns.length - 1))) }));
+      })(),
     };
     return (
       <InterviewReport

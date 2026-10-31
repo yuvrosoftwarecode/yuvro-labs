@@ -10,43 +10,43 @@ const CSS = `
 .ir :focus-visible{outline:3px solid var(--brand);outline-offset:3px;border-radius:8px}
 .ir-wrap{max-width:1080px;margin:0 auto}
 .ir-top{display:flex;justify-content:space-between;align-items:flex-end;gap:20px;flex-wrap:wrap;margin-bottom:28px}
-.ir-back{font-size:14px;font-weight:600;color:var(--muted);display:inline-block;margin-bottom:10px}
+.ir-back{font-size:14px;font-weight:500;color:var(--muted);display:inline-block;margin-bottom:10px}
 .ir-back:hover{color:var(--ink)}
 .ir-h1{font-family:inherit;font-weight:600;font-size:24px;letter-spacing:-.01em;line-height:1.05;margin:0 0 6px;color:var(--ink)}
 .ir-meta{margin:0;color:var(--muted);font-size:14px}
 .ir-acts{display:flex;align-items:center;gap:22px}
-.ir-link{font-size:14px;font-weight:600;color:var(--muted)}
+.ir-link{font-size:14px;font-weight:500;color:var(--muted)}
 .ir-link:hover{color:var(--ink)}
-.ir-dl{background:var(--brand);color:#fff;font-weight:700;font-size:14px;padding:12px 22px;border-radius:12px;transition:transform .15s}
+.ir-dl{background:var(--brand);color:#fff;font-weight:500;font-size:14px;padding:10px 18px;border-radius:10px;transition:transform .15s}
 .ir-dl:hover{transform:translateY(-2px)}
 .ir-hero{display:grid;grid-template-columns:340px 1fr;gap:20px;margin-bottom:34px}
 @media(max-width:860px){.ir-hero{grid-template-columns:1fr}}
 .ir-score{border-radius:24px;padding:28px 30px;background:var(--b-bg);color:var(--b-fg);display:flex;flex-direction:column}
-.ir-lab{font-size:12px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;margin:0 0 12px;color:var(--muted)}
+.ir-lab{font-size:11px;font-weight:600;letter-spacing:.12em;text-transform:uppercase;margin:0 0 12px;color:var(--muted)}
 .ir-score .ir-lab{color:inherit;margin:0}
-.ir-band{font-size:15px;font-weight:700;margin-top:4px}
+.ir-band{font-size:14px;font-weight:500;margin-top:4px}
 .ir-big{font-family:inherit;font-weight:600;font-size:72px;line-height:1;letter-spacing:-.03em;margin:22px 0 4px;display:flex;align-items:baseline;gap:8px}
 .ir-big span{font-family:inherit;font-size:16px;font-weight:500;letter-spacing:0;opacity:.7}
 .ir-meter{height:8px;border-radius:4px;background:color-mix(in srgb,var(--b-fg) 18%,transparent);overflow:hidden;margin:14px 0}
 .ir-meter i{display:block;height:100%;background:var(--b-fg);border-radius:4px;transition:width .8s cubic-bezier(.3,.9,.3,1)}
 .ir-score p.ir-pct{margin:0;font-size:15px}
-.ir-sum{background:var(--card);border-radius:24px;padding:28px 32px}
-.ir-sum>p.ir-text{margin:0 0 22px;color:var(--body);font-size:16px;line-height:1.7}
+.ir-sum{background:var(--card);border:1px solid var(--bar);border-radius:16px;padding:28px 32px}
+.ir-sum>p.ir-text{margin:0 0 22px;color:var(--body);font-size:14.5px;line-height:1.7}
 .ir-two{display:grid;grid-template-columns:1fr 1fr;gap:14px}
 @media(max-width:620px){.ir-two{grid-template-columns:1fr}}
-.ir-two div{border-radius:16px;padding:16px 18px}
+.ir-two div{border-radius:12px;padding:16px 18px}
 .ir-s{background:var(--good-bg);color:var(--good)}
 .ir-f{background:var(--warn-bg);color:var(--warn)}
-.ir-two b{display:block;font-size:11.5px;letter-spacing:.12em;text-transform:uppercase;margin-bottom:6px}
-.ir-two p{margin:0;font-size:16px;font-weight:500;color:var(--ink);line-height:1.45}
+.ir-two b{display:block;font-weight:600;font-size:11px;letter-spacing:.12em;text-transform:uppercase;margin-bottom:6px}
+.ir-two p{margin:0;font-size:14.5px;font-weight:400;color:var(--ink);line-height:1.45}
 .ir-tabs{display:flex;gap:30px;margin-bottom:22px;flex-wrap:wrap}
-.ir-tabs button{font-size:16px;font-weight:600;color:var(--muted);padding:6px 0 10px;position:relative}
+.ir-tabs button{font-size:14.5px;font-weight:500;color:var(--muted);padding:6px 0 10px;position:relative}
 .ir-tabs button.on{color:var(--ink)}
 .ir-tabs button.on::after{content:"";position:absolute;left:0;right:0;bottom:0;height:3px;border-radius:3px;background:var(--brand)}
 .ir-tabs button:not(.on):hover{color:var(--ink)}
 .ir-sg{display:grid;grid-template-columns:380px 1fr;gap:16px;align-items:start}
 .ir-sk{display:grid;grid-template-columns:1fr 1fr;gap:16px}
-.ir-map{background:var(--card);border-radius:20px;padding:22px 20px 20px}
+.ir-map{background:var(--card);border:1px solid var(--bar);border-radius:12px;padding:22px 20px 20px}
 .ir-map .ir-lab{margin:0 0 6px 4px}
 .ir-map svg{display:block;width:100%;height:auto}
 .ir-map text{font-family:inherit}
@@ -55,9 +55,9 @@ const CSS = `
 .ir-mapnote{margin:4px 0 0;font-size:13px;color:var(--muted);text-align:center}
 @media(max-width:980px){.ir-sg{grid-template-columns:1fr}.ir-map{max-width:460px}}
 @media(max-width:620px){.ir-sk{grid-template-columns:1fr}.ir-map{max-width:none}}
-.ir-skill{background:var(--card);border-radius:20px;padding:22px 24px}
+.ir-skill{background:var(--card);border:1px solid var(--bar);border-radius:12px;padding:22px 24px}
 .ir-skill .r{display:flex;justify-content:space-between;align-items:baseline;margin-bottom:10px}
-.ir-skill h3{margin:0;font-size:17px;font-weight:700;color:var(--ink)}
+.ir-skill h3{margin:0;font-size:15px;font-weight:500;color:var(--ink)}
 .ir-skill .n{font-family:inherit;font-weight:600;font-size:18px}
 .ir-skill .n small{font-family:inherit;font-size:13px;color:var(--muted);font-weight:500}
 .ir-track{height:6px;border-radius:3px;background:var(--bar);margin-bottom:14px;overflow:hidden}
@@ -65,25 +65,25 @@ const CSS = `
 .ir-skill p{margin:0 0 12px;font-size:14px;color:var(--body);line-height:1.55}
 .ir-learn{font-size:14px;font-weight:700;color:var(--brand)}
 .ir-learn:hover{text-decoration:underline;text-underline-offset:4px}
-.ir-qa{background:var(--card);border-radius:20px;margin-bottom:12px;overflow:hidden}
-.ir-qh{display:flex;align-items:center;gap:18px;width:100%;padding:20px 24px}
+.ir-qa{background:var(--card);border:1px solid var(--bar);border-radius:12px;margin-bottom:10px;overflow:hidden}
+.ir-qh{display:flex;align-items:center;gap:16px;width:100%;padding:16px 20px}
 .ir-qh .no{font-family:inherit;font-weight:600;font-size:18px;color:var(--muted);width:26px}
 .ir-qh .t{flex:1}
-.ir-qh .t b{display:block;font-size:17px;font-weight:600;color:var(--ink)}
+.ir-qh .t b{display:block;font-size:15px;font-weight:500;color:var(--ink)}
 .ir-qh .t span{font-size:13px;color:var(--muted)}
-.ir-qh .sc{font-weight:700;font-size:14px;padding:4px 12px;border-radius:999px}
-.ir-qh .tg{font-size:13.5px;font-weight:700;color:var(--brand);min-width:90px;text-align:right}
-.ir-qb{padding:0 24px 24px 68px}
+.ir-qh .sc{font-weight:500;font-size:14px;padding:4px 12px;border-radius:999px}
+.ir-qh .tg{font-size:13px;font-weight:500;color:var(--brand);min-width:90px;text-align:right}
+.ir-qb{padding:0 20px 20px 62px;border-top:1px solid var(--bar)}
 .ir-qb .ir-lab{margin:18px 0 6px}
-.ir-qb p{margin:0;color:var(--body);font-size:15.5px;line-height:1.65}
-.ir-qb p.you{background:var(--soft);border-radius:14px;padding:14px 16px}
+.ir-qb p{margin:0;color:var(--body);font-size:14px;line-height:1.65}
+.ir-qb p.you{background:var(--soft);border-radius:8px;padding:14px 16px}
 @media(max-width:620px){.ir-qb{padding-left:24px}.ir-qh .tg{display:none}}
 .ir-tr{max-width:740px;margin:0 auto;display:flex;flex-direction:column;gap:16px}
 .ir-m{max-width:82%}
 .ir-m.me{align-self:flex-end;text-align:right}
 .ir-m .w{font-size:12.5px;color:var(--muted);margin-bottom:4px}
-.ir-m .b{display:inline-block;text-align:left;padding:14px 18px;border-radius:20px 20px 20px 6px;background:var(--card);color:var(--ink);font-size:16px;line-height:1.55}
-.ir-m.me .b{background:var(--brand);color:#fff;border-radius:20px 20px 6px 20px}
+.ir-m .b{display:inline-block;text-align:left;padding:12px 16px;border:1px solid var(--bar);border-radius:14px 14px 14px 4px;background:var(--card);color:var(--ink);font-size:14.5px;line-height:1.55}
+.ir-m.me .b{background:var(--brand);border-color:var(--brand);color:#fff;border-radius:14px 14px 4px 14px}
 .ir-toast{position:fixed;left:50%;bottom:24px;transform:translate(-50%,0);background:var(--ink);color:var(--page);padding:11px 18px;border-radius:12px;font-weight:600;font-size:14px;z-index:50}
 @media(prefers-reduced-motion:reduce){.ir *{transition:none!important;animation:none!important}}
 `;
@@ -292,7 +292,6 @@ export default function InterviewReport({
                     </div>
                     <div className="ir-track"><i style={{ width: Math.max(k.score * 10, 2) + "%", background: `var(--${t})` }} /></div>
                     <p>{k.description}</p>
-                    <button className="ir-learn" onClick={() => onLearn?.(k.name)}>Learn {k.name.toLowerCase()} →</button>
                   </div>
                 );
               })}
