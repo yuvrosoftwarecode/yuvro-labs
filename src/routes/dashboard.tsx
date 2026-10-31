@@ -39,10 +39,6 @@ function Hub() {
           onContinue={() => navigate({ href: "/java-lab" })}
         />
 
-        <div className="mt-8">
-          <UpcomingLabsCarousel onNotify={() => { /* save the user's interest in this lab */ }} />
-        </div>
-
         <div className="mt-8 space-y-10">
           {/* My labs — horizontal scroll */}
           <section>
@@ -83,6 +79,11 @@ function Hub() {
                 </div>
               ))}
             </HScroll>
+          </section>
+
+          {/* Upcoming labs carousel */}
+          <section>
+            <UpcomingLabsCarousel onNotify={() => { /* save the user's interest in this lab */ }} />
           </section>
 
         </div>
