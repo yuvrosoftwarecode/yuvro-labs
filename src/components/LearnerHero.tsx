@@ -201,8 +201,8 @@ function NightScene() {
         <path d="M150 192 q10 8 20 0" fill="none" stroke="#cfe0ff" strokeWidth="4" strokeLinecap="round" />
         <circle cx="118" cy="186" r="7" fill="#ff9a8a" opacity=".5" />
         <circle cx="202" cy="186" r="7" fill="#ff9a8a" opacity=".5" />
-        <text className="lh-z" x="204" y="152" fill="#9db8ff" fontSize="16" fontWeight="700" fontFamily="DM Sans, sans-serif">z</text>
-        <text className="lh-z" x="214" y="140" fill="#9db8ff" fontSize="20" fontWeight="700" fontFamily="DM Sans, sans-serif" style={{ animationDelay: "-1.7s" }}>Z</text>
+        <text className="lh-z" x="204" y="152" fill="#9db8ff" fontSize="16" fontWeight="700" >z</text>
+        <text className="lh-z" x="214" y="140" fill="#9db8ff" fontSize="20" fontWeight="700"  style={{ animationDelay: "-1.7s" }}>Z</text>
         <path d="M64 224 h192 l10 14 a6 6 0 0 1 -6 8 h-200 a6 6 0 0 1 -6 -8z" fill="var(--mugdark)" />
       </g>
       <ellipse cx="280" cy="258" rx="20" ry="6" fill="var(--mugdark)" />
