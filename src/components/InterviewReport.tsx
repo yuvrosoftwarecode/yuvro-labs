@@ -306,6 +306,11 @@ export default function InterviewReport({
     if (onCopyLink) return onCopyLink();
     navigator.clipboard?.writeText(window.location.href).then(() => say("Link copied"), () => say("Copy not allowed here"));
   };
+  const share = () => {
+    const data = { title: `${r.role} interview report`, text: `I scored ${r.score} out of 100 in my ${r.role} mock interview on Yuvro!`, url: window.location.href };
+    if (navigator.share) navigator.share(data).catch(() => {});
+    else copy();
+  };
 
   const tabs: [typeof tab, string][] = [["skills", "Skills & growth"], ["qs", "Question analysis"], ["tr", "Transcript"]];
 
