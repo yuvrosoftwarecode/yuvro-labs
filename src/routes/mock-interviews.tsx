@@ -2,6 +2,7 @@ import { createFileRoute, Link } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
 import { TopNav } from "@/components/TopNav";
 import { Button } from "@/components/ui/button";
+import { Dialog, DialogTrigger, DialogContent, DialogHeader, DialogTitle, DialogDescription } from "@/components/ui/dialog";
 import { hasCompletedInterview } from "@/lib/mockInterviewReports";
 
 export const Route = createFileRoute("/mock-interviews")({
@@ -25,9 +26,23 @@ function MockHub() {
       <TopNav />
       <main className="mx-auto max-w-[1200px] px-4 py-8">
         <section>
-          <div className="mb-4">
+          <div className="mb-4 flex flex-wrap items-center justify-between gap-4">
+            <div>
             <h2 className="text-xl font-semibold">My interviews</h2>
             <p className="text-xs text-muted-foreground mt-0.5">{mine.length} interviews</p>
+            </div>
+            <div className="flex items-center gap-3">
+              <p className="text-sm text-muted-foreground">Available mock interview: <span className="font-medium text-foreground">0</span></p>
+              <Dialog>
+                <DialogTrigger asChild><Button size="sm">Buy</Button></DialogTrigger>
+                <DialogContent>
+                  <DialogHeader>
+                    <DialogTitle>Buy mock interviews</DialogTitle>
+                    <DialogDescription>Mock interview purchases are not available yet.</DialogDescription>
+                  </DialogHeader>
+                </DialogContent>
+              </Dialog>
+            </div>
           </div>
           {mine.length === 0 ? (
             <div className="rounded-xl border border-dashed bg-card/40 p-10 text-center text-sm text-muted-foreground">
