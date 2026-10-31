@@ -6,7 +6,7 @@ const CSS = `
 @media (prefers-color-scheme:dark){.lh{--page:#0d1120;--card:#151b30;--ink:#f1f4fc;--muted:#a1abc4;--line:#252d48;--steam:#6c7898;--tag:#3b3410;--tagink:#ffe9a0;--mug:#5c8ae6;--mugdark:#4572cf}}
 .dark .lh{--page:#0d1120;--card:#151b30;--ink:#f1f4fc;--muted:#a1abc4;--line:#252d48;--steam:#6c7898;--tag:#3b3410;--tagink:#ffe9a0;--mug:#5c8ae6;--mugdark:#4572cf}
 .lh,.lh *{box-sizing:border-box}
-.lh-hero{max-width:1100px;margin:0 auto;background:var(--card);color:var(--ink);font-family:"DM Sans",system-ui,sans-serif;border:1px solid var(--line);border-radius:24px;display:grid;grid-template-columns:1.2fr .8fr;align-items:center;gap:20px;padding:54px 56px;overflow:hidden}
+.lh-hero{width:100%;background:var(--card);color:var(--ink);font-family:"DM Sans",system-ui,sans-serif;border:1px solid var(--line);border-radius:24px;display:grid;grid-template-columns:1.2fr .8fr;align-items:center;gap:20px;padding:54px 56px;overflow:hidden}
 @media(max-width:820px){.lh-hero{grid-template-columns:1fr;padding:34px 22px}.lh-tag{right:2%!important}}
 .lh-hi{font-size:17px;font-weight:500;color:var(--muted);margin:0 0 14px;display:flex;align-items:center;gap:8px}
 .lh-hi b{color:var(--brand);font-weight:700}
