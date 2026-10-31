@@ -57,6 +57,7 @@ export function TopNav({ rightSlot, activeOverride }: { rightSlot?: React.ReactN
                 <span className="font-semibold text-foreground tabular-nums">{s.value}</span>
               </div>
             ))}
+            <AiCreditsPopover />
           </div>
           <ProfileMenu onLogout={() => { logout(); nav({ to: "/" }); }} userName={user?.name ?? me.name} userEmail={user?.email} />
         </div>
