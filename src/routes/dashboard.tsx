@@ -2,45 +2,17 @@ import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { useEffect, useMemo, useState } from "react";
 import { TopNav } from "@/components/TopNav";
 import LearnerHero from "@/components/LearnerHero";
+import UpcomingLabsCarousel from "@/components/UpcomingLabsCarousel";
 import { useAuth } from "@/lib/auth";
 import { ProgressRing } from "@/components/ProgressRing";
 import { labs, type Lab } from "@/lib/dummy";
 import { getEnrolled, enroll, unenroll } from "@/lib/enrollment";
-import { ArrowRight, Check, Plus, Lock, Search } from "lucide-react";
+import { ArrowRight, Check, Plus, Lock } from "lucide-react";
 
 export const Route = createFileRoute("/dashboard")({ component: Hub });
 
 // Curated set of labs to feature.
 const FEATURED_SLUGS = ["javaspring", "systemdesign", "systemdesign-url-shortener", "systemdesign-bookmysystem", "cybersecurity", "pydjango", "postgres", "datastructures", "qa"];
-
-type Category = "Backend" | "Frontend" | "Database" | "DevOps" | "QA" | "AI" | "Security" | "Design";
-const CATEGORIES: Category[] = ["Backend", "Frontend", "Database", "DevOps", "QA", "Security", "Design"];
-const DIFFICULTIES = ["Beginner", "Intermediate", "Advanced"] as const;
-
-const LAB_CATEGORY: Record<string, Category> = {
-  java: "Backend", javaspring: "Backend", python: "Backend", pydjango: "Backend", pyflask: "Backend",
-  programming: "Backend", datastructures: "Backend", systemdesign: "Design",
-  "systemdesign-url-shortener": "Design", "systemdesign-bookmysystem": "Design",
-  ui: "Frontend",
-  sql: "Database", postgres: "Database", mongo: "Database",
-  git: "DevOps", linux: "DevOps",
-  qa: "QA",
-  cybersecurity: "Security",
-};
-
-const LAB_LANGUAGES: Record<string, string[]> = {
-  java: ["Java"], javaspring: ["Java"],
-  python: ["Python"], pydjango: ["Python"], pyflask: ["Python"],
-  programming: ["Python", "JavaScript"], datastructures: ["Python", "Java", "C++"],
-  systemdesign: [],
-  ui: ["HTML", "CSS", "JavaScript"],
-  sql: ["SQL"], postgres: ["SQL"], mongo: ["JavaScript"],
-  git: ["Bash"], linux: ["Bash"],
-  qa: ["JavaScript"],
-  cybersecurity: ["Python", "Bash"],
-};
-
-const ALL_LANGUAGES = Array.from(new Set(Object.values(LAB_LANGUAGES).flat())).sort();
 
 function Hub() {
   const { user } = useAuth();
