@@ -19,6 +19,22 @@ const CSS = `
 .ir-link:hover{color:var(--ink)}
 .ir-dl{background:var(--brand);color:#fff;font-weight:500;font-size:14px;padding:10px 18px;border-radius:10px;transition:transform .15s}
 .ir-dl:hover{transform:translateY(-2px)}
+.ir-msg{position:relative;overflow:hidden;display:flex;gap:22px;align-items:flex-start;border-radius:20px;padding:30px 34px;margin-bottom:22px}
+.ir-msg .ir-em{font-size:46px;line-height:1.1;flex:none}
+.ir-msg h3{margin:0 0 8px;font-size:22px;font-weight:700;letter-spacing:-.01em;color:var(--ink)}
+.ir-msg p{margin:0 0 14px;font-size:15px;line-height:1.65;color:var(--body);max-width:640px}
+.ir-msg .ir-macts{display:flex;gap:26px;flex-wrap:wrap}
+.ir-msg .ir-macts button{font-size:15px;font-weight:600;color:var(--brand)}
+.ir-msg .ir-macts button:hover{text-decoration:underline}
+.ir-msg.low{background:#edf1f9}
+.ir-msg.mid{background:#fdf6e0}
+.ir-msg.high{background:#e6f4ec}
+@media (prefers-color-scheme:dark){.ir-msg.low{background:#1b2546}.ir-msg.mid{background:#3a3017}.ir-msg.high{background:#173528}}
+.dark .ir-msg.low{background:#1b2546}
+.dark .ir-msg.mid{background:#3a3017}
+.dark .ir-msg.high{background:#173528}
+.ir-cf{position:absolute;top:-14px;width:8px;height:12px;border-radius:2px;opacity:.9;animation:irfall linear infinite}
+@keyframes irfall{to{transform:translateY(150px) rotate(260deg)}}
 .ir-hero{display:grid;grid-template-columns:340px 1fr;gap:20px;margin-bottom:34px}
 @media(max-width:860px){.ir-hero{grid-template-columns:1fr}}
 .ir-score{border-radius:24px;padding:28px 30px;background:var(--b-bg);color:var(--b-fg);display:flex;flex-direction:column}
@@ -150,6 +166,71 @@ const band = (s: number) =>
     : { label: "Strong", bg: "var(--good-bg)", fg: "var(--good)" };
 
 const tone = (n: number) => (n < 4 ? "bad" : n < 7 ? "warn" : "good");
+
+/* ---------- score-based result message ---------- */
+const CF_COLORS = ["#4a7bdc", "#f7931e", "#e05d8f", "#3aa76d", "#8b5cf6"];
+function Confetti() {
+  return (
+    <>
+      {Array.from({ length: 18 }, (_, i) => (
+        <i
+          key={i}
+          className="ir-cf"
+          style={{
+            left: `${(i * 53) % 100}%`,
+            background: CF_COLORS[i % CF_COLORS.length],
+            animationDuration: `${2.4 + (i % 5) * 0.5}s`,
+            animationDelay: `${(i % 7) * 0.35}s`,
+            transform: `rotate(${(i * 47) % 360}deg)`,
+          }}
+        />
+      ))}
+    </>
+  );
+}
+
+function ResultMessage({ r, onTryAgain, onShare, onCopy }: { r: Report; onTryAgain?: () => void; onShare: () => void; onCopy: () => void }) {
+  if (r.score < 40)
+    return (
+      <div className="ir-msg low">
+        <span className="ir-em">🤗</span>
+        <div>
+          <h3>Every expert started right here, buddy.</h3>
+          <p>This round didn’t go your way, and that’s okay. Practice is the safest place to stumble. Pick one focus area and go again.</p>
+          <div className="ir-macts">
+            <button onClick={onTryAgain}>Try again →</button>
+          </div>
+        </div>
+      </div>
+    );
+  if (r.score < 80)
+    return (
+      <div className="ir-msg mid">
+        <span className="ir-em">💪</span>
+        <div>
+          <h3>Good progress, buddy! You’re closer than you think.</h3>
+          <p>You’re building the right habits. {80 - r.score} more points and you’re in the strong zone. Your next step: {r.focus.charAt(0).toLowerCase() + r.focus.slice(1)}</p>
+          <div className="ir-macts">
+            <button onClick={onTryAgain}>Practise again →</button>
+          </div>
+        </div>
+      </div>
+    );
+  return (
+    <div className="ir-msg high">
+      <Confetti />
+      <span className="ir-em">🎉</span>
+      <div>
+        <h3>You nailed it, buddy! Time to celebrate.</h3>
+        <p>You scored {r.score} out of 100. Share it with your connections and let them cheer for you.</p>
+        <div className="ir-macts">
+          <button onClick={onShare}>Share with your connections →</button>
+          <button onClick={onCopy}>Copy link →</button>
+        </div>
+      </div>
+    </div>
+  );
+}
 
 /* ---------- competency map (radar) ---------- */
 function Radar({ items }: { items: { name: string; value: number }[] }) {
