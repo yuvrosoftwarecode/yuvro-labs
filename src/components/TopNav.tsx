@@ -1,5 +1,5 @@
 import { Link, useRouterState, useNavigate } from "@tanstack/react-router";
-import { Trophy, User, Users, LayoutDashboard, MessagesSquare, Award, BarChart3, Sun, Moon, LogOut, Rocket, ChevronDown, MoreHorizontal, Mic } from "lucide-react";
+import { User, Sun, Moon, LogOut } from "lucide-react";
 import { useTheme } from "@/hooks/use-theme";
 import { me } from "@/lib/dummy";
 import { useAuth } from "@/lib/auth";
@@ -15,17 +15,8 @@ const headerStats = [
 
 
 const primaryLinks = [
-  { to: "/dashboard", label: "Individual Hub", icon: LayoutDashboard },
-  { to: "/mock-interviews", label: "Vitarka Mock Interviews", icon: Mic },
-  { to: "/hackathons", label: "Hackathons", icon: Rocket },
-];
-
-const otherLinks = [
-  { to: "/collaboration", label: "Collaboration Hub", icon: Users },
-  { to: "/analytics", label: "Analytics", icon: BarChart3 },
-  { to: "/leaderboard", label: "Leaderboard", icon: Trophy },
-  { to: "/forum", label: "Forum", icon: MessagesSquare },
-  { to: "/certificates", label: "Certificates", icon: Award },
+  { to: "/dashboard", label: "Simulation Labs" },
+  { to: "/mock-interviews", label: "Mock Interviews" },
 ];
 
 export function TopNav({ rightSlot, activeOverride }: { rightSlot?: React.ReactNode; activeOverride?: string } = {}) {
@@ -34,17 +25,6 @@ export function TopNav({ rightSlot, activeOverride }: { rightSlot?: React.ReactN
   const { user, logout } = useAuth();
   const nav = useNavigate();
   const activePath = activeOverride ?? path;
-  const [openOther, setOpenOther] = useState(false);
-  const otherRef = useRef<HTMLDivElement | null>(null);
-  useEffect(() => {
-    if (!openOther) return;
-    const onDown = (e: MouseEvent) => {
-      if (!otherRef.current?.contains(e.target as Node)) setOpenOther(false);
-    };
-    document.addEventListener("mousedown", onDown);
-    return () => document.removeEventListener("mousedown", onDown);
-  }, [openOther]);
-  const otherActive = otherLinks.some(l => activePath.startsWith(l.to));
   const isActive = (to: string) => to === "/dashboard" ? activePath === "/dashboard" : activePath.startsWith(to);
   return (
     <header className="sticky top-0 z-40 glass border-b border-border">
@@ -53,38 +33,16 @@ export function TopNav({ rightSlot, activeOverride }: { rightSlot?: React.ReactN
           <img src={YuvroLogo} alt="Yuvro" className="h-7 w-auto" />
           <span>Yuvro</span>
         </Link>
-        <nav className="hidden md:flex items-center gap-1 text-sm">
+        <nav className="hidden md:flex items-center gap-6 text-sm">
           {primaryLinks.map((l) => {
             const active = isActive(l.to);
-            const Icon = l.icon;
             return (
               <Link key={l.to} to={l.to}
-                className={`flex items-center gap-1.5 rounded-md px-3 py-1.5 transition-colors ${active ? "bg-accent text-foreground" : "text-muted-foreground hover:text-foreground hover:bg-accent/60"}`}>
-                <Icon className="h-3.5 w-3.5" />{l.label}
+                className={`relative py-1.5 transition-colors after:absolute after:left-0 after:right-0 after:-bottom-0.5 after:h-[2px] after:rounded-full after:transition-opacity ${active ? "text-foreground font-medium after:bg-[#f7931e] after:opacity-100" : "text-muted-foreground hover:text-foreground after:bg-[#f7931e] after:opacity-0"}`}>
+                {l.label}
               </Link>
             );
           })}
-          <div ref={otherRef} className="relative">
-            <button type="button" onClick={() => setOpenOther(v => !v)}
-              className={`flex items-center gap-1.5 rounded-md px-3 py-1.5 transition-colors ${otherActive || openOther ? "bg-accent text-foreground" : "text-muted-foreground hover:text-foreground hover:bg-accent/60"}`}>
-              <MoreHorizontal className="h-3.5 w-3.5" />Other
-              <ChevronDown className={`h-3 w-3 transition-transform ${openOther ? "rotate-180" : ""}`} />
-            </button>
-            {openOther && (
-              <div className="absolute left-0 top-full mt-1 w-52 rounded-md border border-border bg-popover shadow-lg p-1 z-50">
-                {otherLinks.map(l => {
-                  const active = isActive(l.to);
-                  const Icon = l.icon;
-                  return (
-                    <Link key={l.to} to={l.to} onClick={() => setOpenOther(false)}
-                      className={`flex items-center gap-2 rounded-md px-2.5 py-1.5 text-sm ${active ? "bg-accent text-foreground" : "text-muted-foreground hover:text-foreground hover:bg-accent/60"}`}>
-                      <Icon className="h-3.5 w-3.5" />{l.label}
-                    </Link>
-                  );
-                })}
-              </div>
-            )}
-          </div>
         </nav>
         <div className="ml-auto flex items-center gap-3 text-sm">
           {rightSlot}
