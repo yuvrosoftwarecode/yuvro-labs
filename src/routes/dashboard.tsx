@@ -100,25 +100,6 @@ function HScroll({ children }: { children: React.ReactNode }) {
   );
 }
 
-function FilterGroup({ label, children }: { label: string; children: React.ReactNode }) {
-  return (
-    <div>
-      <div className="text-[10px] uppercase tracking-wider text-muted-foreground mb-2">{label}</div>
-      <div className="space-y-1.5">{children}</div>
-    </div>
-  );
-}
-
-function CheckRow({ checked, onChange, label }: { checked: boolean; onChange: () => void; label: string }) {
-  return (
-    <label className="flex items-center gap-2 text-xs cursor-pointer hover:text-foreground text-muted-foreground select-none">
-      <input type="checkbox" checked={checked} onChange={onChange}
-        className="h-3.5 w-3.5 accent-primary rounded border-border" />
-      <span className={checked ? "text-foreground" : ""}>{label}</span>
-    </label>
-  );
-}
-
 function FeaturedCard({ lab, isEnrolled, onToggle }: { lab: Lab; isEnrolled: boolean; onToggle: () => void }) {
 
   return (
@@ -172,30 +153,6 @@ function EnrolledCard({ lab }: { lab: Lab }) {
     </div>
   );
 
-}
-
-function CatalogCard({ lab, isEnrolled, onToggle }: { lab: Lab; isEnrolled: boolean; onToggle: () => void }) {
-  return (
-    <div className="rounded-xl border bg-card p-4 hover:border-primary/40 transition">
-      <div className="min-w-0">
-        <div className="font-medium text-sm truncate">{lab.name}</div>
-        <div className="text-[11px] text-muted-foreground line-clamp-2 mt-0.5">{lab.description}</div>
-      </div>
-      <div className="mt-3 flex items-center justify-between text-[11px]">
-        <span className="text-muted-foreground">{lab.total} tickets</span>
-        <div className="flex items-center gap-1.5">
-          <Link to="/lab/$slug" params={{ slug: lab.slug }}
-            className="inline-flex items-center rounded-md border px-2.5 py-1 font-medium hover:bg-accent/50 transition">
-            View
-          </Link>
-          <button onClick={onToggle}
-            className={`inline-flex items-center gap-1 rounded-md px-2 py-1 font-medium transition ${isEnrolled ? "border border-success/40 bg-success/10 text-success" : "bg-primary text-primary-foreground hover:opacity-90"}`}>
-            {isEnrolled ? (<><Check className="h-3 w-3" /> Enrolled</>) : (<><Plus className="h-3 w-3" /> Enroll</>)}
-          </button>
-        </div>
-      </div>
-    </div>
-  );
 }
 
 
