@@ -1,5 +1,5 @@
 import { Link, useRouterState, useNavigate } from "@tanstack/react-router";
-import { Trophy, User, Users, LayoutDashboard, MessagesSquare, Award, BarChart3, Sun, Moon, LogOut, Rocket, ChevronDown, MoreHorizontal, Mic } from "lucide-react";
+import { User, Sun, Moon, LogOut } from "lucide-react";
 import { useTheme } from "@/hooks/use-theme";
 import { me } from "@/lib/dummy";
 import { useAuth } from "@/lib/auth";
@@ -15,17 +15,8 @@ const headerStats = [
 
 
 const primaryLinks = [
-  { to: "/dashboard", label: "Individual Hub", icon: LayoutDashboard },
-  { to: "/mock-interviews", label: "Vitarka Mock Interviews", icon: Mic },
-  { to: "/hackathons", label: "Hackathons", icon: Rocket },
-];
-
-const otherLinks = [
-  { to: "/collaboration", label: "Collaboration Hub", icon: Users },
-  { to: "/analytics", label: "Analytics", icon: BarChart3 },
-  { to: "/leaderboard", label: "Leaderboard", icon: Trophy },
-  { to: "/forum", label: "Forum", icon: MessagesSquare },
-  { to: "/certificates", label: "Certificates", icon: Award },
+  { to: "/dashboard", label: "Simulation Labs" },
+  { to: "/mock-interviews", label: "Mock Interviews" },
 ];
 
 export function TopNav({ rightSlot, activeOverride }: { rightSlot?: React.ReactNode; activeOverride?: string } = {}) {
