@@ -2,8 +2,7 @@ import { useEffect, useState } from "react";
 import type { CSSProperties } from "react";
 
 const CSS = `
-@import url('https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,600&family=DM+Sans:wght@400;500;700&display=swap');
-.ir{--page:#f3f5fa;--card:#ffffff;--ink:#14192b;--body:#3f475c;--muted:#6f7890;--soft:#eef2fb;--brand:#4a7bdc;--bar:#e6eaf4;--bad:#c9372c;--bad-bg:#fdeae7;--warn:#9a5b00;--warn-bg:#fdf1d6;--good:#17744d;--good-bg:#e1f4ea;background:var(--page);color:var(--ink);font-family:"DM Sans",system-ui,sans-serif;line-height:1.5;padding:32px 20px 60px}
+.ir{font-family:ui-sans-serif,system-ui,-apple-system,"Segoe UI",Roboto,sans-serif !important;--page:#f3f5fa;--card:#ffffff;--ink:#14192b;--body:#3f475c;--muted:#6f7890;--soft:#eef2fb;--brand:#4a7bdc;--bar:#e6eaf4;--bad:#c9372c;--bad-bg:#fdeae7;--warn:#9a5b00;--warn-bg:#fdf1d6;--good:#17744d;--good-bg:#e1f4ea;background:var(--page);color:var(--ink);font-family:inherit;line-height:1.5;padding:32px 20px 60px}
 @media (prefers-color-scheme:dark){.ir{--page:#0b1020;--card:#141b33;--ink:#f1f4fc;--body:#c3cbe0;--muted:#97a2bf;--soft:#1b2546;--bar:#232d4f;--bad:#ff8a7e;--bad-bg:#3a1f26;--warn:#f5c26b;--warn-bg:#3a3017;--good:#6fd9a4;--good-bg:#173528}}
 .dark .ir{--page:#0b1020;--card:#141b33;--ink:#f1f4fc;--body:#c3cbe0;--muted:#97a2bf;--soft:#1b2546;--bar:#232d4f;--bad:#ff8a7e;--bad-bg:#3a1f26;--warn:#f5c26b;--warn-bg:#3a3017;--good:#6fd9a4;--good-bg:#173528}
 .ir,.ir *{box-sizing:border-box}
@@ -13,12 +12,12 @@ const CSS = `
 .ir-top{display:flex;justify-content:space-between;align-items:flex-end;gap:20px;flex-wrap:wrap;margin-bottom:28px}
 .ir-back{font-size:14px;font-weight:600;color:var(--muted);display:inline-block;margin-bottom:10px}
 .ir-back:hover{color:var(--ink)}
-.ir-h1{font-family:"Fraunces",Georgia,serif;font-weight:600;font-size:clamp(28px,4vw,40px);letter-spacing:-.025em;line-height:1.05;margin:0 0 6px;color:var(--ink)}
-.ir-meta{margin:0;color:var(--muted);font-size:14.5px}
+.ir-h1{font-family:inherit;font-weight:600;font-size:24px;letter-spacing:-.01em;line-height:1.05;margin:0 0 6px;color:var(--ink)}
+.ir-meta{margin:0;color:var(--muted);font-size:14px}
 .ir-acts{display:flex;align-items:center;gap:22px}
-.ir-link{font-size:14.5px;font-weight:600;color:var(--muted)}
+.ir-link{font-size:14px;font-weight:600;color:var(--muted)}
 .ir-link:hover{color:var(--ink)}
-.ir-dl{background:var(--brand);color:#fff;font-weight:700;font-size:14.5px;padding:12px 22px;border-radius:12px;transition:transform .15s}
+.ir-dl{background:var(--brand);color:#fff;font-weight:700;font-size:14px;padding:12px 22px;border-radius:12px;transition:transform .15s}
 .ir-dl:hover{transform:translateY(-2px)}
 .ir-hero{display:grid;grid-template-columns:340px 1fr;gap:20px;margin-bottom:34px}
 @media(max-width:860px){.ir-hero{grid-template-columns:1fr}}
@@ -26,8 +25,8 @@ const CSS = `
 .ir-lab{font-size:12px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;margin:0 0 12px;color:var(--muted)}
 .ir-score .ir-lab{color:inherit;margin:0}
 .ir-band{font-size:15px;font-weight:700;margin-top:4px}
-.ir-big{font-family:"Fraunces",Georgia,serif;font-weight:600;font-size:132px;line-height:1;letter-spacing:-.05em;margin:22px 0 4px;display:flex;align-items:baseline;gap:8px}
-.ir-big span{font-family:"DM Sans",sans-serif;font-size:20px;font-weight:500;letter-spacing:0;opacity:.7}
+.ir-big{font-family:inherit;font-weight:600;font-size:72px;line-height:1;letter-spacing:-.03em;margin:22px 0 4px;display:flex;align-items:baseline;gap:8px}
+.ir-big span{font-family:inherit;font-size:16px;font-weight:500;letter-spacing:0;opacity:.7}
 .ir-meter{height:8px;border-radius:4px;background:color-mix(in srgb,var(--b-fg) 18%,transparent);overflow:hidden;margin:14px 0}
 .ir-meter i{display:block;height:100%;background:var(--b-fg);border-radius:4px;transition:width .8s cubic-bezier(.3,.9,.3,1)}
 .ir-score p.ir-pct{margin:0;font-size:15px}
@@ -50,7 +49,7 @@ const CSS = `
 .ir-map{background:var(--card);border-radius:20px;padding:22px 20px 20px}
 .ir-map .ir-lab{margin:0 0 6px 4px}
 .ir-map svg{display:block;width:100%;height:auto}
-.ir-map text{font-family:"DM Sans",system-ui,sans-serif}
+.ir-map text{font-family:inherit}
 .ir-poly{transform-origin:190px 158px;animation:ir-grow .9s cubic-bezier(.3,.9,.3,1)}
 @keyframes ir-grow{from{transform:scale(0);opacity:0}}
 .ir-mapnote{margin:4px 0 0;font-size:13px;color:var(--muted);text-align:center}
@@ -59,16 +58,16 @@ const CSS = `
 .ir-skill{background:var(--card);border-radius:20px;padding:22px 24px}
 .ir-skill .r{display:flex;justify-content:space-between;align-items:baseline;margin-bottom:10px}
 .ir-skill h3{margin:0;font-size:17px;font-weight:700;color:var(--ink)}
-.ir-skill .n{font-family:"Fraunces",Georgia,serif;font-weight:600;font-size:22px}
-.ir-skill .n small{font-family:"DM Sans";font-size:13px;color:var(--muted);font-weight:500}
+.ir-skill .n{font-family:inherit;font-weight:600;font-size:18px}
+.ir-skill .n small{font-family:inherit;font-size:13px;color:var(--muted);font-weight:500}
 .ir-track{height:6px;border-radius:3px;background:var(--bar);margin-bottom:14px;overflow:hidden}
 .ir-track i{display:block;height:100%;border-radius:3px}
-.ir-skill p{margin:0 0 12px;font-size:14.5px;color:var(--body);line-height:1.55}
-.ir-learn{font-size:14.5px;font-weight:700;color:var(--brand)}
+.ir-skill p{margin:0 0 12px;font-size:14px;color:var(--body);line-height:1.55}
+.ir-learn{font-size:14px;font-weight:700;color:var(--brand)}
 .ir-learn:hover{text-decoration:underline;text-underline-offset:4px}
 .ir-qa{background:var(--card);border-radius:20px;margin-bottom:12px;overflow:hidden}
 .ir-qh{display:flex;align-items:center;gap:18px;width:100%;padding:20px 24px}
-.ir-qh .no{font-family:"Fraunces",Georgia,serif;font-weight:600;font-size:22px;color:var(--muted);width:26px}
+.ir-qh .no{font-family:inherit;font-weight:600;font-size:18px;color:var(--muted);width:26px}
 .ir-qh .t{flex:1}
 .ir-qh .t b{display:block;font-size:17px;font-weight:600;color:var(--ink)}
 .ir-qh .t span{font-size:13px;color:var(--muted)}
