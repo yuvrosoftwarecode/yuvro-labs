@@ -9,6 +9,7 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
+import { Route as TestReportRouteImport } from './routes/test-report'
 import { Route as SystemDesignStudioRouteImport } from './routes/system-design-studio'
 import { Route as SolutionsRouteImport } from './routes/solutions'
 import { Route as RecruiterLoginRouteImport } from './routes/recruiter-login'
@@ -26,7 +27,6 @@ import { Route as CollaborationRouteImport } from './routes/collaboration'
 import { Route as CertificatesRouteImport } from './routes/certificates'
 import { Route as CareersRouteImport } from './routes/careers'
 import { Route as BookDemoRouteImport } from './routes/book-demo'
-import { Route as TestReportRouteImport } from './routes/test-report'
 import { Route as AuthRouteImport } from './routes/auth'
 import { Route as AnalyticsRouteImport } from './routes/analytics'
 import { Route as AdminRouteImport } from './routes/admin'
@@ -105,6 +105,11 @@ import { Route as CollaborationSprintIdReportTeamRouteImport } from './routes/co
 import { Route as CollaborationSprintIdReportIndividualRouteImport } from './routes/collaboration.sprint.$id.report.individual'
 import { Route as AdminLabsIdSprintsSprintIdRouteImport } from './routes/admin.labs.$id.sprints.$sprintId'
 
+const TestReportRoute = TestReportRouteImport.update({
+  id: '/test-report',
+  path: '/test-report',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const SystemDesignStudioRoute = SystemDesignStudioRouteImport.update({
   id: '/system-design-studio',
   path: '/system-design-studio',
@@ -188,11 +193,6 @@ const CareersRoute = CareersRouteImport.update({
 const BookDemoRoute = BookDemoRouteImport.update({
   id: '/book-demo',
   path: '/book-demo',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const TestReportRoute = TestReportRouteImport.update({
-  id: '/test-report',
-  path: '/test-report',
   getParentRoute: () => rootRouteImport,
 } as any)
 const AuthRoute = AuthRouteImport.update({
@@ -606,7 +606,6 @@ export interface FileRoutesByFullPath {
   '/analytics': typeof AnalyticsRoute
   '/auth': typeof AuthRoute
   '/book-demo': typeof BookDemoRoute
-  '/test-report': typeof TestReportRoute
   '/careers': typeof CareersRouteWithChildren
   '/certificates': typeof CertificatesRoute
   '/collaboration': typeof CollaborationRouteWithChildren
@@ -623,6 +622,7 @@ export interface FileRoutesByFullPath {
   '/recruiter-login': typeof RecruiterLoginRoute
   '/solutions': typeof SolutionsRoute
   '/system-design-studio': typeof SystemDesignStudioRoute
+  '/test-report': typeof TestReportRoute
   '/admin/ai-mentor': typeof AdminAiMentorRoute
   '/admin/collaboration': typeof AdminCollaborationRoute
   '/admin/hackathons': typeof AdminHackathonsRouteWithChildren
@@ -702,7 +702,6 @@ export interface FileRoutesByTo {
   '/analytics': typeof AnalyticsRoute
   '/auth': typeof AuthRoute
   '/book-demo': typeof BookDemoRoute
-  '/test-report': typeof TestReportRoute
   '/certificates': typeof CertificatesRoute
   '/dashboard': typeof DashboardRoute
   '/demo': typeof DemoRoute
@@ -715,6 +714,7 @@ export interface FileRoutesByTo {
   '/recruiter-login': typeof RecruiterLoginRoute
   '/solutions': typeof SolutionsRoute
   '/system-design-studio': typeof SystemDesignStudioRoute
+  '/test-report': typeof TestReportRoute
   '/admin/ai-mentor': typeof AdminAiMentorRoute
   '/admin/collaboration': typeof AdminCollaborationRoute
   '/admin/incidents': typeof AdminIncidentsRoute
@@ -793,7 +793,6 @@ export interface FileRoutesById {
   '/analytics': typeof AnalyticsRoute
   '/auth': typeof AuthRoute
   '/book-demo': typeof BookDemoRoute
-  '/test-report': typeof TestReportRoute
   '/careers': typeof CareersRouteWithChildren
   '/certificates': typeof CertificatesRoute
   '/collaboration': typeof CollaborationRouteWithChildren
@@ -810,6 +809,7 @@ export interface FileRoutesById {
   '/recruiter-login': typeof RecruiterLoginRoute
   '/solutions': typeof SolutionsRoute
   '/system-design-studio': typeof SystemDesignStudioRoute
+  '/test-report': typeof TestReportRoute
   '/admin/ai-mentor': typeof AdminAiMentorRoute
   '/admin/collaboration': typeof AdminCollaborationRoute
   '/admin/hackathons': typeof AdminHackathonsRouteWithChildren
@@ -892,7 +892,6 @@ export interface FileRouteTypes {
     | '/analytics'
     | '/auth'
     | '/book-demo'
-    | '/test-report'
     | '/careers'
     | '/certificates'
     | '/collaboration'
@@ -909,6 +908,7 @@ export interface FileRouteTypes {
     | '/recruiter-login'
     | '/solutions'
     | '/system-design-studio'
+    | '/test-report'
     | '/admin/ai-mentor'
     | '/admin/collaboration'
     | '/admin/hackathons'
@@ -1000,6 +1000,7 @@ export interface FileRouteTypes {
     | '/recruiter-login'
     | '/solutions'
     | '/system-design-studio'
+    | '/test-report'
     | '/admin/ai-mentor'
     | '/admin/collaboration'
     | '/admin/incidents'
@@ -1093,6 +1094,7 @@ export interface FileRouteTypes {
     | '/recruiter-login'
     | '/solutions'
     | '/system-design-studio'
+    | '/test-report'
     | '/admin/ai-mentor'
     | '/admin/collaboration'
     | '/admin/hackathons'
@@ -1174,7 +1176,6 @@ export interface RootRouteChildren {
   AnalyticsRoute: typeof AnalyticsRoute
   AuthRoute: typeof AuthRoute
   BookDemoRoute: typeof BookDemoRoute
-  TestReportRoute: typeof TestReportRoute
   CareersRoute: typeof CareersRouteWithChildren
   CertificatesRoute: typeof CertificatesRoute
   CollaborationRoute: typeof CollaborationRouteWithChildren
@@ -1191,6 +1192,7 @@ export interface RootRouteChildren {
   RecruiterLoginRoute: typeof RecruiterLoginRoute
   SolutionsRoute: typeof SolutionsRoute
   SystemDesignStudioRoute: typeof SystemDesignStudioRoute
+  TestReportRoute: typeof TestReportRoute
   LabSlugRoute: typeof LabSlugRouteWithChildren
   MockInterviewSlugRoute: typeof MockInterviewSlugRoute
   ProductSlugRoute: typeof ProductSlugRoute
@@ -1202,6 +1204,13 @@ export interface RootRouteChildren {
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
+    '/test-report': {
+      id: '/test-report'
+      path: '/test-report'
+      fullPath: '/test-report'
+      preLoaderRoute: typeof TestReportRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/system-design-studio': {
       id: '/system-design-studio'
       path: '/system-design-studio'
@@ -1319,13 +1328,6 @@ declare module '@tanstack/react-router' {
       path: '/book-demo'
       fullPath: '/book-demo'
       preLoaderRoute: typeof BookDemoRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/test-report': {
-      id: '/test-report'
-      path: '/test-report'
-      fullPath: '/test-report'
-      preLoaderRoute: typeof TestReportRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/auth': {
@@ -2160,7 +2162,6 @@ const rootRouteChildren: RootRouteChildren = {
   AnalyticsRoute: AnalyticsRoute,
   AuthRoute: AuthRoute,
   BookDemoRoute: BookDemoRoute,
-  TestReportRoute: TestReportRoute,
   CareersRoute: CareersRouteWithChildren,
   CertificatesRoute: CertificatesRoute,
   CollaborationRoute: CollaborationRouteWithChildren,
@@ -2177,6 +2178,7 @@ const rootRouteChildren: RootRouteChildren = {
   RecruiterLoginRoute: RecruiterLoginRoute,
   SolutionsRoute: SolutionsRoute,
   SystemDesignStudioRoute: SystemDesignStudioRoute,
+  TestReportRoute: TestReportRoute,
   LabSlugRoute: LabSlugRouteWithChildren,
   MockInterviewSlugRoute: MockInterviewSlugRoute,
   ProductSlugRoute: ProductSlugRoute,
