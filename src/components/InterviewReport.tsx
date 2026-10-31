@@ -331,6 +331,8 @@ export default function InterviewReport({
           </div>
         </header>
 
+        <ResultMessage r={r} onTryAgain={onTryAgain} onShare={share} onCopy={copy} />
+
         <section className="ir-hero">
           <div className="ir-score" style={{ ["--b-bg" as string]: b.bg, ["--b-fg" as string]: b.fg } as CSSProperties}>
             <p className="ir-lab">Overall score</p>
