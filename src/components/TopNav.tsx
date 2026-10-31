@@ -10,7 +10,6 @@ import YuvroLogo from "@/assets/YuvroLogo.png";
 const headerStats = [
   { label: "Streak", value: "1" },
   { label: "Points", value: "1000 XP" },
-  { label: "AI Credits", value: "35,371" },
 ];
 
 
