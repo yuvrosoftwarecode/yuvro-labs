@@ -102,6 +102,11 @@ const FOLLOWUPS = [
 
 function fmt(s: number) { return `${String(Math.floor(s / 60)).padStart(2, "0")}:${String(s % 60).padStart(2, "0")}`; }
 
+function CapturedReport({ slug, report, children }: { slug: string; report: Report; children: React.ReactNode }) {
+  useEffect(() => { captureInterviewReport(slug, report); }, [slug, report]);
+  return <>{children}</>;
+}
+
 function InterviewScreen() {
   const iv = Route.useLoaderData();
   const navigate = useNavigate();
@@ -203,12 +208,14 @@ function InterviewScreen() {
       })(),
     };
     return (
+      <CapturedReport slug={iv.slug} report={report}>
       <InterviewReport
         report={report}
         onBack={() => { captureInterviewReport(iv.slug, report); setSavedReport(report); navigate({ to: "/mock-interviews" }); }}
         onTryAgain={() => { setPhase("lobby"); setIdx(0); setAnswers([]); setLog([]); setFollowUp(null); setLeft(iv.minutes * 60); }}
         onLearn={() => navigate({ to: "/mock-interviews" })}
       />
+      </CapturedReport>
     );
   }
 
