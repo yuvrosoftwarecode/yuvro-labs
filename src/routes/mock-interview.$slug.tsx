@@ -170,7 +170,6 @@ function InterviewScreen() {
       duration: `${Math.floor(used / 60)}m ${used % 60}s`,
       date: new Date().toLocaleDateString("en-GB", { day: "numeric", month: "short", year: "numeric" }),
       score: overall,
-      percentile: Math.max(1, Math.min(99, overall - 5)),
       summary: `You answered ${answers.length} of ${questions.length} questions. Longer, example-driven answers score higher in this practice session.`,
       strength: answers.length ? "You engaged with the questions and gave written answers." : "You started the session.",
       focus: "Give structured answers with a concrete example and the trade-offs you considered.",

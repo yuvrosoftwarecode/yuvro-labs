@@ -29,7 +29,6 @@ const CSS = `
 .ir-big span{font-family:inherit;font-size:16px;font-weight:500;letter-spacing:0;opacity:.7}
 .ir-meter{height:8px;border-radius:4px;background:color-mix(in srgb,var(--b-fg) 18%,transparent);overflow:hidden;margin:14px 0}
 .ir-meter i{display:block;height:100%;background:var(--b-fg);border-radius:4px;transition:width .8s cubic-bezier(.3,.9,.3,1)}
-.ir-score p.ir-pct{margin:0;font-size:15px}
 .ir-sum{background:var(--card);border:1px solid var(--bar);border-radius:16px;padding:28px 32px}
 .ir-sum>p.ir-text{margin:0 0 22px;color:var(--body);font-size:14.5px;line-height:1.7}
 .ir-two{display:grid;grid-template-columns:1fr 1fr;gap:14px}
@@ -94,7 +93,6 @@ export type Report = {
   duration: string;        // "0m 11s"
   date: string;            // "30 Oct 2026"
   score: number;           // 0 to 100
-  percentile: number;      // "Better than X% of candidates"
   summary: string;
   strength: string;
   focus: string;
@@ -109,7 +107,6 @@ const SAMPLE: Report = {
   duration: "0m 11s",
   date: "30 Oct 2026",
   score: 5,
-  percentile: 72,
   summary:
     "The candidate did not answer the opening question. Instead of giving a professional introduction, they repeated the interviewer’s question back word for word. That points to a gap in interview preparation and communication, and the response gave no information about background, experience or fit for the Machine Learning Engineer role. The candidate would benefit from practising the basics of an interview before taking another one.",
   strength: "Communicated technical concepts clearly.",
@@ -254,7 +251,6 @@ export default function InterviewReport({
             <div className="ir-band">{b.label}</div>
             <div className="ir-big">{r.score}<span>/ 100</span></div>
             <div className="ir-meter"><i style={{ width: meter + "%" }} /></div>
-            <p className="ir-pct">Better than <b>{r.percentile}%</b> of candidates</p>
           </div>
           <div className="ir-sum">
             <p className="ir-lab">AI summary</p>
