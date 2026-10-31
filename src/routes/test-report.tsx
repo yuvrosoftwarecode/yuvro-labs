@@ -1,6 +1,11 @@
-import InterviewReport, { SAMPLE as SAMPLE_REPORT } from "@/components/InterviewReport";
+import { createFileRoute } from "@tanstack/react-router";
+import InterviewReport, { SAMPLE } from "@/components/InterviewReport";
 
-export default function TestReport() {
+function TestReport() {
   const score = Number(new URLSearchParams(window.location.search).get("score") ?? "85");
-  return <InterviewReport report={{ ...SAMPLE_REPORT, score }} onBack={() => history.back()} onTryAgain={() => {}} />;
+  return <InterviewReport report={{ ...SAMPLE, score }} onBack={() => history.back()} onTryAgain={() => {}} />;
 }
+
+export const Route = createFileRoute("/test-report")({
+  component: TestReport,
+});

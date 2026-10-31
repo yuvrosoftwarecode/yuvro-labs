@@ -26,6 +26,7 @@ import { Route as CollaborationRouteImport } from './routes/collaboration'
 import { Route as CertificatesRouteImport } from './routes/certificates'
 import { Route as CareersRouteImport } from './routes/careers'
 import { Route as BookDemoRouteImport } from './routes/book-demo'
+import { Route as TestReportRouteImport } from './routes/test-report'
 import { Route as AuthRouteImport } from './routes/auth'
 import { Route as AnalyticsRouteImport } from './routes/analytics'
 import { Route as AdminRouteImport } from './routes/admin'
@@ -187,6 +188,11 @@ const CareersRoute = CareersRouteImport.update({
 const BookDemoRoute = BookDemoRouteImport.update({
   id: '/book-demo',
   path: '/book-demo',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const TestReportRoute = TestReportRouteImport.update({
+  id: '/test-report',
+  path: '/test-report',
   getParentRoute: () => rootRouteImport,
 } as any)
 const AuthRoute = AuthRouteImport.update({
@@ -600,6 +606,7 @@ export interface FileRoutesByFullPath {
   '/analytics': typeof AnalyticsRoute
   '/auth': typeof AuthRoute
   '/book-demo': typeof BookDemoRoute
+  '/test-report': typeof TestReportRoute
   '/careers': typeof CareersRouteWithChildren
   '/certificates': typeof CertificatesRoute
   '/collaboration': typeof CollaborationRouteWithChildren
@@ -695,6 +702,7 @@ export interface FileRoutesByTo {
   '/analytics': typeof AnalyticsRoute
   '/auth': typeof AuthRoute
   '/book-demo': typeof BookDemoRoute
+  '/test-report': typeof TestReportRoute
   '/certificates': typeof CertificatesRoute
   '/dashboard': typeof DashboardRoute
   '/demo': typeof DemoRoute
@@ -785,6 +793,7 @@ export interface FileRoutesById {
   '/analytics': typeof AnalyticsRoute
   '/auth': typeof AuthRoute
   '/book-demo': typeof BookDemoRoute
+  '/test-report': typeof TestReportRoute
   '/careers': typeof CareersRouteWithChildren
   '/certificates': typeof CertificatesRoute
   '/collaboration': typeof CollaborationRouteWithChildren
@@ -883,6 +892,7 @@ export interface FileRouteTypes {
     | '/analytics'
     | '/auth'
     | '/book-demo'
+    | '/test-report'
     | '/careers'
     | '/certificates'
     | '/collaboration'
@@ -1164,6 +1174,7 @@ export interface RootRouteChildren {
   AnalyticsRoute: typeof AnalyticsRoute
   AuthRoute: typeof AuthRoute
   BookDemoRoute: typeof BookDemoRoute
+  TestReportRoute: typeof TestReportRoute
   CareersRoute: typeof CareersRouteWithChildren
   CertificatesRoute: typeof CertificatesRoute
   CollaborationRoute: typeof CollaborationRouteWithChildren
@@ -1308,6 +1319,13 @@ declare module '@tanstack/react-router' {
       path: '/book-demo'
       fullPath: '/book-demo'
       preLoaderRoute: typeof BookDemoRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/test-report': {
+      id: '/test-report'
+      path: '/test-report'
+      fullPath: '/test-report'
+      preLoaderRoute: typeof TestReportRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/auth': {
@@ -2142,6 +2160,7 @@ const rootRouteChildren: RootRouteChildren = {
   AnalyticsRoute: AnalyticsRoute,
   AuthRoute: AuthRoute,
   BookDemoRoute: BookDemoRoute,
+  TestReportRoute: TestReportRoute,
   CareersRoute: CareersRouteWithChildren,
   CertificatesRoute: CertificatesRoute,
   CollaborationRoute: CollaborationRouteWithChildren,
