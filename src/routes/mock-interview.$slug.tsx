@@ -1,3 +1,4 @@
+import InterviewReport, { type Report } from "@/components/InterviewReport";
 import { createFileRoute, Link, notFound } from "@tanstack/react-router";
 import { useEffect, useMemo, useRef, useState } from "react";
 import { ArrowLeft, Mic, MicOff, Video, VideoOff, Clock, ChevronRight, PhoneOff, MessageSquare, CheckCircle2, RotateCcw, Code2 } from "lucide-react";
@@ -100,6 +101,7 @@ function fmt(s: number) { return `${String(Math.floor(s / 60)).padStart(2, "0")}
 
 function InterviewScreen() {
   const iv = Route.useLoaderData();
+  const navigate = useNavigate();
   const questions = useMemo(() => BANK[iv.category], [iv.category]);
   const [phase, setPhase] = useState<"lobby" | "live" | "done">("lobby");
   const [idx, setIdx] = useState(0);
@@ -156,29 +158,41 @@ function InterviewScreen() {
   }
 
   if (phase === "done") {
-    const score = Math.min(95, 55 + answers.reduce((a, s) => a + Math.min(8, Math.floor(s.length / 40)), 0));
+    const used = iv.minutes * 60 - left;
+    const scoreOf = (a?: string) => (a ? Math.min(95, 30 + Math.floor(a.trim().length / 6)) : 0);
+    const qa = questions.map((x, k) => ({ x, a: answers[k] }));
+    const overall = Math.round(qa.reduce((t, r) => t + scoreOf(r.a), 0) / Math.max(1, qa.length));
+    const bySkill = new Map<string, number[]>();
+    qa.forEach(r => bySkill.set(r.x.skill, [...(bySkill.get(r.x.skill) ?? []), scoreOf(r.a)]));
+    const skills = [...bySkill].map(([name, v]) => ({ name, score: Math.round(v.reduce((a, b) => a + b, 0) / v.length / 10) }));
+    const report: Report = {
+      role: iv.name,
+      duration: `${Math.floor(used / 60)}m ${used % 60}s`,
+      date: new Date().toLocaleDateString("en-GB", { day: "numeric", month: "short", year: "numeric" }),
+      score: overall,
+      percentile: Math.max(1, Math.min(99, overall - 5)),
+      summary: `You answered ${answers.length} of ${questions.length} questions. Longer, example-driven answers score higher in this practice session.`,
+      strength: answers.length ? "You engaged with the questions and gave written answers." : "You started the session.",
+      focus: "Give structured answers with a concrete example and the trade-offs you considered.",
+      competencies: skills.length >= 3 ? skills.map(s => ({ name: s.name, value: s.score })) : [...skills.map(s => ({ name: s.name, value: s.score })), { name: "Communication", value: Math.round(overall / 10) }, { name: "Depth", value: Math.round(overall / 12) }].slice(0, Math.max(3, skills.length)),
+      skills: skills.map(s => ({ ...s, description: s.score >= 7 ? "Solid answer with good detail." : s.score >= 4 ? "Reasonable start; add more depth and examples." : "Needs practice — revisit the fundamentals." })),
+      questions: qa.map(r => ({
+        question: r.x.text,
+        category: r.x.skill,
+        score: scoreOf(r.a),
+        answer: r.a ?? "Not answered.",
+        missing: r.a ? "More specifics: a real example, numbers, and trade-offs." : "This question was not reached.",
+        tip: "Use a short structure: context, approach, trade-offs, result.",
+      })),
+      transcript: log.map((m, k) => ({ from: m.who, text: m.text, time: fmt(Math.round((used * k) / Math.max(1, log.length - 1))) })),
+    };
     return (
-      <Shell title={iv.name}>
-        <div className="mx-auto max-w-3xl px-6 py-10">
-          <div className="rounded-2xl border bg-card p-6">
-            <div className="flex items-center gap-2 text-xs uppercase tracking-widest text-muted-foreground">Vitarka summary</div>
-            <div className="mt-3 flex items-end gap-3"><div className="text-5xl font-semibold">{score}</div><div className="pb-2 text-sm text-muted-foreground">/ 100 practice score</div></div>
-            <p className="mt-2 text-sm text-muted-foreground">You answered {answers.length} prompts across {Math.min(idx + 1, questions.length)} topics. Longer, example-driven answers score higher.</p>
-            <div className="mt-5 grid gap-2 sm:grid-cols-2">
-              {questions.map((x, k) => (
-                <div key={k} className="rounded-lg border p-3 text-xs">
-                  <div className="font-medium">{x.skill}</div>
-                  <div className="mt-1 text-muted-foreground">{k <= idx ? "Answered" : "Not reached"}</div>
-                </div>
-              ))}
-            </div>
-            <div className="mt-6 flex gap-2">
-              <button onClick={() => { setPhase("lobby"); setIdx(0); setAnswers([]); setLog([]); setFollowUp(null); setLeft(iv.minutes * 60); }} className="inline-flex items-center gap-1 rounded-md border px-3 py-2 text-sm hover:bg-muted"><RotateCcw className="h-4 w-4" /> Retake</button>
-              <Link to="/mock-interviews" className="inline-flex items-center gap-1 rounded-md bg-primary px-3 py-2 text-sm font-medium text-primary-foreground">Back to interviews</Link>
-            </div>
-          </div>
-        </div>
-      </Shell>
+      <InterviewReport
+        report={report}
+        onBack={() => navigate({ to: "/mock-interviews" })}
+        onTryAgain={() => { setPhase("lobby"); setIdx(0); setAnswers([]); setLog([]); setFollowUp(null); setLeft(iv.minutes * 60); }}
+        onLearn={() => navigate({ to: "/mock-interviews" })}
+      />
     );
   }
 
