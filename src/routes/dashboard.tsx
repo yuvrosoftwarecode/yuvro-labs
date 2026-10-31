@@ -18,33 +18,16 @@ function Hub() {
   const { user } = useAuth();
   const navigate = useNavigate();
   const [enrolled, setEnrolled] = useState<string[]>([]);
-  const [q, setQ] = useState("");
-  const [cats, setCats] = useState<Category[]>([]);
-  const [diffs, setDiffs] = useState<Array<typeof DIFFICULTIES[number]>>([]);
-  const [langs, setLangs] = useState<string[]>([]);
 
   useEffect(() => { setEnrolled(getEnrolled()); }, []);
 
   const enrolledLabs = useMemo(() => labs.filter(l => enrolled.includes(l.slug)), [enrolled]);
   const featuredLabs = useMemo(() => FEATURED_SLUGS.map(s => labs.find(l => l.slug === s)).filter(Boolean) as Lab[], []);
-  const filteredAll = useMemo(() => {
-    const s = q.trim().toLowerCase();
-    return labs.filter(l => {
-      if (s && !l.name.toLowerCase().includes(s) && !l.description.toLowerCase().includes(s)) return false;
-      if (cats.length && !cats.includes(LAB_CATEGORY[l.slug])) return false;
-      if (diffs.length && !diffs.includes(l.difficulty)) return false;
-      if (langs.length && !(LAB_LANGUAGES[l.slug] ?? []).some(x => langs.includes(x))) return false;
-      return true;
-    });
-  }, [q, cats, diffs, langs]);
 
   const toggle = (slug: string) => {
     if (enrolled.includes(slug)) { unenroll(slug); setEnrolled(prev => prev.filter(s => s !== slug)); }
     else { enroll(slug); setEnrolled(prev => [...prev, slug]); }
   };
-  const clearFilters = () => { setCats([]); setDiffs([]); setLangs([]); setQ(""); };
-  const hasFilters = !!(cats.length || diffs.length || langs.length || q);
-  const toggleIn = <T,>(arr: T[], v: T) => arr.includes(v) ? arr.filter(x => x !== v) : [...arr, v];
 
 
   return (
@@ -55,6 +38,10 @@ function Hub() {
           userName={user?.name.trim().split(/\s+/)[0]}
           onContinue={() => navigate({ href: "/java-lab" })}
         />
+
+        <div className="mt-8">
+          <UpcomingLabsCarousel onNotify={() => { /* save the user's interest in this lab */ }} />
+        </div>
 
         <div className="mt-8 space-y-10">
           {/* My labs — horizontal scroll */}
