@@ -50,9 +50,9 @@ export function TopNav({ rightSlot, activeOverride }: { rightSlot?: React.ReactN
             className="grid h-8 w-8 place-items-center rounded-md border hover:bg-accent text-muted-foreground hover:text-foreground transition-colors">
             {theme === "dark" ? <Sun className="h-4 w-4" /> : <Moon className="h-4 w-4" />}
           </button>
-          <div className="hidden md:flex items-center rounded-lg border border-border bg-accent/40 divide-x divide-border text-xs" role="group" aria-label="Your stats">
+          <div className="hidden md:flex items-center gap-5 text-xs" role="group" aria-label="Your stats">
             {headerStats.map((s) => (
-              <div key={s.label} className="flex items-baseline gap-1.5 px-3 py-1">
+              <div key={s.label} className="flex items-baseline gap-1.5">
                 <span className="text-muted-foreground">{s.label}</span>
                 <span className="font-semibold text-foreground tabular-nums">{s.value}</span>
               </div>
