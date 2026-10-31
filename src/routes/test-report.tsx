@@ -1,4 +1,4 @@
-import InterviewReport, { SAMPLE_REPORT } from "@/components/InterviewReport";
+import InterviewReport, { SAMPLE as SAMPLE_REPORT } from "@/components/InterviewReport";
 
 export default function TestReport() {
   const score = Number(new URLSearchParams(window.location.search).get("score") ?? "85");

@@ -118,7 +118,7 @@ export type Report = {
   transcript: { from: "ai" | "me"; text: string; time: string }[];
 };
 
-const SAMPLE: Report = {
+export const SAMPLE: Report = {
   role: "Machine Learning Engineer",
   duration: "0m 11s",
   date: "30 Oct 2026",
