@@ -85,61 +85,6 @@ function Hub() {
             </HScroll>
           </section>
 
-          {/* All labs catalog with sidebar filters */}
-          <section>
-            <div className="mb-4 flex items-end justify-between gap-3 flex-wrap">
-              <div className="min-w-0">
-                <h2 className="text-xl font-semibold">All labs</h2>
-                <p className="text-xs text-muted-foreground mt-0.5">{filteredAll.length} of {labs.length} labs</p>
-              </div>
-              <div className="relative">
-                <Search className="absolute left-2.5 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-muted-foreground" />
-                <input value={q} onChange={e => setQ(e.target.value)} placeholder="Search labs…"
-                  className="pl-8 pr-3 py-1.5 text-xs rounded-md border border-border bg-transparent w-56 outline-none focus:border-primary" />
-              </div>
-            </div>
-
-            <div className="grid gap-6 md:grid-cols-[220px_minmax(0,1fr)]">
-              <aside className="rounded-xl border bg-card/40 p-4 md:sticky md:top-20 self-start space-y-5">
-                <div className="flex items-center justify-between">
-                  <span className="text-xs font-semibold">Filters</span>
-                  {hasFilters && (
-                    <button onClick={clearFilters} className="text-[10px] text-muted-foreground hover:text-foreground underline">Clear</button>
-                  )}
-                </div>
-                <FilterGroup label="Category">
-                  {CATEGORIES.map(c => (
-                    <CheckRow key={c} checked={cats.includes(c)} onChange={() => setCats(prev => toggleIn(prev, c))} label={c} />
-                  ))}
-                </FilterGroup>
-                <FilterGroup label="Difficulty">
-                  {DIFFICULTIES.map(d => (
-                    <CheckRow key={d} checked={diffs.includes(d)} onChange={() => setDiffs(prev => toggleIn(prev, d))} label={d} />
-                  ))}
-                </FilterGroup>
-                <FilterGroup label="Language">
-                  {ALL_LANGUAGES.map(l => (
-                    <CheckRow key={l} checked={langs.includes(l)} onChange={() => setLangs(prev => toggleIn(prev, l))} label={l} />
-                  ))}
-                </FilterGroup>
-              </aside>
-
-              <div className="min-w-0">
-                {filteredAll.length === 0 ? (
-                  <div className="rounded-xl border border-dashed bg-card/40 p-10 text-center text-sm text-muted-foreground">
-                    No labs match these filters.
-                  </div>
-                ) : (
-                  <div className="grid gap-3 sm:grid-cols-2">
-                    {filteredAll.map(lab => (
-                      <CatalogCard key={lab.slug} lab={lab} isEnrolled={enrolled.includes(lab.slug)} onToggle={() => toggle(lab.slug)} />
-                    ))}
-                  </div>
-                )}
-              </div>
-            </div>
-          </section>
-
         </div>
       </main>
     </div>
