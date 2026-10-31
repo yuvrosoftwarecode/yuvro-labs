@@ -81,13 +81,13 @@ function Hub() {
             </HScroll>
           </section>
 
-          {/* Upcoming labs carousel */}
-          <section>
-            <UpcomingLabsCarousel onNotify={() => { /* save the user's interest in this lab */ }} />
-          </section>
-
         </div>
       </main>
+
+      {/* Upcoming labs carousel — full page width */}
+      <section className="mt-10 pb-10">
+        <UpcomingLabsCarousel onNotify={() => { /* save the user's interest in this lab */ }} />
+      </section>
     </div>
 
   );

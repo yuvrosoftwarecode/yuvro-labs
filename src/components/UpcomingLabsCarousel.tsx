@@ -9,10 +9,10 @@ const CSS = `
 .ul,.ul *{box-sizing:border-box}
 .ul button{font:inherit;color:inherit;background:none;border:0;padding:0;cursor:pointer}
 .ul :focus-visible{outline:3px solid var(--ink);outline-offset:3px;border-radius:8px}
-.ul-sec{max-width:1100px;margin:0 auto;border-radius:28px;padding:36px 0 26px;overflow:hidden;color:var(--ink);font-family:"DM Sans",system-ui,sans-serif;background:color-mix(in srgb,var(--accent) 11%,var(--page));transition:background-color .5s}
+.ul-sec{max-width:none;margin:0;border-radius:0;padding:36px 0 26px;overflow:hidden;color:var(--ink);font-family:"DM Sans",system-ui,sans-serif;background:color-mix(in srgb,var(--accent) 11%,var(--page));transition:background-color .5s}
 .ul-head{padding:0 36px;display:flex;align-items:baseline;justify-content:space-between;gap:16px;flex-wrap:wrap}
-.ul-head h2{font-family:"Fraunces",Georgia,serif;font-weight:600;font-size:clamp(30px,4.4vw,42px);letter-spacing:-.025em;margin:0;line-height:1.05;color:var(--ink)}
-.ul-head p{margin:0;color:var(--muted);font-size:15px}
+.ul-head h2{font-family:"DM Sans",system-ui,sans-serif;font-weight:600;font-size:20px;letter-spacing:0;margin:0;line-height:1.2;color:var(--ink)}
+.ul-head p{margin:0;color:var(--muted);font-size:12px}
 .ul-stage{position:relative;height:410px;margin-top:14px;--w:290px}
 .ul-card{position:absolute;left:50%;top:22px;width:var(--w);height:350px;margin-left:calc(var(--w) / -2);border-radius:28px;background:var(--c);color:#fff;padding:26px;display:flex;flex-direction:column;overflow:hidden;cursor:pointer;transition:transform .5s cubic-bezier(.3,.9,.3,1),opacity .4s,box-shadow .4s;box-shadow:0 10px 24px -14px rgba(0,0,0,.35)}
 .ul-card.on{cursor:default;box-shadow:0 22px 40px -18px color-mix(in srgb,var(--c) 70%,#000)}
