@@ -94,7 +94,7 @@ function Landing() {
 
   /* Real login routes */
   const goCompany = () => nav({ to: "/recruiter-login" });
-  const goDeveloper = () => nav({ to: "/auth" });
+  const goDeveloper = () => nav({ to: "/auth", search: { tab: "signin" } });
 
   /* Rotating headline word */
   const [wordIdx, setWordIdx] = useState(0);
