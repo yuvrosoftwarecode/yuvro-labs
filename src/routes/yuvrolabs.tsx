@@ -248,6 +248,26 @@ function Landing() {
           </ul>
         </section>
       </div>
+      <footer className="foot">
+        <div className="fwrap">
+          <span className="fcopy">© {new Date().getFullYear()} Yuvro Labs. All rights reserved.</span>
+          <a className="fmail" href="mailto:contact@yuvrolabs.com">contact@yuvrolabs.com</a>
+          <nav className="fsocial" aria-label="Social media">
+            <a href="https://www.linkedin.com/company/yuvrolabs" target="_blank" rel="noreferrer" aria-label="LinkedIn">
+              <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4.98 3.5a2.5 2.5 0 1 1 0 5 2.5 2.5 0 0 1 0-5zM3 9h4v12H3zM9 9h3.8v1.7h.05c.53-1 1.83-2.05 3.77-2.05 4.03 0 4.78 2.65 4.78 6.1V21h-4v-5.5c0-1.31-.02-3-1.83-3-1.83 0-2.11 1.43-2.11 2.9V21H9z"/></svg>
+            </a>
+            <a href="https://www.reddit.com/r/yuvrolabs" target="_blank" rel="noreferrer" aria-label="Reddit">
+              <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M22 12a2.2 2.2 0 0 0-3.7-1.6c-1-.7-2.4-1.2-3.9-1.3l.8-3.6 2.5.5a1.8 1.8 0 1 0 .2-.9l-3.1-.6a.5.5 0 0 0-.6.4l-.9 4.1c-1.5.1-2.9.6-3.9 1.3A2.2 2.2 0 1 0 4.4 14c-.05.3-.05.7 0 1 0 2.8 3.4 5 7.6 5s7.6-2.2 7.6-5c.05-.3.05-.7 0-1A2.2 2.2 0 0 0 22 12zm-13.5 1.5a1.5 1.5 0 1 1 3 0 1.5 1.5 0 0 1-3 0zm7 0a1.5 1.5 0 1 1 3 0 1.5 1.5 0 0 1-3 0zm-6.7 3.4a.5.5 0 0 1 .7-.1c.4.3 1.4.9 2.5.9s2.1-.6 2.5-.9a.5.5 0 1 1 .6.8c-.6.5-1.8 1.1-3.1 1.1s-2.5-.6-3.1-1.1a.5.5 0 0 1-.1-.7z"/></svg>
+            </a>
+            <a href="https://discord.gg/yuvrolabs" target="_blank" rel="noreferrer" aria-label="Discord">
+              <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20.3 4.4A19.8 19.8 0 0 0 15.4 3a.5.5 0 0 0-.5.2c-.2.4-.5.9-.6 1.3a18.3 18.3 0 0 0-4.6 0A12.6 12.6 0 0 0 9 3.2a.5.5 0 0 0-.5-.2 19.8 19.8 0 0 0-4.9 1.5.5.5 0 0 0-.2.2A20.4 20.4 0 0 0 .1 18.1a.5.5 0 0 0 .2.3 19.9 19.9 0 0 0 6 3 .5.5 0 0 0 .6-.2c.5-.6.9-1.3 1.2-2a.5.5 0 0 0-.3-.7 13.1 13.1 0 0 1-1.9-.9.5.5 0 0 1 0-.8l.9-.7a.5.5 0 0 1 .5 0 14.2 14.2 0 0 0 12 0 .5.5 0 0 1 .5 0l.9.7a.5.5 0 0 1 0 .8c-.6.4-1.2.7-1.9.9a.5.5 0 0 0-.3.7c.4.7.8 1.4 1.2 2a.5.5 0 0 0 .6.2 19.8 19.8 0 0 0 6-3 .5.5 0 0 0 .2-.3c.5-5.2-.8-9.7-3.5-13.7a.4.4 0 0 0-.2-.2zM8.7 15.3c-1.2 0-2.1-1.1-2.1-2.4s.9-2.4 2.1-2.4 2.2 1.1 2.1 2.4c0 1.3-.9 2.4-2.1 2.4zm6.6 0c-1.2 0-2.1-1.1-2.1-2.4s.9-2.4 2.1-2.4 2.2 1.1 2.1 2.4c0 1.3-.9 2.4-2.1 2.4z"/></svg>
+            </a>
+            <a href="https://twitter.com/yuvrolabs" target="_blank" rel="noreferrer" aria-label="Twitter">
+              <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M18.9 2H22l-6.8 7.8L23.2 22h-6.3l-4.9-6.4L6.4 22H3.3l7.3-8.3L1.5 2h6.4l4.4 5.9L18.9 2zm-1.1 18h1.7L7.1 3.9H5.3L17.8 20z"/></svg>
+            </a>
+          </nav>
+        </div>
+      </footer>
       <div className={`toast${toast ? " show" : ""}`} role="status">{toast}</div>
     </div>
   );
@@ -281,7 +301,7 @@ const CSS = `
 .yl .head{text-align:center;margin:clamp(56px,9vw,104px) 0 clamp(52px,7vw,84px);animation:yl-fade .6s ease}
 @keyframes yl-fade{from{opacity:0;transform:translateY(10px)}}
 .yl .sub{margin:0;color:var(--muted);font-size:clamp(13px,1.2vw,15px)}
-.yl h1.hero{font-family:"Inter",ui-sans-serif,system-ui,sans-serif;font-weight:700;font-size:clamp(26px,4vw,44px);line-height:1.08;letter-spacing:-.015em;margin:0 0 14px}
+.yl h1.hero{font-family:"Inter",ui-sans-serif,system-ui,sans-serif;font-weight:700;font-size:clamp(40px,6.2vw,76px);line-height:1.06;letter-spacing:-.015em;margin:0 0 22px}
 .yl h1.hero>span{display:block}
 .yl h1.hero .w{height:1.12em;overflow:hidden}
 .yl .gold{display:inline-block;color:#a8782a;transition:opacity .3s ease,transform .3s ease}
@@ -353,5 +373,15 @@ const CSS = `
 @media(max-width:900px){.yl .trial{grid-template-columns:1fr;padding:34px 24px;gap:28px}}
 .yl .toast{position:fixed;left:50%;bottom:calc(24px + env(safe-area-inset-bottom,0px));transform:translate(-50%,16px);background:var(--ink);color:var(--page);padding:10px 16px;border-radius:12px;font-weight:600;font-size:12.5px;opacity:0;pointer-events:none;transition:.3s;z-index:30}
 .yl .toast.show{opacity:1;transform:translate(-50%,0)}
+.yl .foot{margin-top:36px;border-top:1px solid rgba(100,109,132,.18)}
+.yl .fwrap{max-width:1120px;margin:0 auto;padding:18px 0 4px;display:flex;align-items:center;gap:18px;flex-wrap:wrap}
+.yl .fcopy{font-size:12px;color:var(--muted)}
+.yl .fmail{font-size:12px;color:var(--muted);text-decoration:none;margin-right:auto}
+.yl .fmail:hover{color:var(--ink)}
+.yl .fsocial{display:flex;gap:6px}
+.yl .fsocial a{display:flex;align-items:center;justify-content:center;width:30px;height:30px;border-radius:8px;color:var(--muted);transition:color .15s,background .15s}
+.yl .fsocial a:hover{color:#f7931e;background:rgba(247,147,30,.1)}
+.yl .fsocial svg{width:16px;height:16px;fill:currentColor}
+@media(max-width:600px){.yl .fwrap{flex-direction:column;gap:10px;text-align:center}.yl .fmail{margin-right:0}}
 @media(prefers-reduced-motion:reduce){.yl *{animation:none!important;transition:none!important}}
 `;
