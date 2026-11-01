@@ -270,18 +270,18 @@ const CSS = `
 .yl .nav{display:flex;align-items:center;gap:30px}
 .yl .logo{display:flex;text-decoration:none}
 .yl .links{display:flex;gap:4px;margin-right:auto}
-.yl .links a{position:relative;padding:9px 14px;border-radius:10px;font-weight:600;font-size:15.5px;color:var(--muted);text-decoration:none;transition:color .15s}
+.yl .links a{position:relative;padding:8px 12px;border-radius:10px;font-weight:600;font-size:13px;color:var(--muted);text-decoration:none;transition:color .15s}
 .yl .links a::after{content:"";position:absolute;left:14px;right:14px;bottom:0;height:3px;border-radius:3px;background:#f7931e;transform:scaleX(0);transform-origin:left;transition:transform .25s ease}
 .yl .links a:hover,.yl .links a:focus-visible{color:var(--ink)}
 .yl .links a:hover::after,.yl .links a:focus-visible::after{transform:scaleX(1)}
-.yl .demo{background:#f7931e;color:#fff;font-weight:700;font-size:15px;padding:12px 22px;border-radius:12px;transition:transform .15s,box-shadow .15s}
+.yl .demo{background:#f7931e;color:#fff;font-weight:600;font-size:13px;padding:9px 16px;border-radius:10px;transition:transform .15s,box-shadow .15s}
 .yl .demo:hover{transform:translateY(-2px);box-shadow:0 8px 0 -3px rgba(247,147,30,.3)}
 @media(max-width:700px){.yl .links{display:none}.yl .nav{justify-content:space-between}}
 .yl .logo span{display:flex;background:#fff;border-radius:9px;padding:4px 10px;box-shadow:0 1px 0 rgba(0,0,0,.06)}
 .yl .head{text-align:center;margin:clamp(56px,9vw,104px) 0 clamp(52px,7vw,84px);animation:yl-fade .6s ease}
 @keyframes yl-fade{from{opacity:0;transform:translateY(10px)}}
-.yl .sub{margin:0;color:var(--muted);font-size:clamp(17px,1.7vw,20px)}
-.yl h1.hero{font-family:"Inter",ui-sans-serif,system-ui,sans-serif;font-weight:700;font-size:clamp(40px,6.2vw,76px);line-height:1.06;letter-spacing:-.015em;margin:0 0 22px}
+.yl .sub{margin:0;color:var(--muted);font-size:clamp(13px,1.2vw,15px)}
+.yl h1.hero{font-family:"Inter",ui-sans-serif,system-ui,sans-serif;font-weight:700;font-size:clamp(26px,4vw,44px);line-height:1.08;letter-spacing:-.015em;margin:0 0 14px}
 .yl h1.hero>span{display:block}
 .yl h1.hero .w{height:1.12em;overflow:hidden}
 .yl .gold{display:inline-block;color:#a8782a;transition:opacity .3s ease,transform .3s ease}
@@ -297,21 +297,21 @@ const CSS = `
 .yl .big>*{position:relative;z-index:1}
 .yl .col{display:flex;flex-direction:column;gap:16px}
 .yl .col>.big{flex:1}
-.yl .eye{font-size:16px;font-weight:700;letter-spacing:.16em;color:var(--muted);padding-left:10px}
-.yl .big h2{font-family:"Fraunces","Instrument Serif",Georgia,serif;font-weight:600;font-size:clamp(32px,3.5vw,44px);line-height:1.04;letter-spacing:-.025em;margin:0;max-width:15ch}
+.yl .eye{font-size:11px;font-weight:700;letter-spacing:.16em;color:var(--muted);padding-left:10px}
+.yl .big h2{font-family:"Fraunces","Instrument Serif",Georgia,serif;font-weight:600;font-size:clamp(20px,2.4vw,28px);line-height:1.08;letter-spacing:-.025em;margin:0;max-width:15ch}
 .yl .list{list-style:none;margin:20px 0 auto;padding:0;display:grid;gap:4px}
 .yl .row{border-radius:18px;padding:13px 16px;cursor:pointer;transition:background .25s;animation:yl-rise .6s cubic-bezier(.2,.8,.2,1) backwards;animation-delay:calc(var(--i) * 80ms + .3s)}
 .yl .row:hover,.yl .row.open,.yl .row:focus-visible{background:rgba(255,255,255,.17)}
 .yl .rh{display:flex;align-items:center;gap:14px}
 .yl .rt{flex:1;min-width:0}
-.yl .rt b{display:block;font-family:"Fraunces","Instrument Serif",Georgia,serif;font-weight:600;font-size:clamp(21px,2.1vw,25px);line-height:1.15}
-.yl .rt small{display:block;font-size:16px;opacity:.9;margin-top:3px}
+.yl .rt b{display:block;font-family:"Fraunces","Instrument Serif",Georgia,serif;font-weight:600;font-size:clamp(15px,1.5vw,18px);line-height:1.2}
+.yl .rt small{display:block;font-size:12.5px;opacity:.9;margin-top:2px}
 .yl .rd{display:grid;grid-template-rows:0fr;transition:grid-template-rows .42s cubic-bezier(.3,.9,.3,1)}
 .yl .rd>div{overflow:hidden}
-.yl .rd p{margin:8px 0 4px 0;font-size:16.5px;line-height:1.5;opacity:0;transform:translateY(8px);transition:opacity .3s,transform .4s}
+.yl .rd p{margin:6px 0 2px 0;font-size:13px;line-height:1.5;opacity:0;transform:translateY(8px);transition:opacity .3s,transform .4s}
 .yl .row:hover .rd,.yl .row.open .rd,.yl .row:focus-visible .rd{grid-template-rows:1fr}
 .yl .row:hover .rd p,.yl .row.open .rd p,.yl .row:focus-visible .rd p{opacity:.96;transform:none;transition-delay:.12s}
-.yl .go{margin-top:24px;align-self:flex-start;display:inline-flex;gap:10px;align-items:center;background:#fff;color:var(--c);font-weight:700;font-size:17.5px;padding:16px 30px;border-radius:14px;box-shadow:0 6px 0 rgba(10,20,60,.28);transition:transform .15s,box-shadow .15s}
+.yl .go{margin-top:20px;align-self:flex-start;display:inline-flex;gap:8px;align-items:center;background:#fff;color:var(--c);font-weight:600;font-size:13.5px;padding:11px 20px;border-radius:10px;box-shadow:0 4px 0 rgba(10,20,60,.28);transition:transform .15s,box-shadow .15s}
 .yl .go:hover{transform:translateY(2px);box-shadow:0 4px 0 rgba(10,20,60,.28)}
 .yl .go:active{transform:translateY(6px);box-shadow:none}
 .yl .m{width:74px;height:40px;display:flex;flex-direction:column;gap:7px;justify-content:center;flex:none}
@@ -338,20 +338,20 @@ const CSS = `
 .yl .trial::before{content:"";position:absolute;right:-120px;top:-140px;width:380px;height:380px;border-radius:50%;background:radial-gradient(circle,rgba(247,147,30,.28),transparent 68%);pointer-events:none}
 .yl .trial>*{position:relative}
 .dark .yl .trial{background:#171d38;box-shadow:inset 0 0 0 1px rgba(255,255,255,.08)}
-.yl .trial h3{font-family:"Fraunces","Instrument Serif",Georgia,serif;font-weight:600;font-size:clamp(28px,3.4vw,42px);line-height:1.08;letter-spacing:-.025em;margin:0 0 12px}
+.yl .trial h3{font-family:"Fraunces","Instrument Serif",Georgia,serif;font-weight:600;font-size:clamp(19px,2.2vw,26px);line-height:1.12;letter-spacing:-.02em;margin:0 0 10px}
 .yl .trial h3 em{display:block;font-style:italic;font-weight:500;color:#f7931e}
-.yl .trial p{margin:0 0 26px;font-size:17px;color:rgba(255,255,255,.78);max-width:46ch}
-.yl .tbtn{background:#f7931e;color:#14192b;font-weight:700;font-size:16.5px;padding:16px 30px;border-radius:14px;box-shadow:0 6px 0 rgba(0,0,0,.35);transition:transform .15s,box-shadow .15s}
+.yl .trial p{margin:0 0 20px;font-size:13.5px;color:rgba(255,255,255,.78);max-width:52ch}
+.yl .tbtn{background:#f7931e;color:#14192b;font-weight:600;font-size:13.5px;padding:11px 20px;border-radius:10px;box-shadow:0 4px 0 rgba(0,0,0,.35);transition:transform .15s,box-shadow .15s}
 .yl .tbtn:hover{transform:translateY(2px);box-shadow:0 4px 0 rgba(0,0,0,.35)}
 .yl .tbtn:active{transform:translateY(6px);box-shadow:none}
 .yl .tr{list-style:none;margin:0;padding:0;display:grid;gap:12px}
 .yl .tr li{display:flex;gap:14px;align-items:flex-start;background:rgba(255,255,255,.07);border-radius:18px;padding:16px 18px}
 .yl .tr svg{width:26px;height:26px;flex:none;margin-top:1px;fill:rgba(247,147,30,.18);stroke:#f7931e;stroke-width:1.6}
 .yl .tr svg path{fill:none;stroke-width:2.2;stroke-linecap:round;stroke-linejoin:round}
-.yl .tr b{display:block;font-size:16.5px}
-.yl .tr span{display:block;font-size:14.5px;color:rgba(255,255,255,.7)}
+.yl .tr b{display:block;font-size:13.5px}
+.yl .tr span{display:block;font-size:12px;color:rgba(255,255,255,.7)}
 @media(max-width:900px){.yl .trial{grid-template-columns:1fr;padding:34px 24px;gap:28px}}
-.yl .toast{position:fixed;left:50%;bottom:calc(24px + env(safe-area-inset-bottom,0px));transform:translate(-50%,16px);background:var(--ink);color:var(--page);padding:12px 20px;border-radius:14px;font-weight:600;font-size:14.5px;opacity:0;pointer-events:none;transition:.3s;z-index:30}
+.yl .toast{position:fixed;left:50%;bottom:calc(24px + env(safe-area-inset-bottom,0px));transform:translate(-50%,16px);background:var(--ink);color:var(--page);padding:10px 16px;border-radius:12px;font-weight:600;font-size:12.5px;opacity:0;pointer-events:none;transition:.3s;z-index:30}
 .yl .toast.show{opacity:1;transform:translate(-50%,0)}
 @media(prefers-reduced-motion:reduce){.yl *{animation:none!important;transition:none!important}}
 `;
