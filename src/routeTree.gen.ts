@@ -9,6 +9,7 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
+import { Route as YuvrolabsRouteImport } from './routes/yuvrolabs'
 import { Route as SystemDesignStudioRouteImport } from './routes/system-design-studio'
 import { Route as SolutionsRouteImport } from './routes/solutions'
 import { Route as RecruiterLoginRouteImport } from './routes/recruiter-login'
@@ -104,6 +105,11 @@ import { Route as CollaborationSprintIdReportTeamRouteImport } from './routes/co
 import { Route as CollaborationSprintIdReportIndividualRouteImport } from './routes/collaboration.sprint.$id.report.individual'
 import { Route as AdminLabsIdSprintsSprintIdRouteImport } from './routes/admin.labs.$id.sprints.$sprintId'
 
+const YuvrolabsRoute = YuvrolabsRouteImport.update({
+  id: '/yuvrolabs',
+  path: '/yuvrolabs',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const SystemDesignStudioRoute = SystemDesignStudioRouteImport.update({
   id: '/system-design-studio',
   path: '/system-design-studio',
@@ -210,9 +216,9 @@ const IndexRoute = IndexRouteImport.update({
   getParentRoute: () => rootRouteImport,
 } as any)
 const YuvrolabsIndexRoute = YuvrolabsIndexRouteImport.update({
-  id: '/yuvrolabs/',
-  path: '/yuvrolabs/',
-  getParentRoute: () => rootRouteImport,
+  id: '/',
+  path: '/',
+  getParentRoute: () => YuvrolabsRoute,
 } as any)
 const RecruiterIndexRoute = RecruiterIndexRouteImport.update({
   id: '/',
@@ -616,6 +622,7 @@ export interface FileRoutesByFullPath {
   '/recruiter-login': typeof RecruiterLoginRoute
   '/solutions': typeof SolutionsRoute
   '/system-design-studio': typeof SystemDesignStudioRoute
+  '/yuvrolabs': typeof YuvrolabsRouteWithChildren
   '/admin/ai-mentor': typeof AdminAiMentorRoute
   '/admin/collaboration': typeof AdminCollaborationRoute
   '/admin/hackathons': typeof AdminHackathonsRouteWithChildren
@@ -801,6 +808,7 @@ export interface FileRoutesById {
   '/recruiter-login': typeof RecruiterLoginRoute
   '/solutions': typeof SolutionsRoute
   '/system-design-studio': typeof SystemDesignStudioRoute
+  '/yuvrolabs': typeof YuvrolabsRouteWithChildren
   '/admin/ai-mentor': typeof AdminAiMentorRoute
   '/admin/collaboration': typeof AdminCollaborationRoute
   '/admin/hackathons': typeof AdminHackathonsRouteWithChildren
@@ -899,6 +907,7 @@ export interface FileRouteTypes {
     | '/recruiter-login'
     | '/solutions'
     | '/system-design-studio'
+    | '/yuvrolabs'
     | '/admin/ai-mentor'
     | '/admin/collaboration'
     | '/admin/hackathons'
@@ -1083,6 +1092,7 @@ export interface FileRouteTypes {
     | '/recruiter-login'
     | '/solutions'
     | '/system-design-studio'
+    | '/yuvrolabs'
     | '/admin/ai-mentor'
     | '/admin/collaboration'
     | '/admin/hackathons'
@@ -1180,17 +1190,24 @@ export interface RootRouteChildren {
   RecruiterLoginRoute: typeof RecruiterLoginRoute
   SolutionsRoute: typeof SolutionsRoute
   SystemDesignStudioRoute: typeof SystemDesignStudioRoute
+  YuvrolabsRoute: typeof YuvrolabsRouteWithChildren
   LabSlugRoute: typeof LabSlugRouteWithChildren
   MockInterviewSlugRoute: typeof MockInterviewSlugRoute
   ProductSlugRoute: typeof ProductSlugRoute
   ProductEngineeringSimulationsRoute: typeof ProductEngineeringSimulationsRoute
   ProductVitarkaAiRoute: typeof ProductVitarkaAiRoute
   ProductIndexRoute: typeof ProductIndexRoute
-  YuvrolabsIndexRoute: typeof YuvrolabsIndexRoute
 }
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
+    '/yuvrolabs': {
+      id: '/yuvrolabs'
+      path: '/yuvrolabs'
+      fullPath: '/yuvrolabs'
+      preLoaderRoute: typeof YuvrolabsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/system-design-studio': {
       id: '/system-design-studio'
       path: '/system-design-studio'
@@ -1340,10 +1357,10 @@ declare module '@tanstack/react-router' {
     }
     '/yuvrolabs/': {
       id: '/yuvrolabs/'
-      path: '/yuvrolabs'
+      path: '/'
       fullPath: '/yuvrolabs/'
       preLoaderRoute: typeof YuvrolabsIndexRouteImport
-      parentRoute: typeof rootRouteImport
+      parentRoute: typeof YuvrolabsRoute
     }
     '/recruiter/': {
       id: '/recruiter/'
@@ -2112,6 +2129,18 @@ const RecruiterRouteWithChildren = RecruiterRoute._addFileChildren(
   RecruiterRouteChildren,
 )
 
+interface YuvrolabsRouteChildren {
+  YuvrolabsIndexRoute: typeof YuvrolabsIndexRoute
+}
+
+const YuvrolabsRouteChildren: YuvrolabsRouteChildren = {
+  YuvrolabsIndexRoute: YuvrolabsIndexRoute,
+}
+
+const YuvrolabsRouteWithChildren = YuvrolabsRoute._addFileChildren(
+  YuvrolabsRouteChildren,
+)
+
 interface LabSlugTicketTicketIdRouteChildren {
   LabSlugTicketTicketIdReviewRoute: typeof LabSlugTicketTicketIdReviewRoute
 }
@@ -2158,13 +2187,13 @@ const rootRouteChildren: RootRouteChildren = {
   RecruiterLoginRoute: RecruiterLoginRoute,
   SolutionsRoute: SolutionsRoute,
   SystemDesignStudioRoute: SystemDesignStudioRoute,
+  YuvrolabsRoute: YuvrolabsRouteWithChildren,
   LabSlugRoute: LabSlugRouteWithChildren,
   MockInterviewSlugRoute: MockInterviewSlugRoute,
   ProductSlugRoute: ProductSlugRoute,
   ProductEngineeringSimulationsRoute: ProductEngineeringSimulationsRoute,
   ProductVitarkaAiRoute: ProductVitarkaAiRoute,
   ProductIndexRoute: ProductIndexRoute,
-  YuvrolabsIndexRoute: YuvrolabsIndexRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
