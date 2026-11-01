@@ -28,7 +28,7 @@ export function TopNav({ rightSlot, activeOverride }: { rightSlot?: React.ReactN
   return (
     <header className="sticky top-0 z-40 glass border-b border-border">
       <div className="mx-auto flex h-14 max-w-[1400px] items-center gap-6 px-4">
-        <Link to="/" className="flex items-center gap-2 font-semibold tracking-tight">
+        <Link to="/yuvrolabs" className="flex items-center gap-2 font-semibold tracking-tight">
           <img src={YuvroLogo} alt="Yuvro" className="h-7 w-auto" />
           <span>Yuvro</span>
         </Link>
