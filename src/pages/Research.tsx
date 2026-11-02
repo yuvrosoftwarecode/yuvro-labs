@@ -110,6 +110,7 @@ export default function Research() {
   }, [all, view, followed, topic, source, period, sort, query]);
 
   const groups = useMemo(() => {
+    if (sort === "cited") return [["Most cited", papers.slice(0, limit)]] as const;
     const order = ["Today", "Yesterday", "This week", "Earlier"];
     const map = new Map<string, Paper[]>();
     papers.slice(0, limit).forEach((p) => {
@@ -117,7 +118,7 @@ export default function Research() {
       map.set(g, [...(map.get(g) || []), p]);
     });
     return order.filter((o) => map.has(o)).map((o) => [o, map.get(o) ?? []] as const);
-  }, [papers, limit]);
+  }, [papers, limit, sort]);
 
   const newThisWeek = (t: Topic) =>
     all.filter((p) => p.topic === t && dayDiff(p.date) < 7).length;
@@ -174,7 +175,7 @@ export default function Research() {
                             setTopic(t.name);
                             setView("latest");
                           }}
-                          className="text-base font-medium text-foreground hover:underline underline-offset-4"
+                          className="h-auto rounded-none p-0 text-base font-medium text-foreground hover:underline underline-offset-4"
                         >
                           {t.name}
                         </Button>
@@ -207,10 +208,10 @@ export default function Research() {
                     ))}
                   </FilterRow>
                   <FilterRow label="Sort">
-                    <Button variant="link" onClick={() => setSort("newest")} className={filterBtn(sort === "newest")}>
+                    <Button variant="link" onClick={() => setSort("newest")} aria-pressed={sort === "newest"} className={filterBtn(sort === "newest")}>
                       Newest
                     </Button>
-                    <Button variant="link" onClick={() => setSort("cited")} className={filterBtn(sort === "cited")}>
+                    <Button variant="link" onClick={() => setSort("cited")} aria-pressed={sort === "cited"} className={filterBtn(sort === "cited")}>
                       Most cited
                     </Button>
                   </FilterRow>
@@ -328,11 +329,10 @@ export default function Research() {
               Practice what you read
             </h2>
             <p className="mb-1.5 text-[13px] text-muted-foreground">Related labs on Yuvro</p>
-            {/* TODO: point these to the real lab routes */}
             <Link to="/mock-interview/$slug" params={{ slug: "genai-llm" }} search={{ report: false }} className="block border-b border-border py-2 text-[15px] hover:underline underline-offset-4">
               LLM mock interview
             </Link>
-            <Link to="/lab/$slug" params={{ slug: "system-design-ecommerce" }} className="block border-b border-border py-2 text-[15px] hover:underline underline-offset-4">
+            <Link to="/lab/$slug" params={{ slug: "systemdesign" }} className="block border-b border-border py-2 text-[15px] hover:underline underline-offset-4">
               System Design Lab
             </Link>
           </aside>

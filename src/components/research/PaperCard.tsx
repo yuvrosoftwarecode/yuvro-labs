@@ -105,7 +105,6 @@ export default function PaperCard({ paper, followed, onToggleFollow }: Props) {
                   Go deeper
                 </Button>
                 <Link to="/mock-interview/$slug" params={{ slug: "genai-llm" }} search={{ report: false }} className={link}>
-                  {/* TODO: point to the real LLM Lab route */}
                   Practice LLM interview
                 </Link>
                 <Button variant="link" className={link} onClick={() => setOpen(false)}>

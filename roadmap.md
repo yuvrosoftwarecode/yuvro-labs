@@ -1,6 +1,6 @@
 # Tasks
-- [ ] Add AI Research Papers navigation and supplied /research feed with filters, topics and inline sample summaries.
-- [ ] Verify research navigation, following persistence, filters, summaries and narrow-screen layout.
+- [x] Add AI Research Papers navigation and supplied /research feed with filters, topics and inline sample summaries.
+- [x] Verify research navigation, following persistence, filters, summaries and narrow-screen layout.
 - [x] Adapt the supplied profile design to a centered layout with application typography and verify profile tabs.
 - [x] Expose the three named system design labs with relevant sprints.
 - [x] Open the design studio for every system design task with isolated drafts and task context.
