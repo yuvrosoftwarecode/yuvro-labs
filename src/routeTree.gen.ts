@@ -12,6 +12,7 @@ import { Route as rootRouteImport } from './routes/__root'
 import { Route as YuvrolabsRouteImport } from './routes/yuvrolabs'
 import { Route as SystemDesignStudioRouteImport } from './routes/system-design-studio'
 import { Route as SolutionsRouteImport } from './routes/solutions'
+import { Route as ResearchRouteImport } from './routes/research'
 import { Route as RecruiterLoginRouteImport } from './routes/recruiter-login'
 import { Route as RecruiterRouteImport } from './routes/recruiter'
 import { Route as ProfileRouteImport } from './routes/profile'
@@ -118,6 +119,11 @@ const SystemDesignStudioRoute = SystemDesignStudioRouteImport.update({
 const SolutionsRoute = SolutionsRouteImport.update({
   id: '/solutions',
   path: '/solutions',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ResearchRoute = ResearchRouteImport.update({
+  id: '/research',
+  path: '/research',
   getParentRoute: () => rootRouteImport,
 } as any)
 const RecruiterLoginRoute = RecruiterLoginRouteImport.update({
@@ -620,6 +626,7 @@ export interface FileRoutesByFullPath {
   '/profile': typeof ProfileRoute
   '/recruiter': typeof RecruiterRouteWithChildren
   '/recruiter-login': typeof RecruiterLoginRoute
+  '/research': typeof ResearchRoute
   '/solutions': typeof SolutionsRoute
   '/system-design-studio': typeof SystemDesignStudioRoute
   '/yuvrolabs': typeof YuvrolabsRouteWithChildren
@@ -712,6 +719,7 @@ export interface FileRoutesByTo {
   '/pricing': typeof PricingRoute
   '/profile': typeof ProfileRoute
   '/recruiter-login': typeof RecruiterLoginRoute
+  '/research': typeof ResearchRoute
   '/solutions': typeof SolutionsRoute
   '/system-design-studio': typeof SystemDesignStudioRoute
   '/admin/ai-mentor': typeof AdminAiMentorRoute
@@ -806,6 +814,7 @@ export interface FileRoutesById {
   '/profile': typeof ProfileRoute
   '/recruiter': typeof RecruiterRouteWithChildren
   '/recruiter-login': typeof RecruiterLoginRoute
+  '/research': typeof ResearchRoute
   '/solutions': typeof SolutionsRoute
   '/system-design-studio': typeof SystemDesignStudioRoute
   '/yuvrolabs': typeof YuvrolabsRouteWithChildren
@@ -905,6 +914,7 @@ export interface FileRouteTypes {
     | '/profile'
     | '/recruiter'
     | '/recruiter-login'
+    | '/research'
     | '/solutions'
     | '/system-design-studio'
     | '/yuvrolabs'
@@ -997,6 +1007,7 @@ export interface FileRouteTypes {
     | '/pricing'
     | '/profile'
     | '/recruiter-login'
+    | '/research'
     | '/solutions'
     | '/system-design-studio'
     | '/admin/ai-mentor'
@@ -1090,6 +1101,7 @@ export interface FileRouteTypes {
     | '/profile'
     | '/recruiter'
     | '/recruiter-login'
+    | '/research'
     | '/solutions'
     | '/system-design-studio'
     | '/yuvrolabs'
@@ -1188,6 +1200,7 @@ export interface RootRouteChildren {
   ProfileRoute: typeof ProfileRoute
   RecruiterRoute: typeof RecruiterRouteWithChildren
   RecruiterLoginRoute: typeof RecruiterLoginRoute
+  ResearchRoute: typeof ResearchRoute
   SolutionsRoute: typeof SolutionsRoute
   SystemDesignStudioRoute: typeof SystemDesignStudioRoute
   YuvrolabsRoute: typeof YuvrolabsRouteWithChildren
@@ -1220,6 +1233,13 @@ declare module '@tanstack/react-router' {
       path: '/solutions'
       fullPath: '/solutions'
       preLoaderRoute: typeof SolutionsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/research': {
+      id: '/research'
+      path: '/research'
+      fullPath: '/research'
+      preLoaderRoute: typeof ResearchRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/recruiter-login': {
@@ -2185,6 +2205,7 @@ const rootRouteChildren: RootRouteChildren = {
   ProfileRoute: ProfileRoute,
   RecruiterRoute: RecruiterRouteWithChildren,
   RecruiterLoginRoute: RecruiterLoginRoute,
+  ResearchRoute: ResearchRoute,
   SolutionsRoute: SolutionsRoute,
   SystemDesignStudioRoute: SystemDesignStudioRoute,
   YuvrolabsRoute: YuvrolabsRouteWithChildren,
