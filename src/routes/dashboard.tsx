@@ -6,6 +6,7 @@ import UpcomingLabsCarousel from "@/components/UpcomingLabsCarousel";
 import { useAuth } from "@/lib/auth";
 import { ProgressRing } from "@/components/ProgressRing";
 import { labs, type Lab } from "@/lib/dummy";
+import { warRooms } from "@/lib/sreWarRooms";
 import { getEnrolled, enroll, unenroll } from "@/lib/enrollment";
 import { ArrowRight, Check, Plus, Lock } from "lucide-react";
 
@@ -35,7 +36,7 @@ function Hub() {
       <TopNav />
       <main className="mx-auto max-w-[1200px] px-4 py-8">
         <LearnerHero
-          userName={user?.name.trim().split(/\s+/)[0]}
+          userName={user?.name?.trim().split(/\s+/)[0]}
           onContinue={() => navigate({ href: "/java-lab" })}
         />
 
@@ -81,6 +82,27 @@ function Hub() {
             </HScroll>
           </section>
 
+          {/* SRE war rooms */}
+          <section>
+            <div className="mb-4">
+              <h2 className="text-xl font-semibold">SRE war rooms</h2>
+              <p className="text-xs text-muted-foreground mt-0.5">Respond to live production incidents across real-world domains before your SLA burns out.</p>
+            </div>
+            <HScroll>
+              {warRooms.map(w => (
+                <div key={w.slug} className="w-[300px] shrink-0 rounded-xl border bg-card p-5 hover:border-primary/50 transition">
+                  <span className="text-[10px] font-medium uppercase tracking-wide" style={{ color: "#f7931e" }}>SRE · {w.domain}</span>
+                  <h3 className="mt-1 font-semibold truncate">{w.name}</h3>
+                  <p className="text-xs text-muted-foreground line-clamp-2 mt-0.5">{w.description}</p>
+                  <div className="mt-3 text-xs text-muted-foreground">{w.incidents.length} incidents · {w.services.length} services</div>
+                  <Link to="/war-room/$slug" params={{ slug: w.slug }}
+                    className="mt-4 w-full inline-flex items-center justify-center gap-1 rounded-md bg-primary px-3 py-1.5 text-xs font-medium text-primary-foreground hover:opacity-90">
+                    Enter war room <ArrowRight className="h-3.5 w-3.5" />
+                  </Link>
+                </div>
+              ))}
+            </HScroll>
+          </section>
         </div>
       </main>
 

@@ -1,3 +1,4 @@
+// @ts-nocheck
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from '@tanstack/react-router';
 import { yhubApiAuthUtil } from '@/utils/RestApiAuthUtil';

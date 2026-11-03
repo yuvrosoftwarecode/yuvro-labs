@@ -40,6 +40,7 @@ import { Route as EvaluationIndexRouteImport } from './routes/evaluation.index'
 import { Route as CollaborationIndexRouteImport } from './routes/collaboration.index'
 import { Route as CareersIndexRouteImport } from './routes/careers.index'
 import { Route as AdminIndexRouteImport } from './routes/admin.index'
+import { Route as WarRoomSlugRouteImport } from './routes/war-room.$slug'
 import { Route as RecruiterSettingsRouteImport } from './routes/recruiter.settings'
 import { Route as RecruiterReportsRouteImport } from './routes/recruiter.reports'
 import { Route as RecruiterQuestionsRouteImport } from './routes/recruiter.questions'
@@ -266,6 +267,11 @@ const AdminIndexRoute = AdminIndexRouteImport.update({
   id: '/',
   path: '/',
   getParentRoute: () => AdminRoute,
+} as any)
+const WarRoomSlugRoute = WarRoomSlugRouteImport.update({
+  id: '/war-room/$slug',
+  path: '/war-room/$slug',
+  getParentRoute: () => rootRouteImport,
 } as any)
 const RecruiterSettingsRoute = RecruiterSettingsRouteImport.update({
   id: '/settings',
@@ -710,6 +716,7 @@ export interface FileRoutesByFullPath {
   '/recruiter/questions': typeof RecruiterQuestionsRoute
   '/recruiter/reports': typeof RecruiterReportsRouteWithChildren
   '/recruiter/settings': typeof RecruiterSettingsRoute
+  '/war-room/$slug': typeof WarRoomSlugRoute
   '/admin/': typeof AdminIndexRoute
   '/careers/': typeof CareersIndexRoute
   '/collaboration/': typeof CollaborationIndexRoute
@@ -805,6 +812,7 @@ export interface FileRoutesByTo {
   '/recruiter/github': typeof RecruiterGithubRoute
   '/recruiter/questions': typeof RecruiterQuestionsRoute
   '/recruiter/settings': typeof RecruiterSettingsRoute
+  '/war-room/$slug': typeof WarRoomSlugRoute
   '/admin': typeof AdminIndexRoute
   '/careers': typeof CareersIndexRoute
   '/collaboration': typeof CollaborationIndexRoute
@@ -910,6 +918,7 @@ export interface FileRoutesById {
   '/recruiter/questions': typeof RecruiterQuestionsRoute
   '/recruiter/reports': typeof RecruiterReportsRouteWithChildren
   '/recruiter/settings': typeof RecruiterSettingsRoute
+  '/war-room/$slug': typeof WarRoomSlugRoute
   '/admin/': typeof AdminIndexRoute
   '/careers/': typeof CareersIndexRoute
   '/collaboration/': typeof CollaborationIndexRoute
@@ -1016,6 +1025,7 @@ export interface FileRouteTypes {
     | '/recruiter/questions'
     | '/recruiter/reports'
     | '/recruiter/settings'
+    | '/war-room/$slug'
     | '/admin/'
     | '/careers/'
     | '/collaboration/'
@@ -1111,6 +1121,7 @@ export interface FileRouteTypes {
     | '/recruiter/github'
     | '/recruiter/questions'
     | '/recruiter/settings'
+    | '/war-room/$slug'
     | '/admin'
     | '/careers'
     | '/collaboration'
@@ -1215,6 +1226,7 @@ export interface FileRouteTypes {
     | '/recruiter/questions'
     | '/recruiter/reports'
     | '/recruiter/settings'
+    | '/war-room/$slug'
     | '/admin/'
     | '/careers/'
     | '/collaboration/'
@@ -1283,6 +1295,7 @@ export interface RootRouteChildren {
   ProductSlugRoute: typeof ProductSlugRoute
   ProductEngineeringSimulationsRoute: typeof ProductEngineeringSimulationsRoute
   ProductVitarkaAiRoute: typeof ProductVitarkaAiRoute
+  WarRoomSlugRoute: typeof WarRoomSlugRoute
   ProductIndexRoute: typeof ProductIndexRoute
   StudentLabSlugTicketTicketIdRoute: typeof StudentLabSlugTicketTicketIdRoute
 }
@@ -1505,6 +1518,13 @@ declare module '@tanstack/react-router' {
       fullPath: '/admin/'
       preLoaderRoute: typeof AdminIndexRouteImport
       parentRoute: typeof AdminRoute
+    }
+    '/war-room/$slug': {
+      id: '/war-room/$slug'
+      path: '/war-room/$slug'
+      fullPath: '/war-room/$slug'
+      preLoaderRoute: typeof WarRoomSlugRouteImport
+      parentRoute: typeof rootRouteImport
     }
     '/recruiter/settings': {
       id: '/recruiter/settings'
@@ -2340,6 +2360,7 @@ const rootRouteChildren: RootRouteChildren = {
   ProductSlugRoute: ProductSlugRoute,
   ProductEngineeringSimulationsRoute: ProductEngineeringSimulationsRoute,
   ProductVitarkaAiRoute: ProductVitarkaAiRoute,
+  WarRoomSlugRoute: WarRoomSlugRoute,
   ProductIndexRoute: ProductIndexRoute,
   StudentLabSlugTicketTicketIdRoute: StudentLabSlugTicketTicketIdRoute,
 }
