@@ -1039,3 +1039,9 @@
 .sd-flow { animation: sd-dash 1.2s linear infinite; }
 @keyframes sd-dash { to { stroke-dashoffset: -20; } }
 @media (prefers-reduced-motion: reduce) { .sd-flow { animation: none; } }
+
+/* Recruiter unified system — final precedence */
+.recruiter-theme .rec-btn { background-color: var(--rec-accent) !important; color: var(--rec-accent-fg) !important; }
+.recruiter-theme .rec-btn:hover { background-color: var(--rec-accent-hover) !important; }
+.recruiter-theme .rec-accent { color: var(--rec-accent) !important; }
+.recruiter-theme main, .recruiter-theme.min-h-screen { background-color: #ffffff !important; }
