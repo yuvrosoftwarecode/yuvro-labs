@@ -170,6 +170,53 @@ export const warRooms: WarRoom[] = [
       { id: "transcoder-leak", title: "Transcoder Leak", service: "transcode", story: "Transcoder memory climbs; frames are dropping.", fix: "restart", hint: "Rolling-restart the transcoders." },
     ],
   },
+  {
+    slug: "healthcare-ehr",
+    domain: "Healthcare",
+    name: "Hospital EHR War Room",
+    description: "Keep patient records, e-prescriptions and lab results flowing across a 40-hospital network during the night shift.",
+    services: [
+      { key: "gateway", label: "API Gateway", p99: 12 },
+      { key: "ehr", label: "EHR Records", p99: 25 },
+      { key: "rx", label: "e-Prescription", p99: 20 },
+      { key: "lab", label: "Lab Results (HL7)", p99: 35 },
+      { key: "imaging", label: "PACS Imaging", p99: 120 },
+      { key: "db", label: "PostgreSQL", p99: 5 },
+      { key: "queue", label: "HL7 Queue", p99: 8 },
+      { key: "idp", label: "SSO / IdP", p99: 15 },
+    ],
+    incidents: [
+      { id: "hl7-backlog", title: "Lab Results Delayed", service: "queue", story: "ICU doctors report lab results arriving 25 minutes late. The HL7 interface queue has 400k pending messages.", fix: "scale", hint: "Add more HL7 consumers to drain the backlog." },
+      { id: "rx-deploy", title: "Prescription Dosage Bug", service: "rx", story: "Tonight's deploy rounds dosage units incorrectly in the e-prescription form. Pharmacists are flagging orders.", fix: "rollback", hint: "Patient safety first — revert the deploy immediately." },
+      { id: "pacs-region", title: "Imaging Storage Outage", service: "imaging", story: "The primary PACS storage zone is unreachable; radiologists can't open CT scans.", fix: "failover", hint: "Switch imaging reads to the replica zone." },
+      { id: "audit-query", title: "Audit Report Locks", service: "db", story: "A compliance audit export is scanning the full patient table and blocking chart updates.", fix: "kill-queries", hint: "Stop the long-running audit query and reschedule it." },
+      { id: "sso-retry", title: "SSO Retry Storm", service: "idp", story: "Shift change — 6,000 nurses log in at once and clients retry aggressively, overloading SSO.", fix: "rate-limit", hint: "Throttle retries at the gateway so logins succeed in order." },
+      { id: "ai-notes", title: "AI Notes Widget Crash", service: "ehr", story: "A new AI clinical-notes summary panel is crashing patient chart loads.", fix: "disable-feature", hint: "Turn off the non-critical panel via feature flag." },
+    ],
+  },
+  {
+    slug: "airline-booking",
+    domain: "Travel",
+    name: "Airline Booking War Room",
+    description: "Hold up seat inventory, check-in and boarding passes while a monsoon storm reroutes 300 flights.",
+    services: [
+      { key: "gateway", label: "API Gateway", p99: 12 },
+      { key: "search", label: "Fare Search", p99: 40 },
+      { key: "seats", label: "Seat Inventory", p99: 18 },
+      { key: "checkin", label: "Web Check-in", p99: 22 },
+      { key: "gds", label: "GDS Connector", p99: 150 },
+      { key: "notify", label: "SMS / Push", p99: 30 },
+      { key: "db", label: "PostgreSQL", p99: 5 },
+      { key: "cache", label: "Redis Cache", p99: 2 },
+    ],
+    incidents: [
+      { id: "rebook-surge", title: "Rebooking Surge", service: "search", story: "Storm cancellations sent 2M passengers to search for new flights at once.", fix: "scale", hint: "Add fare search replicas." },
+      { id: "gds-down", title: "GDS Provider Outage", service: "gds", story: "The primary GDS region returns timeouts; no new tickets can be issued.", fix: "failover", hint: "Route bookings to the secondary GDS region." },
+      { id: "fare-cache", title: "Fare Cache Flushed", service: "cache", story: "An ops script flushed Redis; every fare lookup now hits the database.", fix: "warm-cache", hint: "Pre-load popular routes into cache." },
+      { id: "sms-flood", title: "Notification Flood", service: "notify", story: "The SMS vendor is slow and delay alerts are piling up, blocking check-in threads.", fix: "circuit-breaker", hint: "Fail fast on SMS and queue alerts for later." },
+      { id: "seat-leak", title: "Seat Map Memory Leak", service: "seats", story: "Seat inventory pods leak memory under seat-change bursts.", fix: "restart", hint: "Rolling-restart the pods to buy time." },
+    ],
+  },
 ];
 
 export const getWarRoom = (slug: string) => warRooms.find((w) => w.slug === slug);
