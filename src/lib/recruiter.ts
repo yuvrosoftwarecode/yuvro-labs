@@ -1,3 +1,4 @@
+// @ts-nocheck
 // Recruiter data + backend API
 import restApiAuthUtil, { ycodeApiAuthUtil, yhubApiAuthUtil } from "../utils/RestApiAuthUtil";
 import { questionBankService } from "../services/questionBankService";

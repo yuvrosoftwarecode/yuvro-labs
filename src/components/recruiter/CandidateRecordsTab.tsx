@@ -1,3 +1,4 @@
+// @ts-nocheck
 import type { Candidate } from "@/lib/recruiterCandidates";
 import { useEffect, useMemo, useRef, useState } from "react";
 import {

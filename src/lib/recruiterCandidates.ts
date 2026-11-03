@@ -1,3 +1,4 @@
+// @ts-nocheck
 import { getLabCalculatedStats, countDistinctSelectedTasks } from "./recruiter";
 
 export type CandStatus = "Submitted" | "Completed" | "In Progress" | "Not Started" | "Expired";

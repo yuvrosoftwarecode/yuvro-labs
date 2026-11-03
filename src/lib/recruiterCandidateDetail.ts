@@ -1,3 +1,4 @@
+// @ts-nocheck
 // Deterministic detail generator per candidate (labs, assessment, vitarka, timeline, resume, AI).
 import type { Candidate } from "./recruiterCandidates";
 

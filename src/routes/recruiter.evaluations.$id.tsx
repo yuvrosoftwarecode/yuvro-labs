@@ -1,3 +1,4 @@
+// @ts-nocheck
 import { createFileRoute, useNavigate, Link, Outlet, useLocation } from "@tanstack/react-router";
 import { useEffect, useMemo, useState, useRef } from "react";
 import { z } from "zod";

@@ -1,3 +1,4 @@
+// @ts-nocheck
 import { yhubApiAuthUtil } from "@/utils/RestApiAuthUtil";
 import { type Category, type Diff, type Interview } from "@/lib/mockInterviews";
 

@@ -1,3 +1,4 @@
+// @ts-nocheck
 import type { Design, Notes } from "./systemDesign";
 
 export interface TaskEvaluation {

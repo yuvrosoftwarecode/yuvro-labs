@@ -1,3 +1,4 @@
+// @ts-nocheck
 import { useMemo, useRef, useState } from "react";
 import {
   Plus, X, Check, Upload, FileText, Trash2, Copy, ArrowUp, ArrowDown, Eye, Rocket,

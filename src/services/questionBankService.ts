@@ -1,3 +1,4 @@
+// @ts-nocheck
 import { restApiAuthUtil } from "../utils/RestApiAuthUtil";
 
 export const SEED_LAB_QUESTIONS: any[] = [

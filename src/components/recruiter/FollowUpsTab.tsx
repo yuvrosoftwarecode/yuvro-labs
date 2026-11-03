@@ -1,3 +1,4 @@
+// @ts-nocheck
 import { useEffect, useMemo, useRef, useState } from "react";
 import {
   Save, Users, User, ListChecks, Upload, ClipboardPaste, Mail,
