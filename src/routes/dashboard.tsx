@@ -36,7 +36,7 @@ function Hub() {
       <TopNav />
       <main className="mx-auto max-w-[1200px] px-4 py-8">
         <LearnerHero
-          userName={user?.name.trim().split(/\s+/)[0]}
+          userName={user?.name?.trim().split(/\s+/)[0]}
           onContinue={() => navigate({ href: "/java-lab" })}
         />
 
