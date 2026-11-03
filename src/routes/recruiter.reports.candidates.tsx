@@ -1,7 +1,7 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { Search } from "lucide-react";
-import { listEvaluations } from "@/lib/recruiter";
+import { listEvaluations, Evaluation } from "@/lib/recruiter";
 import { getCandidates } from "@/lib/recruiterCandidates";
 import { PageHead, Panel, Table, Pill, StatTile } from "@/components/recruiter/reportsUi";
 
@@ -12,10 +12,14 @@ export const Route = createFileRoute("/recruiter/reports/candidates")({
 
 function CandidateReports() {
   const [q, setQ] = useState("");
-  const evals = useMemo(() => listEvaluations(), []);
+  const [evals, setEvals] = useState<Evaluation[]>([]);
+  useEffect(() => {
+    listEvaluations().then(data => setEvals(Array.isArray(data) ? data : []));
+  }, []);
+  const safeEvals = Array.isArray(evals) ? evals : [];
   const all = useMemo(
-    () => evals.flatMap(e => getCandidates(e.id, 120).map(c => ({ ...c, evalTitle: e.title }))),
-    [evals]
+    () => safeEvals.flatMap(e => getCandidates(e.id, 120).map(c => ({ ...c, evalTitle: e.title }))),
+    [safeEvals]
   );
 
   const filtered = useMemo(() => {

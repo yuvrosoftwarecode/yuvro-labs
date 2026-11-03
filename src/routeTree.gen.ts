@@ -13,6 +13,7 @@ import { Route as YuvrolabsRouteImport } from './routes/yuvrolabs'
 import { Route as SystemDesignStudioRouteImport } from './routes/system-design-studio'
 import { Route as SolutionsRouteImport } from './routes/solutions'
 import { Route as ResearchRouteImport } from './routes/research'
+import { Route as RecruiterSignupRouteImport } from './routes/recruiter-signup'
 import { Route as RecruiterLoginRouteImport } from './routes/recruiter-login'
 import { Route as RecruiterRouteImport } from './routes/recruiter'
 import { Route as ProfileRouteImport } from './routes/profile'
@@ -41,6 +42,10 @@ import { Route as CareersIndexRouteImport } from './routes/careers.index'
 import { Route as AdminIndexRouteImport } from './routes/admin.index'
 import { Route as RecruiterSettingsRouteImport } from './routes/recruiter.settings'
 import { Route as RecruiterReportsRouteImport } from './routes/recruiter.reports'
+import { Route as RecruiterQuestionsRouteImport } from './routes/recruiter.questions'
+import { Route as RecruiterGithubRouteImport } from './routes/recruiter.github'
+import { Route as RecruiterDashboardRouteImport } from './routes/recruiter.dashboard'
+import { Route as RecruiterBillingRouteImport } from './routes/recruiter.billing'
 import { Route as ProductVitarkaAiRouteImport } from './routes/product.vitarka-ai'
 import { Route as ProductEngineeringSimulationsRouteImport } from './routes/product.engineering-simulations'
 import { Route as ProductSlugRouteImport } from './routes/product.$slug'
@@ -99,6 +104,7 @@ import { Route as CollaborationSprintIdWorkspaceRouteImport } from './routes/col
 import { Route as AdminLabsIdSprintsRouteImport } from './routes/admin.labs.$id.sprints'
 import { Route as AdminLabsIdEditRouteImport } from './routes/admin.labs.$id.edit'
 import { Route as AdminLabsIdAttemptsRouteImport } from './routes/admin.labs.$id.attempts'
+import { Route as StudentLabSlugTicketTicketIdRouteImport } from './routes/student.lab.$slug.ticket.$ticketId'
 import { Route as RecruiterEvaluationsIdCandidatesCandidateIdRouteImport } from './routes/recruiter.evaluations.$id.candidates.$candidateId'
 import { Route as LabSlugTicketTicketIdReviewRouteImport } from './routes/lab.$slug.ticket.$ticketId.review'
 import { Route as CollaborationSprintIdTicketTicketIdRouteImport } from './routes/collaboration.sprint.$id.ticket.$ticketId'
@@ -124,6 +130,11 @@ const SolutionsRoute = SolutionsRouteImport.update({
 const ResearchRoute = ResearchRouteImport.update({
   id: '/research',
   path: '/research',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const RecruiterSignupRoute = RecruiterSignupRouteImport.update({
+  id: '/recruiter-signup',
+  path: '/recruiter-signup',
   getParentRoute: () => rootRouteImport,
 } as any)
 const RecruiterLoginRoute = RecruiterLoginRouteImport.update({
@@ -264,6 +275,26 @@ const RecruiterSettingsRoute = RecruiterSettingsRouteImport.update({
 const RecruiterReportsRoute = RecruiterReportsRouteImport.update({
   id: '/reports',
   path: '/reports',
+  getParentRoute: () => RecruiterRoute,
+} as any)
+const RecruiterQuestionsRoute = RecruiterQuestionsRouteImport.update({
+  id: '/questions',
+  path: '/questions',
+  getParentRoute: () => RecruiterRoute,
+} as any)
+const RecruiterGithubRoute = RecruiterGithubRouteImport.update({
+  id: '/github',
+  path: '/github',
+  getParentRoute: () => RecruiterRoute,
+} as any)
+const RecruiterDashboardRoute = RecruiterDashboardRouteImport.update({
+  id: '/dashboard',
+  path: '/dashboard',
+  getParentRoute: () => RecruiterRoute,
+} as any)
+const RecruiterBillingRoute = RecruiterBillingRouteImport.update({
+  id: '/billing',
+  path: '/billing',
   getParentRoute: () => RecruiterRoute,
 } as any)
 const ProductVitarkaAiRoute = ProductVitarkaAiRouteImport.update({
@@ -569,6 +600,12 @@ const AdminLabsIdAttemptsRoute = AdminLabsIdAttemptsRouteImport.update({
   path: '/$id/attempts',
   getParentRoute: () => AdminLabsRoute,
 } as any)
+const StudentLabSlugTicketTicketIdRoute =
+  StudentLabSlugTicketTicketIdRouteImport.update({
+    id: '/student/lab/$slug/ticket/$ticketId',
+    path: '/student/lab/$slug/ticket/$ticketId',
+    getParentRoute: () => rootRouteImport,
+  } as any)
 const RecruiterEvaluationsIdCandidatesCandidateIdRoute =
   RecruiterEvaluationsIdCandidatesCandidateIdRouteImport.update({
     id: '/candidates/$candidateId',
@@ -626,6 +663,7 @@ export interface FileRoutesByFullPath {
   '/profile': typeof ProfileRoute
   '/recruiter': typeof RecruiterRouteWithChildren
   '/recruiter-login': typeof RecruiterLoginRoute
+  '/recruiter-signup': typeof RecruiterSignupRoute
   '/research': typeof ResearchRoute
   '/solutions': typeof SolutionsRoute
   '/system-design-studio': typeof SystemDesignStudioRoute
@@ -666,6 +704,10 @@ export interface FileRoutesByFullPath {
   '/product/$slug': typeof ProductSlugRoute
   '/product/engineering-simulations': typeof ProductEngineeringSimulationsRoute
   '/product/vitarka-ai': typeof ProductVitarkaAiRoute
+  '/recruiter/billing': typeof RecruiterBillingRoute
+  '/recruiter/dashboard': typeof RecruiterDashboardRoute
+  '/recruiter/github': typeof RecruiterGithubRoute
+  '/recruiter/questions': typeof RecruiterQuestionsRoute
   '/recruiter/reports': typeof RecruiterReportsRouteWithChildren
   '/recruiter/settings': typeof RecruiterSettingsRoute
   '/admin/': typeof AdminIndexRoute
@@ -703,6 +745,7 @@ export interface FileRoutesByFullPath {
   '/collaboration/sprint/$id/ticket/$ticketId': typeof CollaborationSprintIdTicketTicketIdRoute
   '/lab/$slug/ticket/$ticketId/review': typeof LabSlugTicketTicketIdReviewRoute
   '/recruiter/evaluations/$id/candidates/$candidateId': typeof RecruiterEvaluationsIdCandidatesCandidateIdRoute
+  '/student/lab/$slug/ticket/$ticketId': typeof StudentLabSlugTicketTicketIdRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
@@ -719,6 +762,7 @@ export interface FileRoutesByTo {
   '/pricing': typeof PricingRoute
   '/profile': typeof ProfileRoute
   '/recruiter-login': typeof RecruiterLoginRoute
+  '/recruiter-signup': typeof RecruiterSignupRoute
   '/research': typeof ResearchRoute
   '/solutions': typeof SolutionsRoute
   '/system-design-studio': typeof SystemDesignStudioRoute
@@ -756,6 +800,10 @@ export interface FileRoutesByTo {
   '/product/$slug': typeof ProductSlugRoute
   '/product/engineering-simulations': typeof ProductEngineeringSimulationsRoute
   '/product/vitarka-ai': typeof ProductVitarkaAiRoute
+  '/recruiter/billing': typeof RecruiterBillingRoute
+  '/recruiter/dashboard': typeof RecruiterDashboardRoute
+  '/recruiter/github': typeof RecruiterGithubRoute
+  '/recruiter/questions': typeof RecruiterQuestionsRoute
   '/recruiter/settings': typeof RecruiterSettingsRoute
   '/admin': typeof AdminIndexRoute
   '/careers': typeof CareersIndexRoute
@@ -792,6 +840,7 @@ export interface FileRoutesByTo {
   '/collaboration/sprint/$id/ticket/$ticketId': typeof CollaborationSprintIdTicketTicketIdRoute
   '/lab/$slug/ticket/$ticketId/review': typeof LabSlugTicketTicketIdReviewRoute
   '/recruiter/evaluations/$id/candidates/$candidateId': typeof RecruiterEvaluationsIdCandidatesCandidateIdRoute
+  '/student/lab/$slug/ticket/$ticketId': typeof StudentLabSlugTicketTicketIdRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -814,6 +863,7 @@ export interface FileRoutesById {
   '/profile': typeof ProfileRoute
   '/recruiter': typeof RecruiterRouteWithChildren
   '/recruiter-login': typeof RecruiterLoginRoute
+  '/recruiter-signup': typeof RecruiterSignupRoute
   '/research': typeof ResearchRoute
   '/solutions': typeof SolutionsRoute
   '/system-design-studio': typeof SystemDesignStudioRoute
@@ -854,6 +904,10 @@ export interface FileRoutesById {
   '/product/$slug': typeof ProductSlugRoute
   '/product/engineering-simulations': typeof ProductEngineeringSimulationsRoute
   '/product/vitarka-ai': typeof ProductVitarkaAiRoute
+  '/recruiter/billing': typeof RecruiterBillingRoute
+  '/recruiter/dashboard': typeof RecruiterDashboardRoute
+  '/recruiter/github': typeof RecruiterGithubRoute
+  '/recruiter/questions': typeof RecruiterQuestionsRoute
   '/recruiter/reports': typeof RecruiterReportsRouteWithChildren
   '/recruiter/settings': typeof RecruiterSettingsRoute
   '/admin/': typeof AdminIndexRoute
@@ -891,6 +945,7 @@ export interface FileRoutesById {
   '/collaboration/sprint/$id/ticket/$ticketId': typeof CollaborationSprintIdTicketTicketIdRoute
   '/lab/$slug/ticket/$ticketId/review': typeof LabSlugTicketTicketIdReviewRoute
   '/recruiter/evaluations/$id/candidates/$candidateId': typeof RecruiterEvaluationsIdCandidatesCandidateIdRoute
+  '/student/lab/$slug/ticket/$ticketId': typeof StudentLabSlugTicketTicketIdRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -914,6 +969,7 @@ export interface FileRouteTypes {
     | '/profile'
     | '/recruiter'
     | '/recruiter-login'
+    | '/recruiter-signup'
     | '/research'
     | '/solutions'
     | '/system-design-studio'
@@ -954,6 +1010,10 @@ export interface FileRouteTypes {
     | '/product/$slug'
     | '/product/engineering-simulations'
     | '/product/vitarka-ai'
+    | '/recruiter/billing'
+    | '/recruiter/dashboard'
+    | '/recruiter/github'
+    | '/recruiter/questions'
     | '/recruiter/reports'
     | '/recruiter/settings'
     | '/admin/'
@@ -991,6 +1051,7 @@ export interface FileRouteTypes {
     | '/collaboration/sprint/$id/ticket/$ticketId'
     | '/lab/$slug/ticket/$ticketId/review'
     | '/recruiter/evaluations/$id/candidates/$candidateId'
+    | '/student/lab/$slug/ticket/$ticketId'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
@@ -1007,6 +1068,7 @@ export interface FileRouteTypes {
     | '/pricing'
     | '/profile'
     | '/recruiter-login'
+    | '/recruiter-signup'
     | '/research'
     | '/solutions'
     | '/system-design-studio'
@@ -1044,6 +1106,10 @@ export interface FileRouteTypes {
     | '/product/$slug'
     | '/product/engineering-simulations'
     | '/product/vitarka-ai'
+    | '/recruiter/billing'
+    | '/recruiter/dashboard'
+    | '/recruiter/github'
+    | '/recruiter/questions'
     | '/recruiter/settings'
     | '/admin'
     | '/careers'
@@ -1080,6 +1146,7 @@ export interface FileRouteTypes {
     | '/collaboration/sprint/$id/ticket/$ticketId'
     | '/lab/$slug/ticket/$ticketId/review'
     | '/recruiter/evaluations/$id/candidates/$candidateId'
+    | '/student/lab/$slug/ticket/$ticketId'
   id:
     | '__root__'
     | '/'
@@ -1101,6 +1168,7 @@ export interface FileRouteTypes {
     | '/profile'
     | '/recruiter'
     | '/recruiter-login'
+    | '/recruiter-signup'
     | '/research'
     | '/solutions'
     | '/system-design-studio'
@@ -1141,6 +1209,10 @@ export interface FileRouteTypes {
     | '/product/$slug'
     | '/product/engineering-simulations'
     | '/product/vitarka-ai'
+    | '/recruiter/billing'
+    | '/recruiter/dashboard'
+    | '/recruiter/github'
+    | '/recruiter/questions'
     | '/recruiter/reports'
     | '/recruiter/settings'
     | '/admin/'
@@ -1178,6 +1250,7 @@ export interface FileRouteTypes {
     | '/collaboration/sprint/$id/ticket/$ticketId'
     | '/lab/$slug/ticket/$ticketId/review'
     | '/recruiter/evaluations/$id/candidates/$candidateId'
+    | '/student/lab/$slug/ticket/$ticketId'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -1200,6 +1273,7 @@ export interface RootRouteChildren {
   ProfileRoute: typeof ProfileRoute
   RecruiterRoute: typeof RecruiterRouteWithChildren
   RecruiterLoginRoute: typeof RecruiterLoginRoute
+  RecruiterSignupRoute: typeof RecruiterSignupRoute
   ResearchRoute: typeof ResearchRoute
   SolutionsRoute: typeof SolutionsRoute
   SystemDesignStudioRoute: typeof SystemDesignStudioRoute
@@ -1210,6 +1284,7 @@ export interface RootRouteChildren {
   ProductEngineeringSimulationsRoute: typeof ProductEngineeringSimulationsRoute
   ProductVitarkaAiRoute: typeof ProductVitarkaAiRoute
   ProductIndexRoute: typeof ProductIndexRoute
+  StudentLabSlugTicketTicketIdRoute: typeof StudentLabSlugTicketTicketIdRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -1240,6 +1315,13 @@ declare module '@tanstack/react-router' {
       path: '/research'
       fullPath: '/research'
       preLoaderRoute: typeof ResearchRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/recruiter-signup': {
+      id: '/recruiter-signup'
+      path: '/recruiter-signup'
+      fullPath: '/recruiter-signup'
+      preLoaderRoute: typeof RecruiterSignupRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/recruiter-login': {
@@ -1436,6 +1518,34 @@ declare module '@tanstack/react-router' {
       path: '/reports'
       fullPath: '/recruiter/reports'
       preLoaderRoute: typeof RecruiterReportsRouteImport
+      parentRoute: typeof RecruiterRoute
+    }
+    '/recruiter/questions': {
+      id: '/recruiter/questions'
+      path: '/questions'
+      fullPath: '/recruiter/questions'
+      preLoaderRoute: typeof RecruiterQuestionsRouteImport
+      parentRoute: typeof RecruiterRoute
+    }
+    '/recruiter/github': {
+      id: '/recruiter/github'
+      path: '/github'
+      fullPath: '/recruiter/github'
+      preLoaderRoute: typeof RecruiterGithubRouteImport
+      parentRoute: typeof RecruiterRoute
+    }
+    '/recruiter/dashboard': {
+      id: '/recruiter/dashboard'
+      path: '/dashboard'
+      fullPath: '/recruiter/dashboard'
+      preLoaderRoute: typeof RecruiterDashboardRouteImport
+      parentRoute: typeof RecruiterRoute
+    }
+    '/recruiter/billing': {
+      id: '/recruiter/billing'
+      path: '/billing'
+      fullPath: '/recruiter/billing'
+      preLoaderRoute: typeof RecruiterBillingRouteImport
       parentRoute: typeof RecruiterRoute
     }
     '/product/vitarka-ai': {
@@ -1844,6 +1954,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AdminLabsIdAttemptsRouteImport
       parentRoute: typeof AdminLabsRoute
     }
+    '/student/lab/$slug/ticket/$ticketId': {
+      id: '/student/lab/$slug/ticket/$ticketId'
+      path: '/student/lab/$slug/ticket/$ticketId'
+      fullPath: '/student/lab/$slug/ticket/$ticketId'
+      preLoaderRoute: typeof StudentLabSlugTicketTicketIdRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/recruiter/evaluations/$id/candidates/$candidateId': {
       id: '/recruiter/evaluations/$id/candidates/$candidateId'
       path: '/candidates/$candidateId'
@@ -2130,6 +2247,10 @@ const RecruiterEvaluationsIdRouteWithChildren =
   )
 
 interface RecruiterRouteChildren {
+  RecruiterBillingRoute: typeof RecruiterBillingRoute
+  RecruiterDashboardRoute: typeof RecruiterDashboardRoute
+  RecruiterGithubRoute: typeof RecruiterGithubRoute
+  RecruiterQuestionsRoute: typeof RecruiterQuestionsRoute
   RecruiterReportsRoute: typeof RecruiterReportsRouteWithChildren
   RecruiterSettingsRoute: typeof RecruiterSettingsRoute
   RecruiterIndexRoute: typeof RecruiterIndexRoute
@@ -2138,6 +2259,10 @@ interface RecruiterRouteChildren {
 }
 
 const RecruiterRouteChildren: RecruiterRouteChildren = {
+  RecruiterBillingRoute: RecruiterBillingRoute,
+  RecruiterDashboardRoute: RecruiterDashboardRoute,
+  RecruiterGithubRoute: RecruiterGithubRoute,
+  RecruiterQuestionsRoute: RecruiterQuestionsRoute,
   RecruiterReportsRoute: RecruiterReportsRouteWithChildren,
   RecruiterSettingsRoute: RecruiterSettingsRoute,
   RecruiterIndexRoute: RecruiterIndexRoute,
@@ -2205,6 +2330,7 @@ const rootRouteChildren: RootRouteChildren = {
   ProfileRoute: ProfileRoute,
   RecruiterRoute: RecruiterRouteWithChildren,
   RecruiterLoginRoute: RecruiterLoginRoute,
+  RecruiterSignupRoute: RecruiterSignupRoute,
   ResearchRoute: ResearchRoute,
   SolutionsRoute: SolutionsRoute,
   SystemDesignStudioRoute: SystemDesignStudioRoute,
@@ -2215,6 +2341,7 @@ const rootRouteChildren: RootRouteChildren = {
   ProductEngineeringSimulationsRoute: ProductEngineeringSimulationsRoute,
   ProductVitarkaAiRoute: ProductVitarkaAiRoute,
   ProductIndexRoute: ProductIndexRoute,
+  StudentLabSlugTicketTicketIdRoute: StudentLabSlugTicketTicketIdRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)

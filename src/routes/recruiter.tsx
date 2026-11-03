@@ -1,5 +1,5 @@
 import { createFileRoute, Link, Outlet, useRouterState, useNavigate } from "@tanstack/react-router";
-import { LayoutDashboard, ClipboardList, BarChart3, Settings, LogOut, Sparkles, Sun, Moon } from "lucide-react";
+import { LayoutDashboard, ClipboardList, Database, Github, BarChart3, Settings, LogOut, Sparkles, Sun, Moon } from "lucide-react";
 import { useAuth } from "@/lib/auth";
 import { useTheme } from "@/hooks/use-theme";
 import YuvroLogo from "@/assets/YuvroLogo.png";
@@ -15,9 +15,11 @@ function RecruiterLayout() {
   const { theme, toggle } = useTheme();
   const pathname = useRouterState({ select: s => s.location.pathname });
   const items = [
-    { to: "/recruiter", label: "Dashboard", icon: LayoutDashboard, exact: true },
+    { to: "/recruiter/dashboard", label: "Dashboard", icon: LayoutDashboard, exact: true },
     { to: "/recruiter/evaluations", label: "Evaluations", icon: ClipboardList },
+    { to: "/recruiter/questions", label: "Question Bank", icon: Database },
     { to: "/recruiter/reports", label: "Reports", icon: BarChart3 },
+    { to: "/recruiter/github", label: "GitHub & Repositories", icon: Github },
     { to: "/recruiter/settings", label: "Settings", icon: Settings },
   ];
   const isActive = (to: string, exact?: boolean) => exact ? pathname === to : pathname.startsWith(to);

@@ -1,6 +1,6 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { useMemo } from "react";
-import { listEvaluations } from "@/lib/recruiter";
+import { useEffect, useMemo, useState } from "react";
+import { listEvaluations, Evaluation } from "@/lib/recruiter";
 import { getCandidates } from "@/lib/recruiterCandidates";
 import { PageHead, Panel, Table, Pill, StatTile } from "@/components/recruiter/reportsUi";
 
@@ -13,10 +13,14 @@ const CHANNELS = ["Email", "Email", "WhatsApp", "SMS"] as const;
 const STATES = ["Delivered", "Opened", "Responded", "Bounced"] as const;
 
 function FollowUpReports() {
-  const evals = useMemo(() => listEvaluations(), []);
+  const [evals, setEvals] = useState<Evaluation[]>([]);
+  useEffect(() => {
+    listEvaluations().then(data => setEvals(Array.isArray(data) ? data : []));
+  }, []);
+  const safeEvals = Array.isArray(evals) ? evals : [];
   const rows = useMemo(() => {
     const out: { name: string; evalTitle: string; channel: string; state: string; sent: string; type: string }[] = [];
-    evals.forEach((e, ei) => {
+    safeEvals.forEach((e, ei) => {
       getCandidates(e.id, 40).slice(0, 12).forEach((c, i) => {
         out.push({
           name: c.name,
@@ -29,7 +33,7 @@ function FollowUpReports() {
       });
     });
     return out.slice(0, 40);
-  }, [evals]);
+  }, [safeEvals]);
 
   const count = (s: string) => rows.filter(r => r.state === s).length;
   const tone = (s: string) => (s === "Responded" ? "green" : s === "Bounced" ? "red" : s === "Opened" ? "amber" : "neutral");

@@ -1,40 +1,237 @@
-import { createContext, useContext, useEffect, useState, ReactNode } from "react";
+import { createContext, useContext, useReducer, useEffect, ReactNode } from "react";
+import authService from "../services/authService";
 
 export type Role = "student" | "admin" | "job_seeker" | "recruiter";
-export interface AuthUser { email: string; name: string; role: Role; }
 
-const KEY = "yuvro-auth";
-
-interface AuthCtx {
-  user: AuthUser | null;
-  login: (u: AuthUser) => void;
-  logout: () => void;
+export interface User {
+  id?: string;
+  email: string;
+  username?: string;
+  name?: string;
+  first_name?: string;
+  last_name?: string;
+  role?: Role | string;
+  roles?: {
+    ycode?: string;
+    ylabs?: string;
+  };
+  is_active?: boolean;
+  is_guest_user?: boolean;
+  date_joined?: string;
+  last_login?: string;
+  github_connected?: boolean;
+  github_username?: string;
+  profile_image?: string;
+  cover_image?: string;
+  resume_file?: string;
+  phone?: string;
+  location?: string;
+  website?: string;
+  about?: string;
+  education?: Array<Record<string, any>>;
+  employment?: Array<Record<string, any>>;
+  profile?: {
+    about?: string;
+    avatar?: string;
+  };
 }
-const Ctx = createContext<AuthCtx>({ user: null, login: () => {}, logout: () => {} });
+
+export type AuthUser = User;
+
+interface AuthState {
+  user: User | null;
+  token: string | null;
+  isLoading: boolean;
+  isAuthenticated: boolean;
+}
+
+type AuthAction =
+  | { type: "LOGIN_START" }
+  | { type: "LOGIN_SUCCESS"; payload: { user: User; token: string } }
+  | { type: "LOGIN_FAILURE" }
+  | { type: "LOGOUT" }
+  | { type: "UPDATE_USER"; payload: User }
+  | { type: "SET_LOADING"; payload: boolean };
+
+export interface AuthContextType extends AuthState {
+  login: (user: User, token?: string) => void;
+  logout: () => void;
+  updateUser: (user: User) => void;
+}
+
+const authReducer = (state: AuthState, action: AuthAction): AuthState => {
+  switch (action.type) {
+    case "LOGIN_START":
+      return { ...state, isLoading: true };
+    case "LOGIN_SUCCESS":
+      return {
+        ...state,
+        isLoading: false,
+        isAuthenticated: true,
+        user: action.payload.user,
+        token: action.payload.token,
+      };
+    case "LOGIN_FAILURE":
+      return {
+        ...state,
+        isLoading: false,
+        isAuthenticated: false,
+        user: null,
+        token: null,
+      };
+    case "LOGOUT":
+      return {
+        ...state,
+        isAuthenticated: false,
+        user: null,
+        token: null,
+      };
+    case "UPDATE_USER":
+      return {
+        ...state,
+        user: action.payload,
+      };
+    case "SET_LOADING":
+      return {
+        ...state,
+        isLoading: action.payload,
+      };
+    default:
+      return state;
+  }
+};
+
+const getInitialState = (): AuthState => {
+  if (typeof window === "undefined") {
+    return {
+      user: null,
+      token: null,
+      isLoading: false,
+      isAuthenticated: false,
+    };
+  }
+
+  const accessToken = localStorage.getItem("access");
+  const storedUser = localStorage.getItem("user") || localStorage.getItem("yuvro-auth");
+
+  let user = null;
+  if (storedUser && storedUser !== "undefined" && storedUser !== "null") {
+    try {
+      user = JSON.parse(storedUser);
+    } catch (e) {
+      console.warn("Failed to parse stored user data:", e);
+      localStorage.removeItem("user");
+    }
+  }
+
+  if (accessToken || user) {
+    return {
+      user,
+      token: accessToken || "mock-token",
+      isLoading: false,
+      isAuthenticated: true,
+    };
+  }
+  return {
+    user: null,
+    token: null,
+    isLoading: false,
+    isAuthenticated: false,
+  };
+};
+
+const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
 export function AuthProvider({ children }: { children: ReactNode }) {
-  const [user, setUser] = useState<AuthUser | null>(null);
+  const [state, dispatch] = useReducer(authReducer, getInitialState());
+
   useEffect(() => {
-    try {
-      const raw = typeof window !== "undefined" ? localStorage.getItem(KEY) : null;
-      if (raw) setUser(JSON.parse(raw));
-    } catch {}
+    if (state.isAuthenticated && state.token) {
+      localStorage.setItem("access", state.token);
+      authService.setAuthToken(state.token);
+    } else {
+      localStorage.removeItem("access");
+      localStorage.removeItem("refresh");
+    }
+  }, [state.isAuthenticated, state.token]);
+
+  useEffect(() => {
+    const accessToken = localStorage.getItem("access");
+
+    if (accessToken && accessToken !== "mock-token") {
+      authService.setAuthToken(accessToken);
+      authService.initializeFromStorage();
+
+      authService
+        .getCurrentUser()
+        .then((userData) => {
+          const latestToken = authService.getAuthToken() || accessToken;
+          localStorage.setItem("user", JSON.stringify(userData));
+          dispatch({
+            type: "LOGIN_SUCCESS",
+            payload: { user: userData, token: latestToken },
+          });
+        })
+        .catch((error) => {
+          console.error("Failed to fetch user on load:", error);
+          if (error.status === 401) {
+            authService.logoutUser();
+            dispatch({ type: "LOGIN_FAILURE" });
+          } else {
+            dispatch({ type: "SET_LOADING", payload: false });
+          }
+        });
+    } else {
+      dispatch({ type: "SET_LOADING", payload: false });
+    }
   }, []);
-  const login = (u: AuthUser) => {
-    setUser(u);
-    try { localStorage.setItem(KEY, JSON.stringify(u)); } catch {}
+
+  const login = (user: User, token?: string) => {
+    const safeToken = token || "mock-token";
+    localStorage.setItem("user", JSON.stringify(user));
+    localStorage.setItem("yuvro-auth", JSON.stringify(user));
+    dispatch({
+      type: "LOGIN_SUCCESS",
+      payload: { user, token: safeToken },
+    });
   };
+
   const logout = () => {
-    setUser(null);
-    try { localStorage.removeItem(KEY); } catch {}
+    localStorage.removeItem("user");
+    localStorage.removeItem("yuvro-auth");
+    authService.logoutUser();
+    dispatch({ type: "LOGOUT" });
   };
-  return <Ctx.Provider value={{ user, login, logout }}>{children}</Ctx.Provider>;
+
+  const updateUser = (user: User) => {
+    localStorage.setItem("user", JSON.stringify(user));
+    dispatch({ type: "UPDATE_USER", payload: user });
+  };
+
+  return (
+    <AuthContext.Provider
+      value={{
+        ...state,
+        login,
+        logout,
+        updateUser,
+      }}
+    >
+      {children}
+    </AuthContext.Provider>
+  );
 }
 
-export const useAuth = () => useContext(Ctx);
+export const useAuth = () => {
+  const context = useContext(AuthContext);
+  if (context === undefined) {
+    throw new Error("useAuth must be used within an AuthProvider");
+  }
+  return context;
+};
 
 export const DEMO_ACCOUNTS: Record<string, { password: string; user: AuthUser }> = {
-  "student@yuvrolabs.com": { password: "student123", user: { email: "student@yuvrolabs.com", name: "Alex Student", role: "student" } },
-  "admin@yuvrolabs.com": { password: "admin123", user: { email: "admin@yuvrolabs.com", name: "Admin Yuvro", role: "admin" } },
-  "recruiter@yuvrolabs.com": { password: "recruiter123", user: { email: "recruiter@yuvrolabs.com", name: "Riya Recruiter", role: "recruiter" } },
+  "student@yuvrolabs.com": { password: "student123", user: { id: "demo-student", email: "student@yuvrolabs.com", name: "Alex Student", username: "alexstudent", role: "student" } },
+  "admin@yuvrolabs.com": { password: "admin123", user: { id: "demo-admin", email: "admin@yuvrolabs.com", name: "Admin Yuvro", username: "adminyuvro", role: "admin" } },
+  "recruiter@yuvrolabs.com": { password: "recruiter123", user: { id: "demo-recruiter", email: "recruiter@yuvrolabs.com", name: "Riya Recruiter", username: "riyarecruiter", role: "recruiter" } },
 };

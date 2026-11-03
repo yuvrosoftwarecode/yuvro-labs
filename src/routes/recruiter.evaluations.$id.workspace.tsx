@@ -1,8 +1,10 @@
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { useEffect, useMemo, useRef, useState } from "react";
+import { BarChart, Bar, XAxis, YAxis, Tooltip as RechartsTooltip, ResponsiveContainer, Cell, CartesianGrid } from "recharts";
 import { z } from "zod";
 import {
   ChevronLeft,
+  ArrowLeft,
   Copy as CopyIcon,
   Mail,
   Download,
@@ -35,12 +37,22 @@ import {
   GitCompare,
 } from "lucide-react";
 import {
+  DropdownMenu,
+  DropdownMenuTrigger,
+  DropdownMenuContent,
+  DropdownMenuItem,
+} from "@/components/ui/dropdown-menu";
+import {
   getEvaluation,
   evaluationTotals,
   saveEvaluation,
   duplicateEvaluation,
   deleteEvaluation,
   Evaluation,
+  getEvaluationSubmissions,
+  inviteCandidates,
+  generateSharedReportLink,
+  forceFinishSubmissions,
 } from "@/lib/recruiter";
 import {
   getCandidates,
@@ -58,47 +70,99 @@ import {
   Recommendation,
   VitarkaLabel,
 } from "@/lib/recruiterCandidates";
-import { computeAttentionGroups, loadViewed, loadNotedSet, type AttentionGroup } from "@/lib/recruiterCandidateDetail";
+import { yhubApiAuthUtil } from "@/utils/RestApiAuthUtil";
+import {
+  computeAttentionGroups,
+  loadViewed,
+  loadNotedSet,
+  pushActivity,
+  saveDecision,
+  type AttentionGroup,
+  type HiringDecision,
+} from "@/lib/recruiterCandidateDetail";
 import { IntelligenceTab } from "@/components/recruiter/IntelligenceTab";
 import { SettingsTab } from "@/components/recruiter/SettingsTab";
 import { FollowUpsTab } from "@/components/recruiter/FollowUpsTab";
 import { CandidateRecordsTab } from "@/components/recruiter/CandidateRecordsTab";
+import { FeedbackTab } from "@/components/recruiter/FeedbackTab";
+import { CandidateAnalyticsViewer } from "@/components/evaluation/CandidateAnalyticsViewer";
 
 const searchSchema = z.object({
   tab: z
-    .enum(["overview", "candidates", "followups", "records", "intelligence", "attention", "settings"])
+    .enum(["overview", "candidates", "followups", "records", "feedback", "intelligence", "settings"])
     .default("overview")
     .catch("overview"),
+  view: z
+    .enum(["edit", "preview", "publish", "publish-done"])
+    .optional()
+    .default("edit")
+    .catch("edit"),
 });
 
-const TAB_LABELS: Record<"overview" | "candidates" | "followups" | "records" | "intelligence" | "attention" | "settings", string> = {
+const TAB_LABELS: Record<
+  "overview" | "candidates" | "followups" | "records" | "feedback" | "intelligence" | "settings",
+  string
+> = {
   overview: "Overview",
   candidates: "Submissions",
   followups: "Follow-ups",
   records: "Candidate Records",
+  feedback: "Feedback",
   intelligence: "Hiring Intelligence",
-  attention: "Need Your Attention",
   settings: "Settings",
 };
 
 export const Route = createFileRoute("/recruiter/evaluations/$id/workspace")({
   validateSearch: (s) => searchSchema.parse(s),
-  head: () => ({ meta: [{ title: "Evaluation Workspace — Yuvro Labs" }, { name: "robots", content: "noindex" }] }),
+  head: () => ({
+    meta: [{ title: "Evaluation Workspace — Yuvro Labs" }, { name: "robots", content: "noindex" }],
+  }),
   component: Workspace,
 });
+
+function getMockInterviewId(evaluation: Evaluation | null) {
+  const discSec: any = evaluation?.sections?.find(
+    (s: any) => s.type === "VITARKA_AI_INTERVIEW" || s.kind === "discussion" || s.kind === "vitarka"
+  );
+  let mockInterviewId = discSec?.mockInterviewId;
+  if (!mockInterviewId && discSec?.description) {
+    try {
+      mockInterviewId = JSON.parse(discSec.description).mockInterviewId;
+    } catch {}
+  }
+  return mockInterviewId;
+}
 
 function Workspace() {
   const { id } = Route.useParams();
   const { tab } = Route.useSearch();
   const nav = useNavigate();
   const [ev, setEv] = useState<Evaluation | null>(null);
+  const [submissions, setSubmissions] = useState<any[] | null>(null);
+  const [vitarkaSubmissions, setVitarkaSubmissions] = useState<any[]>([]);
   const [toast, setToast] = useState<string | null>(null);
   const [moreOpen, setMoreOpen] = useState(false);
+  const [inviteOpen, setInviteOpen] = useState(false);
+  const [generating, setGenerating] = useState(false);
 
   useEffect(() => {
-    const e = getEvaluation(id);
-    if (!e) nav({ to: "/recruiter/evaluations" });
-    else setEv(e);
+    getEvaluation(id).then((e) => {
+      if (!e) nav({ to: "/recruiter/evaluations" });
+      else {
+        setEv(e);
+        getEvaluationSubmissions(e.id).then(setSubmissions).catch(() => setSubmissions([]));
+
+        const mockInterviewId = getMockInterviewId(e);
+        if (mockInterviewId) {
+          yhubApiAuthUtil
+            .get<any[]>(`/interview/submissions/?mock_interview=${mockInterviewId}&ordering=-created_at`)
+            .then((res) => {
+              if (Array.isArray(res)) setVitarkaSubmissions(res);
+            })
+            .catch(console.error);
+        }
+      }
+    });
   }, [id, nav]);
 
   useEffect(() => {
@@ -107,18 +171,18 @@ function Workspace() {
     return () => clearTimeout(t);
   }, [toast]);
 
-  if (!ev) return null;
+  if (!ev || submissions === null) return null;
 
-  const candidates = getCandidates(ev.id);
+  const candidates = getCandidates(ev.id, submissions, vitarkaSubmissions, ev);
   const totals = evaluationTotals(ev);
   const goto = (t: typeof tab) =>
-    nav({ to: "/recruiter/evaluations/$id/workspace", params: { id }, search: { tab: t } });
+    nav({ to: "/recruiter/evaluations/$id/workspace", params: { id }, search: { tab: t, view: "edit" } as any });
 
   const notify = (m: string) => setToast(m);
 
   const copyLink = async () => {
     try {
-      await navigator.clipboard.writeText(`${location.origin}/evaluation/${ev.id}`);
+      await navigator.clipboard.writeText(`${typeof window !== "undefined" ? window.location.origin : ""}/evaluation?e=${ev.id}`);
       notify("Public link copied");
     } catch {
       notify("Copy failed");
@@ -126,13 +190,24 @@ function Workspace() {
   };
   const download = (kind: "csv" | "xlsx" | "reports") => {
     const rows = [
-      ["Candidate", "Email", "Phone", "ECI", "Labs", "Assessment", "Vitarka", "Status", "Hiring", "Submitted"],
+      [
+        "Candidate",
+        "Email",
+        "Phone",
+        "Total",
+        "Labs",
+        "Assessment",
+        "Vitarka",
+        "Status",
+        "Hiring",
+        "Submitted",
+      ],
     ].concat(
       candidates.map((c) => [
         c.name,
         c.email,
         c.phone,
-        String(c.eci),
+        String(c.totalEarned != null ? c.totalEarned : c.eci),
         String(c.labsScore),
         String(c.assessmentScore),
         String(c.vitarkaScore),
@@ -141,8 +216,12 @@ function Workspace() {
         new Date(c.submittedAt).toISOString(),
       ]),
     );
-    const csv = rows.map((r) => r.map((v) => `"${String(v).replace(/"/g, '""')}"`).join(",")).join("\n");
-    const blob = new Blob([csv], { type: kind === "xlsx" ? "application/vnd.ms-excel" : "text/csv" });
+    const csv = rows
+      .map((r) => r.map((v) => `"${String(v).replace(/"/g, '""')}"`).join(","))
+      .join("\n");
+    const blob = new Blob([csv], {
+      type: kind === "xlsx" ? "application/vnd.ms-excel" : "text/csv",
+    });
     const url = URL.createObjectURL(blob);
     const a = document.createElement("a");
     a.href = url;
@@ -152,31 +231,178 @@ function Workspace() {
     notify(`Downloaded ${kind.toUpperCase()}`);
   };
   const emailAll = () => notify("Email queued to invited candidates");
-  const onDuplicate = () => {
-    const c = duplicateEvaluation(ev.id);
+  const onDuplicate = async () => {
+    const c = await duplicateEvaluation(ev.id);
     if (c) {
       notify("Evaluation duplicated");
-      nav({ to: "/recruiter/evaluations/$id/workspace", params: { id: c.id }, search: { tab: "overview" } });
+      nav({ to: "/recruiter/evaluations/$id/workspace", params: { id: c.id }, search: { tab: "overview", view: "edit" } as any });
     }
   };
-  const onArchive = () => {
+  const onArchive = async () => {
     const c = { ...ev, status: "draft" as const };
-    saveEvaluation(c);
+    await saveEvaluation(c);
     setEv(c);
     notify("Evaluation archived");
   };
-  const onDelete = () => {
+  const onDelete = async () => {
     if (confirm("Delete this evaluation? This cannot be undone.")) {
-      deleteEvaluation(ev.id);
+      await deleteEvaluation(ev.id);
       nav({ to: "/recruiter/evaluations" });
+    }
+  };
+
+
+  const refreshSubmissions = async () => {
+    if (!ev) return;
+    try {
+      const subs = await getEvaluationSubmissions(ev.id);
+      setSubmissions(subs);
+    } catch {
+      setSubmissions([]);
+    }
+
+    const mockInterviewId = getMockInterviewId(ev);
+    if (mockInterviewId) {
+      try {
+        const vSubs = await yhubApiAuthUtil.get<any[]>(
+          `/interview/submissions/?mock_interview=${mockInterviewId}&ordering=-created_at`
+        );
+        if (Array.isArray(vSubs)) {
+          setVitarkaSubmissions(vSubs);
+        }
+      } catch (err) {
+        console.error("Failed to refresh vitarka submissions:", err);
+      }
+    }
+  };
+
+  const handleGenerateReports = async () => {
+    if (!ev) return;
+    const now = Date.now();
+    const evaluationMinutes = totals.minutes;
+    const mockInterviewId = getMockInterviewId(ev);
+
+    // 1. Identify all candidates whose start time has exceeded the evaluation duration
+    const timeElapsedCandidates = candidates.filter((c) => {
+      const startMs = c.startedAt || (c.rawSubmission?.created_at ? new Date(c.rawSubmission.created_at).getTime() : c.submittedAt);
+      const elapsedMinutes = (now - startMs) / (1000 * 60);
+      return elapsedMinutes > evaluationMinutes;
+    });
+
+    if (timeElapsedCandidates.length === 0) {
+      const inProgressNotExpired = candidates.filter((c) => {
+        const startMs = c.startedAt || (c.rawSubmission?.created_at ? new Date(c.rawSubmission.created_at).getTime() : c.submittedAt);
+        const elapsedMinutes = (now - startMs) / (1000 * 60);
+        return (!c.rawSubmission?.completed_at || c.status === "In Progress") && elapsedMinutes <= evaluationMinutes;
+      });
+
+      if (inProgressNotExpired.length > 0) {
+        notify(`${inProgressNotExpired.length} candidate(s) are currently in progress within the time limit (${evaluationMinutes} min).`);
+      } else {
+        notify("No candidates have exceeded the time limit.");
+      }
+      return;
+    }
+
+    // 2. Out of the candidates who exceeded the time limit, find who needs report generation:
+    // Either their main evaluation submission is incomplete OR their Vitarka AI analysis was not generated yet
+    const candidatesToProcess = timeElapsedCandidates.filter((c) => {
+      const isSubmissionIncomplete = !c.rawSubmission?.completed_at || c.status === "In Progress";
+      
+      const vSub = c.rawSubmission?.vitarka_submission || vitarkaSubmissions.find((vs: any) =>
+        (c.email && (vs.user?.email === c.email || vs.user_email === c.email || vs.candidate_email === c.email)) ||
+        (c.realUserId && (vs.user === c.realUserId || vs.user?.id === c.realUserId)) ||
+        (c.id && (vs.candidate_id === c.id || vs.candidate_id === String(c.realUserId)))
+      );
+
+      const hasVitarkaPendingReport = Boolean(
+        vSub && !(vSub.report_bundle || vSub.report || vSub.session_state?.report_bundle || vSub.session_state?.report)
+      );
+
+      return isSubmissionIncomplete || hasVitarkaPendingReport;
+    });
+
+    if (candidatesToProcess.length === 0) {
+      notify("All candidates exceeding the time limit already have reports generated.");
+      return;
+    }
+
+    setGenerating(true);
+
+    try {
+      // Step A: Force finish main evaluation submissions for incomplete ones
+      const emailsToFinish = candidatesToProcess
+        .filter((c) => !c.rawSubmission?.completed_at || c.status === "In Progress")
+        .map((c) => c.email);
+
+      if (emailsToFinish.length > 0) {
+        await forceFinishSubmissions(ev.id, emailsToFinish);
+      }
+
+      // Step B: For each candidate, if Vitarka session exists and report is pending, trigger generate_report
+      if (mockInterviewId) {
+        for (const c of candidatesToProcess) {
+          let vSub = c.rawSubmission?.vitarka_submission || vitarkaSubmissions.find((vs: any) =>
+            (c.email && (vs.user?.email === c.email || vs.user_email === c.email || vs.candidate_email === c.email)) ||
+            (c.realUserId && (vs.user === c.realUserId || vs.user?.id === c.realUserId)) ||
+            (c.id && (vs.candidate_id === c.id || vs.candidate_id === String(c.realUserId)))
+          );
+
+          if (!vSub?.id) {
+            try {
+              const params = new URLSearchParams();
+              params.append("mock_interview", mockInterviewId);
+              if (c.email) params.append("email", c.email);
+              else if (c.realUserId) params.append("user", c.realUserId);
+              params.append("ordering", "-created_at");
+              const res = await yhubApiAuthUtil.get<any[]>(`/interview/submissions/?${params.toString()}`);
+              if (res && res.length > 0) {
+                vSub = res[0];
+              }
+            } catch (err) {
+              console.error("Failed to query Vitarka submission for", c.email, err);
+            }
+          }
+
+          if (vSub?.id) {
+            const hasReport = Boolean(
+              vSub.report_bundle || vSub.report || vSub.session_state?.report_bundle || vSub.session_state?.report
+            );
+
+            if (!hasReport) {
+              const sessionId = vSub.session_id || vSub.interview_session_id;
+              if (sessionId) {
+                try {
+                  await yhubApiAuthUtil.post(`/interviews/${sessionId}/end_interview/`, {});
+                } catch {}
+              }
+
+              try {
+                await yhubApiAuthUtil.post(`/interview/submissions/${vSub.id}/generate_report/`, {});
+              } catch (err) {
+                console.error("Failed to generate Vitarka report for submission", vSub.id, err);
+              }
+            }
+          }
+        }
+      }
+
+      // Step C: Refresh both evaluation submissions and Vitarka submissions
+      await refreshSubmissions();
+      notify(`Generated reports for ${candidatesToProcess.length} candidate(s).`);
+    } catch (err) {
+      console.error("Failed to generate reports", err);
+      notify("Failed to generate reports.");
+    } finally {
+      setGenerating(false);
     }
   };
 
   return (
     <div className="min-h-screen">
       {/* Top header */}
-      <header className="sticky top-0 z-30 border-b border-neutral-200 bg-white/95 backdrop-blur">
-        <div className="mx-auto max-w-[1440px] px-8 pt-6 pb-4">
+      <header className="sticky top-0 z-30 border-b border-white/5 bg-white backdrop-blur">
+        <div className="w-full px-8 pt-6 pb-4">
           <Link
             to="/recruiter/evaluations"
             className="inline-flex items-center gap-1.5 text-[12px] text-neutral-500 hover:text-white"
@@ -191,16 +417,19 @@ function Workspace() {
                   {ev.domain || "Uncategorized"} · Domain
                 </span>
               </div>
-              <h1 className="mt-2 text-[32px] font-medium leading-tight tracking-tight text-white">{ev.title}</h1>
+              <h1 className="mt-2 text-[32px] font-medium leading-tight tracking-tight text-white">
+                {ev.title}
+              </h1>
               <dl className="mt-3 flex flex-wrap items-center gap-x-6 gap-y-1 text-[12px] text-neutral-500">
                 <span>
                   Created <b className="font-normal text-neutral-300">{fmtDate(ev.createdAt)}</b>
                 </span>
                 <span>
-                  Last modified <b className="font-normal text-neutral-300">{fmtRel(ev.createdAt)}</b>
+                  Last modified{" "}
+                  <b className="font-normal text-neutral-300">{fmtRel(ev.createdAt)}</b>
                 </span>
                 <span>
-                  Created by <b className="font-normal text-neutral-300">Riya Recruiter</b>
+                  Created by <b className="font-normal text-neutral-300">{ev.createdBy || "Recruiter"}</b>
                 </span>
                 <span>
                   Duration <b className="font-normal text-neutral-300">{totals.minutes} min</b>
@@ -208,125 +437,66 @@ function Workspace() {
                 <span>
                   Marks <b className="font-normal text-neutral-300">{totals.marks}</b>
                 </span>
-                <span>
-                  Candidate limit <b className="font-normal text-neutral-300">∞</b>
-                </span>
-              </dl>
-            </div>
-            <div className="flex flex-shrink-0 flex-nowrap items-center gap-2">
 
-              <HeaderBtn onClick={copyLink} icon={<CopyIcon className="h-3.5 w-3.5" />}>
-                Copy Link
-              </HeaderBtn>
-              <HeaderBtn onClick={() => notify("Invite dialog opened")} icon={<Mail className="h-3.5 w-3.5" />}>
-                Invite Candidates
-              </HeaderBtn>
-              <HeaderBtn onClick={() => download("reports")} icon={<Download className="h-3.5 w-3.5" />}>
-                Download
-              </HeaderBtn>
-              <div className="relative">
-                <HeaderBtn onClick={() => setMoreOpen((v) => !v)} icon={<MoreHorizontal className="h-3.5 w-3.5" />}>
-                  More
-                </HeaderBtn>
-                {moreOpen && (
-                  <>
-                    <div className="fixed inset-0 z-10" onClick={() => setMoreOpen(false)} />
-                    <div className="absolute right-0 top-full z-20 mt-1 w-56 overflow-hidden rounded-lg border border-white/10 bg-neutral-950 shadow-2xl">
-                      <MenuItem
-                        onClick={() => {
-                          download("csv");
-                          setMoreOpen(false);
-                        }}
-                        icon={<FileText className="h-3.5 w-3.5" />}
-                      >
-                        Export CSV
-                      </MenuItem>
-                      <MenuItem
-                        onClick={() => {
-                          download("xlsx");
-                          setMoreOpen(false);
-                        }}
-                        icon={<FileSpreadsheet className="h-3.5 w-3.5" />}
-                      >
-                        Export Excel
-                      </MenuItem>
-                      <MenuItem
-                        onClick={() => {
-                          emailAll();
-                          setMoreOpen(false);
-                        }}
-                        icon={<Mail className="h-3.5 w-3.5" />}
-                      >
-                        Email Candidates
-                      </MenuItem>
-                      <MenuItem
-                        onClick={() => {
-                          onDuplicate();
-                          setMoreOpen(false);
-                        }}
-                        icon={<CopyIcon className="h-3.5 w-3.5" />}
-                      >
-                        Duplicate Evaluation
-                      </MenuItem>
-                      <MenuItem
-                        onClick={() => {
-                          nav({ to: "/recruiter/evaluations/$id", params: { id: ev.id } });
-                        }}
-                        icon={<Pencil className="h-3.5 w-3.5" />}
-                      >
-                        Edit Evaluation
-                      </MenuItem>
-                      <div className="h-px bg-white/5" />
-                      <MenuItem
-                        onClick={() => {
-                          onArchive();
-                          setMoreOpen(false);
-                        }}
-                        icon={<Archive className="h-3.5 w-3.5" />}
-                      >
-                        Archive
-                      </MenuItem>
-                      <MenuItem
-                        onClick={() => {
-                          onDelete();
-                          setMoreOpen(false);
-                        }}
-                        icon={<Trash2 className="h-3.5 w-3.5" />}
-                        danger
-                      >
-                        Delete
-                      </MenuItem>
-                    </div>
-                  </>
-                )}
-              </div>
+              </dl>
             </div>
           </div>
 
-          {/* Tabs */}
-          <nav className="mt-6 flex items-center gap-1">
-            {(["overview", "candidates", "followups", "records", "intelligence", "attention", "settings"] as const).map((t) => (
-              <button
-                key={t}
-                onClick={() => goto(t)}
-                className={`relative px-3 py-2 text-[13px] transition ${tab === t ? "text-white" : "text-neutral-500 hover:text-neutral-300"}`}
+          {/* Tabs & Actions */}
+          <div className="mt-6 flex items-center justify-between">
+            <nav className="flex items-center gap-1">
+              {(["overview", "candidates", "followups", "records", "feedback"] as const).map(
+                (t) => (
+                  <button
+                    key={t}
+                    onClick={() => goto(t)}
+                    className={`relative whitespace-nowrap px-3 py-2 text-[13px] transition ${tab === t ? "text-white" : "text-neutral-500 hover:text-neutral-300"}`}
+                  >
+                    {TAB_LABELS[t]}
+                    {tab === t && (
+                      <span className="absolute inset-x-3 -bottom-[13px] h-px bg-white" />
+                    )}
+                  </button>
+                ),
+              )}
+            </nav>
+            <div className="flex flex-shrink-0 flex-nowrap items-center gap-2 pb-2">
+              <HeaderBtn
+                onClick={() => setInviteOpen(true)}
+                icon={<Mail className="h-3.5 w-3.5" />}
               >
-                {TAB_LABELS[t]}
-                {tab === t && <span className="absolute inset-x-3 -bottom-[13px] h-px bg-white" />}
-              </button>
-            ))}
-          </nav>
+                Invite Candidates
+              </HeaderBtn>
+              <HeaderBtn onClick={copyLink} icon={<CopyIcon className="h-3.5 w-3.5" />}>
+                Copy Link
+              </HeaderBtn>
+              <HeaderBtn 
+                onClick={handleGenerateReports} 
+                icon={<FileText className={`h-3.5 w-3.5 ${generating ? "animate-pulse" : ""}`} />}
+              >
+                {generating ? "Generating..." : "Generate Reports"}
+              </HeaderBtn>
+
+            </div>
+          </div>
         </div>
       </header>
 
-      <main className="mx-auto max-w-[1440px] px-8 py-8">
-        {tab === "overview" && <OverviewTab ev={ev} candidates={candidates} onGoto={goto} notify={notify} />}
-        {tab === "candidates" && <CandidatesTab evId={ev.id} candidates={candidates} notify={notify} />}
+      <main className="w-full px-8 py-8">
+        {tab === "overview" && (
+          <OverviewTab ev={ev} candidates={candidates} onGoto={goto} notify={notify} />
+        )}
+        {tab === "candidates" && (
+          <CandidatesTab evId={ev.id} ev={ev} candidates={candidates} notify={notify} onRefresh={refreshSubmissions} />
+        )}
         {tab === "followups" && <FollowUpsTab ev={ev} notify={notify} />}
-        {tab === "records" && <CandidateRecordsTab ev={ev} notify={notify} onGotoFollowUps={() => goto("followups")} />}
-        {tab === "intelligence" && <IntelligenceTab ev={ev} candidates={candidates} notify={notify} />}
-        {tab === "attention" && <AttentionTab evId={ev.id} candidates={candidates} onGoto={goto} />}
-        {tab === "settings" && <SettingsTab ev={ev} notify={notify} />}
+        {tab === "records" && <CandidateRecordsTab ev={ev} notify={notify} onGotoFollowUps={() => goto("followups")} candidates={candidates} />}
+        {tab === "feedback" && <FeedbackTab ev={ev} />}
+
+        {tab === "intelligence" && (
+          <IntelligenceTab ev={ev} candidates={candidates} notify={notify} />
+        )}
+        {tab === "settings" && <SettingsTab ev={ev} notify={notify} onSave={(updatedEv) => setEv(updatedEv)} />}
       </main>
 
       {toast && (
@@ -334,6 +504,331 @@ function Workspace() {
           {toast}
         </div>
       )}
+
+      {inviteOpen && (
+        <InviteDialog
+          evId={ev.id}
+          evTitle={ev.title}
+          onClose={() => setInviteOpen(false)}
+          notify={notify}
+        />
+      )}
+    </div>
+  );
+}
+
+function InviteDialog({ evId, evTitle, onClose, notify }: { evId: string; evTitle: string; onClose: () => void; notify: (m: string) => void }) {
+  const [emailsInput, setEmailsInput] = useState("");
+  const [recipients, setRecipients] = useState<Array<{name: string, email: string}>>([]);
+  const [nameInput, setNameInput] = useState("");
+  const [subject, setSubject] = useState("Invitation to Complete Evaluation");
+  const [body, setBody] = useState("Hi {{name}},\n\nYou've been invited to complete the {{evaluation}} evaluation for {{company}}.\n\nGood luck,\nThe hiring team\n\n{{link}}");
+  const [sending, setSending] = useState(false);
+  const [showPreview, setShowPreview] = useState(false);
+  const [error, setError] = useState("");
+
+  const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
+  const handleEmailInput = (e: React.KeyboardEvent<HTMLInputElement>) => {
+    if (['Enter', ',', ' '].includes(e.key)) {
+      e.preventDefault();
+      addRecipients(emailsInput);
+    }
+  };
+
+  const addRecipients = (text: string) => {
+    const list = text.split(/[\s,]+/).map(e => e.trim()).filter(Boolean);
+    const valid: string[] = [];
+    const invalid: string[] = [];
+    
+    list.forEach(email => {
+      if (emailRegex.test(email)) {
+        if (!recipients.includes(email)) valid.push(email);
+      } else {
+        invalid.push(email);
+      }
+    });
+
+    if (valid.length > 0) {
+      setRecipients([...recipients, ...valid]);
+    }
+    
+    if (invalid.length > 0) {
+      setError(`Invalid email(s): ${invalid[0]}${invalid.length > 1 ? ` and ${invalid.length - 1} more` : ''}`);
+    } else {
+      setError("");
+    }
+    
+    setEmailsInput("");
+  };
+
+  const removeRecipient = (email: string) => {
+    setRecipients(recipients.filter(r => r !== email));
+  };
+
+  const onSubmit = async () => {
+    if (emailsInput.trim()) {
+      addRecipients(emailsInput);
+    }
+    const finalRecipients = emailsInput.trim() && emailRegex.test(emailsInput.trim()) 
+      ? Array.from(new Set([...recipients, emailsInput.trim()]))
+      : recipients;
+
+    if (!finalRecipients.length) {
+      notify("Please enter at least one valid email");
+      return;
+    }
+    setSending(true);
+    const res = await inviteCandidates(evId, finalRecipients, subject, body);
+    setSending(false);
+    if (res) {
+      notify(`Invited ${finalRecipients.length} candidate(s)`);
+      onClose();
+    } else {
+      notify("Failed to invite candidates");
+    }
+  };
+
+  const bodyRef = useRef<HTMLTextAreaElement>(null);
+
+  const insertPlaceholder = (ph: string) => {
+    const textarea = bodyRef.current;
+    if (textarea) {
+      const start = textarea.selectionStart;
+      const end = textarea.selectionEnd;
+      setBody(prev => prev.substring(0, start) + ph + prev.substring(end));
+      
+      // Move cursor after the inserted placeholder
+      setTimeout(() => {
+        textarea.focus();
+        textarea.setSelectionRange(start + ph.length, start + ph.length);
+      }, 0);
+    } else {
+      setBody(prev => prev + ph);
+    }
+  };
+
+  const parseTemplateText = (text: string) => {
+    return text
+      .replace(/{{name}}/g, "Candidate Name")
+      .replace(/{{evaluation}}/g, evTitle || "Evaluation")
+      .replace(/{{company}}/g, "Yuvro");
+  };
+
+  const renderPreviewBody = () => {
+    const parsed = parseTemplateText(body);
+    const parts = parsed.split(/({{link}})/);
+    return (
+      <div className="whitespace-pre-wrap text-[13px] leading-relaxed text-neutral-300">
+        {parts.map((part, i) => {
+          if (part === "{{link}}") {
+            return (
+              <div key={i} className="my-4">
+                <a
+                  href={`${typeof window !== "undefined" ? window.location.origin : ""}/evaluation/${evId}`}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="inline-block rounded-lg bg-[#F5A623] px-6 py-2.5 text-[13px] font-semibold !text-white transition hover:bg-opacity-90 shadow-sm"
+                  style={{ color: "#ffffff" }}
+                >
+                  Start Evaluation
+                </a>
+              </div>
+            );
+          }
+          return <span key={i}>{part}</span>;
+        })}
+      </div>
+    );
+  };
+
+  const isValid = recipients.length > 0 || (emailsInput.trim() && emailRegex.test(emailsInput.trim()));
+  const allEmailsToPreview = [...recipients.map(r => r.email)];
+  if (emailsInput.trim() && emailRegex.test(emailsInput.trim()) && !allEmailsToPreview.includes(emailsInput.trim().toLowerCase())) {
+    allEmailsToPreview.push(emailsInput.trim());
+  }
+  const totalCount = allEmailsToPreview.length;
+  const [showAllRecipients, setShowAllRecipients] = useState(false);
+
+  return (
+    <div className="fixed inset-0 z-[100] flex flex-col bg-white text-neutral-900">
+      {/* Header */}
+      <div className="flex items-center justify-between px-8 py-5">
+        <div>
+          <h2 className="text-[20px] font-semibold text-neutral-900">Invite Candidates</h2>
+          <p className="mt-1 text-[13px] text-neutral-500">Send personalized evaluation invitations to candidates.</p>
+        </div>
+        <button onClick={onClose} className="rounded-md p-2 text-neutral-500 hover:bg-neutral-100 transition-colors">
+          <X className="h-5 w-5" />
+        </button>
+      </div>
+      
+      {/* Content */}
+      <div className="flex flex-1 overflow-hidden flex-col md:flex-row">
+        {/* Editor Side */}
+        <div className="flex w-full flex-col p-8 md:w-1/2 md:border-r md:border-neutral-200">
+          <div className="flex flex-col h-full space-y-6">
+            {/* Emails */}
+            <div className="space-y-1.5">
+              <label className="text-[13px] font-medium text-neutral-700">Candidate Emails</label>
+              
+              <div className="flex gap-2 items-center mb-2">
+                  <input
+                    type="text"
+                    value={nameInput}
+                    onChange={(e) => setNameInput(e.target.value)}
+                    placeholder="Name (Optional)"
+                    className="w-1/3 rounded-lg border border-neutral-200 bg-white px-3 py-2 text-[13px] text-neutral-900 outline-none focus:border-neutral-400"
+                  />
+                  <input
+                    type="text"
+                    value={emailsInput}
+                    onChange={(e) => setEmailsInput(e.target.value)}
+                    onKeyDown={handleEmailInput}
+                    placeholder="candidate@example.com"
+                    className="flex-1 rounded-lg border border-neutral-200 bg-white px-3 py-2 text-[13px] text-neutral-900 outline-none focus:border-neutral-400"
+                  />
+                  <button onClick={() => addRecipients(emailsInput)} disabled={!emailsInput.trim()} className="rounded-lg bg-neutral-900 px-4 py-2 text-[13px] font-medium text-white hover:bg-neutral-800 disabled:opacity-50">
+                    Add
+                  </button>
+              </div>
+
+              {recipients.length > 0 && (
+                  <div className="mt-2 flex flex-col gap-1.5 max-h-48 overflow-y-auto pr-2">
+                    {recipients.map((r, idx) => (
+                      <div key={idx} className="flex items-center justify-between rounded-md border border-neutral-200 bg-neutral-50 px-3 py-2">
+                        <div className="flex flex-col">
+                           {r.name && <span className="text-[13px] font-medium text-neutral-900">{r.name}</span>}
+                           <span className="text-[12px] text-neutral-500">{r.email}</span>
+                        </div>
+                        <button onClick={() => removeRecipient(r.email)} className="p-1 text-neutral-400 hover:text-red-500">
+                          <X className="h-3.5 w-3.5" />
+                        </button>
+                      </div>
+                    ))}
+                  </div>
+              )}
+
+              <div className="flex items-center justify-between mt-1">
+                <div className="text-[12px] text-neutral-500">You can also paste multiple email addresses separated by commas.</div>
+                {error && <div className="text-[12px] text-red-500">{error}</div>}
+              </div>
+            </div>
+
+            {/* Subject */}
+            <div className="space-y-1.5">
+              <label className="text-[13px] font-medium text-neutral-700">Email Subject</label>
+              <input
+                type="text"
+                value={subject}
+                onChange={(e) => setSubject(e.target.value)}
+                className="w-full rounded-lg border border-neutral-200 bg-white px-3.5 py-2.5 text-[13px] text-neutral-900 outline-none focus:border-neutral-400 transition-colors"
+              />
+            </div>
+
+            {/* Body */}
+            <div className="flex flex-1 flex-col space-y-1.5">
+              <label className="text-[13px] font-medium text-neutral-700">Email Body</label>
+              <div className="flex flex-wrap gap-2 mb-2">
+                <button onClick={() => insertPlaceholder('{{name}}')} className="rounded-md border border-neutral-200 bg-neutral-50 px-2.5 py-1 text-[11px] font-medium text-neutral-600 hover:bg-neutral-100 hover:text-neutral-900 transition-colors">+ Name</button>
+                <button onClick={() => insertPlaceholder('{{evaluation}}')} className="rounded-md border border-neutral-200 bg-neutral-50 px-2.5 py-1 text-[11px] font-medium text-neutral-600 hover:bg-neutral-100 hover:text-neutral-900 transition-colors">+ Evaluation</button>
+                <button onClick={() => insertPlaceholder('{{company}}')} className="rounded-md border border-neutral-200 bg-neutral-50 px-2.5 py-1 text-[11px] font-medium text-neutral-600 hover:bg-neutral-100 hover:text-neutral-900 transition-colors">+ Company</button>
+                <button onClick={() => insertPlaceholder('{{link}}')} className="rounded-md border border-neutral-200 bg-neutral-50 px-2.5 py-1 text-[11px] font-medium text-neutral-600 hover:bg-neutral-100 hover:text-neutral-900 transition-colors">+ Link</button>
+              </div>
+              <textarea
+                ref={bodyRef}
+                value={body}
+                onChange={(e) => setBody(e.target.value)}
+                className="w-full flex-1 resize-none rounded-lg border border-neutral-200 bg-white p-3.5 text-[13px] leading-relaxed text-neutral-900 outline-none focus:border-neutral-400 transition-colors"
+              />
+            </div>
+          </div>
+          
+          <div className="mt-6 flex items-center justify-between md:hidden">
+            <button onClick={() => setShowPreview(!showPreview)} className="text-[13px] font-medium text-amber-500">
+              {showPreview ? "Hide Preview" : "Show Preview"}
+            </button>
+          </div>
+        </div>
+
+        {/* Preview Side */}
+        <div className={`w-full flex-col bg-neutral-50 p-8 md:flex md:w-1/2 ${showPreview ? 'flex' : 'hidden md:flex'}`}>
+          <div className="flex items-center justify-between">
+            <h3 className="text-[14px] font-medium text-neutral-500 uppercase tracking-wider">Live Preview</h3>
+          </div>
+          
+          <div className="mt-8 flex-1 rounded-xl border border-neutral-200 bg-white shadow-sm overflow-hidden flex flex-col">
+            <div className="border-b border-neutral-100 bg-neutral-50/50 px-6 py-4">
+              <div className="mb-2 flex items-start text-[13px]">
+                <span className="w-16 font-medium text-neutral-500 pt-0.5">To:</span>
+                <div className="flex-1 text-neutral-700">
+                  {showAllRecipients ? (
+                    <div className="flex flex-wrap gap-1">
+                      {allEmailsToPreview.length > 0 ? allEmailsToPreview.map((r, i) => <span key={i} className="bg-neutral-200/50 px-1.5 py-0.5 rounded text-[12px]">{r}</span>) : "candidate@example.com"}
+                      {allEmailsToPreview.length > 1 && (
+                        <button onClick={() => setShowAllRecipients(false)} className="text-amber-600 hover:underline text-[12px] px-1 ml-1 font-medium bg-amber-50 rounded">
+                          (collapse)
+                        </button>
+                      )}
+                    </div>
+                  ) : (
+                    <span>
+                      {allEmailsToPreview[0] || "candidate@example.com"}
+                      {totalCount > 1 && (
+                        <button onClick={() => setShowAllRecipients(true)} className="text-amber-600 hover:underline ml-1 font-medium bg-amber-50 px-1.5 py-0.5 rounded text-[12px]">
+                          (+{totalCount - 1} more)
+                        </button>
+                      )}
+                    </span>
+                  )}
+                </div>
+              </div>
+              <div className="flex items-center text-[13px]">
+                <span className="w-16 font-medium text-neutral-500">Subject:</span>
+                <span className="font-semibold text-neutral-900">{parseTemplateText(subject)}</span>
+              </div>
+            </div>
+            <div className="flex-1 p-6 overflow-y-auto custom-scrollbar">
+              <div className="whitespace-pre-wrap text-[13px] leading-relaxed text-neutral-700">
+                {parseTemplateText(body).split(/({{link}})/).map((part, i) => {
+                  if (part === "{{link}}") {
+                    return (
+                      <div key={i} className="my-4">
+                        <a
+                          href={`${typeof window !== "undefined" ? window.location.origin : ""}/evaluation/${evId}`}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="inline-block rounded-lg bg-[#F5A623] px-6 py-2.5 text-[13px] font-semibold !text-white transition hover:bg-opacity-90 shadow-sm"
+                          style={{ color: "#ffffff" }}
+                        >
+                          Start Evaluation
+                        </a>
+                      </div>
+                    );
+                  }
+                  return <span key={i}>{part}</span>;
+                })}
+              </div>
+            </div>
+          </div>
+          
+        </div>
+      </div>
+      
+      {/* Footer */}
+      <div className="flex items-center justify-end gap-3 p-5 bg-white border-t border-neutral-200">
+        <button onClick={onClose} className="rounded-lg px-6 py-2.5 text-[13px] font-medium text-neutral-600 hover:bg-neutral-100 transition-colors">
+          Cancel
+        </button>
+        <button 
+          onClick={onSubmit} 
+          disabled={sending || !isValid} 
+          className="inline-flex items-center justify-center rounded-lg bg-[#F5A623] px-8 py-2.5 text-[13px] font-semibold !text-white transition-all hover:bg-opacity-90 disabled:opacity-50 disabled:cursor-not-allowed shadow-sm"
+          style={{ color: "#ffffff" }}
+        >
+          {sending ? "Sending..." : `Send Invites ${totalCount > 0 ? `(${totalCount})` : ''}`}
+        </button>
+      </div>
     </div>
   );
 }
@@ -348,27 +843,47 @@ function OverviewTab({
 }: {
   ev: Evaluation;
   candidates: Candidate[];
-  onGoto: (t: "overview" | "candidates" | "followups" | "records" | "intelligence" | "attention" | "settings") => void;
+  onGoto: (t: "overview" | "candidates" | "followups" | "records" | "feedback" | "intelligence" | "settings") => void;
   notify: (m: string) => void;
 }) {
+  const [records, setRecords] = useState<any[]>([]);
+
+  useEffect(() => {
+    let mounted = true;
+    import("@/lib/candidateRecords").then((m) => {
+      m.fetchCandidateRecords(ev.id).then((res) => {
+        if (mounted) setRecords(res);
+      });
+    });
+    return () => { mounted = false; };
+  }, [ev.id]);
+
   const stats = useMemo(() => {
-    const invited = candidates.length;
+    // 1. Funnel
+    const invited = ev.candidatesTotal; 
     const submitted = candidates.filter((c) => c.status === "Submitted").length;
     const completed = candidates.filter((c) => c.status === "Completed").length;
     const inProgress = candidates.filter((c) => c.status === "In Progress").length;
-    const notStarted = candidates.filter((c) => c.status === "Not Started").length;
     const expired = candidates.filter((c) => c.status === "Expired").length;
+    const notStarted = Math.max(0, invited - (submitted + completed + inProgress + expired));
+
+    // 2. Hiring Status from candidates (from submissions)
     const pending = candidates.filter((c) => c.hiringStatus === "Pending Review").length;
     const shortlisted = candidates.filter((c) => c.hiringStatus === "Shortlisted").length;
     const interview = candidates.filter((c) => c.hiringStatus === "Interview Scheduled").length;
     const selected = candidates.filter((c) => c.hiringStatus === "Selected").length;
     const rejected = candidates.filter((c) => c.hiringStatus === "Rejected").length;
-    const submittedList = candidates.filter((c) => c.status === "Submitted" || c.status === "Completed");
+    
+    const submittedList = candidates.filter(
+      (c) => c.status === "Submitted" || c.status === "Completed",
+    );
     const avgEci = submittedList.length
       ? Math.round(submittedList.reduce((a, c) => a + c.eci, 0) / submittedList.length)
       : 0;
     const avgTime = submittedList.length
-      ? Math.round(submittedList.reduce((a, c) => a + c.completionMinutes, 0) / submittedList.length)
+      ? Math.round(
+          submittedList.reduce((a, c) => a + c.completionMinutes, 0) / submittedList.length,
+        )
       : 0;
     return {
       invited,
@@ -385,7 +900,7 @@ function OverviewTab({
       avgEci,
       avgTime,
     };
-  }, [candidates]);
+  }, [candidates, ev.candidatesTotal]);
 
   const activity = useMemo(() => buildActivity(candidates), [candidates]);
 
@@ -512,12 +1027,18 @@ const DEFAULT_VIEWS: { id: string; name: string; build: () => CandidateFilters }
   {
     id: "strong",
     name: "Strong Candidates",
-    build: () => ({ ...emptyFilters(), recommendation: new Set(["Strong Hire", "Hire"] as Recommendation[]) }),
+    build: () => ({
+      ...emptyFilters(),
+      recommendation: new Set(["Strong Hire", "Hire"] as Recommendation[]),
+    }),
   },
   {
     id: "pending",
     name: "Pending",
-    build: () => ({ ...emptyFilters(), status: new Set(["In Progress", "Not Started"] as CandStatus[]) }),
+    build: () => ({
+      ...emptyFilters(),
+      status: new Set(["In Progress", "Not Started"] as CandStatus[]),
+    }),
   },
   {
     id: "selected",
@@ -543,13 +1064,13 @@ const PIPELINE: { id: PipelineId; label: string; match: (c: Candidate) => boolea
   {
     id: "pending",
     label: "Pending Review",
-    match: (c) => c.hiringStatus === "Pending Review" && (c.status === "Submitted" || c.status === "Completed"),
+    match: (c) =>
+      c.hiringStatus === "Pending Review" && (c.status === "Submitted" || c.status === "Completed"),
   },
   { id: "shortlisted", label: "Shortlisted", match: (c) => c.hiringStatus === "Shortlisted" },
   { id: "rejected", label: "Rejected", match: (c) => c.hiringStatus === "Rejected" },
   { id: "hold", label: "Hold", match: (c) => c.hiringStatus === "Hold" },
 ];
-
 
 // ------- Column definitions -------
 type ColKey =
@@ -559,6 +1080,7 @@ type ColKey =
   | "labs"
   | "assessment"
   | "vitarka"
+  | "system_design"
   | "eci"
   | "recommendation"
   | "submitted"
@@ -570,7 +1092,8 @@ const ALL_COLS: { key: ColKey; label: string; always?: boolean }[] = [
   { key: "labs", label: "Engineering Labs", always: true },
   { key: "assessment", label: "Knowledge Assessment", always: true },
   { key: "vitarka", label: "Vitarka", always: true },
-  { key: "eci", label: "Engineering Capability Index", always: true },
+  { key: "system_design", label: "System Design", always: true },
+  { key: "eci", label: "Total Score", always: true },
   { key: "recommendation", label: "AI Recommendation", always: true },
   { key: "submitted", label: "Submitted On", always: true },
   { key: "status", label: "Review Status", always: true },
@@ -587,15 +1110,18 @@ const DEFAULT_COLS: ColKey[] = [
 ];
 const COLS_KEY = "yuvro-cand-cols-v2";
 
-
 function CandidatesTab({
   evId,
+  ev,
   candidates,
   notify,
+  onRefresh,
 }: {
   evId: string;
+  ev?: Evaluation;
   candidates: Candidate[];
   notify: (m: string) => void;
+  onRefresh: () => void;
 }) {
   const nav = useNavigate();
   const [filters, setFilters] = useState<CandidateFilters>(emptyFilters());
@@ -613,14 +1139,29 @@ function CandidatesTab({
   const [viewed, setViewed] = useState<Set<string>>(new Set());
   const [noted, setNoted] = useState<Set<string>>(new Set());
   const [drawerOpen, setDrawerOpen] = useState(false);
-  const [cols, setCols] = useState<Set<ColKey>>(() => {
-    if (typeof window === "undefined") return new Set(DEFAULT_COLS);
-    try {
-      const raw = localStorage.getItem(COLS_KEY);
-      if (raw) return new Set(JSON.parse(raw));
-    } catch {}
-    return new Set(DEFAULT_COLS);
-  });
+
+  const sections = ev?.sections || [];
+  const hasSections = sections.length > 0;
+  const hasLabs = hasSections ? sections.some((s: any) => s.kind === "labs" || s.kind === "lab" || s.type === "LAB" || s.type === "ENGINEERING_LABS") : false;
+  const hasAssessment = hasSections ? sections.some((s: any) => s.kind === "assessment" || s.kind === "knowledge" || s.type === "KNOWLEDGE_ASSESSMENT") : false;
+  const hasVitarka = hasSections ? sections.some((s: any) => s.kind === "discussion" || s.kind === "vitarka" || s.type === "VITARKA_AI_INTERVIEW") : false;
+  const hasSystemDesign = hasSections ? sections.some((s: any) => s.kind === "system_design" || s.type === "SYSTEM_DESIGN") : false;
+
+  const defaultColsSet = useMemo(() => {
+    const list: ColKey[] = ["candidate"];
+    if (hasLabs) list.push("labs");
+    if (hasAssessment) list.push("assessment");
+    if (hasVitarka) list.push("vitarka");
+    if (hasSystemDesign) list.push("system_design");
+    list.push("eci", "recommendation", "submitted", "status");
+    return new Set(list);
+  }, [hasLabs, hasAssessment, hasVitarka, hasSystemDesign]);
+
+  const [cols, setCols] = useState<Set<ColKey>>(defaultColsSet);
+
+  useEffect(() => {
+    setCols(defaultColsSet);
+  }, [defaultColsSet]);
 
   useEffect(() => {
     try {
@@ -651,7 +1192,10 @@ function CandidatesTab({
   // Apply pipeline first (as a lens over the full set), then filters + sort
   const pipelineFn = PIPELINE.find((p) => p.id === pipeline)!.match;
   const pipelineBase = useMemo(() => candidates.filter(pipelineFn), [candidates, pipeline]);
-  const filtered = useMemo(() => applyFilters(pipelineBase, filters, sort), [pipelineBase, filters, sort]);
+  const filtered = useMemo(
+    () => applyFilters(pipelineBase, filters, sort),
+    [pipelineBase, filters, sort],
+  );
 
   const pipelineCounts = useMemo(() => {
     const withFilters = (c: Candidate) => applyFilters([c], filters, sort).length === 1;
@@ -696,16 +1240,128 @@ function CandidatesTab({
       n.has(id) ? n.delete(id) : n.add(id);
       return n;
     });
-  const toggleAll = () => setSelected((s) => (s.size === paged.length ? new Set() : new Set(paged.map((c) => c.id))));
+  const toggleAll = () =>
+    setSelected((s) => (s.size === paged.length ? new Set() : new Set(paged.map((c) => c.id))));
   const openDetails = (c: Candidate) =>
-    nav({ to: "/recruiter/evaluations/$id/candidates/$candidateId", params: { id: evId, candidateId: c.id } });
-  const bulk = (label: string) => {
+    nav({
+      to: "/recruiter/evaluations/$id/candidates/$candidateId",
+      params: { id: evId, candidateId: c.id },
+      search: { view: "edit" } as any,
+    });
+    
+  const bulk = async (label: string, decision?: HiringDecision) => {
+    for (const c of selected) {
+      const candidateObj = candidates.find(cand => cand.id === c);
+      if (candidateObj?.email) {
+        if (decision) {
+          await saveDecision(evId, candidateObj.id, candidateObj.email, decision);
+        }
+        await pushActivity(evId, candidateObj.email, label, `Bulk applied ${label}`);
+      }
+    }
     notify(`${label} applied to ${selected.size} candidate${selected.size === 1 ? "" : "s"}`);
     setSelected(new Set());
+    if (decision) {
+      onRefresh();
+    }
   };
 
-  const colleges = useMemo(() => Array.from(new Set(candidates.map((c) => c.college))).sort(), [candidates]);
-  const companies = useMemo(() => Array.from(new Set(candidates.map((c) => c.company))).sort(), [candidates]);
+  const handleRowAction = async (c: Candidate, label: string, decision?: HiringDecision) => {
+    if (decision && c.email) {
+      await saveDecision(evId, c.id, c.email, decision);
+      notify(`${label} applied to ${c.name}`);
+      onRefresh();
+    } else if (label === "Resume opened") {
+      nav({
+        to: "/recruiter/evaluations/$id/candidates/$candidateId",
+        params: { id: evId, candidateId: c.id },
+        search: { view: "edit", tab: "resume" } as any,
+      });
+    } else if (label === "Note added") {
+      nav({
+        to: "/recruiter/evaluations/$id/candidates/$candidateId",
+        params: { id: evId, candidateId: c.id },
+        search: { view: "edit", tab: "notes" } as any,
+      });
+    } else if (label === "Report downloaded") {
+      try {
+        notify("Generating report PDF...");
+        const { getCandidateDetail } = await import("@/lib/recruiterCandidateDetail");
+        const { buildEvaluationSummary } = await import("@/lib/evaluationSummary");
+        const { downloadCandidateReportPdf } = await import("@/lib/candidateReportPdf");
+        
+        const detail = getCandidateDetail(c, {
+          labsMaxScore: c.labsMaxScore ?? 80,
+          assessmentMaxScore: c.assessmentMaxScore ?? 30,
+          discussionMaxScore: c.discussionMaxScore ?? 25,
+        });
+        
+        downloadCandidateReportPdf({
+          name: c.name,
+          email: c.email,
+          phone: c.phone,
+          college: c.college,
+          company: c.company,
+          experience: c.experience,
+          eci: c.eci,
+          recommendation: c.recommendation,
+          confidence: detail.confidence,
+          labsScore: c.labsScore,
+          assessmentScore: c.assessmentScore,
+          vitarkaScore: c.vitarkaScore,
+          labsMaxScore: c.labsMaxScore ?? 80,
+          assessmentMaxScore: c.assessmentMaxScore ?? 30,
+          discussionMaxScore: c.discussionMaxScore ?? 25,
+          systemDesignScore: c.systemDesignScore,
+          systemDesignMaxScore: c.systemDesignMaxScore,
+          strengths: detail.strengths,
+          weaknesses: detail.weaknesses,
+          aiSummary: detail.aiSummary,
+          nextStep: detail.nextStep,
+          evaluationTitle: ev?.title || "Evaluation Report",
+          summary: buildEvaluationSummary(c, hasLabs, hasAssessment, hasVitarka, hasSystemDesign),
+        });
+        notify("Report downloaded");
+      } catch (err) {
+        console.error(err);
+        notify("Failed to download PDF report");
+      }
+    } else if (label === "Link copied") {
+      try {
+        const result = await generateSharedReportLink(evId, c.email, c.rawSubmission?.id || c.id);
+        if (result && result.token) {
+          const url = `${typeof window !== "undefined" ? window.location.origin : ""}/shared/report/${result.token}`;
+          if (navigator.clipboard) {
+            await navigator.clipboard.writeText(url);
+          } else {
+            // Fallback for non-secure contexts
+            const el = document.createElement('textarea');
+            el.value = url;
+            document.body.appendChild(el);
+            el.select();
+            document.execCommand('copy');
+            document.body.removeChild(el);
+          }
+          notify("Candidate report link copied");
+        } else {
+          notify("Failed to generate link");
+        }
+      } catch (e) {
+        console.error(e);
+        notify("Failed to copy link");
+      }
+    } else {
+      notify(label);
+    }
+  };
+  const colleges = useMemo(
+    () => Array.from(new Set(candidates.map((c) => c.college))).sort(),
+    [candidates],
+  );
+  const companies = useMemo(
+    () => Array.from(new Set(candidates.map((c) => c.company))).sort(),
+    [candidates],
+  );
 
   const activeChips = useMemo(() => buildActiveChips(filters), [filters]);
   const attention = useMemo(
@@ -744,11 +1400,11 @@ function CandidatesTab({
               <button
                 key={p.id}
                 onClick={() => setPipeline(p.id)}
-                className={`inline-flex items-center gap-1.5 whitespace-nowrap rounded-md px-2.5 py-1.5 text-[12.5px] transition ${active ? "bg-neutral-900 text-white" : "text-neutral-600 hover:bg-neutral-100 hover:text-neutral-900"}`}
+                className={`inline-flex items-center gap-1.5 whitespace-nowrap rounded-md px-2.5 py-1.5 text-[12.5px] transition ${active ? "bg-neutral-900 !text-white dark:bg-white dark:!text-neutral-900 font-medium" : "text-neutral-600 dark:text-neutral-400 hover:bg-neutral-100 dark:hover:bg-white/10 hover:text-neutral-900 dark:hover:text-white"}`}
               >
-                <span className={active ? "font-medium" : ""}>{p.label}</span>
+                <span>{p.label}</span>
                 <span
-                  className={`rounded-full px-1.5 py-0.5 text-[10px] font-medium tabular-nums ${active ? "bg-white/20 text-white" : "bg-neutral-100 text-neutral-600"}`}
+                  className={`rounded-full px-1.5 py-0.5 text-[10px] font-medium tabular-nums ${active ? "bg-white/20 !text-white dark:bg-black/10 dark:!text-neutral-900" : "bg-neutral-100 dark:bg-white/10 text-neutral-600 dark:text-neutral-400"}`}
                 >
                   {count.toLocaleString()}
                 </span>
@@ -765,8 +1421,11 @@ function CandidatesTab({
             Advanced Filters
           </ToolbarBtn>
           <SortMenu value={sort} onChange={setSort} />
-          <ColumnsMenu cols={cols} setCols={setCols} />
-          <ExportMenu candidates={filtered} selected={candidates.filter((c) => selected.has(c.id))} notify={notify} />
+          <ExportMenu
+            candidates={filtered}
+            selected={candidates.filter((c) => selected.has(c.id))}
+            notify={notify}
+          />
         </div>
       </div>
 
@@ -804,35 +1463,14 @@ function CandidatesTab({
       {/* Subtle divider before table */}
       <div className="border-t border-neutral-200" />
 
-
       {/* Bulk actions */}
       {selected.size > 0 && (
         <div className="flex flex-wrap items-center gap-2 rounded-xl border border-neutral-200 bg-white px-3 py-2">
           <div className="text-[12px] font-medium text-neutral-900">{selected.size} selected</div>
           <div className="mx-2 h-4 w-px bg-neutral-200" />
-          <BulkBtn
-            onClick={() => {
-              if (selected.size < 2 || selected.size > 4) return notify("Select 2 to 4 candidates to compare");
-              nav({
-                to: "/recruiter/evaluations/$id/compare",
-                params: { id: evId },
-                search: { ids: Array.from(selected).join(",") },
-              });
-            }}
-            accent
-          >
-            Compare {selected.size >= 2 && selected.size <= 4 ? `(${selected.size})` : ""}
-          </BulkBtn>
-          <BulkBtn onClick={() => bulk("Moved to Hold")}>Hold</BulkBtn>
-          <BulkBtn onClick={() => bulk("Shortlisted")}>Shortlist</BulkBtn>
-          <BulkBtn onClick={() => bulk("Rejected")}>Reject</BulkBtn>
-          <BulkBtn onClick={() => bulk("Email sent")}>Send Email</BulkBtn>
-          <BulkBtn onClick={() => bulk("Reports downloaded")}>Download Reports</BulkBtn>
-          <BulkBtn onClick={() => bulk("Tag added")}>Add Tags</BulkBtn>
-          <BulkBtn onClick={() => bulk("Archived")}>Archive</BulkBtn>
-          <BulkBtn onClick={() => bulk("Deleted")} danger>
-            Delete
-          </BulkBtn>
+          <BulkBtn onClick={() => bulk("Moved to Hold", "Hold")}>Hold</BulkBtn>
+          <BulkBtn onClick={() => bulk("Shortlisted", "Shortlisted")}>Shortlist</BulkBtn>
+          <BulkBtn onClick={() => bulk("Rejected", "Rejected")}>Reject</BulkBtn>
           <button
             onClick={() => setSelected(new Set())}
             className="ml-auto text-[11px] text-neutral-500 hover:text-neutral-900"
@@ -862,8 +1500,12 @@ function CandidatesTab({
             allChecked={paged.length > 0 && paged.every((r) => selected.has(r.id))}
             onOpen={openDetails}
             onPreview={setPreview}
-            onAction={(label) => notify(label)}
+            onAction={handleRowAction}
             highlight={filters.search}
+            hasLabs={hasLabs}
+            hasAssessment={hasAssessment}
+            hasVitarka={hasVitarka}
+            hasSystemDesign={hasSystemDesign}
           />
         ) : (
           <div className="grid grid-cols-1 gap-3 md:grid-cols-2 xl:grid-cols-3">
@@ -875,7 +1517,11 @@ function CandidatesTab({
                 onToggle={() => toggleSelect(c.id)}
                 onOpen={() => openDetails(c)}
                 onPreview={() => setPreview(c)}
-                onAction={(l) => notify(l)}
+                onAction={(l, d) => handleRowAction(c, l, d)}
+                hasLabs={hasLabs}
+                hasAssessment={hasAssessment}
+                hasVitarka={hasVitarka}
+                hasSystemDesign={hasSystemDesign}
               />
             ))}
           </div>
@@ -887,8 +1533,10 @@ function CandidatesTab({
         <div className="flex flex-wrap items-center justify-between gap-3 rounded-xl border border-neutral-200 bg-white px-4 py-3 text-[12px] text-neutral-600">
           <div>
             Showing <b className="text-neutral-900 tabular-nums">{(page - 1) * perPage + 1}</b>–
-            <b className="text-neutral-900 tabular-nums">{Math.min(page * perPage, filtered.length)}</b> of{" "}
-            <b className="text-neutral-900 tabular-nums">{filtered.length.toLocaleString()}</b>
+            <b className="text-neutral-900 tabular-nums">
+              {Math.min(page * perPage, filtered.length)}
+            </b>{" "}
+            of <b className="text-neutral-900 tabular-nums">{filtered.length.toLocaleString()}</b>
           </div>
           <div className="flex items-center gap-4">
             <div className="flex items-center gap-1.5">
@@ -928,7 +1576,13 @@ function CandidatesTab({
         </div>
       )}
 
-      {preview && <PreviewPanel c={preview} onClose={() => setPreview(null)} onOpen={() => openDetails(preview)} />}
+      {preview && (
+        <PreviewPanel
+          c={preview}
+          onClose={() => setPreview(null)}
+          onOpen={() => openDetails(preview)}
+        />
+      )}
 
       {/* Advanced Filters drawer */}
       <AdvancedFiltersDrawer
@@ -936,7 +1590,7 @@ function CandidatesTab({
         onClose={() => setDrawerOpen(false)}
         filters={filters}
         setFilters={setFilters}
-        matchCount={filtered.length}
+        candidates={pipelineBase}
         colleges={colleges}
         companies={companies}
       />
@@ -1007,7 +1661,9 @@ function ColumnsMenu({ cols, setCols }: { cols: Set<ColKey>; setCols: (s: Set<Co
                       {on && <Check className="h-3 w-3" />}
                     </span>
                     <span>{c.label}</span>
-                    {c.always && <span className="ml-auto text-[10px] text-neutral-400">required</span>}
+                    {c.always && (
+                      <span className="ml-auto text-[10px] text-neutral-400">required</span>
+                    )}
                   </button>
                 );
               })}
@@ -1039,19 +1695,32 @@ function ExportMenu({
   selected: Candidate[];
   notify: (m: string) => void;
 }) {
-  const [open, setOpen] = useState(false);
   const scope = selected.length > 0 ? selected : candidates;
-  const label = selected.length > 0 ? `${selected.length} selected` : `${candidates.length.toLocaleString()} in view`;
+  const label =
+    selected.length > 0
+      ? `${selected.length} selected`
+      : `${candidates.length.toLocaleString()} in view`;
 
-  const doCsv = (kind: "csv" | "xlsx") => {
+  const doCsv = async (kind: "csv" | "xlsx") => {
     const rows = [
-      ["Candidate", "Email", "Phone", "ECI", "Labs", "Assessment", "Vitarka", "Status", "Hiring", "Submitted"],
+      [
+        "Candidate",
+        "Email",
+        "Phone",
+        "Total",
+        "Labs",
+        "Assessment",
+        "Vitarka",
+        "Status",
+        "Hiring",
+        "Submitted",
+      ],
     ].concat(
       scope.map((c) => [
         c.name,
         c.email,
         c.phone,
-        String(c.eci),
+        String(c.totalEarned != null ? c.totalEarned : c.eci),
         String(c.labsScore),
         String(c.assessmentScore),
         String(c.vitarkaScore),
@@ -1060,118 +1729,50 @@ function ExportMenu({
         new Date(c.submittedAt).toISOString(),
       ]),
     );
-    const csv = rows.map((r) => r.map((v) => `"${String(v).replace(/"/g, '""')}"`).join(",")).join("\n");
-    const blob = new Blob([csv], { type: kind === "xlsx" ? "application/vnd.ms-excel" : "text/csv" });
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement("a");
-    a.href = url;
-    a.download = `candidates.${kind === "xlsx" ? "xls" : "csv"}`;
-    a.click();
-    URL.revokeObjectURL(url);
+    
+    if (kind === "xlsx") {
+      const XLSX = await import("xlsx");
+      const wb = XLSX.utils.book_new();
+      const ws = XLSX.utils.aoa_to_sheet(rows);
+      XLSX.utils.book_append_sheet(wb, ws, "Candidates");
+      XLSX.writeFile(wb, "candidates.xlsx");
+    } else {
+      const csv = rows
+        .map((r) => r.map((v) => `"${String(v).replace(/"/g, '""')}"`).join(","))
+        .join("\n");
+      const blob = new Blob([csv], { type: "text/csv" });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = "candidates.csv";
+      a.click();
+      URL.revokeObjectURL(url);
+    }
     notify(`Exported ${scope.length} candidates (${kind.toUpperCase()})`);
   };
 
   return (
-    <div className="relative">
-      <ToolbarBtn onClick={() => setOpen((v) => !v)} icon={<Download className="h-3.5 w-3.5" />}>
-        Export
-      </ToolbarBtn>
-      {open && (
-        <>
-          <div className="fixed inset-0 z-30" onClick={() => setOpen(false)} />
-          <div className="absolute right-0 top-full z-40 mt-1 w-64 overflow-hidden rounded-xl border border-neutral-200 bg-white shadow-lg">
-            <div className="border-b border-neutral-100 px-3 py-2 text-[11px] uppercase tracking-widest text-neutral-500">
-              Export · {label}
-            </div>
-            <div className="py-1">
-              <ExportItem
-                onClick={() => {
-                  doCsv("csv");
-                  setOpen(false);
-                }}
-                icon={<FileText className="h-3.5 w-3.5" />}
-              >
-                CSV
-              </ExportItem>
-              <ExportItem
-                onClick={() => {
-                  doCsv("xlsx");
-                  setOpen(false);
-                }}
-                icon={<FileSpreadsheet className="h-3.5 w-3.5" />}
-              >
-                Excel
-              </ExportItem>
-              <ExportItem
-                onClick={() => {
-                  notify(`Combined PDF prepared (${scope.length})`);
-                  setOpen(false);
-                }}
-                icon={<FileText className="h-3.5 w-3.5" />}
-              >
-                Combined PDF
-              </ExportItem>
-              <div className="my-1 h-px bg-neutral-100" />
-              <ExportItem
-                onClick={() => {
-                  notify("Resume bundle prepared");
-                  setOpen(false);
-                }}
-                icon={<Download className="h-3.5 w-3.5" />}
-              >
-                Resume Bundle
-              </ExportItem>
-              <ExportItem
-                onClick={() => {
-                  notify("Engineering report prepared");
-                  setOpen(false);
-                }}
-                icon={<Download className="h-3.5 w-3.5" />}
-              >
-                Engineering Report
-              </ExportItem>
-              <ExportItem
-                onClick={() => {
-                  notify("Assessment report prepared");
-                  setOpen(false);
-                }}
-                icon={<Download className="h-3.5 w-3.5" />}
-              >
-                Assessment Report
-              </ExportItem>
-              <ExportItem
-                onClick={() => {
-                  notify("Vitarka report prepared");
-                  setOpen(false);
-                }}
-                icon={<Download className="h-3.5 w-3.5" />}
-              >
-                Vitarka Report
-              </ExportItem>
-            </div>
-          </div>
-        </>
-      )}
-    </div>
-  );
-}
-function ExportItem({
-  children,
-  onClick,
-  icon,
-}: {
-  children: React.ReactNode;
-  onClick: () => void;
-  icon?: React.ReactNode;
-}) {
-  return (
-    <button
-      onClick={onClick}
-      className="flex w-full items-center gap-2 px-3 py-2 text-left text-[12.5px] text-neutral-800 hover:bg-neutral-50"
-    >
-      {icon}
-      {children}
-    </button>
+    <DropdownMenu>
+      <DropdownMenuTrigger asChild>
+        <button className="inline-flex items-center gap-1.5 rounded-lg border border-neutral-200 bg-white px-3 py-1.5 text-[12px] font-medium text-neutral-800 transition hover:border-neutral-300 hover:bg-neutral-50 focus:outline-none">
+          <Download className="h-3.5 w-3.5" /> Export
+        </button>
+      </DropdownMenuTrigger>
+      <DropdownMenuContent align="end" className="w-48 p-0 overflow-hidden rounded-xl border border-neutral-200 bg-white shadow-lg">
+        <DropdownMenuItem
+          onClick={() => doCsv("csv")}
+          className="block w-full cursor-pointer px-3 py-2 text-left text-[12.5px] text-neutral-800 hover:bg-neutral-50 focus:bg-neutral-50 focus:text-neutral-900 rounded-none border-none outline-none"
+        >
+          Export as CSV ({label})
+        </DropdownMenuItem>
+        <DropdownMenuItem
+          onClick={() => doCsv("xlsx")}
+          className="block w-full cursor-pointer px-3 py-2 text-left text-[12.5px] text-neutral-800 hover:bg-neutral-50 focus:bg-neutral-50 focus:text-neutral-900 rounded-none border-none outline-none"
+        >
+          Export as Excel ({label})
+        </DropdownMenuItem>
+      </DropdownMenuContent>
+    </DropdownMenu>
   );
 }
 
@@ -1184,7 +1785,9 @@ function highlightText(text: string, q: string) {
   return (
     <>
       {text.slice(0, i)}
-      <mark className="rounded bg-yellow-100 px-0.5 text-neutral-900">{text.slice(i, i + q.length)}</mark>
+      <mark className="rounded bg-yellow-100 px-0.5 text-neutral-900">
+        {text.slice(i, i + q.length)}
+      </mark>
       {text.slice(i + q.length)}
     </>
   );
@@ -1201,6 +1804,10 @@ function CandidateTable({
   onPreview,
   onAction,
   highlight,
+  hasLabs = true,
+  hasAssessment = true,
+  hasVitarka = true,
+  hasSystemDesign = true,
 }: {
   rows: Candidate[];
   cols: Set<ColKey>;
@@ -1210,10 +1817,21 @@ function CandidateTable({
   allChecked: boolean;
   onOpen: (c: Candidate) => void;
   onPreview: (c: Candidate) => void;
-  onAction: (label: string) => void;
+  onAction: (c: Candidate, label: string, decision?: HiringDecision) => void;
   highlight?: string;
+  hasLabs?: boolean;
+  hasAssessment?: boolean;
+  hasVitarka?: boolean;
+  hasSystemDesign?: boolean;
 }) {
-  const show = (k: ColKey) => cols.has(k);
+  const show = (k: ColKey) => {
+    if (k === "labs" && !hasLabs) return false;
+    if (k === "assessment" && !hasAssessment) return false;
+    if (k === "vitarka" && !hasVitarka) return false;
+    if (k === "system_design" && !hasSystemDesign) return false;
+    return cols.has(k);
+  };
+
   return (
     <div className="-mx-1 overflow-x-auto">
       <table className="w-full min-w-[960px] border-collapse text-left text-[12.5px]">
@@ -1228,7 +1846,8 @@ function CandidateTable({
             {show("labs") && <Th className="w-[84px] text-right">Eng. Labs</Th>}
             {show("assessment") && <Th className="w-[104px] text-right">Knowledge</Th>}
             {show("vitarka") && <Th className="w-[84px] text-right">Vitarka</Th>}
-            {show("eci") && <Th className="w-[84px] text-right">ECI</Th>}
+            {show("system_design") && <Th className="w-[96px] text-right">Sys. Design</Th>}
+            {show("eci") && <Th className="w-[84px] text-right">Total</Th>}
             {show("recommendation") && <Th className="w-[150px]">AI Recommendation</Th>}
             {show("submitted") && <Th className="w-[120px]">Submitted</Th>}
             {show("status") && <Th className="w-[130px]">Review Status</Th>}
@@ -1240,10 +1859,14 @@ function CandidateTable({
             <tr
               key={c.id}
               onClick={() => onOpen(c)}
-              className={`cursor-pointer border-b border-neutral-100 text-neutral-900 transition hover:bg-neutral-50 ${selected.has(c.id) ? "bg-neutral-50" : ""}`}
+              className={`cursor-pointer border-b border-neutral-100 dark:border-white/5 text-neutral-900 dark:text-neutral-100 transition hover:bg-neutral-50 dark:hover:bg-white/5 ${selected.has(c.id) ? "bg-neutral-50 dark:bg-white/[0.04]" : ""}`}
             >
               <Td onClick={(e) => e.stopPropagation()}>
-                <input type="checkbox" checked={selected.has(c.id)} onChange={() => onToggle(c.id)} />
+                <input
+                  type="checkbox"
+                  checked={selected.has(c.id)}
+                  onChange={() => onToggle(c.id)}
+                />
               </Td>
               {show("candidate") && (
                 <Td>
@@ -1260,20 +1883,48 @@ function CandidateTable({
                   </div>
                 </Td>
               )}
-              {show("email") && <Td className="text-neutral-700">{highlightText(c.email, highlight || "")}</Td>}
-              {show("phone") && <Td className="text-neutral-700">{c.phone}</Td>}
-              {show("labs") && <Td className="text-right tabular-nums text-neutral-900">{c.labsScore}</Td>}
-              {show("assessment") && <Td className="text-right tabular-nums text-neutral-900">{c.assessmentScore}</Td>}
+              {show("email") && (
+                <Td className="text-neutral-700">{highlightText(c.email, highlight || "")}</Td>
+              )}
+              {show("phone") && <Td className="text-neutral-700">{c.phone || "—"}</Td>}
+              {show("labs") && (
+                <Td className="text-right tabular-nums text-neutral-900">
+                  <div className="font-medium">{c.labsScore}</div>
+                  <div className="text-[10.5px] text-neutral-500">
+                    {c.labsMaxScore ? `of ${c.labsMaxScore}` : ""}
+                  </div>
+                </Td>
+              )}
+              {show("assessment") && (
+                <Td className="text-right tabular-nums text-neutral-900">
+                  <div className="font-medium">{c.assessmentScore}</div>
+                  <div className="text-[10.5px] text-neutral-500">
+                    {c.assessmentMaxScore ? `of ${c.assessmentMaxScore}` : ""}
+                  </div>
+                </Td>
+              )}
               {show("vitarka") && (
                 <Td className="text-right tabular-nums text-neutral-900">
-                  <div>{c.vitarkaScore}</div>
-                  <div className="text-[10.5px] text-neutral-500">{vitarkaLabel(c.vitarkaScore)}</div>
+                  <div className="font-medium">{c.vitarkaScore}</div>
+                  <div className="text-[10.5px] text-neutral-500">
+                    {c.discussionMaxScore ? `of ${c.discussionMaxScore}` : ""}
+                  </div>
+                </Td>
+              )}
+              {show("system_design") && (
+                <Td className="text-right tabular-nums text-neutral-900">
+                  <div className="font-medium">{c.systemDesignScore || 0}</div>
+                  <div className="text-[10.5px] text-neutral-500">
+                    {c.systemDesignMaxScore ? `of ${c.systemDesignMaxScore}` : ""}
+                  </div>
                 </Td>
               )}
               {show("eci") && (
                 <Td className="text-right tabular-nums text-neutral-900">
-                  <div className="font-medium">{c.eci}</div>
-                  <div className="text-[10.5px] text-neutral-500">{eciLabel(c.eci)}</div>
+                  <div className="font-medium">{c.totalEarned != null ? c.totalEarned : c.eci}</div>
+                  <div className="text-[10.5px] text-neutral-500">
+                    {c.totalPossible ? `of ${c.totalPossible}` : eciLabel(c.eci)}
+                  </div>
                 </Td>
               )}
               {show("recommendation") && (
@@ -1284,11 +1935,13 @@ function CandidateTable({
               {show("submitted") && <Td className="text-neutral-700">{fmtRel(c.submittedAt)}</Td>}
               {show("status") && (
                 <Td>
-                  <NeutralBadge>{c.hiringStatus === "Interview Scheduled" ? "Pending Review" : c.hiringStatus}</NeutralBadge>
+                  <NeutralBadge>
+                    {c.hiringStatus === "Interview Scheduled" ? "Pending Review" : c.hiringStatus}
+                  </NeutralBadge>
                 </Td>
               )}
               <Td onClick={(e) => e.stopPropagation()}>
-                <RowMenu onOpen={() => onOpen(c)} onAction={onAction} />
+                <RowMenu onOpen={() => onOpen(c)} onAction={(l, d) => onAction(c, l, d)} />
               </Td>
             </tr>
           ))}
@@ -1298,50 +1951,42 @@ function CandidateTable({
   );
 }
 
-
-function RowMenu({ onOpen, onAction }: { onOpen: () => void; onAction: (l: string) => void }) {
-  const [open, setOpen] = useState(false);
+function RowMenu({ onOpen, onAction }: { onOpen: () => void; onAction: (l: string, d?: HiringDecision) => void }) {
   const items = [
     { label: "View Candidate", fn: onOpen },
     { label: "Open Resume", fn: () => onAction("Resume opened") },
     { label: "Download Report", fn: () => onAction("Report downloaded") },
-    { label: "Shortlist", fn: () => onAction("Shortlisted") },
-    { label: "Reject", fn: () => onAction("Rejected") },
-    { label: "Hold", fn: () => onAction("Moved to Hold") },
+    { label: "Shortlist", fn: () => onAction("Shortlisted", "Shortlisted") },
+    { label: "Reject", fn: () => onAction("Rejected", "Rejected") },
+    { label: "Hold", fn: () => onAction("Moved to Hold", "Hold") },
     { label: "Copy Candidate Link", fn: () => onAction("Link copied") },
     { label: "Add Notes", fn: () => onAction("Note added") },
   ];
   return (
-    <div className="relative">
-      <button
-        onClick={(e) => {
-          e.stopPropagation();
-          setOpen((v) => !v);
-        }}
-        className="rounded p-1 text-neutral-500 hover:bg-neutral-100 hover:text-neutral-900"
-      >
-        <MoreHorizontal className="h-3.5 w-3.5" />
-      </button>
-      {open && (
-        <>
-          <div className="fixed inset-0 z-30" onClick={() => setOpen(false)} />
-          <div className="absolute right-0 top-full z-40 mt-1 w-48 overflow-hidden rounded-xl border border-neutral-200 bg-white shadow-lg">
-            {items.map((it) => (
-              <button
-                key={it.label}
-                onClick={() => {
-                  it.fn();
-                  setOpen(false);
-                }}
-                className="block w-full px-3 py-2 text-left text-[12.5px] text-neutral-800 hover:bg-neutral-50"
-              >
-                {it.label}
-              </button>
-            ))}
-          </div>
-        </>
-      )}
-    </div>
+    <DropdownMenu>
+      <DropdownMenuTrigger asChild>
+        <button
+          onClick={(e) => e.stopPropagation()}
+          className="rounded p-1 text-neutral-500 hover:bg-neutral-100 hover:text-neutral-900 focus:outline-none"
+        >
+          <MoreHorizontal className="h-3.5 w-3.5" />
+        </button>
+      </DropdownMenuTrigger>
+      <DropdownMenuContent align="end" className="w-48 overflow-hidden rounded-xl border border-neutral-200 bg-white p-0 shadow-lg">
+        {items.map((it) => (
+          <DropdownMenuItem
+            key={it.label}
+            onClick={(e) => {
+              e.stopPropagation();
+              it.fn();
+            }}
+            className="block w-full cursor-pointer px-3 py-2 text-left text-[12.5px] text-neutral-800 hover:bg-neutral-50 focus:bg-neutral-50 focus:text-neutral-900 rounded-none border-none outline-none"
+          >
+            {it.label}
+          </DropdownMenuItem>
+        ))}
+      </DropdownMenuContent>
+    </DropdownMenu>
   );
 }
 
@@ -1352,13 +1997,21 @@ function CandidateCard({
   onOpen,
   onPreview,
   onAction,
+  hasLabs = true,
+  hasAssessment = true,
+  hasVitarka = true,
+  hasSystemDesign = true,
 }: {
   c: Candidate;
   selected: boolean;
   onToggle: () => void;
   onOpen: () => void;
   onPreview: () => void;
-  onAction: (l: string) => void;
+  onAction: (l: string, d?: HiringDecision) => void;
+  hasLabs?: boolean;
+  hasAssessment?: boolean;
+  hasVitarka?: boolean;
+  hasSystemDesign?: boolean;
 }) {
   return (
     <div
@@ -1382,13 +2035,14 @@ function CandidateCard({
         </div>
         <dl className="mt-4 grid grid-cols-2 gap-1 text-[11px] text-neutral-600">
           <span className="truncate">{c.email}</span>
-          <span className="truncate text-right">{c.phone}</span>
+          <span className="truncate text-right">{c.phone || "—"}</span>
         </dl>
-        <div className="mt-4 grid grid-cols-4 gap-1.5">
-          <MiniScore label="Labs" v={c.labsScore} />
-          <MiniScore label="Assess" v={c.assessmentScore} />
-          <MiniScore label="Vitarka" v={c.vitarkaScore} />
-          <MiniScore label="ECI" v={c.eci} highlight />
+        <div className="mt-4 flex flex-wrap gap-1.5">
+          {hasLabs && <MiniScore label="Labs" v={c.labsScore} />}
+          {hasAssessment && <MiniScore label="Assess" v={c.assessmentScore} />}
+          {hasVitarka && <MiniScore label="Vitarka" v={c.vitarkaScore} />}
+          {hasSystemDesign && <MiniScore label="Sys Design" v={c.systemDesignScore || 0} />}
+          <MiniScore label="Total" v={c.totalEarned != null ? c.totalEarned : c.eci} highlight />
         </div>
         <div className="mt-3 flex items-center justify-between text-[11px] text-neutral-600">
           <span>{fmtRel(c.submittedAt)}</span>
@@ -1409,7 +2063,10 @@ function CandidateCard({
           >
             Preview
           </button>
-          <button onClick={onOpen} className="rounded-md bg-neutral-900 px-2 py-1 text-white hover:bg-neutral-800">
+          <button
+            onClick={onOpen}
+            className="rounded-md bg-neutral-900 px-2 py-1 text-white hover:bg-neutral-800"
+          >
             View Details
           </button>
         </div>
@@ -1423,10 +2080,14 @@ function MiniScore({ label, v, highlight }: { label: string; v: number; highligh
     <div
       className={`rounded-lg border p-2 ${highlight ? "border-neutral-900 bg-neutral-900 text-white" : "border-neutral-200 bg-neutral-50"}`}
     >
-      <div className={`text-[9px] uppercase tracking-widest ${highlight ? "text-white/70" : "text-neutral-500"}`}>
+      <div
+        className={`text-[9px] uppercase tracking-widest ${highlight ? "text-white/70" : "text-neutral-500"}`}
+      >
         {label}
       </div>
-      <div className={`mt-0.5 text-[14px] font-medium tabular-nums ${highlight ? "text-white" : "text-neutral-900"}`}>
+      <div
+        className={`mt-0.5 text-[14px] font-medium tabular-nums ${highlight ? "text-white" : "text-neutral-900"}`}
+      >
         {v}
       </div>
     </div>
@@ -1441,7 +2102,7 @@ function AdvancedFiltersDrawer({
   onClose,
   filters,
   setFilters,
-  matchCount,
+  candidates,
   colleges,
   companies,
 }: {
@@ -1449,7 +2110,7 @@ function AdvancedFiltersDrawer({
   onClose: () => void;
   filters: CandidateFilters;
   setFilters: (f: CandidateFilters | ((p: CandidateFilters) => CandidateFilters)) => void;
-  matchCount: number;
+  candidates: Candidate[];
   colleges: string[];
   companies: string[];
 }) {
@@ -1474,7 +2135,9 @@ function AdvancedFiltersDrawer({
   }, [open, filters]);
 
   const setL = (patch: Partial<CandidateFilters> | ((p: CandidateFilters) => CandidateFilters)) => {
-    setLocal((prev) => (typeof patch === "function" ? (patch as any)(prev) : { ...prev, ...patch }));
+    setLocal((prev) =>
+      typeof patch === "function" ? (patch as any)(prev) : { ...prev, ...patch },
+    );
   };
 
   const reset = () => setLocal(emptyFilters());
@@ -1482,6 +2145,8 @@ function AdvancedFiltersDrawer({
     setFilters(local);
     onClose();
   };
+
+  const localMatchCount = useMemo(() => applyFilters(candidates, local, "newest").length, [candidates, local]);
 
   return (
     <>
@@ -1527,7 +2192,14 @@ function AdvancedFiltersDrawer({
             count={local.hiring.size}
           >
             <CheckGrid
-              options={["Pending Review", "Shortlisted", "Interview Scheduled", "Selected", "Rejected", "Hold"]}
+              options={[
+                "Pending Review",
+                "Shortlisted",
+                "Interview Scheduled",
+                "Selected",
+                "Rejected",
+                "Hold",
+              ]}
               value={local.hiring}
               onChange={(v) => setL({ hiring: v as any })}
             />
@@ -1557,10 +2229,24 @@ function AdvancedFiltersDrawer({
               local.vitarka.size
             }
           >
-            <ScoreRow label="Engineering Capability Index" value={local.eciMin} onChange={(v) => setL({ eciMin: v })} />
-            <ScoreRow label="Engineering Labs" value={local.labsMin} onChange={(v) => setL({ labsMin: v })} />
-            <ScoreRow label="Knowledge Assessment" value={local.assessMin} onChange={(v) => setL({ assessMin: v })} />
-            <div className="mt-3 text-[11px] uppercase tracking-widest text-neutral-500">Vitarka Discussion</div>
+            <ScoreRow
+              label="Total Score"
+              value={local.eciMin}
+              onChange={(v) => setL({ eciMin: v })}
+            />
+            <ScoreRow
+              label="Engineering Labs"
+              value={local.labsMin}
+              onChange={(v) => setL({ labsMin: v })}
+            />
+            <ScoreRow
+              label="Knowledge Assessment"
+              value={local.assessMin}
+              onChange={(v) => setL({ assessMin: v })}
+            />
+            <div className="mt-3 text-[11px] uppercase tracking-widest text-neutral-500">
+              Vitarka Discussion
+            </div>
             <div className="mt-1">
               <CheckGrid
                 options={["Excellent", "Good", "Average", "Poor"]}
@@ -1574,28 +2260,22 @@ function AdvancedFiltersDrawer({
             title="Background"
             open={openSection === "background"}
             onToggle={setOpenSection}
-            count={
-              local.experience.size +
-              local.colleges.size +
-              local.companies.size +
-              local.skills.size +
-              local.domains.size
-            }
+            count={local.experience.size + local.colleges.size + local.companies.size}
           >
-            <SubLabel>Experience</SubLabel>
+            <SubLabel>Experience Level</SubLabel>
             <CheckGrid
               options={["Fresher", "1-3 Years", "3-5 Years", "5-8 Years", "8+"]}
               value={local.experience}
               onChange={(v) => setL({ experience: v })}
             />
-            <SubLabel>College</SubLabel>
+            <SubLabel>College / University</SubLabel>
             <SearchableList
               options={colleges}
               value={local.colleges}
               onChange={(v) => setL({ colleges: v })}
               placeholder="Search colleges"
             />
-            <SubLabel>Company</SubLabel>
+            <SubLabel>Current Company</SubLabel>
             <SearchableList
               options={companies}
               value={local.companies}
@@ -1604,7 +2284,18 @@ function AdvancedFiltersDrawer({
             />
             <SubLabel>Skills</SubLabel>
             <CheckGrid
-              options={["Java", "Python", "SQL", "React", "Node", "AWS", "Docker", "Spring Boot", "TypeScript", "Go"]}
+              options={[
+                "Java",
+                "Python",
+                "SQL",
+                "React",
+                "Node",
+                "AWS",
+                "Docker",
+                "Spring Boot",
+                "TypeScript",
+                "Go",
+              ]}
               value={local.skills}
               onChange={(v) => setL({ skills: v })}
             />
@@ -1659,16 +2350,19 @@ function AdvancedFiltersDrawer({
         </div>
 
         <footer className="flex items-center justify-between gap-3 border-t border-neutral-100 bg-white px-6 py-4">
-          <button onClick={reset} className="text-[13px] text-neutral-600 hover:text-neutral-900 hover:underline">
+          <button
+            onClick={reset}
+            className="text-[13px] text-neutral-600 hover:text-neutral-900 hover:underline"
+          >
             Reset filters
           </button>
           <button
             onClick={apply}
             className="inline-flex items-center gap-2 rounded-lg bg-neutral-900 px-4 py-2 text-[13px] font-medium text-white hover:bg-neutral-800"
           >
-            Show {applyFilters(dryRunCandidates, local, "newest").length ? "matching" : ""} candidates
+            Show {localMatchCount ? "matching" : ""} candidates
             <span className="rounded-full bg-white/15 px-2 py-0.5 text-[11px] tabular-nums">
-              {matchCount.toLocaleString()}
+              {localMatchCount.toLocaleString()}
             </span>
           </button>
         </footer>
@@ -1709,7 +2403,9 @@ function DrawerSection({
             </span>
           ) : null}
         </div>
-        <ChevronDown className={`h-4 w-4 text-neutral-400 transition ${open ? "rotate-180" : ""}`} />
+        <ChevronDown
+          className={`h-4 w-4 text-neutral-400 transition ${open ? "rotate-180" : ""}`}
+        />
       </button>
       {open && <div className="px-6 pb-5 pt-1">{children}</div>}
     </div>
@@ -1772,7 +2468,9 @@ function ScoreRow({
     <div className="mb-3">
       <div className="mb-1.5 flex items-center justify-between">
         <span className="text-[12.5px] text-neutral-800">{label}</span>
-        <span className="text-[11px] text-neutral-500 tabular-nums">{value != null ? `≥ ${value}` : "Any"}</span>
+        <span className="text-[11px] text-neutral-500 tabular-nums">
+          {value != null ? `≥ ${value}` : "Any"}
+        </span>
       </div>
       <div className="flex gap-1">
         {opts.map((v, i) => (
@@ -1834,11 +2532,16 @@ function SearchableList({
             </button>
           );
         })}
-        {list.length === 0 && <div className="px-3 py-4 text-center text-[11px] text-neutral-500">No matches</div>}
+        {list.length === 0 && (
+          <div className="px-3 py-4 text-center text-[11px] text-neutral-500">No matches</div>
+        )}
       </div>
       {value.size > 0 && (
         <div className="border-t border-neutral-100 px-2.5 py-1.5 text-right">
-          <button onClick={() => onChange(new Set())} className="text-[11px] text-neutral-600 hover:text-neutral-900">
+          <button
+            onClick={() => onChange(new Set())}
+            className="text-[11px] text-neutral-600 hover:text-neutral-900"
+          >
             Clear ({value.size})
           </button>
         </div>
@@ -1883,9 +2586,19 @@ function buildActiveChips(f: CandidateFilters): ActiveChip[] {
   addSet("Tag", "tags");
   addSet("Domain", "domains");
   if (f.eciMin != null)
-    chips.push({ key: "eci", group: "ECI", value: `≥ ${f.eciMin}`, remove: (c) => ({ ...c, eciMin: null }) });
+    chips.push({
+      key: "eci",
+      group: "Total",
+      value: `≥ ${f.eciMin}`,
+      remove: (c) => ({ ...c, eciMin: null }),
+    });
   if (f.labsMin != null)
-    chips.push({ key: "labs", group: "Labs", value: `≥ ${f.labsMin}`, remove: (c) => ({ ...c, labsMin: null }) });
+    chips.push({
+      key: "labs",
+      group: "Labs",
+      value: `≥ ${f.labsMin}`,
+      remove: (c) => ({ ...c, labsMin: null }),
+    });
   if (f.assessMin != null)
     chips.push({
       key: "assess",
@@ -1913,12 +2626,11 @@ function buildActiveChips(f: CandidateFilters): ActiveChip[] {
 // -------------- Sort --------------
 
 function SortMenu({ value, onChange }: { value: SortKey; onChange: (v: SortKey) => void }) {
-  const [open, setOpen] = useState(false);
   const opts: [SortKey, string][] = [
     ["newest", "Newest submission"],
     ["oldest", "Oldest submission"],
-    ["eci_desc", "Highest ECI"],
-    ["eci_asc", "Lowest ECI"],
+    ["eci_desc", "Highest Total"],
+    ["eci_asc", "Lowest Total"],
     ["labs_desc", "Highest Labs"],
     ["assess_desc", "Highest Assessment"],
     ["vit_desc", "Highest Vitarka"],
@@ -1928,47 +2640,51 @@ function SortMenu({ value, onChange }: { value: SortKey; onChange: (v: SortKey) 
     ["name_desc", "Z → A"],
   ];
   return (
-    <div className="relative">
-      <button
-        onClick={() => setOpen((v) => !v)}
-        className="inline-flex items-center gap-1.5 rounded-md border border-white/10 px-2.5 py-1.5 text-[12px] text-neutral-300 hover:border-white/20"
-      >
-        <ArrowUpDown className="h-3.5 w-3.5" /> {opts.find((o) => o[0] === value)?.[1]}
-        <ChevronDown className="h-3 w-3" />
-      </button>
-      {open && (
-        <>
-          <div className="fixed inset-0 z-30" onClick={() => setOpen(false)} />
-          <div className="absolute right-0 top-full z-40 mt-1 w-52 overflow-hidden rounded-lg border border-white/10 bg-neutral-950 shadow-2xl">
-            {opts.map(([k, l]) => (
-              <button
-                key={k}
-                onClick={() => {
-                  onChange(k);
-                  setOpen(false);
-                }}
-                className={`block w-full px-3 py-1.5 text-left text-[12px] hover:bg-white/5 ${value === k ? "text-white" : "text-neutral-300"}`}
-              >
-                {l}
-              </button>
-            ))}
-          </div>
-        </>
-      )}
-    </div>
+    <DropdownMenu>
+      <DropdownMenuTrigger asChild>
+        <button className="inline-flex items-center gap-1.5 rounded-lg border border-neutral-200 bg-white px-3 py-1.5 text-[12px] font-medium text-neutral-800 transition hover:border-neutral-300 hover:bg-neutral-50 focus:outline-none">
+          <ArrowUpDown className="h-3.5 w-3.5" /> {opts.find((o) => o[0] === value)?.[1]}
+          <ChevronDown className="h-3.5 w-3.5 text-neutral-400" />
+        </button>
+      </DropdownMenuTrigger>
+      <DropdownMenuContent align="end" className="w-52 p-0 overflow-hidden rounded-xl border border-neutral-200 bg-white shadow-lg">
+        {opts.map(([k, l]) => (
+          <DropdownMenuItem
+            key={k}
+            onClick={() => onChange(k)}
+            className={`block w-full cursor-pointer px-3 py-2 text-left text-[12.5px] rounded-none border-none outline-none ${value === k ? "bg-neutral-50 font-medium text-neutral-900" : "text-neutral-800 hover:bg-neutral-50 focus:bg-neutral-50"}`}
+          >
+            {l}
+          </DropdownMenuItem>
+        ))}
+      </DropdownMenuContent>
+    </DropdownMenu>
   );
 }
 
 // -------------- Preview panel --------------
 
-function PreviewPanel({ c, onClose, onOpen }: { c: Candidate; onClose: () => void; onOpen: () => void }) {
+function PreviewPanel({
+  c,
+  onClose,
+  onOpen,
+}: {
+  c: Candidate;
+  onClose: () => void;
+  onOpen: () => void;
+}) {
   return (
     <>
       <div className="fixed inset-0 z-40 bg-black/40" onClick={onClose} />
       <aside className="fixed right-0 top-0 z-50 h-full w-full max-w-md overflow-y-auto border-l border-white/10 bg-neutral-950 p-6">
         <div className="flex items-center justify-between">
-          <div className="text-[11px] uppercase tracking-wider text-neutral-500">Candidate preview</div>
-          <button onClick={onClose} className="rounded p-1 text-neutral-400 hover:bg-white/5 hover:text-white">
+          <div className="text-[11px] uppercase tracking-wider text-neutral-500">
+            Candidate preview
+          </div>
+          <button
+            onClick={onClose}
+            className="rounded p-1 text-neutral-400 hover:bg-white/5 hover:text-white"
+          >
             <X className="h-4 w-4" />
           </button>
         </div>
@@ -2009,27 +2725,32 @@ function PreviewPanel({ c, onClose, onOpen }: { c: Candidate; onClose: () => voi
         </dl>
 
         <div className="mt-6">
-          <div className="text-[11px] uppercase tracking-wider text-neutral-500">Engineering capability</div>
+          <div className="text-[11px] uppercase tracking-wider text-neutral-500">
+            Total Score
+          </div>
           <div className="mt-2 flex items-baseline gap-2">
-            <div className="text-[36px] font-medium text-white">{c.eci}</div>
-            <div className="text-[12px] text-neutral-500">/100</div>
+            <div className="text-[36px] font-medium text-white">{c.totalEarned != null ? c.totalEarned : c.eci}</div>
+            <div className="text-[12px] text-neutral-500">/{c.totalPossible || 100}</div>
             <div className="ml-auto">
               <RecBadge r={c.recommendation} />
             </div>
           </div>
         </div>
 
-        <div className="mt-4 grid grid-cols-3 gap-2">
-          <ScoreBlock label="Labs" v={c.labsScore} big />
-          <ScoreBlock label="Assessment" v={c.assessmentScore} big />
-          <ScoreBlock label="Vitarka" v={c.vitarkaScore} big />
+        <div className="mt-4 flex flex-wrap gap-2">
+          {c.labsMaxScore ? <ScoreBlock label="Labs" v={c.labsScore} big /> : null}
+          {c.assessmentMaxScore ? <ScoreBlock label="Assessment" v={c.assessmentScore} big /> : null}
+          {c.discussionMaxScore ? <ScoreBlock label="Vitarka" v={c.vitarkaScore} big /> : null}
         </div>
 
         <div className="mt-6">
           <div className="text-[11px] uppercase tracking-wider text-neutral-500">Skills</div>
           <div className="mt-2 flex flex-wrap gap-1.5">
             {c.skills.map((s) => (
-              <span key={s} className="rounded-full border border-white/10 px-2 py-0.5 text-[11px] text-neutral-300">
+              <span
+                key={s}
+                className="rounded-full border border-white/10 px-2 py-0.5 text-[11px] text-neutral-300"
+              >
                 {s}
               </span>
             ))}
@@ -2100,7 +2821,15 @@ function MenuItem({
     </button>
   );
 }
-function MiniStat({ label, value, tone }: { label: string; value: number; tone?: "good" | "muted" }) {
+function MiniStat({
+  label,
+  value,
+  tone,
+}: {
+  label: string;
+  value: number;
+  tone?: "good" | "muted";
+}) {
   return (
     <div className="bg-neutral-950 px-4 py-3">
       <div className="text-[10px] uppercase tracking-widest text-neutral-500">{label}</div>
@@ -2211,9 +2940,21 @@ function Td({
 function ScorePill({ v, bold }: { v: number; bold?: boolean }) {
   return <span className={`text-neutral-900 ${bold ? "font-medium" : ""}`}>{v}</span>;
 }
-function ScoreBlock({ label, v, highlight, big }: { label: string; v: number; highlight?: boolean; big?: boolean }) {
+function ScoreBlock({
+  label,
+  v,
+  highlight,
+  big,
+}: {
+  label: string;
+  v: number;
+  highlight?: boolean;
+  big?: boolean;
+}) {
   return (
-    <div className={`rounded-lg border border-white/5 ${highlight ? "bg-emerald-400/[0.05]" : "bg-black/20"} p-2`}>
+    <div
+      className={`rounded-lg border border-white/5 ${highlight ? "bg-emerald-400/[0.05]" : "bg-black/20"} p-2`}
+    >
       <div className="text-[9px] uppercase tracking-widest text-neutral-500">{label}</div>
       <div className={`mt-0.5 ${big ? "text-[20px]" : "text-[14px]"} font-medium text-white`}>
         <ScorePill v={v} />
@@ -2250,7 +2991,9 @@ function Avatar({ name, hue, size = "md" }: { name: string; hue: number; size?: 
   return (
     <span
       className={`grid ${cls} flex-shrink-0 place-items-center rounded-full font-medium text-white`}
-      style={{ background: `linear-gradient(135deg, hsl(${hue} 60% 40%), hsl(${(hue + 60) % 360} 55% 30%))` }}
+      style={{
+        background: `linear-gradient(135deg, hsl(${hue} 60% 40%), hsl(${(hue + 60) % 360} 55% 30%))`,
+      }}
     >
       {initials}
     </span>
@@ -2297,8 +3040,27 @@ function cap(s: string) {
   return s[0].toUpperCase() + s.slice(1);
 }
 function fmtDate(t: number) {
-  return new Date(t).toLocaleDateString(undefined, { day: "numeric", month: "short", year: "numeric" });
+  return new Date(t).toLocaleDateString(undefined, {
+    day: "numeric",
+    month: "short",
+    year: "numeric",
+  });
 }
+const getImageUrl = (imgUrl: string | undefined) => {
+    if (!imgUrl) return undefined;
+    let processedUrl = imgUrl;
+    if (processedUrl.includes('minio:9000') || processedUrl.includes('http://minio/')) {
+        processedUrl = processedUrl.replace('minio:9000', 'localhost:9100').replace('http://minio/', 'http://localhost:9100/');
+    }
+    if (processedUrl.startsWith('http')) return processedUrl;
+    let cleanPath = processedUrl?.replace(/\\/g, '/');
+    if (cleanPath.startsWith('uploads/')) cleanPath = cleanPath.substring('uploads/'.length);
+    else if (cleanPath.startsWith('/uploads/')) cleanPath = cleanPath.substring('/uploads/'.length);
+    if (cleanPath.startsWith('/')) cleanPath = cleanPath.substring(1);
+    const baseUrl = (import.meta.env.VITE_BACKEND_API_BASE_URL || import.meta.env.VITE_API_BASE_URL || 'http://127.0.0.1:8002/api')?.replace(/\/$/, '');
+    const rootUrl = baseUrl?.replace(/\/api\/?$/, '');
+    return `${rootUrl}/media/${cleanPath}`;
+};
 function fmtRel(t: number) {
   const d = Date.now() - t;
   const m = Math.floor(d / 60000);
@@ -2351,8 +3113,13 @@ function deserializeFilters(s: SerializedFilters): CandidateFilters {
   };
 }
 function buildActivity(candidates: Candidate[]) {
-  const items: { id: string; text: string; time: string; tone: "good" | "warn" | "bad" | "neutral"; when: number }[] =
-    [];
+  const items: {
+    id: string;
+    text: string;
+    time: string;
+    tone: "good" | "warn" | "bad" | "neutral";
+    when: number;
+  }[] = [];
   const recent = [...candidates].sort((a, b) => b.submittedAt - a.submittedAt).slice(0, 40);
   for (const c of recent) {
     if (c.status === "Submitted")
@@ -2401,7 +3168,10 @@ function buildActivity(candidates: Candidate[]) {
 
 // ============================ ATTENTION ============================
 
-const TONE_MAP: Record<AttentionGroup["tone"], { ring: string; dot: string; btn: string; glow: string }> = {
+const TONE_MAP: Record<
+  AttentionGroup["tone"],
+  { ring: string; dot: string; btn: string; glow: string }
+> = {
   red: {
     ring: "border-red-400/25 hover:border-red-400/50",
     dot: "bg-red-400",
@@ -2435,7 +3205,10 @@ function AttentionSection({
   onApply: (f: CandidateFilters) => void;
   onOpen: (c: Candidate) => void;
 }) {
-  const groups = useMemo(() => computeAttentionGroups(candidates, viewed, noted), [candidates, viewed, noted]);
+  const groups = useMemo(
+    () => computeAttentionGroups(candidates, viewed, noted),
+    [candidates, viewed, noted],
+  );
   if (groups.length === 0) return null;
 
   const applyGroup = (g: AttentionGroup) => {
@@ -2511,38 +3284,140 @@ function AttentionSection({
   );
 }
 
-function AttentionTab({
-  evId,
-  candidates,
-  onGoto,
-}: {
-  evId: string;
-  candidates: Candidate[];
-  onGoto: (t: "overview" | "candidates" | "followups" | "records" | "intelligence" | "attention" | "settings") => void;
-}) {
-  const nav = useNavigate();
-  const [viewed, setViewed] = useState<Set<string>>(new Set());
-  const [noted, setNoted] = useState<Set<string>>(new Set());
+
+// ============================ ANALYTICS ============================
+
+function AnalyticsTab({ evId, candidates: mockCandidates }: { evId?: string, candidates: Candidate[] }) {
+  const [realSubmissions, setRealSubmissions] = useState<any[]>([]);
+  const [loading, setLoading] = useState(false);
+  
   useEffect(() => {
-    setViewed(loadViewed(evId));
-    setNoted(
-      loadNotedSet(
-        evId,
-        candidates.map((c) => c.id),
-      ),
+    if (!evId) return;
+    setLoading(true);
+    getEvaluationSubmissions(evId).then(data => {
+      setRealSubmissions(data || []);
+      setLoading(false);
+    });
+  }, [evId]);
+
+  // Map real submissions to the Candidate type our UI expects
+  const mappedCandidates = useMemo(() => {
+    return realSubmissions.map((sub: any) => {
+      const proctoringEvents = sub.proctoring_events || [];
+      const generalEvents = sub.general_events || [];
+      
+      const totalViolations = proctoringEvents.length;
+      const tabSwitches = proctoringEvents.filter((e: any) => e.activity_type === "tab_switched").length;
+      const copyPastes = proctoringEvents.filter((e: any) => e.activity_type === "copy_detected" || e.activity_type === "paste_detected").length;
+      const windowBlurs = proctoringEvents.filter((e: any) => e.activity_type === "window_blur").length;
+
+      const timelineEvents = proctoringEvents.map((e: any) => ({
+        time: new Date(e.timestamp).getTime(),
+        type: e.activity_type,
+        desc: JSON.stringify(e.meta_data) || e.activity_type,
+        severity: (e.activity_type.includes("critical") || e.activity_type.includes("new_tab")) ? 3 : 2,
+        image_path: getImageUrl(e.image_path),
+        screen_path: getImageUrl(e.screen_path)
+      }));
+      
+      const generalTimelineEvents = generalEvents.map((e: any) => ({
+        time: new Date(e.timestamp).getTime(),
+        type: e.activity_type,
+        desc: JSON.stringify(e.meta_data) || e.activity_type,
+        severity: 0,
+        image_path: getImageUrl(e.image_path),
+        screen_path: getImageUrl(e.screen_path)
+      }));
+      
+      const allEvents = [...timelineEvents, ...generalTimelineEvents].sort((a, b) => a.time - b.time);
+
+      const durationMins = sub.duration || (sub.updated_at ? Math.round((new Date(sub.updated_at).getTime() - new Date(sub.created_at).getTime()) / 60000) : 0);
+      const subScore = sub.score || sub.total_score || 0;
+
+      return {
+        id: String(sub.id),
+        name: sub.user ? `${sub.user.first_name} ${sub.user.last_name}` : "Unknown Candidate",
+        email: sub.user ? sub.user.email : "",
+        phone: "", college: "", company: "", experience: 0, domain: "", skills: [], tags: [],
+        labsScore: subScore, assessmentScore: 0, vitarkaScore: 0, eci: subScore,
+        recommendation: "Hold" as Recommendation,
+        status: "Completed" as CandStatus,
+        hiringStatus: "Pending Review" as HiringStatus,
+        submittedAt: new Date(sub.completed_at || sub.created_at).getTime(),
+        completionMinutes: durationMins,
+        rawSubmission: sub,
+        avatarHue: 0,
+        proctoringData: {
+          totalViolations,
+          tabSwitches,
+          copyPastes,
+          windowBlurs,
+          snapshots: [], // For now we rely on the timeline events
+          timelineEvents: allEvents,
+          sections: {
+            labs: { score: subScore, timeSpent: durationMins, events: allEvents.filter(e => e.severity > 0) },
+            assessment: { score: 0, timeSpent: 0, events: [] },
+            vitarka: { score: 0, timeSpent: 0, events: [] },
+            system_design: { score: 0, timeSpent: 0, events: [] }
+          }
+        }
+      } as Candidate;
+    });
+  }, [realSubmissions]);
+
+  // Fallback to mock candidates if real backend returns none (for demo purposes)
+  const displayCandidates = loading ? [] : (mappedCandidates.length > 0 ? mappedCandidates : mockCandidates.filter(c => c.status === "Submitted" || c.status === "Completed"));
+
+  const [selectedCandidate, setSelectedCandidate] = useState<Candidate | null>(null);
+
+  if (selectedCandidate) {
+    return (
+      <div className="flex flex-col gap-4 min-h-[700px] h-full">
+        <button onClick={() => setSelectedCandidate(null)} className="self-start flex items-center gap-2 text-sm text-neutral-400 hover:text-white transition group mb-2">
+           <ArrowLeft className="h-4 w-4 group-hover:-translate-x-1 transition-transform" /> Back to candidates
+        </button>
+        <div className="flex-1 min-w-0">
+          <CandidateAnalyticsViewer candidate={selectedCandidate} />
+        </div>
+      </div>
     );
-  }, [evId, candidates]);
-  const openDetails = (c: Candidate) =>
-    nav({ to: "/recruiter/evaluations/$id/candidates/$candidateId", params: { id: evId, candidateId: c.id } });
+  }
+
   return (
-    <div>
-      <AttentionSection
-        candidates={candidates}
-        viewed={viewed}
-        noted={noted}
-        onApply={() => onGoto("candidates")}
-        onOpen={openDetails}
-      />
+    <div className="flex flex-col gap-6 min-h-[700px] h-full">
+      <div className="mb-2">
+        <h2 className="text-sm font-medium text-white flex items-center gap-2 uppercase tracking-wider">
+          <Users className="h-4 w-4 text-emerald-400" /> Submitted Candidates
+        </h2>
+        <p className="text-xs text-neutral-500 mt-1">Select a candidate to view their detailed performance and proctoring analytics. {loading && "(Loading...)"}</p>
+      </div>
+      <div className="flex flex-col gap-3">
+        {displayCandidates.map(c => {
+           const v = c.proctoringData?.totalViolations || 0;
+           return (
+             <button 
+               key={c.id} 
+               onClick={() => setSelectedCandidate(c)}
+               className="w-full text-left p-4 rounded-xl border border-white/5 bg-white/[0.02] hover:bg-white/[0.06] hover:border-emerald-500/30 transition flex items-center justify-between gap-4"
+             >
+               <div className="flex-1 min-w-0">
+                 <div className="text-sm text-white font-medium truncate">{c.name}</div>
+                 <div className="text-xs text-neutral-500 truncate">{c.email}</div>
+               </div>
+               <div className="flex items-center gap-6 shrink-0">
+                  <div className="text-[11px] text-neutral-400 text-right">
+                    <div>Score</div>
+                    <div className="text-white font-medium text-sm">{c.eci}</div>
+                  </div>
+                  <div className={`text-xs font-medium px-3 py-1.5 rounded-md ${v > 4 ? 'bg-red-500/10 text-red-400' : v > 0 ? 'bg-amber-500/10 text-amber-400' : 'bg-emerald-500/10 text-emerald-400'}`}>
+                    {v} Violations
+                  </div>
+               </div>
+             </button>
+           )
+        })}
+      </div>
     </div>
-  );
+  )
 }
+

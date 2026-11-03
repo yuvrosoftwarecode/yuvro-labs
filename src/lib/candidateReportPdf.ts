@@ -1,4 +1,4 @@
-import { jsPDF } from "jspdf";
+import jsPDF from "jspdf";
 import type { EvaluationSummaryData } from "./evaluationSummary";
 
 export interface ReportInput {
@@ -14,6 +14,11 @@ export interface ReportInput {
   labsScore: number;
   assessmentScore: number;
   vitarkaScore: number;
+  systemDesignScore?: number;
+  labsMaxScore?: number;
+  assessmentMaxScore?: number;
+  discussionMaxScore?: number;
+  systemDesignMaxScore?: number;
   strengths: string[];
   weaknesses: string[];
   aiSummary: string;
@@ -27,7 +32,8 @@ const INK: [number, number, number] = [23, 23, 23];
 const MUTED: [number, number, number] = [115, 115, 115];
 
 export function buildCandidateReportPdf(d: ReportInput) {
-  const doc = new jsPDF({ unit: "pt", format: "a4" });
+  const PDFConstructor = (jsPDF as any).jsPDF || (jsPDF as any).default || jsPDF;
+  const doc = new PDFConstructor({ unit: "pt", format: "a4" });
   const W = doc.internal.pageSize.getWidth();
   const H = doc.internal.pageSize.getHeight();
   const M = 48;
@@ -74,10 +80,13 @@ export function buildCandidateReportPdf(d: ReportInput) {
   // Score cards
   const cards: [string, string][] = [
     ["Capability Index", `${d.eci}/100`],
-    ["Engineering Labs", `${d.labsScore}`],
-    ["Assessment", `${d.assessmentScore}`],
-    ["Vitarka AI", `${d.vitarkaScore}`],
+    ["Engineering Labs", `${d.labsScore}/${d.labsMaxScore ?? 80}`],
+    ["Assessment", `${d.assessmentScore}/${d.assessmentMaxScore ?? 30}`],
+    ["Vitarka AI", `${d.vitarkaScore}/${d.discussionMaxScore ?? 25}`],
   ];
+  if (d.systemDesignMaxScore || d.systemDesignScore != null) {
+    cards.push(["System Design", `${d.systemDesignScore ?? 0}/${d.systemDesignMaxScore ?? 30}`]);
+  }
   const gap = 12;
   const cw = (W - M * 2 - gap * (cards.length - 1)) / cards.length;
   cards.forEach(([label, value], i) => {
@@ -124,7 +133,7 @@ export function buildCandidateReportPdf(d: ReportInput) {
     doc.setFont("helvetica", "normal").setFontSize(10);
     doc.setTextColor(60, 60, 60);
     const lines = doc.splitTextToSize(text, W - M * 2) as string[];
-    lines.forEach((ln) => {
+    lines.forEach((ln: string) => {
       ensure(16);
       doc.text(ln, M, y);
       y += 14;
@@ -140,7 +149,7 @@ export function buildCandidateReportPdf(d: ReportInput) {
       doc.setFillColor(...color);
       doc.circle(M + 3, y - 3, 2.2, "F");
       doc.setTextColor(60, 60, 60);
-      lines.forEach((ln, li) => {
+      lines.forEach((ln: string, li: number) => {
         doc.text(ln, M + 14, y + li * 14);
       });
       y += lines.length * 14 + 4;
@@ -202,7 +211,7 @@ export function buildCandidateReportPdf(d: ReportInput) {
 
 
   // Footer on every page
-  const pages = doc.getNumberOfPages();
+  const pages = (doc as any).getNumberOfPages();
   for (let p = 1; p <= pages; p++) {
     doc.setPage(p);
     doc.setDrawColor(230, 230, 226);

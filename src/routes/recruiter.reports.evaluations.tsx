@@ -1,6 +1,6 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { useMemo } from "react";
-import { listEvaluations } from "@/lib/recruiter";
+import { useEffect, useMemo, useState } from "react";
+import { listEvaluations, Evaluation } from "@/lib/recruiter";
 import { getCandidates } from "@/lib/recruiterCandidates";
 import { PageHead, Panel, Table, Pill } from "@/components/recruiter/reportsUi";
 
@@ -10,17 +10,21 @@ export const Route = createFileRoute("/recruiter/reports/evaluations")({
 });
 
 function EvaluationReports() {
-  const evals = useMemo(() => listEvaluations(), []);
+  const [evals, setEvals] = useState<Evaluation[]>([]);
+  useEffect(() => {
+    listEvaluations().then(data => setEvals(Array.isArray(data) ? data : []));
+  }, []);
+  const safeEvals = Array.isArray(evals) ? evals : [];
   const rows = useMemo(
     () =>
-      evals.map(e => {
+      safeEvals.map(e => {
         const c = getCandidates(e.id, 120);
         const done = c.filter(x => x.status === "Submitted" || x.status === "Completed");
         const avgEci = done.length ? Math.round(done.reduce((a, b) => a + b.eci, 0) / done.length) : 0;
         const shortlisted = c.filter(x => x.hiringStatus === "Shortlisted" || x.hiringStatus === "Selected").length;
         return { e, invited: c.length, done: done.length, avgEci, shortlisted };
       }),
-    [evals]
+    [safeEvals]
   );
 
   return (

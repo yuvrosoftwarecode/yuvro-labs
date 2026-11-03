@@ -1,6 +1,6 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { useMemo } from "react";
-import { listEvaluations, evaluationTotals } from "@/lib/recruiter";
+import { useEffect, useMemo, useState } from "react";
+import { listEvaluations, evaluationTotals, Evaluation } from "@/lib/recruiter";
 import { getCandidates } from "@/lib/recruiterCandidates";
 import { PageHead, Panel, StatTile, Bar, Table, Pill } from "@/components/recruiter/reportsUi";
 
@@ -10,8 +10,12 @@ export const Route = createFileRoute("/recruiter/reports/")({
 });
 
 function ReportsOverview() {
-  const evals = useMemo(() => listEvaluations(), []);
-  const cands = useMemo(() => evals.flatMap(e => getCandidates(e.id, 120)), [evals]);
+  const [evals, setEvals] = useState<Evaluation[]>([]);
+  useEffect(() => {
+    listEvaluations().then(data => setEvals(Array.isArray(data) ? data : []));
+  }, []);
+  const safeEvals = Array.isArray(evals) ? evals : [];
+  const cands = useMemo(() => safeEvals.flatMap(e => getCandidates(e.id, 120)), [safeEvals]);
 
   const completed = cands.filter(c => c.status === "Submitted" || c.status === "Completed");
   const avg = (xs: number[]) => (xs.length ? Math.round(xs.reduce((a, b) => a + b, 0) / xs.length) : 0);
@@ -22,7 +26,7 @@ function ReportsOverview() {
       <PageHead title="Overview" desc="Hiring activity across every evaluation in your workspace." />
 
       <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
-        <StatTile label="Evaluations" value={evals.length} hint={`${evals.filter(e => e.status === "published").length} active`} />
+        <StatTile label="Evaluations" value={safeEvals.length} hint={`${safeEvals.filter(e => e.status === "published").length} active`} />
         <StatTile label="Candidates" value={cands.length.toLocaleString()} hint={`${completed.length.toLocaleString()} submitted`} />
         <StatTile label="Completion Rate" value={`${cands.length ? Math.round((completed.length / cands.length) * 100) : 0}%`} />
         <StatTile label="Shortlisted" value={shortlisted.toLocaleString()} hint="Across all pipelines" />
@@ -41,7 +45,7 @@ function ReportsOverview() {
         <Panel title="Recent evaluations" desc="Latest activity." right={<Link to="/recruiter/reports/evaluations" className="text-[12px] text-neutral-500 hover:text-neutral-900">View all</Link>}>
           <Table
             head={["Evaluation", "Status", "Invited", "Completed"]}
-            rows={evals.slice(0, 6).map(e => {
+            rows={safeEvals.slice(0, 6).map(e => {
               const t = evaluationTotals(e);
               return [
                 <span className="font-medium">{e.title}</span>,

@@ -1,6 +1,6 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { useMemo } from "react";
-import { listEvaluations } from "@/lib/recruiter";
+import { useEffect, useMemo, useState } from "react";
+import { listEvaluations, Evaluation } from "@/lib/recruiter";
 import { getCandidates, experienceBucket } from "@/lib/recruiterCandidates";
 import { PageHead, Panel, Bar, StatTile } from "@/components/recruiter/reportsUi";
 
@@ -10,8 +10,12 @@ export const Route = createFileRoute("/recruiter/reports/performance")({
 });
 
 function PerformanceReports() {
-  const evals = useMemo(() => listEvaluations(), []);
-  const all = useMemo(() => evals.flatMap(e => getCandidates(e.id, 120)), [evals]);
+  const [evals, setEvals] = useState<Evaluation[]>([]);
+  useEffect(() => {
+    listEvaluations().then(data => setEvals(Array.isArray(data) ? data : []));
+  }, []);
+  const safeEvals = Array.isArray(evals) ? evals : [];
+  const all = useMemo(() => safeEvals.flatMap(e => getCandidates(e.id, 120)), [safeEvals]);
   const done = all.filter(c => c.status === "Submitted" || c.status === "Completed");
 
   const band = (min: number, max: number) => done.filter(c => c.eci >= min && c.eci < max).length;

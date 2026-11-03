@@ -413,3 +413,620 @@
 .sd-flow { animation: sd-dash 1.2s linear infinite; }
 @keyframes sd-dash { to { stroke-dashoffset: -20; } }
 @media (prefers-reduced-motion: reduce) { .sd-flow { animation: none; } }
+
+
+/* ============================================================
+   xterm.js Styles
+   ============================================================ */
+.xterm {
+  position: relative;
+  user-select: none;
+  -ms-user-select: none;
+  -webkit-user-select: none;
+  cursor: text;
+}
+
+.xterm.focus,
+.xterm:focus {
+  outline: none;
+}
+
+.xterm .xterm-helpers {
+  position: absolute;
+  top: 0;
+  z-index: 5;
+}
+
+.xterm .xterm-helper-textarea {
+  padding: 0;
+  border: 0;
+  margin: 0;
+  position: absolute;
+  opacity: 0;
+  left: -9999em;
+  top: 0;
+  width: 0;
+  height: 0;
+  z-index: -5;
+  white-space: nowrap;
+  overflow: hidden;
+  resize: none;
+  font-size: 10px;
+}
+
+.xterm .composition-view {
+  background: #000;
+  color: #fff;
+  z-index: 1;
+  top: 0;
+  left: 0;
+}
+
+.xterm .composition-view.active {
+  white-space: nowrap;
+}
+
+.xterm .xterm-viewport {
+  background-color: transparent !important;
+  overflow-y: scroll;
+  cursor: default;
+  position: absolute;
+  right: 0;
+  left: 0;
+  top: 0;
+  bottom: 0;
+}
+
+.xterm .xterm-screen {
+  position: relative;
+}
+
+.xterm .xterm-screen canvas {
+  position: absolute;
+  left: 0;
+  top: 0;
+}
+
+.xterm .xterm-scroll-area {
+  visibility: hidden;
+}
+
+.xterm-char-measure-element {
+  display: inline-block;
+  visibility: hidden;
+  position: absolute;
+  top: 0;
+  left: -9999em;
+  line-height: normal;
+}
+
+.xterm.enable-mouse-events {
+  cursor: default;
+}
+
+.xterm.xterm-cursor-pointer,
+.xterm .xterm-cursor-pointer {
+  cursor: pointer;
+}
+
+.xterm.column-select {
+  cursor: crosshair;
+}
+
+.xterm .xterm-accessibility,
+.xterm .xterm-message {
+  position: absolute;
+  left: 0;
+  top: 0;
+  bottom: 0;
+  right: 0;
+  z-index: 10;
+  color: transparent;
+}
+
+.xterm .live-region {
+  position: absolute;
+  left: -9999px;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+}
+
+.xterm-dim {
+  opacity: 0.5;
+}
+
+.xterm-underline {
+  text-decoration: underline;
+}
+
+.xterm-strikethrough {
+  text-decoration: line-through;
+}
+
+.xterm-screen .xterm-decoration-container {
+  position: absolute;
+  top: 0;
+  left: 0;
+}
+
+.xterm-decoration-overview-ruler {
+  text-align: right;
+  position: absolute;
+  top: 0;
+  right: 0;
+  pointer-events: none;
+}
+
+.xterm-decoration-top {
+  z-index: 2;
+  position: relative;
+}
+
+.xterm .xterm-rows {
+  position: absolute;
+  left: 0;
+  top: 0;
+  color: #fff;
+  font-feature-settings: "liga" 0;
+  user-select: none;
+  line-height: normal;
+  white-space: pre;
+}
+
+.xterm .xterm-rows > div {
+  white-space: pre;
+}
+
+.xterm .xterm-viewport::-webkit-scrollbar {
+  width: 8px;
+}
+.xterm .xterm-viewport::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.2);
+  border-radius: 4px;
+}
+
+
+/* ============================================================
+   Recruiter Portal — scoped paper/serif skin (light + dark)
+   Only overrides visuals inside .recruiter-theme.
+   ============================================================ */
+.recruiter-theme {
+  --rec-bg: #fdfdfb;
+  --rec-surface: #ffffff;
+  --rec-surface-2: #ffffff;
+  --rec-fg: #0f1115;
+  --rec-fg-soft: #2b2e35;
+  --rec-muted: #565a63;
+  --rec-muted-2: #7a7e87;
+  --rec-border: rgba(17, 20, 26, 0.08);
+  --rec-border-strong: rgba(17, 20, 26, 0.16);
+  --rec-overlay-1: rgba(17, 20, 26, 0.025);
+  --rec-overlay-2: rgba(17, 20, 26, 0.045);
+  --rec-overlay-3: rgba(17, 20, 26, 0.07);
+  --rec-accent: #0f1115;
+  --rec-accent-fg: #fafaf7;
+  --rec-success: #2f7a4d;
+  --rec-success-soft: rgba(47, 122, 77, 0.1);
+  --rec-warning: #9a5b16;
+  --rec-warning-soft: rgba(154, 91, 22, 0.1);
+  --rec-danger: #a83232;
+  --rec-menu-bg: #ffffff;
+
+  font-family:
+    "Inter",
+    ui-sans-serif,
+    system-ui,
+    -apple-system,
+    "Segoe UI",
+    Roboto,
+    sans-serif;
+  font-feature-settings: "cv02", "cv03", "cv11";
+  background-color: var(--rec-bg) !important;
+  color: var(--rec-fg) !important;
+}
+
+.dark .recruiter-theme {
+  --rec-bg: #0a0a0b;
+  --rec-surface: rgba(0, 0, 0, 0.4);
+  --rec-surface-2: rgba(0, 0, 0, 0.6);
+  --rec-fg: #f5f5f5;
+  --rec-fg-soft: #d4d4d4;
+  --rec-muted: #a3a3a3;
+  --rec-muted-2: #a3a3a3;
+  --rec-border: rgba(255, 255, 255, 0.05);
+  --rec-border-strong: rgba(255, 255, 255, 0.1);
+  --rec-overlay-1: rgba(255, 255, 255, 0.02);
+  --rec-overlay-2: rgba(255, 255, 255, 0.06);
+  --rec-overlay-3: rgba(255, 255, 255, 0.1);
+  --rec-accent: #ffffff;
+  --rec-accent-fg: #000000;
+  --rec-success: #34d399;
+  --rec-success-soft: rgba(52, 211, 153, 0.1);
+  --rec-warning: #fbbf24;
+  --rec-warning-soft: rgba(251, 191, 36, 0.1);
+  --rec-danger: #f87171;
+  --rec-menu-bg: #0a0a0b;
+}
+
+.dark .recruiter-theme .recruiter-glow {
+  display: block;
+}
+
+/* Serif display for headings + oversized numerals */
+.recruiter-theme h1,
+.recruiter-theme h2,
+.recruiter-theme .text-\[26px\],
+.recruiter-theme .text-\[28px\],
+.recruiter-theme .text-\[32px\],
+.recruiter-theme .text-\[34px\],
+.recruiter-theme .text-\[42px\] {
+  font-family: "Fraunces", "Instrument Serif", ui-serif, Georgia, serif;
+  font-weight: 500 !important;
+  letter-spacing: -0.02em;
+  line-height: 1.1;
+  color: var(--rec-fg);
+  font-optical-sizing: auto;
+}
+.recruiter-theme .text-\[42px\] {
+  font-size: 30px !important;
+}
+.recruiter-theme .text-\[34px\] {
+  font-size: 26px !important;
+}
+.recruiter-theme .text-\[32px\] {
+  font-size: 26px !important;
+}
+.recruiter-theme .text-\[28px\] {
+  font-size: 24px !important;
+}
+.recruiter-theme .text-\[26px\] {
+  font-size: 22px !important;
+}
+
+/* Hide the ambient neon glow (belongs to the old dark identity) */
+.recruiter-theme .recruiter-glow {
+  display: none;
+}
+
+/* --- Backgrounds --- */
+.recruiter-theme .bg-\[\#0a0a0b\] {
+  background-color: var(--rec-bg) !important;
+}
+.recruiter-theme .bg-neutral-950 {
+  background-color: var(--rec-menu-bg) !important;
+}
+.recruiter-theme .bg-white {
+  background-color: var(--rec-surface) !important;
+}
+.recruiter-theme .bg-black\/20,
+.recruiter-theme .bg-black\/30,
+.recruiter-theme .bg-black\/40,
+.recruiter-theme .bg-black\/50,
+.recruiter-theme .bg-black\/60 {
+  background-color: var(--rec-surface) !important;
+}
+.recruiter-theme .bg-white\/5,
+.recruiter-theme .bg-white\/\[0\.02\],
+.recruiter-theme .bg-white\/\[0\.03\] {
+  background-color: var(--rec-overlay-1) !important;
+}
+.recruiter-theme .bg-white\/10,
+.recruiter-theme .bg-white\/\[0\.06\] {
+  background-color: var(--rec-overlay-2) !important;
+}
+.recruiter-theme .hover\:bg-white\/5:hover,
+.recruiter-theme .hover\:bg-white\/15:hover,
+.recruiter-theme .hover\:bg-white\/\[0\.02\]:hover,
+.recruiter-theme .hover\:bg-white\/\[0\.03\]:hover,
+.recruiter-theme .hover\:bg-white\/\[0\.04\]:hover {
+  background-color: var(--rec-overlay-2) !important;
+}
+.recruiter-theme .hover\:bg-emerald-400\/\[0\.03\]:hover {
+  background-color: var(--rec-overlay-1) !important;
+}
+.recruiter-theme .hover\:bg-red-500\/10:hover {
+  background-color: rgba(168, 50, 50, 0.1) !important;
+}
+
+.recruiter-theme .bg-neutral-50,
+.recruiter-theme .bg-neutral-50\/60,
+.recruiter-theme .bg-neutral-100 {
+  background-color: var(--rec-overlay-1) !important;
+}
+.recruiter-theme .hover\:bg-neutral-50:hover,
+.recruiter-theme .hover\:bg-neutral-100:hover,
+.recruiter-theme .hover\:bg-neutral-200:hover {
+  background-color: var(--rec-overlay-2) !important;
+}
+
+/* --- Borders + dividers --- */
+.recruiter-theme .border-neutral-100,
+.recruiter-theme .border-neutral-200,
+.recruiter-theme .border-white\/5 {
+  border-color: var(--rec-border) !important;
+}
+.recruiter-theme .border-neutral-300,
+.recruiter-theme .border-white\/10 {
+  border-color: var(--rec-border-strong) !important;
+}
+.recruiter-theme .hover\:border-white\/15:hover {
+  border-color: var(--rec-border-strong) !important;
+}
+.recruiter-theme .divide-neutral-100 > :not([hidden]) ~ :not([hidden]),
+.recruiter-theme .divide-neutral-200 > :not([hidden]) ~ :not([hidden]),
+.recruiter-theme .divide-white\/5 > :not([hidden]) ~ :not([hidden]) {
+  border-color: var(--rec-border) !important;
+}
+
+/* --- Text --- */
+.recruiter-theme .text-neutral-800,
+.recruiter-theme .text-neutral-900,
+.recruiter-theme .text-neutral-100,
+.recruiter-theme .text-neutral-200 {
+  color: var(--rec-fg) !important;
+}
+/* Default text-white to the theme foreground so values stay legible on white cards */
+.recruiter-theme .text-white {
+  color: var(--rec-fg) !important;
+}
+/* Keep text-white white when paired with a dark background pill/button */
+.recruiter-theme .bg-neutral-900.text-white,
+.recruiter-theme .bg-neutral-900 .text-white,
+.recruiter-theme .bg-neutral-800 .text-white,
+.recruiter-theme .bg-black.text-white,
+.recruiter-theme .bg-black .text-white,
+.recruiter-theme .bg-\[\#111217\] .text-white,
+.recruiter-theme .bg-red-600,
+.recruiter-theme .bg-red-600 *,
+.recruiter-theme .bg-red-700,
+.recruiter-theme .bg-red-700 *,
+.recruiter-theme [style*="background"].text-white {
+  color: #ffffff !important;
+}
+
+.dark .recruiter-theme .dark\:bg-white,
+.dark .recruiter-theme .dark\:bg-white.text-white,
+.dark .recruiter-theme .dark\:bg-white .text-white,
+.dark .recruiter-theme .dark\:text-neutral-900 {
+  color: #09090b !important;
+}
+
+.dark .recruiter-theme .dark\:hover\:bg-neutral-200:hover {
+  background-color: #e5e5e5 !important;
+  color: #09090b !important;
+}
+
+.recruiter-theme .text-neutral-300 {
+  color: var(--rec-fg-soft) !important;
+}
+.recruiter-theme .text-neutral-400 {
+  color: var(--rec-muted) !important;
+}
+.recruiter-theme .text-neutral-500,
+.recruiter-theme .text-neutral-600,
+.recruiter-theme .text-neutral-700 {
+  color: var(--rec-muted-2) !important;
+}
+.recruiter-theme .hover\:text-white:hover {
+  color: var(--rec-fg) !important;
+}
+.recruiter-theme .placeholder-neutral-600::placeholder {
+  color: var(--rec-muted-2) !important;
+}
+
+/* --- Accent replacements (drop neon gradients for a mono ink accent) --- */
+/* Solid ink accent for buttons + icon chips: anything with a colored from-* */
+.recruiter-theme .bg-gradient-to-r.from-emerald-400,
+.recruiter-theme .bg-gradient-to-br.from-emerald-400,
+.recruiter-theme .bg-gradient-to-r.from-cyan-400,
+.recruiter-theme .bg-gradient-to-r.from-violet-400,
+.recruiter-theme .bg-gradient-to-br.from-violet-400,
+.recruiter-theme .bg-gradient-to-r.from-amber-400,
+.recruiter-theme .bg-gradient-to-br.from-amber-400,
+.recruiter-theme .bg-gradient-to-br.from-cyan-400 {
+  background-image: none !important;
+  background-color: var(--rec-accent) !important;
+  color: var(--rec-accent-fg) !important;
+}
+/* Subtle surface cards (from-white overlays) */
+.recruiter-theme .bg-gradient-to-b.from-white\/\[0\.03\],
+.recruiter-theme .bg-gradient-to-br.from-white\/\[0\.03\] {
+  background-image: none !important;
+  background-color: var(--rec-surface) !important;
+}
+/* Decorative empty gradients (no from-*) — neutralize */
+.recruiter-theme .bg-gradient-to-b:not([class*="from-"]),
+.recruiter-theme .bg-gradient-to-br:not([class*="from-"]),
+.recruiter-theme .bg-gradient-to-r:not([class*="from-"]) {
+  background-image: none !important;
+  background-color: transparent !important;
+}
+.recruiter-theme .text-black {
+  color: var(--rec-accent-fg) !important;
+}
+.recruiter-theme .text-emerald-400,
+.recruiter-theme .text-emerald-300,
+.recruiter-theme .hover\:text-emerald-400:hover {
+  color: var(--rec-success) !important;
+}
+.recruiter-theme .bg-emerald-400 {
+  background-color: var(--rec-success) !important;
+}
+.recruiter-theme .bg-emerald-400\/10,
+.recruiter-theme .bg-emerald-400\/5,
+.recruiter-theme .bg-emerald-500\/10 {
+  background-color: var(--rec-success-soft) !important;
+}
+.recruiter-theme .border-emerald-400\/20,
+.recruiter-theme .border-emerald-400\/40,
+.recruiter-theme .border-emerald-400\/50,
+.recruiter-theme .hover\:border-emerald-400\/40:hover,
+.recruiter-theme .focus\:border-emerald-400\/60:focus {
+  border-color: var(--rec-success) !important;
+}
+.recruiter-theme .text-amber-400,
+.recruiter-theme .text-amber-300 {
+  color: var(--rec-warning) !important;
+}
+.recruiter-theme .bg-amber-400 {
+  background-color: var(--rec-warning) !important;
+}
+.recruiter-theme .bg-amber-400\/10 {
+  background-color: var(--rec-warning-soft) !important;
+}
+.recruiter-theme .border-amber-400\/20,
+.recruiter-theme .border-amber-400\/40 {
+  border-color: var(--rec-warning) !important;
+}
+.recruiter-theme .text-red-400 {
+  color: var(--rec-danger) !important;
+}
+.recruiter-theme .bg-violet-400,
+.recruiter-theme .bg-violet-500\/10 {
+  background-color: var(--rec-overlay-2) !important;
+}
+.recruiter-theme .focus\:border-violet-400\/60:focus,
+.recruiter-theme .hover\:border-violet-400\/40:hover {
+  border-color: var(--rec-border-strong) !important;
+}
+
+/* ============================================================
+   Evaluation candidate experience — dark mode
+   Scoped overrides so hardcoded neutral colors in EvalShell and
+   evaluation.* routes flip cleanly in dark, and primary buttons
+   pick up the Yuvro orange.
+   ============================================================ */
+.eval-theme {
+  --eval-orange: #f97316;
+  --eval-orange-hover: #ea580c;
+  --eval-orange-fg: #ffffff;
+}
+.dark .eval-theme {
+  --eval-bg: #0b0b0d;
+  --eval-surface: #131316;
+  --eval-surface-2: #17171b;
+  --eval-border: rgba(255, 255, 255, 0.08);
+  --eval-border-strong: rgba(255, 255, 255, 0.18);
+  --eval-text: #ededf0;
+  --eval-text-muted: #a1a1aa;
+  --eval-text-dim: #71717a;
+  color: var(--eval-text);
+}
+
+/* Backgrounds */
+.dark .eval-theme.bg-\[\#fafaf7\],
+.dark .eval-theme .bg-\[\#fafaf7\] {
+  background-color: var(--eval-bg) !important;
+}
+.dark .eval-theme .bg-white,
+.dark .eval-theme .bg-neutral-50,
+.dark .eval-theme .bg-neutral-50\/60 {
+  background-color: var(--eval-surface) !important;
+}
+.dark .eval-theme .hover\:bg-neutral-50\/60:hover,
+.dark .eval-theme .hover\:bg-neutral-50:hover {
+  background-color: var(--eval-surface-2) !important;
+}
+.dark .eval-theme .bg-neutral-100 {
+  background-color: var(--eval-surface-2) !important;
+}
+
+/* Borders */
+.dark .eval-theme .border-neutral-200,
+.dark .eval-theme .border-neutral-200\/80,
+.dark .eval-theme .border-neutral-300 {
+  border-color: var(--eval-border) !important;
+}
+.dark .eval-theme .hover\:border-neutral-500:hover,
+.dark .eval-theme .hover\:border-neutral-900:hover,
+.dark .eval-theme .focus\:border-neutral-900:focus {
+  border-color: var(--eval-border-strong) !important;
+}
+.dark .eval-theme .bg-neutral-200\/80 {
+  background-color: var(--eval-border) !important;
+}
+
+/* Text */
+.dark .eval-theme.text-neutral-900,
+.dark .eval-theme .text-neutral-900 {
+  color: var(--eval-text) !important;
+}
+.dark .eval-theme .text-neutral-700,
+.dark .eval-theme .text-neutral-600 {
+  color: var(--eval-text-muted) !important;
+}
+.dark .eval-theme .text-neutral-500,
+.dark .eval-theme .text-neutral-400,
+.dark .eval-theme .text-neutral-300 {
+  color: var(--eval-text-dim) !important;
+}
+.dark .eval-theme .hover\:text-neutral-900:hover {
+  color: var(--eval-text) !important;
+}
+.dark .eval-theme .placeholder\:text-neutral-400::placeholder {
+  color: var(--eval-text-dim) !important;
+}
+
+/* Inputs */
+.dark .eval-theme .eval-input {
+  color: var(--eval-text);
+  border-bottom-color: var(--eval-border-strong);
+}
+.dark .eval-theme .eval-input::placeholder {
+  color: var(--eval-text-dim);
+}
+.dark .eval-theme .eval-input:focus {
+  border-color: var(--eval-text);
+}
+
+/* Primary buttons in dark mode */
+.dark .eval-theme .dark\:bg-white {
+  background-color: #ffffff !important;
+  color: #09090b !important;
+}
+.dark .eval-theme .dark\:text-neutral-900 {
+  color: #09090b !important;
+}
+.dark .eval-theme .dark\:hover\:bg-neutral-200:hover {
+  background-color: #e5e5e5 !important;
+  color: #09090b !important;
+}
+.dark .eval-theme .disabled\:bg-neutral-300:disabled {
+  background-color: rgba(255, 255, 255, 0.08) !important;
+  color: var(--eval-text-dim) !important;
+}
+.dark .eval-theme .disabled\:text-neutral-500:disabled {
+  color: var(--eval-text-dim) !important;
+}
+
+/* Progress bar accent */
+.dark .eval-theme header .bg-neutral-900 {
+  background-color: var(--eval-orange) !important;
+}
+
+/* Y mark stays dark on dark */
+.dark .eval-theme .bg-neutral-900.grid {
+  background-color: var(--eval-orange) !important;
+}
+
+/* Shadow softening on cards */
+.dark
+  .eval-theme
+  .shadow-\[0_1px_0_rgba\(0\,0\,0\,0\.02\)\,0_20px_60px_-30px_rgba\(0\,0\,0\,0\.15\)\] {
+  box-shadow:
+    0 1px 0 rgba(255, 255, 255, 0.03),
+    0 20px 60px -30px rgba(0, 0, 0, 0.6) !important;
+}
+
+/* Emerald success accents stay legible */
+.dark .eval-theme .bg-emerald-50 {
+  background-color: rgba(16, 185, 129, 0.12) !important;
+}
+.dark .eval-theme .text-emerald-600 {
+  color: #34d399 !important;
+}
+
+.sd-flow { animation: sd-dash 1.2s linear infinite; }
+@keyframes sd-dash { to { stroke-dashoffset: -20; } }
+@media (prefers-reduced-motion: reduce) { .sd-flow { animation: none; } }

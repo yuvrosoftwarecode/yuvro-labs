@@ -1,13 +1,17 @@
+import type { Candidate } from "@/lib/recruiterCandidates";
 import { useEffect, useMemo, useRef, useState } from "react";
 import {
   Search, ChevronDown, Columns3, Download, MoreHorizontal, X, Filter,
-  Eye, FileText, Link2, PhoneCall, BellPlus, ArrowUpDown, Check,
+  Eye, FileText, Link2, PhoneCall, BellPlus, ArrowUpDown, Check, Users,
 } from "lucide-react";
 import type { Evaluation } from "@/lib/recruiter";
 import {
-  getCandidateRecords, recordTotals, fmtDate, fmtTime,
+  recordTotals, fmtDate, fmtTime, fetchCandidateRecords,
   type CandidateRecord, type RecordSource, type RecordStatus, type RecordResult,
 } from "@/lib/candidateRecords";
+import EmptyState from "@/components/common/EmptyState";
+import LoadingSkeleton from "@/components/common/LoadingSkeleton";
+
 
 type SortKey = "sent_desc" | "sent_asc" | "sub_desc" | "score_desc" | "score_asc" | "name_asc";
 
@@ -22,7 +26,7 @@ const SORTS: { v: SortKey; l: string }[] = [
 
 type ColKey =
   | "candidate" | "email" | "source" | "sent" | "status" | "submitted" | "score" | "result" | "followup"
-  | "phone" | "candidateId" | "labs" | "assessment" | "vitarka" | "eci" | "deadline" | "emails" | "aicall" | "last";
+  | "phone" | "candidateId" | "labs" | "assessment" | "vitarka" | "system_design" | "eci" | "deadline" | "emails" | "aicall" | "last";
 
 const COLUMNS: { key: ColKey; label: string; optional?: boolean }[] = [
   { key: "candidate", label: "Candidate" },
@@ -39,7 +43,8 @@ const COLUMNS: { key: ColKey; label: string; optional?: boolean }[] = [
   { key: "labs", label: "Engineering Labs", optional: true },
   { key: "assessment", label: "Assessment", optional: true },
   { key: "vitarka", label: "Vitarka AI", optional: true },
-  { key: "eci", label: "ECI", optional: true },
+  { key: "system_design", label: "System Design", optional: true },
+  { key: "eci", label: "Total", optional: true },
   { key: "deadline", label: "Deadline", optional: true },
   { key: "emails", label: "Follow-up Emails Sent", optional: true },
   { key: "aicall", label: "AI Call", optional: true },
@@ -50,16 +55,65 @@ const DEFAULT_COLS = COLUMNS.filter((c) => !c.optional).map((c) => c.key);
 const COLS_KEY = (id: string) => `yuvro-records-cols-${id}`;
 export const PREFILL_KEY = (id: string) => `yuvro-followup-prefill-${id}`;
 
+
+
 export function CandidateRecordsTab({
   ev,
+  candidates,
   notify,
   onGotoFollowUps,
 }: {
   ev: Evaluation;
+  candidates: Candidate[];
   notify: (m: string) => void;
   onGotoFollowUps: () => void;
 }) {
-  const all = useMemo(() => getCandidateRecords(ev.id), [ev.id]);
+
+  const [all, setAll] = useState<CandidateRecord[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    let mounted = true;
+    const load = () => {
+      fetchCandidateRecords(ev.id).then(data => {
+        if (mounted) {
+          // Merge scores from the real candidates list!
+          const merged = data.map(record => {
+            const cand = candidates.find(c => c.email.toLowerCase() === record.email.toLowerCase());
+            if (cand) {
+              return {
+                ...record,
+                score: cand.totalEarned ?? cand.eci,
+                result: (cand.recommendation === "Reject" ? "Failed" : cand.recommendation === "Pending" ? "Not Evaluated" : "Passed") as RecordResult,
+                labsScore: cand.labsScore,
+                assessmentScore: cand.assessmentScore,
+                vitarkaScore: cand.vitarkaScore,
+                eci: cand.eci,
+              };
+            }
+            return record;
+          });
+          setAll(merged);
+          setLoading(false);
+        }
+      });
+    };
+    
+    setLoading(true);
+    load();
+    
+    const interval = setInterval(() => {
+      if (typeof document !== "undefined" && document.visibilityState === "visible") {
+        load();
+      }
+    }, 5000);
+    
+    return () => {
+      mounted = false;
+      clearInterval(interval);
+    };
+  }, [ev.id, candidates]);
+
   const totals = useMemo(() => recordTotals(all), [all]);
 
   const [search, setSearch] = useState("");
@@ -78,17 +132,22 @@ export function CandidateRecordsTab({
   const [colsOpen, setColsOpen] = useState(false);
   const [filtersOpen, setFiltersOpen] = useState(false);
   const [menuFor, setMenuFor] = useState<string | null>(null);
+  const [menuPos, setMenuPos] = useState({ top: 0, right: 0 });
   const [detail, setDetail] = useState<CandidateRecord | null>(null);
 
   useEffect(() => {
-    try {
-      const raw = localStorage.getItem(COLS_KEY(ev.id));
-      if (raw) setCols(JSON.parse(raw));
-    } catch {}
+    if (typeof window !== "undefined") {
+      try {
+        const raw = localStorage.getItem(COLS_KEY(ev.id));
+        if (raw) setCols(JSON.parse(raw));
+      } catch {}
+    }
   }, [ev.id]);
   const setColumns = (next: ColKey[]) => {
     setCols(next);
-    try { localStorage.setItem(COLS_KEY(ev.id), JSON.stringify(next)); } catch {}
+    if (typeof window !== "undefined") {
+      try { localStorage.setItem(COLS_KEY(ev.id), JSON.stringify(next)); } catch {}
+    }
   };
 
   useEffect(() => { setPage(1); }, [search, status, result, source, followUp, sentFrom, sentTo, subFrom, subTo, perPage]);
@@ -155,9 +214,11 @@ export function CandidateRecordsTab({
   };
 
   const setFollowUpFor = (r: CandidateRecord) => {
-    try {
-      localStorage.setItem(PREFILL_KEY(ev.id), JSON.stringify({ name: r.name, email: r.email, phone: r.phone }));
-    } catch {}
+    if (typeof window !== "undefined") {
+      try {
+        localStorage.setItem(PREFILL_KEY(ev.id), JSON.stringify({ name: r.name, email: r.email, phone: r.phone }));
+      } catch {}
+    }
     notify(`Opening Individual Setup for ${r.name}`);
     onGotoFollowUps();
   };
@@ -230,18 +291,24 @@ export function CandidateRecordsTab({
                   <Field label="Follow-up">
                     <Select value={followUp} onChange={(v) => setFollowUp(v as any)} options={["all", "enabled", "disabled"]} labels={{ enabled: "Enabled", disabled: "Not Enabled" }} />
                   </Field>
-                  <Field label="Sent Date">
-                    <div className="flex items-center gap-1">
-                      <input type="date" value={sentFrom} onChange={(e) => setSentFrom(e.target.value)} className={dateInput} />
-                      <input type="date" value={sentTo} onChange={(e) => setSentTo(e.target.value)} className={dateInput} />
-                    </div>
-                  </Field>
-                  <Field label="Submitted Date">
-                    <div className="flex items-center gap-1">
-                      <input type="date" value={subFrom} onChange={(e) => setSubFrom(e.target.value)} className={dateInput} />
-                      <input type="date" value={subTo} onChange={(e) => setSubTo(e.target.value)} className={dateInput} />
-                    </div>
-                  </Field>
+                  <div className="col-span-2">
+                    <Field label="Sent Date">
+                      <div className="flex items-center gap-2">
+                        <input type="date" value={sentFrom} onChange={(e) => setSentFrom(e.target.value)} className={dateInput} />
+                        <span className="text-[12px] text-neutral-400 font-medium">to</span>
+                        <input type="date" value={sentTo} onChange={(e) => setSentTo(e.target.value)} className={dateInput} />
+                      </div>
+                    </Field>
+                  </div>
+                  <div className="col-span-2">
+                    <Field label="Submitted Date">
+                      <div className="flex items-center gap-2">
+                        <input type="date" value={subFrom} onChange={(e) => setSubFrom(e.target.value)} className={dateInput} />
+                        <span className="text-[12px] text-neutral-400 font-medium">to</span>
+                        <input type="date" value={subTo} onChange={(e) => setSubTo(e.target.value)} className={dateInput} />
+                      </div>
+                    </Field>
+                  </div>
                 </div>
                 <div className="mt-4 flex items-center justify-between border-t border-black/5 pt-3">
                   <button onClick={resetFilters} className="text-[12px] text-neutral-500 hover:text-neutral-900">Reset all</button>
@@ -264,111 +331,58 @@ export function CandidateRecordsTab({
           <ChevronDown className="pointer-events-none absolute right-2.5 h-3.5 w-3.5 text-neutral-400" />
         </div>
 
-        <div className="relative">
-          <button onClick={() => { setColsOpen((v) => !v); setFiltersOpen(false); }} className={toolBtn}>
-            <Columns3 className="h-3.5 w-3.5" /> Columns <ChevronDown className="h-3.5 w-3.5" />
-          </button>
-          {colsOpen && (
-            <>
-              <div className="fixed inset-0 z-20" onClick={() => setColsOpen(false)} />
-              <div className="absolute right-0 z-30 mt-1 max-h-[380px] w-56 overflow-auto rounded-xl border border-black/10 bg-white py-1 shadow-lg">
-                {COLUMNS.map((c) => {
-                  const on = cols.includes(c.key);
-                  return (
-                    <button
-                      key={c.key}
-                      onClick={() => setColumns(on ? cols.filter((k) => k !== c.key) : [...cols, c.key])}
-                      className="flex w-full items-center justify-between px-3 py-1.5 text-left text-[12.5px] text-neutral-800 hover:bg-black/[0.03]"
-                    >
-                      <span>{c.label}</span>
-                      {on && <Check className="h-3.5 w-3.5 text-neutral-900" />}
-                    </button>
-                  );
-                })}
-              </div>
-            </>
-          )}
-        </div>
-
           <button onClick={exportCsv} className={toolBtn}><Download className="h-3.5 w-3.5" /> Export</button>
         </div>
       </div>
 
-      {/* Table */}
-      <div className="border-t border-neutral-200">
-        <div>
+      <div className="border-t border-neutral-200 overflow-x-auto">
+        <div className="min-w-fit">
           <table className="w-full text-[12.5px]">
 
             <thead className="sticky top-0 z-10">
               <tr className="bg-neutral-900 text-left text-[11px] uppercase tracking-widest text-white">
                 {COLUMNS.filter((c) => show(c.key)).map((c) => (
-                  <th key={c.key} className="whitespace-nowrap px-3 py-2.5 font-normal">{c.label}</th>
+                  <th key={c.key} className="px-3 py-2.5 font-normal">{c.label}</th>
                 ))}
-                <th className="px-3 py-2.5 text-right font-normal">Actions</th>
               </tr>
             </thead>
             <tbody>
-              {slice.map((r) => (
-                <tr
-                  key={r.id}
-                  onClick={() => setDetail(r)}
-                  className="cursor-pointer border-b border-black/5 text-neutral-900 hover:bg-black/[0.02]"
-                >
-                  {COLUMNS.filter((c) => show(c.key)).map((c) => (
-                    <td key={c.key} className="whitespace-nowrap px-3 py-2.5 align-middle">
-                      {renderCell(r, c.key)}
-                    </td>
-                  ))}
-                  <td className="px-3 py-2.5 text-right" onClick={(e) => e.stopPropagation()}>
-                    <div className="relative inline-block">
-                      <button
-                        onClick={() => setMenuFor(menuFor === r.id ? null : r.id)}
-                        className="rounded p-1 text-neutral-500 hover:bg-black/5 hover:text-neutral-900"
-                      >
-                        <MoreHorizontal className="h-4 w-4" />
-                      </button>
-                      {menuFor === r.id && (
-                        <>
-                          <div className="fixed inset-0 z-20" onClick={() => setMenuFor(null)} />
-                          <div className="absolute right-0 z-30 mt-1 w-56 overflow-hidden rounded-lg border border-black/10 bg-white py-1 text-left shadow-lg">
-                            <RowItem icon={<Eye className="h-3.5 w-3.5" />} onClick={() => { setDetail(r); setMenuFor(null); }}>View Candidate</RowItem>
-                            {r.status === "Submitted" && (
-                              <RowItem icon={<FileText className="h-3.5 w-3.5" />} onClick={() => { setDetail(r); setMenuFor(null); }}>View Result</RowItem>
-                            )}
-                            {r.followUp ? (
-                              <RowItem icon={<PhoneCall className="h-3.5 w-3.5" />} onClick={() => { setMenuFor(null); onGotoFollowUps(); }}>View Follow-up Activity</RowItem>
-                            ) : (
-                              <RowItem icon={<BellPlus className="h-3.5 w-3.5" />} onClick={() => { setMenuFor(null); setFollowUpFor(r); }}>Set Follow-up</RowItem>
-                            )}
-                            {r.followUp && (
-                              <RowItem icon={<BellPlus className="h-3.5 w-3.5" />} onClick={() => { setMenuFor(null); setFollowUpFor(r); }}>Edit Follow-up</RowItem>
-                            )}
-                            <RowItem
-                              icon={<Link2 className="h-3.5 w-3.5" />}
-                              onClick={() => {
-                                navigator.clipboard?.writeText(`${location.origin}/evaluation/${ev.id}?c=${r.candidateId}`);
-                                notify("Assessment link copied");
-                                setMenuFor(null);
-                              }}
-                            >
-                              Copy Assessment Link
-                            </RowItem>
-                            {r.status === "Submitted" && (
-                              <RowItem icon={<Download className="h-3.5 w-3.5" />} onClick={() => { notify(`Downloading result for ${r.name}`); setMenuFor(null); }}>Download Result</RowItem>
-                            )}
-                          </div>
-                        </>
-                      )}
-                    </div>
-                  </td>
-                </tr>
-              ))}
-              {slice.length === 0 && (
+              {loading ? (
                 <tr>
                   <td colSpan={cols.length + 1} className="px-3 py-16 text-center text-[13px] text-neutral-500">
-                    No candidates match these filters.
+                    Loading records...
                   </td>
                 </tr>
+              ) : all.length === 0 ? (
+                <tr>
+                  <td colSpan={cols.length + 1} className="px-3 py-16 text-center text-[13px] text-neutral-500">
+                    No candidate records found.
+                  </td>
+                </tr>
+              ) : slice.length === 0 ? (
+                <tr>
+                  <td colSpan={cols.length + 1} className="px-3 py-12">
+                    <EmptyState
+                      icon={Users}
+                      title="No Candidates Found"
+                      description="No candidate records match your active search and filter criteria."
+                    />
+                  </td>
+                </tr>
+              ) : (
+                slice.map((r) => (
+                  <tr
+                    key={r.id}
+                    onClick={() => setDetail(r)}
+                    className="cursor-pointer border-b border-black/5 text-neutral-900 hover:bg-black/[0.02]"
+                  >
+                    {COLUMNS.filter((c) => show(c.key)).map((c) => (
+                      <td key={c.key} className="px-3 py-2.5 align-middle">
+                        {renderCell(r, c.key)}
+                      </td>
+                    ))}
+                  </tr>
+                ))
               )}
             </tbody>
           </table>
@@ -438,7 +452,7 @@ function DetailDrawer({
             <ScoreRow label="Engineering Labs" value={r.labsScore} />
             <ScoreRow label="Assessment" value={r.assessmentScore} />
             <ScoreRow label="Vitarka AI" value={r.vitarkaScore} />
-            <ScoreRow label="Overall" value={r.eci} />
+            <ScoreRow label="Total" value={r.totalEarned != null ? r.totalEarned : r.eci} />
           </div>
 
           <div className="mt-7 text-[11px] uppercase tracking-widest text-neutral-500">Activity</div>
@@ -504,7 +518,8 @@ function cellText(r: CandidateRecord, k: ColKey): string {
     case "labs": return r.labsScore == null ? "—" : String(r.labsScore);
     case "assessment": return r.assessmentScore == null ? "—" : String(r.assessmentScore);
     case "vitarka": return r.vitarkaScore == null ? "—" : String(r.vitarkaScore);
-    case "eci": return r.eci == null ? "—" : String(r.eci);
+    case "system_design": return r.systemDesignScore == null ? "—" : String(r.systemDesignScore);
+    case "eci": return r.totalEarned != null ? String(r.totalEarned) : (r.eci == null ? "—" : String(r.eci));
     case "deadline": return fmtDate(r.deadline);
     case "emails": return String(r.emailsSent);
     case "aicall": return r.aiCall ? "Yes" : "No";
@@ -513,8 +528,8 @@ function cellText(r: CandidateRecord, k: ColKey): string {
 }
 
 function renderCell(r: CandidateRecord, k: ColKey) {
-  if (k === "candidate") return <span className="font-medium text-neutral-900">{r.name}</span>;
-  if (k === "email") return <span className="text-neutral-700">{r.email}</span>;
+  if (k === "candidate") return <div className="truncate max-w-[140px] font-medium text-neutral-900" title={r.name}>{r.name}</div>;
+  if (k === "email") return <div className="truncate max-w-[160px] text-neutral-700" title={r.email}>{r.email}</div>;
   if (k === "source") return <span className="text-neutral-600">{r.source}</span>;
   if (k === "sent" || k === "submitted") {
     const ts = k === "sent" ? r.sentAt : r.submittedAt;
