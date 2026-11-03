@@ -23,7 +23,7 @@ function OtpPage() {
   const refs = useRef<(HTMLInputElement | null)[]>([]);
   const router = useRouter();
   const searchParams = new URLSearchParams(window.location.search);
-  const evaluationId = searchParams.get("e") || "";
+  const evaluationId = searchParams.get("e") || "eval-senior-architect";
   const email = (() => {
     try {
       return JSON.parse(localStorage.getItem("yuvro-eval-candidate") ?? "{}").email;

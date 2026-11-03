@@ -29,7 +29,7 @@ function ProctoringPage() {
   const searchParams = new URLSearchParams(
     typeof window !== "undefined" ? window.location.search : "",
   );
-  const evaluationId = searchParams.get("e") || "";
+  const evaluationId = searchParams.get("e") || "eval-senior-architect";
 
   const [config, setConfig] = useState<{ enableProctoring: boolean, screenShareRequired: boolean } | null>(null);
 

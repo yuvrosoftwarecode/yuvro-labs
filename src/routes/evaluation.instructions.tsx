@@ -32,7 +32,7 @@ function InstructionsPage() {
   const searchParams = new URLSearchParams(
     typeof window !== "undefined" ? window.location.search : "",
   );
-  const evaluationId = searchParams.get("e") || "";
+  const evaluationId = searchParams.get("e") || "eval-senior-architect";
 
   useEffect(() => {
     if (!evaluationId) {

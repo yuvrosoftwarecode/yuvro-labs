@@ -38,7 +38,7 @@ function EvaluationInvite() {
   const inputRef = useRef<HTMLInputElement>(null);
   const router = useRouter();
   const searchParams = useSearch({ strict: false }) as Record<string, string>;
-  const evaluationId = searchParams?.e || searchParams?.evaluationId || "";
+  const evaluationId = searchParams?.e || searchParams?.evaluationId || "eval-senior-architect";
   const [estMinutes, setEstMinutes] = useState<number | null>(null);
 
   useEffect(() => {

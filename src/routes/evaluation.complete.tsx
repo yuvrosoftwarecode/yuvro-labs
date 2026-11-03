@@ -35,7 +35,7 @@ function CompletePage() {
         }
       } catch {}
     }
-    return id;
+    return id || "eval-senior-architect";
   });
 
   const [guestToken, setGuestToken] = useState<string | null>(null);

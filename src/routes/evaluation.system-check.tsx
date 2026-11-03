@@ -29,7 +29,7 @@ function SystemCheckPage() {
   const searchParams = new URLSearchParams(
     typeof window !== "undefined" ? window.location.search : "",
   );
-  const evaluationId = searchParams.get("e") || "";
+  const evaluationId = searchParams.get("e") || "eval-senior-architect";
 
   const [micVolume, setMicVolume] = useState<number>(0);
   const audioContextRef = useRef<AudioContext | null>(null);

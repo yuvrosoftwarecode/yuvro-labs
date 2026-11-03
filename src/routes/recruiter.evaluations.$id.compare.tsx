@@ -1,5 +1,5 @@
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
-import { useMemo } from "react";
+import { useMemo, useState, useEffect } from "react";
 import { z } from "zod";
 import {
   ChevronLeft, Calendar, X, Printer, Share2, Download, ArrowUpRight, Trophy, Minus, CheckCircle2, XCircle,
@@ -28,7 +28,12 @@ function Compare() {
   const { id } = Route.useParams();
   const { ids } = Route.useSearch();
   const nav = useNavigate();
-  const ev = getEvaluation(id);
+  const [ev, setEv] = useState<any>(null);
+
+  useEffect(() => {
+    getEvaluation(id).then((e) => setEv(e || null));
+  }, [id]);
+
   const list = ids.split(",").filter(Boolean);
   const all = ev ? getCandidates(ev.id) : [];
   const candidates = useMemo(() => list.map((cid: string) => all.find(c => c.id === cid)).filter(Boolean) as Candidate[], [list, all]);
