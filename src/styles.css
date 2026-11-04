@@ -1010,3 +1010,45 @@
 .recruiter-theme .rec-btn:hover { background-color: var(--rec-accent-hover) !important; }
 .recruiter-theme .rec-accent { color: var(--rec-accent) !important; }
 .recruiter-theme main, .recruiter-theme.min-h-screen { background-color: #ffffff !important; }
+
+/* Question bank: semantic roles scoped to this page and its dialogs. */
+.qb-theme {
+  --background: var(--rec-bg);
+  --foreground: var(--rec-fg);
+  --card: var(--rec-surface);
+  --card-foreground: var(--rec-fg);
+  --primary: var(--rec-accent);
+  --primary-foreground: var(--rec-accent-fg);
+  --secondary-foreground: var(--rec-fg-soft);
+  --muted-foreground: var(--rec-muted-2);
+  --accent: #fffdfa;
+  --accent-foreground: var(--rec-fg);
+  --border: var(--rec-border);
+  --input: var(--rec-border);
+  --ring: var(--rec-accent);
+  --destructive: var(--rec-danger);
+  color-scheme: light;
+}
+.recruiter-theme main:has(.qb-theme) { min-width: 0; }
+.qb-theme .qb-tab { background: transparent; border-radius: 0 !important; }
+.qb-theme .qb-action { height: auto; padding: 0; color: var(--muted-foreground); font-size: 14px; font-weight: 400; text-decoration: underline; }
+.qb-theme .qb-action:hover { color: var(--foreground); }
+.qb-theme .qb-action.hover\:text-destructive:hover { color: var(--destructive); }
+.qb-theme .qb-filters input { flex-basis: 260px; }
+.qb-theme .qb-filters select { flex: 1 1 140px; width: 140px; }
+.qb-theme .qb-filter:focus-visible { outline: 2px solid var(--ring); outline-offset: 1px; }
+.qb-dialog { max-width: calc(100vw - 32px); }
+.qb-dialog > button:last-child { font-size: 0; }
+.qb-dialog > button:last-child svg { display: none; }
+.qb-dialog > button:last-child::after { content: "Close"; font-size: 14px; }
+.qb-dialog > button:last-child .sr-only { display: none; }
+@media (min-width: 1280px) {
+  .qb-theme .qb-filters { flex-wrap: nowrap; }
+}
+@media (max-width: 639px) {
+  .recruiter-theme:has(main > .qb-theme) > .flex { flex-direction: column; }
+  .recruiter-theme:has(main > .qb-theme) aside { position: static; width: 100%; border-right: 0; border-bottom: 1px solid var(--rec-border); }
+  .recruiter-theme:has(main > .qb-theme) aside nav { display: flex; flex-wrap: wrap; gap: 4px; padding-bottom: 12px; }
+  .recruiter-theme:has(main > .qb-theme) aside > div:last-child { display: none; }
+  .recruiter-theme main:has(> .qb-theme) { margin-left: 0; width: 100%; }
+}
