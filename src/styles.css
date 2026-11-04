@@ -1045,3 +1045,10 @@
 @media (min-width: 1280px) {
   .qb-theme .qb-filters { flex-wrap: nowrap; }
 }
+@media (max-width: 639px) {
+  .recruiter-theme:has(main > .qb-theme) > .flex { flex-direction: column; }
+  .recruiter-theme:has(main > .qb-theme) aside { position: static; width: 100%; border-right: 0; border-bottom: 1px solid var(--rec-border); }
+  .recruiter-theme:has(main > .qb-theme) aside nav { display: flex; flex-wrap: wrap; gap: 4px; padding-bottom: 12px; }
+  .recruiter-theme:has(main > .qb-theme) aside > div:last-child { display: none; }
+  .recruiter-theme main:has(> .qb-theme) { margin-left: 0; width: 100%; }
+}
