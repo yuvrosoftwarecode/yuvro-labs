@@ -1,4 +1,5 @@
 # Tasks
+- [ ] Restyle recruiter Question bank to the supplied design and verify filters, card actions and narrow-screen layout.
 - [x] Add AI Research Papers navigation and supplied /research feed with filters, topics and inline sample summaries.
 - [x] Verify research navigation, following persistence, filters, summaries and narrow-screen layout.
 - [x] Adapt the supplied profile design to a centered layout with application typography and verify profile tabs.
