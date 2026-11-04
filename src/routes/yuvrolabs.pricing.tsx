@@ -128,14 +128,16 @@ const FAQS = [
 /* ============================================================ */
 
 export function YuvrolabsPricing() {
+  const [billing, setBilling] = useState<Billing>("monthly");
+
   return (
     <div className="ylp min-h-screen bg-background font-sans text-foreground antialiased">
       <style>{YLP_CSS}</style>
       <div className="mx-auto w-full max-w-6xl px-6">
         <SiteHeader />
-        <Hero />
+        <Hero billing={billing} setBilling={setBilling} />
         <TrialStrip />
-        <Plans />
+        <Plans billing={billing} />
         <WorkTrail />
         <HowSubmissionsWork />
         <Faq />
