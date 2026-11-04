@@ -40,6 +40,7 @@ import { Route as EvaluationIndexRouteImport } from './routes/evaluation.index'
 import { Route as CollaborationIndexRouteImport } from './routes/collaboration.index'
 import { Route as CareersIndexRouteImport } from './routes/careers.index'
 import { Route as AdminIndexRouteImport } from './routes/admin.index'
+import { Route as YuvrolabsPricingRouteImport } from './routes/yuvrolabs.pricing'
 import { Route as WarRoomSlugRouteImport } from './routes/war-room.$slug'
 import { Route as RecruiterSettingsRouteImport } from './routes/recruiter.settings'
 import { Route as RecruiterReportsRouteImport } from './routes/recruiter.reports'
@@ -267,6 +268,11 @@ const AdminIndexRoute = AdminIndexRouteImport.update({
   id: '/',
   path: '/',
   getParentRoute: () => AdminRoute,
+} as any)
+const YuvrolabsPricingRoute = YuvrolabsPricingRouteImport.update({
+  id: '/pricing',
+  path: '/pricing',
+  getParentRoute: () => YuvrolabsRoute,
 } as any)
 const WarRoomSlugRoute = WarRoomSlugRouteImport.update({
   id: '/war-room/$slug',
@@ -717,6 +723,7 @@ export interface FileRoutesByFullPath {
   '/recruiter/reports': typeof RecruiterReportsRouteWithChildren
   '/recruiter/settings': typeof RecruiterSettingsRoute
   '/war-room/$slug': typeof WarRoomSlugRoute
+  '/yuvrolabs/pricing': typeof YuvrolabsPricingRoute
   '/admin/': typeof AdminIndexRoute
   '/careers/': typeof CareersIndexRoute
   '/collaboration/': typeof CollaborationIndexRoute
@@ -813,6 +820,7 @@ export interface FileRoutesByTo {
   '/recruiter/questions': typeof RecruiterQuestionsRoute
   '/recruiter/settings': typeof RecruiterSettingsRoute
   '/war-room/$slug': typeof WarRoomSlugRoute
+  '/yuvrolabs/pricing': typeof YuvrolabsPricingRoute
   '/admin': typeof AdminIndexRoute
   '/careers': typeof CareersIndexRoute
   '/collaboration': typeof CollaborationIndexRoute
@@ -919,6 +927,7 @@ export interface FileRoutesById {
   '/recruiter/reports': typeof RecruiterReportsRouteWithChildren
   '/recruiter/settings': typeof RecruiterSettingsRoute
   '/war-room/$slug': typeof WarRoomSlugRoute
+  '/yuvrolabs/pricing': typeof YuvrolabsPricingRoute
   '/admin/': typeof AdminIndexRoute
   '/careers/': typeof CareersIndexRoute
   '/collaboration/': typeof CollaborationIndexRoute
@@ -1026,6 +1035,7 @@ export interface FileRouteTypes {
     | '/recruiter/reports'
     | '/recruiter/settings'
     | '/war-room/$slug'
+    | '/yuvrolabs/pricing'
     | '/admin/'
     | '/careers/'
     | '/collaboration/'
@@ -1122,6 +1132,7 @@ export interface FileRouteTypes {
     | '/recruiter/questions'
     | '/recruiter/settings'
     | '/war-room/$slug'
+    | '/yuvrolabs/pricing'
     | '/admin'
     | '/careers'
     | '/collaboration'
@@ -1227,6 +1238,7 @@ export interface FileRouteTypes {
     | '/recruiter/reports'
     | '/recruiter/settings'
     | '/war-room/$slug'
+    | '/yuvrolabs/pricing'
     | '/admin/'
     | '/careers/'
     | '/collaboration/'
@@ -1518,6 +1530,13 @@ declare module '@tanstack/react-router' {
       fullPath: '/admin/'
       preLoaderRoute: typeof AdminIndexRouteImport
       parentRoute: typeof AdminRoute
+    }
+    '/yuvrolabs/pricing': {
+      id: '/yuvrolabs/pricing'
+      path: '/pricing'
+      fullPath: '/yuvrolabs/pricing'
+      preLoaderRoute: typeof YuvrolabsPricingRouteImport
+      parentRoute: typeof YuvrolabsRoute
     }
     '/war-room/$slug': {
       id: '/war-room/$slug'
@@ -2295,10 +2314,12 @@ const RecruiterRouteWithChildren = RecruiterRoute._addFileChildren(
 )
 
 interface YuvrolabsRouteChildren {
+  YuvrolabsPricingRoute: typeof YuvrolabsPricingRoute
   YuvrolabsIndexRoute: typeof YuvrolabsIndexRoute
 }
 
 const YuvrolabsRouteChildren: YuvrolabsRouteChildren = {
+  YuvrolabsPricingRoute: YuvrolabsPricingRoute,
   YuvrolabsIndexRoute: YuvrolabsIndexRoute,
 }
 
