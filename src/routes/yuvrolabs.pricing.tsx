@@ -175,9 +175,13 @@ function SiteHeader() {
 
 type Billing = "monthly" | "yearly";
 
-function Hero() {
-  const [billing, setBilling] = useState<Billing>("monthly");
-
+function Hero({
+  billing,
+  setBilling,
+}: {
+  billing: Billing;
+  setBilling: (b: Billing) => void;
+}) {
   return (
     <section className="pt-16 pb-12 text-center sm:pt-20">
       <h1 className="mx-auto max-w-2xl text-3xl font-semibold tracking-tight text-balance sm:text-4xl">
