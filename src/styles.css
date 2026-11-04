@@ -1052,3 +1052,27 @@
   .recruiter-theme:has(main > .qb-theme) aside > div:last-child { display: none; }
   .recruiter-theme main:has(> .qb-theme) { margin-left: 0; width: 100%; }
 }
+
+/* GitHub and repositories: semantic roles scoped to this page. */
+.gh-theme {
+  --background: var(--rec-bg);
+  --foreground: var(--rec-fg);
+  --card: var(--rec-surface);
+  --card-foreground: var(--rec-fg);
+  --primary: var(--rec-accent);
+  --primary-foreground: var(--rec-accent-fg);
+  --secondary-foreground: var(--rec-fg-soft);
+  --muted-foreground: var(--rec-muted-2);
+  --accent: var(--rec-overlay-1);
+  --accent-foreground: var(--rec-fg);
+  --border: var(--rec-border);
+  --input: var(--rec-border);
+  --ring: var(--rec-accent);
+  --destructive: var(--rec-danger);
+  color-scheme: light;
+}
+.gh-link { color: var(--rec-fg); text-underline-offset: 3px; }
+.gh-link:hover { color: var(--rec-link-hover); }
+.gh-theme .gh-repo-row:hover { background: var(--rec-overlay-1); }
+.rec-btn-danger { display:inline-flex; align-items:center; justify-content:center; border-radius:8px; background:var(--rec-danger); color:var(--rec-accent-fg); padding:10px 16px; font-size:15px; line-height:20px; font-weight:500; transition:background-color .15s; }
+.rec-btn-danger:hover { background:#b91c1c; }
