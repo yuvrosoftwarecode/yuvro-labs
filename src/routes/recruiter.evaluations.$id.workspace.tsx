@@ -402,84 +402,63 @@ function Workspace() {
   return (
     <div className="min-h-screen">
       {/* Top header */}
-      <header className="sticky top-0 z-30 border-b border-white/5 bg-white backdrop-blur">
-        <div className="w-full px-8 pt-6 pb-4">
+      <header className="border-b border-[var(--rec-border)] bg-[var(--rec-bg)]">
+        <div className="w-full px-8 pt-6">
           <Link
             to="/recruiter/evaluations"
-            className="inline-flex items-center gap-1.5 text-[12px] text-neutral-500 hover:text-white"
+            className="text-sm text-[var(--rec-muted-2)] underline underline-offset-2 hover:text-[var(--rec-fg)]"
           >
-            <ChevronLeft className="h-3.5 w-3.5" /> All evaluations
+            All evaluations
           </Link>
-          <div className="mt-4 flex flex-nowrap items-start justify-between gap-6">
+          <div className="mb-7 mt-5 flex flex-wrap items-start justify-between gap-6">
             <div className="min-w-0">
-              <div className="flex items-center gap-2">
-                <StatusBadge status={ev.status} />
-                <span className="text-[11px] uppercase tracking-widest text-neutral-500">
-                  {ev.domain || "Uncategorized"} · Domain
-                </span>
-              </div>
-              <h1 className="mt-2 text-[32px] font-medium leading-tight tracking-tight text-white">
+              <h1>
                 {ev.title}
+                <span className="ml-2 text-[15px] font-normal text-[var(--rec-muted-2)]">
+                  {ev.status === "published" ? "Published" : "Draft"}
+                </span>
               </h1>
-              <dl className="mt-3 flex flex-wrap items-center gap-x-6 gap-y-1 text-[12px] text-neutral-500">
-                <span>
-                  Created <b className="font-normal text-neutral-300">{fmtDate(ev.createdAt)}</b>
-                </span>
-                <span>
-                  Last modified{" "}
-                  <b className="font-normal text-neutral-300">{fmtRel(ev.createdAt)}</b>
-                </span>
-                <span>
-                  Created by <b className="font-normal text-neutral-300">{ev.createdBy || "Recruiter"}</b>
-                </span>
-                <span>
-                  Duration <b className="font-normal text-neutral-300">{totals.minutes} min</b>
-                </span>
-                <span>
-                  Marks <b className="font-normal text-neutral-300">{totals.marks}</b>
-                </span>
-
-              </dl>
+              <p className="mt-1 text-sm leading-5 text-[var(--rec-muted-2)]">
+                Created {fmtDate(ev.createdAt)} · Last modified {fmtDate(ev.createdAt)} · {totals.minutes} min · {totals.marks} marks
+              </p>
+            </div>
+            <div className="flex shrink-0 items-center gap-5 text-[15px]">
+              <button
+                onClick={copyLink}
+                className="font-medium text-[var(--rec-fg)] underline underline-offset-2 hover:text-[var(--rec-link-hover)]"
+              >
+                Copy link
+              </button>
+              <button
+                onClick={handleGenerateReports}
+                className="font-medium text-[var(--rec-fg)] underline underline-offset-2 hover:text-[var(--rec-link-hover)]"
+              >
+                {generating ? "Generating..." : "Generate reports"}
+              </button>
+              <button onClick={() => setInviteOpen(true)} className="rec-btn">
+                Invite candidates
+              </button>
             </div>
           </div>
 
-          {/* Tabs & Actions */}
-          <div className="mt-6 flex items-center justify-between">
-            <nav className="flex items-center gap-1">
-              {(["overview", "candidates", "followups", "records", "feedback"] as const).map(
-                (t) => (
-                  <button
-                    key={t}
-                    onClick={() => goto(t)}
-                    className={`relative whitespace-nowrap px-3 py-2 text-[13px] transition ${tab === t ? "text-white" : "text-neutral-500 hover:text-neutral-300"}`}
-                  >
-                    {TAB_LABELS[t]}
-                    {tab === t && (
-                      <span className="absolute inset-x-3 -bottom-[13px] h-px bg-white" />
-                    )}
-                  </button>
-                ),
-              )}
-            </nav>
-            <div className="flex flex-shrink-0 flex-nowrap items-center gap-2 pb-2">
-              <HeaderBtn
-                onClick={() => setInviteOpen(true)}
-                icon={<Mail className="h-3.5 w-3.5" />}
-              >
-                Invite Candidates
-              </HeaderBtn>
-              <HeaderBtn onClick={copyLink} icon={<CopyIcon className="h-3.5 w-3.5" />}>
-                Copy Link
-              </HeaderBtn>
-              <HeaderBtn 
-                onClick={handleGenerateReports} 
-                icon={<FileText className={`h-3.5 w-3.5 ${generating ? "animate-pulse" : ""}`} />}
-              >
-                {generating ? "Generating..." : "Generate Reports"}
-              </HeaderBtn>
-
-            </div>
-          </div>
+          {/* Tabs */}
+          <nav className="flex gap-7 border-t border-transparent">
+            {(["overview", "candidates", "followups", "records", "feedback"] as const).map(
+              (t) => (
+                <button
+                  key={t}
+                  onClick={() => goto(t)}
+                  className={`-mb-px whitespace-nowrap border-b-2 pb-3 text-[15px] transition ${
+                    tab === t
+                      ? "border-[var(--rec-accent)] font-medium text-[var(--rec-fg)]"
+                      : "border-transparent text-[var(--rec-muted-2)] hover:text-[var(--rec-fg)]"
+                  }`}
+                >
+                  {TAB_LABELS[t]}
+                </button>
+              ),
+            )}
+          </nav>
         </div>
       </header>
 
