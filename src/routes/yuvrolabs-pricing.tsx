@@ -1,8 +1,8 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { useMemo, useState } from "react";
+import { useState } from "react";
 import YuvroLogo from "@/assets/YuvroLogo.png";
 
-export const Route = createFileRoute("/yuvrolabs/pricing")({
+export const Route = createFileRoute("/yuvrolabs-pricing")({
   head: () => ({
     meta: [
       { title: "Pricing — Yuvro" },
@@ -138,7 +138,6 @@ export function YuvrolabsPricing() {
         <Hero billing={billing} setBilling={setBilling} />
         <TrialStrip />
         <Plans billing={billing} />
-        <WorkTrail />
         <HowSubmissionsWork />
         <Faq />
         <ClosingBanner />
@@ -289,8 +288,7 @@ function TrialStrip() {
   );
 }
 
-function Plans() {
-  const [billing, setBilling] = useState<Billing>("monthly");
+function Plans({ billing }: { billing: Billing }) {
   const [workTrailQty, setWorkTrailQty] = useState(0); // 0 = not added
 
   const workTrailTotal =
@@ -323,8 +321,6 @@ function Plans() {
         <PlanCard order="order-3 lg:order-3" plan={ENTERPRISE} billing={billing} />
       </div>
       <WorkTrailControls
-        billing={billing}
-        setBilling={setBilling}
         qty={workTrailQty}
         setQty={setWorkTrail}
         total={workTrailTotal}
@@ -337,13 +333,13 @@ function PlanCard({
   plan,
   featured = false,
   billing,
-  workTrailLine,
+  workTrailLine = null,
   order,
 }: {
   plan: typeof STARTUP | typeof GROWTH | typeof ENTERPRISE;
   featured?: boolean;
   billing: Billing;
-  workTrailLine: string | null;
+  workTrailLine?: string | null;
   order: string;
 }) {
   const isEnterprise = !("monthly" in plan);
@@ -421,14 +417,10 @@ function PlanCard({
 }
 
 function WorkTrailControls({
-  billing,
-  setBilling,
   qty,
   setQty,
   total,
 }: {
-  billing: Billing;
-  setBilling: (b: Billing) => void;
   qty: number;
   setQty: (n: number) => void;
   total: number;

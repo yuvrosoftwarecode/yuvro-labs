@@ -156,7 +156,7 @@ function Landing() {
           </a>
           <nav className="links" aria-label="Main">
             <a href="/lab/systemdesign" onClick={(e) => { e.preventDefault(); nav({ to: "/lab/$slug", params: { slug: "systemdesign" } }); }}>System Design Studio</a>
-            <a href="/yuvrolabs/pricing" onClick={(e) => { e.preventDefault(); nav({ to: "/yuvrolabs/pricing" }); }}>Pricing</a>
+            <a href="/yuvrolabs-pricing" onClick={(e) => { e.preventDefault(); nav({ to: "/yuvrolabs-pricing" }); }}>Pricing</a>
           </nav>
           <button className="demo" onClick={() => nav({ to: "/book-demo" })}>Book a demo</button>
         </header>
