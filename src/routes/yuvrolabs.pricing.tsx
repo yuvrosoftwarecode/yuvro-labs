@@ -138,7 +138,6 @@ export function YuvrolabsPricing() {
         <Hero billing={billing} setBilling={setBilling} />
         <TrialStrip />
         <Plans billing={billing} />
-        <WorkTrail />
         <HowSubmissionsWork />
         <Faq />
         <ClosingBanner />
@@ -334,13 +333,12 @@ function PlanCard({
   plan,
   featured = false,
   billing,
-  workTrailLine,
+  workTrailLine = null,
   order,
 }: {
   plan: typeof STARTUP | typeof GROWTH | typeof ENTERPRISE;
   featured?: boolean;
   billing: Billing;
-  workTrailLine: string | null;
   order: string;
 }) {
   const isEnterprise = !("monthly" in plan);
