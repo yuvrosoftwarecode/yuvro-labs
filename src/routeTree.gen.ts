@@ -9,6 +9,7 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
+import { Route as YuvrolabsPricingRouteImport } from './routes/yuvrolabs-pricing'
 import { Route as YuvrolabsRouteImport } from './routes/yuvrolabs'
 import { Route as SystemDesignStudioRouteImport } from './routes/system-design-studio'
 import { Route as SolutionsRouteImport } from './routes/solutions'
@@ -40,7 +41,6 @@ import { Route as EvaluationIndexRouteImport } from './routes/evaluation.index'
 import { Route as CollaborationIndexRouteImport } from './routes/collaboration.index'
 import { Route as CareersIndexRouteImport } from './routes/careers.index'
 import { Route as AdminIndexRouteImport } from './routes/admin.index'
-import { Route as YuvrolabsPricingRouteImport } from './routes/yuvrolabs.pricing'
 import { Route as WarRoomSlugRouteImport } from './routes/war-room.$slug'
 import { Route as RecruiterSettingsRouteImport } from './routes/recruiter.settings'
 import { Route as RecruiterReportsRouteImport } from './routes/recruiter.reports'
@@ -114,6 +114,11 @@ import { Route as CollaborationSprintIdReportTeamRouteImport } from './routes/co
 import { Route as CollaborationSprintIdReportIndividualRouteImport } from './routes/collaboration.sprint.$id.report.individual'
 import { Route as AdminLabsIdSprintsSprintIdRouteImport } from './routes/admin.labs.$id.sprints.$sprintId'
 
+const YuvrolabsPricingRoute = YuvrolabsPricingRouteImport.update({
+  id: '/yuvrolabs-pricing',
+  path: '/yuvrolabs-pricing',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const YuvrolabsRoute = YuvrolabsRouteImport.update({
   id: '/yuvrolabs',
   path: '/yuvrolabs',
@@ -268,11 +273,6 @@ const AdminIndexRoute = AdminIndexRouteImport.update({
   id: '/',
   path: '/',
   getParentRoute: () => AdminRoute,
-} as any)
-const YuvrolabsPricingRoute = YuvrolabsPricingRouteImport.update({
-  id: '/pricing',
-  path: '/pricing',
-  getParentRoute: () => YuvrolabsRoute,
 } as any)
 const WarRoomSlugRoute = WarRoomSlugRouteImport.update({
   id: '/war-room/$slug',
@@ -680,6 +680,7 @@ export interface FileRoutesByFullPath {
   '/solutions': typeof SolutionsRoute
   '/system-design-studio': typeof SystemDesignStudioRoute
   '/yuvrolabs': typeof YuvrolabsRouteWithChildren
+  '/yuvrolabs-pricing': typeof YuvrolabsPricingRoute
   '/admin/ai-mentor': typeof AdminAiMentorRoute
   '/admin/collaboration': typeof AdminCollaborationRoute
   '/admin/hackathons': typeof AdminHackathonsRouteWithChildren
@@ -723,7 +724,6 @@ export interface FileRoutesByFullPath {
   '/recruiter/reports': typeof RecruiterReportsRouteWithChildren
   '/recruiter/settings': typeof RecruiterSettingsRoute
   '/war-room/$slug': typeof WarRoomSlugRoute
-  '/yuvrolabs/pricing': typeof YuvrolabsPricingRoute
   '/admin/': typeof AdminIndexRoute
   '/careers/': typeof CareersIndexRoute
   '/collaboration/': typeof CollaborationIndexRoute
@@ -780,6 +780,7 @@ export interface FileRoutesByTo {
   '/research': typeof ResearchRoute
   '/solutions': typeof SolutionsRoute
   '/system-design-studio': typeof SystemDesignStudioRoute
+  '/yuvrolabs-pricing': typeof YuvrolabsPricingRoute
   '/admin/ai-mentor': typeof AdminAiMentorRoute
   '/admin/collaboration': typeof AdminCollaborationRoute
   '/admin/incidents': typeof AdminIncidentsRoute
@@ -820,7 +821,6 @@ export interface FileRoutesByTo {
   '/recruiter/questions': typeof RecruiterQuestionsRoute
   '/recruiter/settings': typeof RecruiterSettingsRoute
   '/war-room/$slug': typeof WarRoomSlugRoute
-  '/yuvrolabs/pricing': typeof YuvrolabsPricingRoute
   '/admin': typeof AdminIndexRoute
   '/careers': typeof CareersIndexRoute
   '/collaboration': typeof CollaborationIndexRoute
@@ -884,6 +884,7 @@ export interface FileRoutesById {
   '/solutions': typeof SolutionsRoute
   '/system-design-studio': typeof SystemDesignStudioRoute
   '/yuvrolabs': typeof YuvrolabsRouteWithChildren
+  '/yuvrolabs-pricing': typeof YuvrolabsPricingRoute
   '/admin/ai-mentor': typeof AdminAiMentorRoute
   '/admin/collaboration': typeof AdminCollaborationRoute
   '/admin/hackathons': typeof AdminHackathonsRouteWithChildren
@@ -927,7 +928,6 @@ export interface FileRoutesById {
   '/recruiter/reports': typeof RecruiterReportsRouteWithChildren
   '/recruiter/settings': typeof RecruiterSettingsRoute
   '/war-room/$slug': typeof WarRoomSlugRoute
-  '/yuvrolabs/pricing': typeof YuvrolabsPricingRoute
   '/admin/': typeof AdminIndexRoute
   '/careers/': typeof CareersIndexRoute
   '/collaboration/': typeof CollaborationIndexRoute
@@ -992,6 +992,7 @@ export interface FileRouteTypes {
     | '/solutions'
     | '/system-design-studio'
     | '/yuvrolabs'
+    | '/yuvrolabs-pricing'
     | '/admin/ai-mentor'
     | '/admin/collaboration'
     | '/admin/hackathons'
@@ -1035,7 +1036,6 @@ export interface FileRouteTypes {
     | '/recruiter/reports'
     | '/recruiter/settings'
     | '/war-room/$slug'
-    | '/yuvrolabs/pricing'
     | '/admin/'
     | '/careers/'
     | '/collaboration/'
@@ -1092,6 +1092,7 @@ export interface FileRouteTypes {
     | '/research'
     | '/solutions'
     | '/system-design-studio'
+    | '/yuvrolabs-pricing'
     | '/admin/ai-mentor'
     | '/admin/collaboration'
     | '/admin/incidents'
@@ -1132,7 +1133,6 @@ export interface FileRouteTypes {
     | '/recruiter/questions'
     | '/recruiter/settings'
     | '/war-room/$slug'
-    | '/yuvrolabs/pricing'
     | '/admin'
     | '/careers'
     | '/collaboration'
@@ -1195,6 +1195,7 @@ export interface FileRouteTypes {
     | '/solutions'
     | '/system-design-studio'
     | '/yuvrolabs'
+    | '/yuvrolabs-pricing'
     | '/admin/ai-mentor'
     | '/admin/collaboration'
     | '/admin/hackathons'
@@ -1238,7 +1239,6 @@ export interface FileRouteTypes {
     | '/recruiter/reports'
     | '/recruiter/settings'
     | '/war-room/$slug'
-    | '/yuvrolabs/pricing'
     | '/admin/'
     | '/careers/'
     | '/collaboration/'
@@ -1302,6 +1302,7 @@ export interface RootRouteChildren {
   SolutionsRoute: typeof SolutionsRoute
   SystemDesignStudioRoute: typeof SystemDesignStudioRoute
   YuvrolabsRoute: typeof YuvrolabsRouteWithChildren
+  YuvrolabsPricingRoute: typeof YuvrolabsPricingRoute
   LabSlugRoute: typeof LabSlugRouteWithChildren
   MockInterviewSlugRoute: typeof MockInterviewSlugRoute
   ProductSlugRoute: typeof ProductSlugRoute
@@ -1314,6 +1315,13 @@ export interface RootRouteChildren {
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
+    '/yuvrolabs-pricing': {
+      id: '/yuvrolabs-pricing'
+      path: '/yuvrolabs-pricing'
+      fullPath: '/yuvrolabs-pricing'
+      preLoaderRoute: typeof YuvrolabsPricingRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/yuvrolabs': {
       id: '/yuvrolabs'
       path: '/yuvrolabs'
@@ -1530,13 +1538,6 @@ declare module '@tanstack/react-router' {
       fullPath: '/admin/'
       preLoaderRoute: typeof AdminIndexRouteImport
       parentRoute: typeof AdminRoute
-    }
-    '/yuvrolabs/pricing': {
-      id: '/yuvrolabs/pricing'
-      path: '/pricing'
-      fullPath: '/yuvrolabs/pricing'
-      preLoaderRoute: typeof YuvrolabsPricingRouteImport
-      parentRoute: typeof YuvrolabsRoute
     }
     '/war-room/$slug': {
       id: '/war-room/$slug'
@@ -2314,12 +2315,10 @@ const RecruiterRouteWithChildren = RecruiterRoute._addFileChildren(
 )
 
 interface YuvrolabsRouteChildren {
-  YuvrolabsPricingRoute: typeof YuvrolabsPricingRoute
   YuvrolabsIndexRoute: typeof YuvrolabsIndexRoute
 }
 
 const YuvrolabsRouteChildren: YuvrolabsRouteChildren = {
-  YuvrolabsPricingRoute: YuvrolabsPricingRoute,
   YuvrolabsIndexRoute: YuvrolabsIndexRoute,
 }
 
@@ -2376,6 +2375,7 @@ const rootRouteChildren: RootRouteChildren = {
   SolutionsRoute: SolutionsRoute,
   SystemDesignStudioRoute: SystemDesignStudioRoute,
   YuvrolabsRoute: YuvrolabsRouteWithChildren,
+  YuvrolabsPricingRoute: YuvrolabsPricingRoute,
   LabSlugRoute: LabSlugRouteWithChildren,
   MockInterviewSlugRoute: MockInterviewSlugRoute,
   ProductSlugRoute: ProductSlugRoute,

@@ -2,7 +2,7 @@ import { createFileRoute, Link } from "@tanstack/react-router";
 import { useState } from "react";
 import YuvroLogo from "@/assets/YuvroLogo.png";
 
-export const Route = createFileRoute("/yuvrolabs/pricing")({
+export const Route = createFileRoute("/yuvrolabs-pricing")({
   head: () => ({
     meta: [
       { title: "Pricing — Yuvro" },
