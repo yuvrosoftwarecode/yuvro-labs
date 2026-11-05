@@ -1,5 +1,5 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { useMemo, useState } from "react";
+import { useState } from "react";
 import YuvroLogo from "@/assets/YuvroLogo.png";
 
 export const Route = createFileRoute("/yuvrolabs/pricing")({
@@ -418,14 +418,10 @@ function PlanCard({
 }
 
 function WorkTrailControls({
-  billing,
-  setBilling,
   qty,
   setQty,
   total,
 }: {
-  billing: Billing;
-  setBilling: (b: Billing) => void;
   qty: number;
   setQty: (n: number) => void;
   total: number;
