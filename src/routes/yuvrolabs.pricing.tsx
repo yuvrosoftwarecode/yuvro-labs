@@ -289,8 +289,7 @@ function TrialStrip() {
   );
 }
 
-function Plans() {
-  const [billing, setBilling] = useState<Billing>("monthly");
+function Plans({ billing }: { billing: Billing }) {
   const [workTrailQty, setWorkTrailQty] = useState(0); // 0 = not added
 
   const workTrailTotal =
@@ -323,8 +322,6 @@ function Plans() {
         <PlanCard order="order-3 lg:order-3" plan={ENTERPRISE} billing={billing} />
       </div>
       <WorkTrailControls
-        billing={billing}
-        setBilling={setBilling}
         qty={workTrailQty}
         setQty={setWorkTrail}
         total={workTrailTotal}
