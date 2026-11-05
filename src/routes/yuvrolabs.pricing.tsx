@@ -339,6 +339,7 @@ function PlanCard({
   plan: typeof STARTUP | typeof GROWTH | typeof ENTERPRISE;
   featured?: boolean;
   billing: Billing;
+  workTrailLine?: string | null;
   order: string;
 }) {
   const isEnterprise = !("monthly" in plan);
