@@ -1402,22 +1402,19 @@ function CandidatesTab({
         })}
       </div>
 
-      {/* Active filter chips (only when applied) */}
+      {/* Active filters (only when applied) */}
       {activeChips.length > 0 && (
-        <div className="flex flex-wrap items-center gap-2 pt-1">
-          <span className="text-[11px] uppercase tracking-widest text-neutral-500">Applied</span>
+        <div className="flex flex-wrap items-center gap-x-5 gap-y-1 pb-2 text-[13px]">
+          <span className="text-[var(--rec-muted-2)]">Applied:</span>
           {activeChips.map((chip) => (
-            <span
-              key={chip.key}
-              className="inline-flex items-center gap-1.5 rounded-full border border-neutral-200 bg-neutral-50 px-2.5 py-0.5 text-[11px] text-neutral-800"
-            >
-              <span className="text-neutral-500">{chip.group}</span>
+            <span key={chip.key} className="text-[var(--rec-fg)]">
+              <span className="text-[var(--rec-muted-2)]">{chip.group}: </span>
               <span className="font-medium">{chip.value}</span>
               <button
                 onClick={() => setFilters((f) => chip.remove(f))}
-                className="ml-0.5 rounded-full p-0.5 text-neutral-400 hover:bg-neutral-200 hover:text-neutral-700"
+                className="ml-1.5 text-[var(--rec-muted-2)] underline underline-offset-2 hover:text-[var(--rec-fg)]"
               >
-                <X className="h-3 w-3" />
+                Remove
               </button>
             </span>
           ))}
@@ -1426,27 +1423,23 @@ function CandidatesTab({
               setFilters(emptyFilters());
               setActiveSavedView(null);
             }}
-            className="text-[11px] font-medium text-neutral-700 hover:text-neutral-900 hover:underline"
+            className="font-medium text-[var(--rec-fg)] underline underline-offset-2 hover:text-[var(--rec-link-hover)]"
           >
             Clear all
           </button>
         </div>
       )}
 
-      {/* Subtle divider before table */}
-      <div className="border-t border-neutral-200" />
-
       {/* Bulk actions */}
       {selected.size > 0 && (
-        <div className="flex flex-wrap items-center gap-2 rounded-xl border border-neutral-200 bg-white px-3 py-2">
-          <div className="text-[12px] font-medium text-neutral-900">{selected.size} selected</div>
-          <div className="mx-2 h-4 w-px bg-neutral-200" />
-          <BulkBtn onClick={() => bulk("Moved to Hold", "Hold")}>Hold</BulkBtn>
-          <BulkBtn onClick={() => bulk("Shortlisted", "Shortlisted")}>Shortlist</BulkBtn>
-          <BulkBtn onClick={() => bulk("Rejected", "Rejected")}>Reject</BulkBtn>
+        <div className="flex flex-wrap items-center gap-5 border-y border-[var(--rec-border)] py-2.5 text-[14px]">
+          <div className="font-medium text-[var(--rec-fg)]">{selected.size} selected</div>
+          <button onClick={() => bulk("Moved to Hold", "Hold")} className="text-[var(--rec-fg)] underline underline-offset-2 hover:text-[var(--rec-link-hover)]">Hold</button>
+          <button onClick={() => bulk("Shortlisted", "Shortlisted")} className="text-[var(--rec-fg)] underline underline-offset-2 hover:text-[var(--rec-link-hover)]">Shortlist</button>
+          <button onClick={() => bulk("Rejected", "Rejected")} className="text-[var(--rec-fg)] underline underline-offset-2 hover:text-[var(--rec-link-hover)]">Reject</button>
           <button
             onClick={() => setSelected(new Set())}
-            className="ml-auto text-[11px] text-neutral-500 hover:text-neutral-900"
+            className="ml-auto text-[var(--rec-muted-2)] underline underline-offset-2 hover:text-[var(--rec-fg)]"
           >
             Clear
           </button>
@@ -1503,21 +1496,21 @@ function CandidatesTab({
 
       {/* Pagination */}
       {filtered.length > 0 && (
-        <div className="flex flex-wrap items-center justify-between gap-3 rounded-xl border border-neutral-200 bg-white px-4 py-3 text-[12px] text-neutral-600">
+        <div className="flex flex-wrap items-center justify-between gap-3 py-4 text-[14px] text-[var(--rec-muted-2)]">
           <div>
-            Showing <b className="text-neutral-900 tabular-nums">{(page - 1) * perPage + 1}</b>–
-            <b className="text-neutral-900 tabular-nums">
+            Showing <span className="font-medium text-[var(--rec-fg)] tabular-nums">{(page - 1) * perPage + 1}</span>–
+            <span className="font-medium text-[var(--rec-fg)] tabular-nums">
               {Math.min(page * perPage, filtered.length)}
-            </b>{" "}
-            of <b className="text-neutral-900 tabular-nums">{filtered.length.toLocaleString()}</b>
+            </span>{" "}
+            of <span className="font-medium text-[var(--rec-fg)] tabular-nums">{filtered.length.toLocaleString()}</span>
           </div>
-          <div className="flex items-center gap-4">
-            <div className="flex items-center gap-1.5">
-              <span className="text-neutral-500">Per page</span>
+          <div className="flex items-center gap-6">
+            <div className="flex items-center gap-2">
+              <span>Per page</span>
               <select
                 value={perPage}
                 onChange={(e) => setPerPage(parseInt(e.target.value))}
-                className="rounded-md border border-neutral-200 bg-white px-2 py-1 text-neutral-800 outline-none focus:border-neutral-400"
+                className="border-0 border-b border-[var(--rec-border)] bg-transparent py-0.5 text-[var(--rec-fg)] outline-none focus:border-[var(--rec-accent)]"
               >
                 {[25, 50, 100, 250, 500].map((n) => (
                   <option key={n} value={n}>
@@ -1526,21 +1519,21 @@ function CandidatesTab({
                 ))}
               </select>
             </div>
-            <div className="flex items-center gap-1">
+            <div className="flex items-center gap-5">
               <button
                 disabled={page === 1}
                 onClick={() => setPage((p) => Math.max(1, p - 1))}
-                className="rounded-md border border-neutral-200 px-2.5 py-1 text-neutral-800 disabled:opacity-30 hover:bg-neutral-50"
+                className="font-medium text-[var(--rec-fg)] underline underline-offset-2 hover:text-[var(--rec-link-hover)] disabled:opacity-40 disabled:no-underline"
               >
                 Prev
               </button>
-              <div className="px-2 tabular-nums">
+              <div className="tabular-nums">
                 Page {page} / {totalPages}
               </div>
               <button
                 disabled={page === totalPages}
                 onClick={() => setPage((p) => Math.min(totalPages, p + 1))}
-                className="rounded-md border border-neutral-200 px-2.5 py-1 text-neutral-800 disabled:opacity-30 hover:bg-neutral-50"
+                className="font-medium text-[var(--rec-fg)] underline underline-offset-2 hover:text-[var(--rec-link-hover)] disabled:opacity-40 disabled:no-underline"
               >
                 Next
               </button>
