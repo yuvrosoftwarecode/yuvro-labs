@@ -400,7 +400,7 @@ function Workspace() {
   };
 
   return (
-    <div className="min-h-screen">
+    <div className="evs-theme min-h-screen">
       {/* Top header */}
       <header className="border-b border-[var(--rec-border)] bg-[var(--rec-bg)]">
         <div className="w-full px-8 pt-6">

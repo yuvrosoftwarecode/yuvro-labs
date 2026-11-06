@@ -1076,3 +1076,6 @@
 .gh-theme .gh-repo-row:hover { background: var(--rec-overlay-1); }
 .rec-btn-danger { display:inline-flex; align-items:center; justify-content:center; border-radius:8px; background:var(--rec-danger); color:var(--rec-accent-fg); padding:10px 16px; font-size:15px; line-height:20px; font-weight:500; transition:background-color .15s; }
 .rec-btn-danger:hover { background:#b91c1c; }
+
+/* Evaluation workspace (Submissions): allow main to shrink beside the fixed sidebar. */
+.recruiter-theme main:has(.evs-theme) { min-width: 0; }
