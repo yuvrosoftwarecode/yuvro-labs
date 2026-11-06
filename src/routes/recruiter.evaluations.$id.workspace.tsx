@@ -1043,7 +1043,7 @@ const PIPELINE: { id: PipelineId; label: string; match: (c: Candidate) => boolea
   { id: "all", label: "All", match: () => true },
   {
     id: "pending",
-    label: "Pending Review",
+    label: "Pending review",
     match: (c) =>
       c.hiringStatus === "Pending Review" && (c.status === "Submitted" || c.status === "Completed"),
   },
@@ -1720,8 +1720,8 @@ function ExportMenu({
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
-        <button className="inline-flex items-center gap-1.5 rounded-lg border border-neutral-200 bg-white px-3 py-1.5 text-[12px] font-medium text-neutral-800 transition hover:border-neutral-300 hover:bg-neutral-50 focus:outline-none">
-          <Download className="h-3.5 w-3.5" /> Export
+        <button className="text-[15px] font-medium text-[var(--rec-fg)] underline underline-offset-2 hover:text-[var(--rec-link-hover)] focus:outline-none">
+          Export
         </button>
       </DropdownMenuTrigger>
       <DropdownMenuContent align="end" className="w-48 p-0 overflow-hidden rounded-xl border border-neutral-200 bg-white shadow-lg">
@@ -1913,9 +1913,10 @@ function RowMenu({ onOpen, onAction }: { onOpen: () => void; onAction: (l: strin
       <DropdownMenuTrigger asChild>
         <button
           onClick={(e) => e.stopPropagation()}
-          className="rounded p-1 text-neutral-500 hover:bg-neutral-100 hover:text-neutral-900 focus:outline-none"
+          aria-label="Row actions"
+          className="tracking-[2px] text-[var(--rec-muted-2)] hover:text-[var(--rec-fg)] focus:outline-none"
         >
-          <MoreHorizontal className="h-3.5 w-3.5" />
+          ···
         </button>
       </DropdownMenuTrigger>
       <DropdownMenuContent align="end" className="w-48 overflow-hidden rounded-xl border border-neutral-200 bg-white p-0 shadow-lg">
@@ -2588,9 +2589,8 @@ function SortMenu({ value, onChange }: { value: SortKey; onChange: (v: SortKey) 
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
-        <button className="inline-flex items-center gap-1.5 rounded-lg border border-neutral-200 bg-white px-3 py-1.5 text-[12px] font-medium text-neutral-800 transition hover:border-neutral-300 hover:bg-neutral-50 focus:outline-none">
-          <ArrowUpDown className="h-3.5 w-3.5" /> {opts.find((o) => o[0] === value)?.[1]}
-          <ChevronDown className="h-3.5 w-3.5 text-neutral-400" />
+        <button className="text-[15px] font-medium text-[var(--rec-fg)] underline underline-offset-2 hover:text-[var(--rec-link-hover)] focus:outline-none">
+          {opts.find((o) => o[0] === value)?.[1]}
         </button>
       </DropdownMenuTrigger>
       <DropdownMenuContent align="end" className="w-52 p-0 overflow-hidden rounded-xl border border-neutral-200 bg-white shadow-lg">
@@ -2947,14 +2947,11 @@ function Avatar({ name, hue, size = "md" }: { name: string; hue: number; size?: 
 }
 function EmptyState({ hasFilters, onReset }: { hasFilters: boolean; onReset: () => void }) {
   return (
-    <div className="rounded-2xl border border-dashed border-neutral-200 bg-white p-16 text-center">
-      <div className="mx-auto grid h-12 w-12 place-items-center rounded-full border border-neutral-200 text-neutral-500">
-        <Users className="h-5 w-5" />
+    <div className="py-16 text-center">
+      <div className="text-[15px] font-medium text-[var(--rec-fg)]">
+        {hasFilters ? "No candidates match your filters" : "No candidates yet"}
       </div>
-      <div className="mt-4 text-[15px] font-medium text-neutral-900">
-        {hasFilters ? "No candidates match these filters" : "No candidates yet"}
-      </div>
-      <div className="mt-1 text-[12px] text-neutral-500">
+      <div className="mt-1 text-sm text-[var(--rec-muted-2)]">
         {hasFilters
           ? "Try loosening a filter or clearing your search."
           : "Invite candidates from the header to get started."}
@@ -2962,7 +2959,7 @@ function EmptyState({ hasFilters, onReset }: { hasFilters: boolean; onReset: () 
       {hasFilters && (
         <button
           onClick={onReset}
-          className="mt-4 rounded-lg border border-neutral-200 bg-white px-3 py-1.5 text-[12px] text-neutral-800 hover:bg-neutral-50"
+          className="mt-4 text-[15px] font-medium text-[var(--rec-fg)] underline underline-offset-2 hover:text-[var(--rec-link-hover)]"
         >
           Reset filters
         </button>
