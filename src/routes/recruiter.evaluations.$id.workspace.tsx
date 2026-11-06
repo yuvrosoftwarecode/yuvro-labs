@@ -1880,7 +1880,7 @@ function CandidateTable({
             <div className="whitespace-nowrap pl-4">{c.recommendation}</div>
             <div className="text-sm text-[var(--rec-muted-2)]">{fmtRel(c.submittedAt)}</div>
             <div className="truncate">
-              {c.hiringStatus === "Interview Scheduled" ? "Pending review" : c.hiringStatus}
+              {sentenceCase(c.hiringStatus === "Interview Scheduled" ? "Pending review" : c.hiringStatus)}
             </div>
 
             <div onClick={(e) => e.stopPropagation()} className="text-right">
@@ -2981,6 +2981,9 @@ function SimplePane({ title, desc }: { title: string; desc: string }) {
 
 function cap(s: string) {
   return s[0].toUpperCase() + s.slice(1);
+}
+function sentenceCase(s: string) {
+  return s ? s.charAt(0).toUpperCase() + s.slice(1).toLowerCase() : s;
 }
 function fmtDate(t: number) {
   return new Date(t).toLocaleDateString(undefined, {
