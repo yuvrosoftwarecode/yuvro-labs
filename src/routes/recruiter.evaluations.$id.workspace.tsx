@@ -107,7 +107,7 @@ const TAB_LABELS: Record<
   overview: "Overview",
   candidates: "Submissions",
   followups: "Follow-ups",
-  records: "Candidate Records",
+  records: "Candidate records",
   feedback: "Feedback",
   intelligence: "Hiring Intelligence",
   settings: "Settings",
@@ -1351,55 +1351,31 @@ function CandidatesTab({
 
   return (
     <div className="space-y-3">
-      {/* Row 1 — Full-width search */}
-      <div className="relative flex items-center">
-        <Search className="pointer-events-none absolute left-3 h-4 w-4 text-neutral-400" />
-        <input
-          value={filters.search}
-          onChange={(e) => setFilters((f) => ({ ...f, search: e.target.value }))}
-          placeholder="Search candidates by name, email, phone, company, college or candidate ID..."
-          className="w-full rounded-lg border border-neutral-200 bg-white py-2 pl-9 pr-9 text-[13px] text-neutral-900 placeholder-neutral-400 outline-none focus:border-neutral-400"
-        />
-        {filters.search && (
+      {/* Row 1 — Search + tools on a single row */}
+      <div className="mb-4 mt-7 flex flex-wrap items-center gap-8">
+        <div className="relative flex-1 min-w-[240px]">
+          <input
+            value={filters.search}
+            onChange={(e) => setFilters((f) => ({ ...f, search: e.target.value }))}
+            placeholder="Search by name, email, phone, company, college or candidate ID"
+            className="h-10 w-full border-0 border-b border-[var(--rec-border)] bg-transparent text-[15px] text-[var(--rec-fg)] placeholder:text-[var(--rec-muted-2)] focus:border-[var(--rec-accent)] focus:outline-none"
+          />
+          {filters.search && (
+            <button
+              onClick={() => setFilters((f) => ({ ...f, search: "" }))}
+              className="absolute right-0 top-1/2 -translate-y-1/2 text-[13px] text-[var(--rec-muted-2)] underline underline-offset-2 hover:text-[var(--rec-fg)]"
+            >
+              Clear
+            </button>
+          )}
+        </div>
+        <div className="flex items-center gap-6 text-[15px] font-medium">
           <button
-            onClick={() => setFilters((f) => ({ ...f, search: "" }))}
-            className="absolute right-2 rounded-md p-1 text-neutral-400 hover:bg-neutral-100 hover:text-neutral-700"
-          >
-            <X className="h-3.5 w-3.5" />
-          </button>
-        )}
-      </div>
-
-      {/* Row 2 — Pipeline nav (left) + toolbar actions (right) on a single row */}
-      <div className="flex items-center justify-between gap-4 overflow-x-auto">
-        <nav className="flex items-center gap-1">
-          {PIPELINE.map((p) => {
-            const active = pipeline === p.id;
-            const count = pipelineCounts[p.id] ?? 0;
-            return (
-              <button
-                key={p.id}
-                onClick={() => setPipeline(p.id)}
-                className={`inline-flex items-center gap-1.5 whitespace-nowrap rounded-md px-2.5 py-1.5 text-[12.5px] transition ${active ? "bg-neutral-900 !text-white dark:bg-white dark:!text-neutral-900 font-medium" : "text-neutral-600 dark:text-neutral-400 hover:bg-neutral-100 dark:hover:bg-white/10 hover:text-neutral-900 dark:hover:text-white"}`}
-              >
-                <span>{p.label}</span>
-                <span
-                  className={`rounded-full px-1.5 py-0.5 text-[10px] font-medium tabular-nums ${active ? "bg-white/20 !text-white dark:bg-black/10 dark:!text-neutral-900" : "bg-neutral-100 dark:bg-white/10 text-neutral-600 dark:text-neutral-400"}`}
-                >
-                  {count.toLocaleString()}
-                </span>
-              </button>
-            );
-          })}
-        </nav>
-        <div className="flex items-center gap-2">
-          <ToolbarBtn
             onClick={() => setDrawerOpen(true)}
-            icon={<SlidersHorizontal className="h-3.5 w-3.5" />}
-            count={activeFilterCount(filters)}
+            className="text-[var(--rec-fg)] underline underline-offset-2 hover:text-[var(--rec-link-hover)]"
           >
-            Advanced Filters
-          </ToolbarBtn>
+            Advanced filters{activeFilterCount(filters) > 0 ? ` (${activeFilterCount(filters)})` : ""}
+          </button>
           <SortMenu value={sort} onChange={setSort} />
           <ExportMenu
             candidates={filtered}
@@ -1407,6 +1383,23 @@ function CandidatesTab({
             notify={notify}
           />
         </div>
+      </div>
+
+      {/* Row 2 — Status filters */}
+      <div className="mb-3 flex flex-wrap gap-6 text-[15px] text-[var(--rec-muted-2)]">
+        {PIPELINE.map((p) => {
+          const active = pipeline === p.id;
+          const count = pipelineCounts[p.id] ?? 0;
+          return (
+            <button
+              key={p.id}
+              onClick={() => setPipeline(p.id)}
+              className={active ? "font-medium text-[var(--rec-fg)]" : "hover:text-[var(--rec-fg)]"}
+            >
+              {p.label} ({count.toLocaleString()})
+            </button>
+          );
+        })}
       </div>
 
       {/* Active filter chips (only when applied) */}
