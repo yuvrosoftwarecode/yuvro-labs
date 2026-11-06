@@ -1798,121 +1798,101 @@ function CandidateTable({
     return cols.has(k);
   };
 
+  const sections: { key: ColKey; label: string; max: (c: Candidate) => number | undefined; val: (c: Candidate) => number }[] = [];
+  if (show("labs")) sections.push({ key: "labs", label: "Eng. labs", max: (c) => c.labsMaxScore, val: (c) => c.labsScore });
+  if (show("assessment")) sections.push({ key: "assessment", label: "Knowledge", max: (c) => c.assessmentMaxScore, val: (c) => c.assessmentScore });
+  if (show("vitarka")) sections.push({ key: "vitarka", label: "Vitarka", max: (c) => c.discussionMaxScore, val: (c) => c.vitarkaScore });
+  if (show("system_design")) sections.push({ key: "system_design", label: "Sys. design", max: (c) => c.systemDesignMaxScore, val: (c) => c.systemDesignScore || 0 });
+  const maxOf = (fn: (c: Candidate) => number | undefined) => {
+    const m = rows.reduce((acc, c) => Math.max(acc, fn(c) || 0), 0);
+    return m > 0 ? m : undefined;
+  };
+  const sectionMaxes = sections.map((s) => maxOf(s.max));
+  const totalMax = rows.reduce((acc, c) => Math.max(acc, c.totalPossible || 0), 0) || undefined;
+
+  const GRID = `grid items-center gap-3 [grid-template-columns:20px_minmax(0,1fr)_repeat(${sections.length + 1},72px)_152px_76px_124px_24px]`;
+
+  const Score = ({ value, bold }: { value: number; bold?: boolean }) => (
+    <div
+      className={`text-right tabular-nums ${
+        value === 0 ? "text-[var(--rec-muted-2)]" : "text-[var(--rec-fg)]"
+      } ${bold ? "font-semibold" : ""}`}
+    >
+      {value}
+    </div>
+  );
+
   return (
-    <div className="-mx-1 overflow-x-auto">
-      <table className="w-full min-w-[960px] border-collapse text-left text-[12.5px]">
-        <thead className="sticky top-0 z-10 bg-white">
-          <tr className="border-b border-neutral-200 text-[10.5px] uppercase tracking-widest text-neutral-500">
-            <Th className="w-8">
-              <input type="checkbox" checked={allChecked} onChange={onToggleAll} />
-            </Th>
-            {show("candidate") && <Th className="min-w-[280px]">Candidate</Th>}
-            {show("email") && <Th>Email</Th>}
-            {show("phone") && <Th>Phone</Th>}
-            {show("labs") && <Th className="w-[84px] text-right">Eng. Labs</Th>}
-            {show("assessment") && <Th className="w-[104px] text-right">Knowledge</Th>}
-            {show("vitarka") && <Th className="w-[84px] text-right">Vitarka</Th>}
-            {show("system_design") && <Th className="w-[96px] text-right">Sys. Design</Th>}
-            {show("eci") && <Th className="w-[84px] text-right">Total</Th>}
-            {show("recommendation") && <Th className="w-[150px]">AI Recommendation</Th>}
-            {show("submitted") && <Th className="w-[120px]">Submitted</Th>}
-            {show("status") && <Th className="w-[130px]">Review Status</Th>}
-            <Th className="w-8"></Th>
-          </tr>
-        </thead>
-        <tbody>
-          {rows.map((c) => (
-            <tr
-              key={c.id}
-              onClick={() => onOpen(c)}
-              className={`cursor-pointer border-b border-neutral-100 dark:border-white/5 text-neutral-900 dark:text-neutral-100 transition hover:bg-neutral-50 dark:hover:bg-white/5 ${selected.has(c.id) ? "bg-neutral-50 dark:bg-white/[0.04]" : ""}`}
-            >
-              <Td onClick={(e) => e.stopPropagation()}>
-                <input
-                  type="checkbox"
-                  checked={selected.has(c.id)}
-                  onChange={() => onToggle(c.id)}
-                />
-              </Td>
-              {show("candidate") && (
-                <Td>
-                  <div className="flex items-center gap-2.5">
-                    <Avatar name={c.name} hue={c.avatarHue} />
-                    <div className="min-w-0">
-                      <div className="truncate font-medium text-neutral-900">
-                        {highlightText(c.name, highlight || "")}
-                      </div>
-                      <div className="truncate text-[11px] text-neutral-500">
-                        {highlightText(c.email, highlight || "")}
-                      </div>
-                    </div>
-                  </div>
-                </Td>
-              )}
-              {show("email") && (
-                <Td className="text-neutral-700">{highlightText(c.email, highlight || "")}</Td>
-              )}
-              {show("phone") && <Td className="text-neutral-700">{c.phone || "—"}</Td>}
-              {show("labs") && (
-                <Td className="text-right tabular-nums text-neutral-900">
-                  <div className="font-medium">{c.labsScore}</div>
-                  <div className="text-[10.5px] text-neutral-500">
-                    {c.labsMaxScore ? `of ${c.labsMaxScore}` : ""}
-                  </div>
-                </Td>
-              )}
-              {show("assessment") && (
-                <Td className="text-right tabular-nums text-neutral-900">
-                  <div className="font-medium">{c.assessmentScore}</div>
-                  <div className="text-[10.5px] text-neutral-500">
-                    {c.assessmentMaxScore ? `of ${c.assessmentMaxScore}` : ""}
-                  </div>
-                </Td>
-              )}
-              {show("vitarka") && (
-                <Td className="text-right tabular-nums text-neutral-900">
-                  <div className="font-medium">{c.vitarkaScore}</div>
-                  <div className="text-[10.5px] text-neutral-500">
-                    {c.discussionMaxScore ? `of ${c.discussionMaxScore}` : ""}
-                  </div>
-                </Td>
-              )}
-              {show("system_design") && (
-                <Td className="text-right tabular-nums text-neutral-900">
-                  <div className="font-medium">{c.systemDesignScore || 0}</div>
-                  <div className="text-[10.5px] text-neutral-500">
-                    {c.systemDesignMaxScore ? `of ${c.systemDesignMaxScore}` : ""}
-                  </div>
-                </Td>
-              )}
-              {show("eci") && (
-                <Td className="text-right tabular-nums text-neutral-900">
-                  <div className="font-medium">{c.totalEarned != null ? c.totalEarned : c.eci}</div>
-                  <div className="text-[10.5px] text-neutral-500">
-                    {c.totalPossible ? `of ${c.totalPossible}` : eciLabel(c.eci)}
-                  </div>
-                </Td>
-              )}
-              {show("recommendation") && (
-                <Td>
-                  <NeutralBadge>{c.recommendation}</NeutralBadge>
-                </Td>
-              )}
-              {show("submitted") && <Td className="text-neutral-700">{fmtRel(c.submittedAt)}</Td>}
-              {show("status") && (
-                <Td>
-                  <NeutralBadge>
-                    {c.hiringStatus === "Interview Scheduled" ? "Pending Review" : c.hiringStatus}
-                  </NeutralBadge>
-                </Td>
-              )}
-              <Td onClick={(e) => e.stopPropagation()}>
-                <RowMenu onOpen={() => onOpen(c)} onAction={(l, d) => onAction(c, l, d)} />
-              </Td>
-            </tr>
+    <div className="overflow-x-auto">
+      <div className="min-w-[1040px]">
+        {/* header */}
+        <div className={`${GRID} items-start border-y border-[var(--rec-border)] pb-3 pt-3.5 text-sm font-medium leading-5 text-[var(--rec-muted-2)]`}>
+          <input
+            type="checkbox"
+            className="h-4 w-4 [accent-color:var(--rec-accent)]"
+            checked={allChecked}
+            onChange={onToggleAll}
+          />
+          <div>Candidate</div>
+          {sections.map((s, i) => (
+            <div key={s.key} className="whitespace-nowrap text-right">
+              {s.label}
+              {sectionMaxes[i] != null && <span className="block font-normal">of {sectionMaxes[i]}</span>}
+            </div>
           ))}
-        </tbody>
-      </table>
+          <div className="whitespace-nowrap text-right">
+            Total
+            {totalMax != null && <span className="block font-normal">of {totalMax}</span>}
+          </div>
+          <div className="whitespace-nowrap pl-4">AI recommendation</div>
+          <div>Submitted</div>
+          <div>Review status</div>
+          <div />
+        </div>
+
+        {/* rows */}
+        {rows.map((c) => (
+          <div
+            key={c.id}
+            onClick={() => onOpen(c)}
+            className={`${GRID} cursor-pointer border-b border-[var(--rec-border)] py-4 text-[15px] text-[var(--rec-fg)] transition hover:bg-[var(--rec-overlay-1)] ${selected.has(c.id) ? "bg-[var(--rec-overlay-1)]" : ""}`}
+          >
+            <input
+              type="checkbox"
+              className="h-4 w-4 [accent-color:var(--rec-accent)]"
+              checked={selected.has(c.id)}
+              onClick={(e) => e.stopPropagation()}
+              onChange={() => onToggle(c.id)}
+            />
+
+            <div className="min-w-0">
+              <div className="truncate font-medium">{highlightText(c.name, highlight || "")}</div>
+              <div className="truncate text-sm leading-5 text-[var(--rec-muted-2)]" title={c.email}>
+                {highlightText(c.email, highlight || "")}
+              </div>
+            </div>
+
+            {sections.map((s) => (
+              <Score key={s.key} value={s.val(c)} />
+            ))}
+            <Score value={c.totalEarned != null ? c.totalEarned : c.eci} bold />
+
+            <div className="whitespace-nowrap pl-4">{c.recommendation}</div>
+            <div className="text-sm text-[var(--rec-muted-2)]">{fmtRel(c.submittedAt)}</div>
+            <div className="truncate">
+              {c.hiringStatus === "Interview Scheduled" ? "Pending review" : c.hiringStatus}
+            </div>
+
+            <div onClick={(e) => e.stopPropagation()} className="text-right">
+              <RowMenu onOpen={() => onOpen(c)} onAction={(l, d) => onAction(c, l, d)} />
+            </div>
+          </div>
+        ))}
+
+        {rows.length === 0 && (
+          <p className="py-12 text-center text-[var(--rec-muted-2)]">No candidates match your filters</p>
+        )}
+      </div>
     </div>
   );
 }
