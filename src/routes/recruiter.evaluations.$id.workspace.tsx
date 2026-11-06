@@ -1810,7 +1810,8 @@ function CandidateTable({
   const sectionMaxes = sections.map((s) => maxOf(s.max));
   const totalMax = rows.reduce((acc, c) => Math.max(acc, c.totalPossible || 0), 0) || undefined;
 
-  const GRID = `grid items-center gap-3 [grid-template-columns:20px_minmax(0,1fr)_repeat(${sections.length + 1},72px)_152px_76px_124px_24px]`;
+  const GRID = "grid items-center gap-3";
+  const gridTemplate = `20px minmax(0,1fr) repeat(${sections.length + 1},72px) 152px 76px 124px 24px`;
 
   const Score = ({ value, bold }: { value: number; bold?: boolean }) => (
     <div
@@ -1826,7 +1827,7 @@ function CandidateTable({
     <div className="overflow-x-auto">
       <div className="min-w-[1040px]">
         {/* header */}
-        <div className={`${GRID} items-start border-y border-[var(--rec-border)] pb-3 pt-3.5 text-sm font-medium leading-5 text-[var(--rec-muted-2)]`}>
+        <div style={{ gridTemplateColumns: gridTemplate }} className={`${GRID} items-start border-y border-[var(--rec-border)] pb-3 pt-3.5 text-sm font-medium leading-5 text-[var(--rec-muted-2)]`}>
           <input
             type="checkbox"
             className="h-4 w-4 [accent-color:var(--rec-accent)]"
@@ -1855,6 +1856,7 @@ function CandidateTable({
           <div
             key={c.id}
             onClick={() => onOpen(c)}
+            style={{ gridTemplateColumns: gridTemplate }}
             className={`${GRID} cursor-pointer border-b border-[var(--rec-border)] py-4 text-[15px] text-[var(--rec-fg)] transition hover:bg-[var(--rec-overlay-1)] ${selected.has(c.id) ? "bg-[var(--rec-overlay-1)]" : ""}`}
           >
             <input
