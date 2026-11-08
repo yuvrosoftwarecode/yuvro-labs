@@ -6,7 +6,6 @@ import {
   Copy,
   Pencil,
   Trash2,
-  Clock,
   Users,
   Link2,
 } from "lucide-react";
@@ -144,21 +143,17 @@ function EvaluationsList() {
                     </div>
                     <StatusPill status={e.status} />
                   </div>
-                  <div className="mt-5 grid grid-cols-3 gap-3 text-[11px]">
-                    <div className="rounded-lg border border-white/5 bg-white/[0.02] p-2.5">
-                      <div className="flex items-center gap-1 text-neutral-500">
-                        <Clock className="h-3 w-3" /> Duration
-                      </div>
+                  <div className="mt-5 grid grid-cols-3 gap-3 text-sm">
+                    <div>
+                      <div className="text-muted-foreground">Duration</div>
                       <div className="mt-1 text-[13px] text-white">{t.minutes} min</div>
                     </div>
-                    <div className="rounded-lg border border-white/5 bg-white/[0.02] p-2.5">
-                      <div className="text-neutral-500">Marks</div>
+                    <div>
+                      <div className="text-muted-foreground">Marks</div>
                       <div className="mt-1 text-[13px] text-white">{t.marks}</div>
                     </div>
-                    <div className="rounded-lg border border-white/5 bg-white/[0.02] p-2.5">
-                      <div className="flex items-center gap-1 text-neutral-500">
-                        <Users className="h-3 w-3" /> Candidates
-                      </div>
+                    <div>
+                      <div className="text-muted-foreground">Candidates</div>
                       <div className="mt-1 text-[13px] text-white">{e.candidatesTotal}</div>
                     </div>
                   </div>
@@ -273,13 +268,9 @@ function IconBtn({
 }
 
 function StatusPill({ status }: { status: "draft" | "published" }) {
-  return status === "published" ? (
-    <span className="inline-flex items-center gap-1 rounded-full border border-emerald-400/20 bg-emerald-400/10 px-1.5 py-0.5 text-[10px] font-medium text-emerald-300">
-      <span className="h-1 w-1 rounded-full bg-emerald-400" /> Published
-    </span>
-  ) : (
-    <span className="inline-flex items-center gap-1 rounded-full border border-amber-400/20 bg-amber-400/10 px-1.5 py-0.5 text-[10px] font-medium text-amber-300">
-      <span className="h-1 w-1 rounded-full bg-amber-400" /> Draft
+  return (
+    <span className="shrink-0 text-sm font-normal text-muted-foreground">
+      {status === "published" ? "Published" : "Draft"}
     </span>
   );
 }
