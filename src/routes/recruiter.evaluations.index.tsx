@@ -8,6 +8,8 @@ import {
   Trash2,
   Users,
   Link2,
+  LayoutGrid,
+  List,
 } from "lucide-react";
 import {
   listEvaluations,
@@ -21,6 +23,7 @@ import {
 import LoadingSkeleton from "@/components/common/LoadingSkeleton";
 import EmptyState from "@/components/common/EmptyState";
 import ErrorState from "@/components/common/ErrorState";
+import { Button } from "@/components/ui/button";
 
 export const Route = createFileRoute("/recruiter/evaluations/")({
   head: () => ({
@@ -34,6 +37,7 @@ function EvaluationsList() {
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
   const [toast, setToast] = useState<string | null>(null);
+  const [view, setView] = useState<"cards" | "list">("cards");
   const nav = useNavigate();
 
   const refresh = () => {
@@ -83,20 +87,30 @@ function EvaluationsList() {
   };
 
   return (
-    <div className="p-10">
-      <div className="flex items-center justify-between">
+    <div className="evaluation-list-theme min-w-0 p-5 sm:p-10">
+      <div className="flex flex-wrap items-center justify-between gap-4">
         <div>
           <h1 className="text-[28px] font-semibold tracking-tight">Evaluations</h1>
           <p className="mt-1 text-[13px] text-neutral-400">
             {evals.length} total · {evals.filter((e) => e.status === "published").length} live
           </p>
         </div>
+        <div className="flex items-center gap-3">
+          <div className="flex items-center gap-1" role="group" aria-label="Evaluation view">
+            <Button variant="ghost" size="icon" aria-label="Card view" title="Card view" aria-pressed={view === "cards"} onClick={() => setView("cards")} className={view === "cards" ? "text-brand-orange" : "text-muted-foreground"}>
+              <LayoutGrid />
+            </Button>
+            <Button variant="ghost" size="icon" aria-label="List view" title="List view" aria-pressed={view === "list"} onClick={() => setView("list")} className={view === "list" ? "text-brand-orange" : "text-muted-foreground"}>
+              <List />
+            </Button>
+          </div>
         <button
           onClick={onCreate}
           className="inline-flex items-center gap-2 rounded-lg bg-gradient-to-r from-emerald-400 to-cyan-400 px-4 py-2.5 text-[13px] font-medium text-black transition hover:brightness-110"
         >
           <Plus className="h-4 w-4" /> Create Evaluation
         </button>
+        </div>
       </div>
 
       {error && <ErrorState message={error} onRetry={refresh} inline className="mt-6" />}
@@ -115,7 +129,12 @@ function EvaluationsList() {
           />
         </div>
       ) : (
-        <div className="mt-8 grid grid-cols-1 gap-4 md:grid-cols-2 xl:grid-cols-3">
+        <div className={view === "list" ? "mt-8 overflow-x-auto" : "mt-8 grid grid-cols-1 gap-4 md:grid-cols-2 xl:grid-cols-3"}>
+          {view === "list" && (
+            <div className="grid min-w-[960px] grid-cols-[minmax(280px,1fr)_80px_65px_85px_125px_170px] gap-4 border-b border-border px-4 py-3 text-xs font-normal text-muted-foreground">
+              <span>Evaluation · domain · status</span><span>Duration</span><span>Marks</span><span>Candidates</span><span>Created</span><span>Actions</span>
+            </div>
+          )}
           {evals.map((e) => {
             const t = evaluationTotals(e);
             const created = new Date(e.createdAt);
@@ -123,43 +142,42 @@ function EvaluationsList() {
             return (
               <div
                 key={e.id}
-                className="group relative overflow-hidden rounded-2xl border border-white/5 bg-gradient-to-b from-white/[0.03] to-white/[0.01] transition hover:border-white/15"
+                className={view === "list" ? "grid min-w-[960px] grid-cols-[minmax(280px,1fr)_80px_65px_85px_125px_170px] items-center gap-4 border-b border-border px-4 py-4" : "group relative overflow-hidden rounded-2xl border border-white/5 bg-gradient-to-b from-white/[0.03] to-white/[0.01] transition hover:border-white/15"}
               >
-                <div className="absolute -right-16 -top-16 h-40 w-40 rounded-full bg-emerald-400/10 blur-3xl opacity-0 transition group-hover:opacity-100" />
                 <Link
                   to="/recruiter/evaluations/$id/workspace"
                   params={{ id: e.id }}
                   search={{ tab: "overview", view: "edit" } as any}
-                  className="block p-5"
+                  className={view === "list" ? "contents" : "block p-5"}
                 >
-                  <div className="flex items-start justify-between">
+                  <div className={view === "list" ? "flex min-w-0 items-start justify-between gap-3" : "flex items-start justify-between"}>
                     <div className="min-w-0">
                       <div className="text-[10px] uppercase tracking-widest text-neutral-500">
                         {e.domain || "Uncategorized"}
                       </div>
-                      <div className="mt-1 truncate text-[16px] font-medium text-white">
+                      <div className={view === "list" ? "mt-1 break-words text-sm font-medium text-foreground" : "mt-1 truncate text-[16px] font-medium text-white"}>
                         {e.title}
                       </div>
                     </div>
                     <StatusPill status={e.status} />
                   </div>
-                  <div className="mt-5 grid grid-cols-3 gap-3 text-sm">
+                  <div className={view === "list" ? "contents text-sm" : "mt-5 grid grid-cols-3 gap-3 text-sm"}>
                     <div>
-                      <div className="text-muted-foreground">Duration</div>
+                      {view === "cards" && <div className="text-muted-foreground">Duration</div>}
                       <div className="mt-1 text-[13px] text-white">{t.minutes} min</div>
                     </div>
                     <div>
-                      <div className="text-muted-foreground">Marks</div>
+                      {view === "cards" && <div className="text-muted-foreground">Marks</div>}
                       <div className="mt-1 text-[13px] text-white">{t.marks}</div>
                     </div>
                     <div>
-                      <div className="text-muted-foreground">Candidates</div>
+                      {view === "cards" && <div className="text-muted-foreground">Candidates</div>}
                       <div className="mt-1 text-[13px] text-white">{e.candidatesTotal}</div>
                     </div>
                   </div>
-                  <div className="mt-4 text-[11px] text-neutral-500">Created {rel}</div>
+                  <div title={created.toLocaleString()} className={view === "list" ? "text-xs text-muted-foreground" : "mt-4 text-[11px] text-neutral-500"}>{view === "cards" ? "Created " : ""}{rel}</div>
                 </Link>
-                <div className="flex items-center justify-between border-t border-white/5 bg-black/20 px-3 py-2">
+                <div className={view === "list" ? "flex items-center justify-between" : "flex items-center justify-between border-t border-white/5 bg-black/20 px-3 py-2"}>
                   <div className="flex items-center gap-1">
                     <IconBtn
                       title="Preview"
