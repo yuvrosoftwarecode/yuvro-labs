@@ -2780,7 +2780,7 @@ function MiniStat({
 }) {
   return (
     <div className="bg-neutral-950 px-4 py-3">
-      <div className="text-[10px] uppercase tracking-widest text-neutral-500">{label}</div>
+      <div className="text-sm leading-5 font-normal tracking-normal text-muted-foreground">{label}</div>
       <div
         className={`mt-1 text-[22px] font-medium ${tone === "good" ? "text-emerald-300" : tone === "muted" ? "text-neutral-400" : "text-white"}`}
       >
@@ -2802,7 +2802,7 @@ function BigStat({
 }) {
   return (
     <div className="rounded-xl border border-white/5 p-4">
-      <div className="flex items-center gap-1.5 text-[11px] uppercase tracking-widest text-neutral-500">
+      <div className="flex items-center gap-1.5 text-sm leading-5 font-normal tracking-normal text-muted-foreground">
         {icon}
         {label}
       </div>
