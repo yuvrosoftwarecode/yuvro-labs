@@ -269,7 +269,7 @@ function IconBtn({
 
 function StatusPill({ status }: { status: "draft" | "published" }) {
   return (
-    <span className="shrink-0 text-sm font-normal text-muted-foreground">
+    <span className="shrink-0 text-[10px] font-normal text-muted-foreground">
       {status === "published" ? "Published" : "Draft"}
     </span>
   );
