@@ -1079,3 +1079,11 @@
 
 /* Evaluation workspace (Submissions): allow main to shrink beside the fixed sidebar. */
 .recruiter-theme main:has(.evs-theme) { min-width: 0; }
+
+/* Evaluation view switching stays contained beside the recruiter sidebar. */
+.recruiter-theme main:has(.evaluation-list-theme) { min-width: 0; }
+.evaluation-list-theme {
+  --foreground: var(--rec-fg);
+  --muted-foreground: var(--rec-muted-2);
+  --border: var(--rec-border);
+}

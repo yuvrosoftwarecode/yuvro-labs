@@ -87,7 +87,7 @@ function EvaluationsList() {
   };
 
   return (
-    <div className="p-10">
+    <div className="evaluation-list-theme min-w-0 p-5 sm:p-10">
       <div className="flex flex-wrap items-center justify-between gap-4">
         <div>
           <h1 className="text-[28px] font-semibold tracking-tight">Evaluations</h1>
