@@ -1,8 +1,6 @@
 import { useState } from "react";
 import { createFileRoute, Link, notFound } from "@tanstack/react-router";
 import { TopNav } from "@/components/TopNav";
-import { Button } from "@/components/ui/button";
-import { Textarea } from "@/components/ui/textarea";
 import { getPapers, type Paper } from "@/data/papers";
 
 export const Route = createFileRoute("/research_/$paperId")({
@@ -48,9 +46,6 @@ function PaperSummaryPage() {
   const { paper } = Route.useLoaderData();
   const [tab, setTab] = useState<Tab>("summary");
   const [level, setLevel] = useState<Level>("standard");
-  const [asking, setAsking] = useState(false);
-  const [question, setQuestion] = useState("");
-  const [asked, setAsked] = useState(false);
 
   const t = (s: string) => (level === "simple" ? simplify(s) : s);
   const s = paper.summary;
@@ -88,16 +83,6 @@ function PaperSummaryPage() {
 
   const tabCls = (k: Tab) =>
     `-mb-px border-b-2 pb-3 text-sm transition-colors ${tab === k ? "border-brand-orange text-foreground" : "border-transparent text-muted-foreground hover:text-foreground"}`;
-  const levelBtn = (k: Level, label: string) => (
-    <Button
-      variant={level === k ? "default" : "outline"}
-      size="sm"
-      aria-pressed={level === k}
-      onClick={() => { setLevel(level === k ? "standard" : k); setTab("summary"); }}
-    >
-      {label}
-    </Button>
-  );
 
   return (
     <div className="min-h-screen bg-background">
@@ -133,15 +118,7 @@ function PaperSummaryPage() {
           </div>
         </div>
 
-        {asking && (
-          <div className="mt-6 border-b border-border pb-6">
-            <Textarea value={question} onChange={(e) => { setQuestion(e.target.value); setAsked(false); }} placeholder="What would you like to know about this paper?" rows={3} />
-            <div className="mt-3 flex items-center gap-4">
-              <Button size="sm" disabled={!question.trim()} onClick={() => setAsked(true)}>Ask</Button>
-              {asked && <span className="text-sm text-muted-foreground">Questions are not connected yet, so no answer was generated and no credits were used.</span>}
-            </div>
-          </div>
-        )}
+
 
         {tab === "summary" && (
           <>
