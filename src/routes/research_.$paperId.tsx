@@ -87,7 +87,7 @@ function PaperSummaryPage() {
   const others = related.length ? related : getPapers().filter((p) => p.id !== paper.id).slice(0, 3);
 
   const tabCls = (k: Tab) =>
-    `-mb-px border-b-2 pb-3 text-sm transition-colors ${tab === k ? "border-primary text-foreground" : "border-transparent text-muted-foreground hover:text-foreground"}`;
+    `-mb-px border-b-2 pb-3 text-sm transition-colors ${tab === k ? "border-brand-orange text-foreground" : "border-transparent text-muted-foreground hover:text-foreground"}`;
   const levelBtn = (k: Level, label: string) => (
     <Button
       variant={level === k ? "default" : "outline"}
@@ -122,9 +122,14 @@ function PaperSummaryPage() {
             <button role="tab" aria-selected={tab === "related"} className={tabCls("related")} onClick={() => setTab("related")}>Related papers</button>
           </nav>
           <div className="flex flex-wrap gap-2 pb-3">
-            {levelBtn("deep", "Go deeper")}
-            {levelBtn("simple", "Explain simpler")}
-            <Button variant={asking ? "default" : "outline"} size="sm" onClick={() => setAsking((a) => !a)}>Ask a question</Button>
+            <button
+              type="button"
+              aria-pressed={level === "deep"}
+              onClick={() => { setLevel(level === "deep" ? "standard" : "deep"); setTab("summary"); }}
+              className="rounded-md bg-brand-orange px-3 py-1.5 text-sm font-medium text-white hover:opacity-90"
+            >
+              {level === "deep" ? "Standard summary" : "Go deeper"}
+            </button>
           </div>
         </div>
 
@@ -144,7 +149,7 @@ function PaperSummaryPage() {
               {sections.map((sec, i) => (
                 <li key={sec.title} className="border-b border-border py-6 last:border-b-0">
                   <h2 className="text-base font-semibold text-foreground">
-                    <span className="mr-2 text-primary">{i + 1}.</span>{sec.title}
+                    <span className="mr-2">{i + 1}.</span>{sec.title}
                   </h2>
                   <div className="mt-2 text-[15px] leading-relaxed text-foreground/80">{sec.body}</div>
                 </li>
