@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { createFileRoute, Link, notFound } from "@tanstack/react-router";
-import TopNav from "@/components/TopNav";
+import { TopNav } from "@/components/TopNav";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { getPapers, type Paper } from "@/data/papers";
