@@ -1,8 +1,6 @@
 import { useState } from "react";
 import { createFileRoute, Link, notFound } from "@tanstack/react-router";
 import { TopNav } from "@/components/TopNav";
-import { Button } from "@/components/ui/button";
-import { Textarea } from "@/components/ui/textarea";
 import { getPapers, type Paper } from "@/data/papers";
 
 export const Route = createFileRoute("/research_/$paperId")({
@@ -48,9 +46,6 @@ function PaperSummaryPage() {
   const { paper } = Route.useLoaderData();
   const [tab, setTab] = useState<Tab>("summary");
   const [level, setLevel] = useState<Level>("standard");
-  const [asking, setAsking] = useState(false);
-  const [question, setQuestion] = useState("");
-  const [asked, setAsked] = useState(false);
 
   const t = (s: string) => (level === "simple" ? simplify(s) : s);
   const s = paper.summary;
@@ -87,17 +82,7 @@ function PaperSummaryPage() {
   const others = related.length ? related : getPapers().filter((p) => p.id !== paper.id).slice(0, 3);
 
   const tabCls = (k: Tab) =>
-    `-mb-px border-b-2 pb-3 text-sm transition-colors ${tab === k ? "border-primary text-foreground" : "border-transparent text-muted-foreground hover:text-foreground"}`;
-  const levelBtn = (k: Level, label: string) => (
-    <Button
-      variant={level === k ? "default" : "outline"}
-      size="sm"
-      aria-pressed={level === k}
-      onClick={() => { setLevel(level === k ? "standard" : k); setTab("summary"); }}
-    >
-      {label}
-    </Button>
-  );
+    `-mb-px border-b-2 pb-3 text-sm transition-colors ${tab === k ? "border-brand-orange text-foreground" : "border-transparent text-muted-foreground hover:text-foreground"}`;
 
   return (
     <div className="min-h-screen bg-background">
@@ -122,21 +107,18 @@ function PaperSummaryPage() {
             <button role="tab" aria-selected={tab === "related"} className={tabCls("related")} onClick={() => setTab("related")}>Related papers</button>
           </nav>
           <div className="flex flex-wrap gap-2 pb-3">
-            {levelBtn("deep", "Go deeper")}
-            {levelBtn("simple", "Explain simpler")}
-            <Button variant={asking ? "default" : "outline"} size="sm" onClick={() => setAsking((a) => !a)}>Ask a question</Button>
+            <button
+              type="button"
+              aria-pressed={level === "deep"}
+              onClick={() => { setLevel(level === "deep" ? "standard" : "deep"); setTab("summary"); }}
+              className="rounded-md bg-brand-orange px-3 py-1.5 text-sm font-medium text-white hover:opacity-90"
+            >
+              {level === "deep" ? "Standard summary" : "Go deeper"}
+            </button>
           </div>
         </div>
 
-        {asking && (
-          <div className="mt-6 border-b border-border pb-6">
-            <Textarea value={question} onChange={(e) => { setQuestion(e.target.value); setAsked(false); }} placeholder="What would you like to know about this paper?" rows={3} />
-            <div className="mt-3 flex items-center gap-4">
-              <Button size="sm" disabled={!question.trim()} onClick={() => setAsked(true)}>Ask</Button>
-              {asked && <span className="text-sm text-muted-foreground">Questions are not connected yet, so no answer was generated and no credits were used.</span>}
-            </div>
-          </div>
-        )}
+
 
         {tab === "summary" && (
           <>
@@ -144,7 +126,7 @@ function PaperSummaryPage() {
               {sections.map((sec, i) => (
                 <li key={sec.title} className="border-b border-border py-6 last:border-b-0">
                   <h2 className="text-base font-semibold text-foreground">
-                    <span className="mr-2 text-primary">{i + 1}.</span>{sec.title}
+                    <span className="mr-2">{i + 1}.</span>{sec.title}
                   </h2>
                   <div className="mt-2 text-[15px] leading-relaxed text-foreground/80">{sec.body}</div>
                 </li>
