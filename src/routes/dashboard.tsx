@@ -8,6 +8,7 @@ import { ProgressRing } from "@/components/ProgressRing";
 import { labs, type Lab } from "@/lib/dummy";
 import { warRooms } from "@/lib/sreWarRooms";
 import { getEnrolled, enroll, unenroll } from "@/lib/enrollment";
+import { weeklyTask, todayIndex } from "@/lib/weeklyTask";
 import { ArrowRight, Check, Plus, Lock } from "lucide-react";
 
 export const Route = createFileRoute("/dashboard")({ component: Hub });
@@ -41,6 +42,18 @@ function Hub() {
         />
 
         <div className="mt-8 space-y-10">
+          <section>
+            <h2 className="text-xl font-semibold">Weekly task</h2>
+            <Link to="/weekly-task" className="mt-4 flex items-center justify-between gap-4 rounded-xl border bg-card p-5 hover:bg-muted/40 transition-colors">
+              <div className="min-w-0">
+                <p className="text-base font-medium">{weeklyTask.name}</p>
+                <p className="text-sm text-muted-foreground mt-0.5">
+                  {weeklyTask.days[todayIndex()].day} · Day {todayIndex() + 1} — {weeklyTask.days[todayIndex()].title}
+                </p>
+              </div>
+              <span className="shrink-0 rounded-md px-3 py-1.5 text-sm text-white" style={{ background: "#f7931e" }}>Open</span>
+            </Link>
+          </section>
           {/* My labs — horizontal scroll */}
           <section>
             <div className="mb-4 flex items-end justify-between">
