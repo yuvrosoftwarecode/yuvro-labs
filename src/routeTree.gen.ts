@@ -11,6 +11,7 @@
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as YuvrolabsPricingRouteImport } from './routes/yuvrolabs-pricing'
 import { Route as YuvrolabsRouteImport } from './routes/yuvrolabs'
+import { Route as WeeklyTaskRouteImport } from './routes/weekly-task'
 import { Route as SystemDesignStudioRouteImport } from './routes/system-design-studio'
 import { Route as SolutionsRouteImport } from './routes/solutions'
 import { Route as ResearchRouteImport } from './routes/research'
@@ -123,6 +124,11 @@ const YuvrolabsPricingRoute = YuvrolabsPricingRouteImport.update({
 const YuvrolabsRoute = YuvrolabsRouteImport.update({
   id: '/yuvrolabs',
   path: '/yuvrolabs',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const WeeklyTaskRoute = WeeklyTaskRouteImport.update({
+  id: '/weekly-task',
+  path: '/weekly-task',
   getParentRoute: () => rootRouteImport,
 } as any)
 const SystemDesignStudioRoute = SystemDesignStudioRouteImport.update({
@@ -685,6 +691,7 @@ export interface FileRoutesByFullPath {
   '/research': typeof ResearchRoute
   '/solutions': typeof SolutionsRoute
   '/system-design-studio': typeof SystemDesignStudioRoute
+  '/weekly-task': typeof WeeklyTaskRoute
   '/yuvrolabs': typeof YuvrolabsRouteWithChildren
   '/yuvrolabs-pricing': typeof YuvrolabsPricingRoute
   '/admin/ai-mentor': typeof AdminAiMentorRoute
@@ -787,6 +794,7 @@ export interface FileRoutesByTo {
   '/research': typeof ResearchRoute
   '/solutions': typeof SolutionsRoute
   '/system-design-studio': typeof SystemDesignStudioRoute
+  '/weekly-task': typeof WeeklyTaskRoute
   '/yuvrolabs-pricing': typeof YuvrolabsPricingRoute
   '/admin/ai-mentor': typeof AdminAiMentorRoute
   '/admin/collaboration': typeof AdminCollaborationRoute
@@ -891,6 +899,7 @@ export interface FileRoutesById {
   '/research': typeof ResearchRoute
   '/solutions': typeof SolutionsRoute
   '/system-design-studio': typeof SystemDesignStudioRoute
+  '/weekly-task': typeof WeeklyTaskRoute
   '/yuvrolabs': typeof YuvrolabsRouteWithChildren
   '/yuvrolabs-pricing': typeof YuvrolabsPricingRoute
   '/admin/ai-mentor': typeof AdminAiMentorRoute
@@ -1000,6 +1009,7 @@ export interface FileRouteTypes {
     | '/research'
     | '/solutions'
     | '/system-design-studio'
+    | '/weekly-task'
     | '/yuvrolabs'
     | '/yuvrolabs-pricing'
     | '/admin/ai-mentor'
@@ -1102,6 +1112,7 @@ export interface FileRouteTypes {
     | '/research'
     | '/solutions'
     | '/system-design-studio'
+    | '/weekly-task'
     | '/yuvrolabs-pricing'
     | '/admin/ai-mentor'
     | '/admin/collaboration'
@@ -1205,6 +1216,7 @@ export interface FileRouteTypes {
     | '/research'
     | '/solutions'
     | '/system-design-studio'
+    | '/weekly-task'
     | '/yuvrolabs'
     | '/yuvrolabs-pricing'
     | '/admin/ai-mentor'
@@ -1313,6 +1325,7 @@ export interface RootRouteChildren {
   ResearchRoute: typeof ResearchRoute
   SolutionsRoute: typeof SolutionsRoute
   SystemDesignStudioRoute: typeof SystemDesignStudioRoute
+  WeeklyTaskRoute: typeof WeeklyTaskRoute
   YuvrolabsRoute: typeof YuvrolabsRouteWithChildren
   YuvrolabsPricingRoute: typeof YuvrolabsPricingRoute
   LabSlugRoute: typeof LabSlugRouteWithChildren
@@ -1340,6 +1353,13 @@ declare module '@tanstack/react-router' {
       path: '/yuvrolabs'
       fullPath: '/yuvrolabs'
       preLoaderRoute: typeof YuvrolabsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/weekly-task': {
+      id: '/weekly-task'
+      path: '/weekly-task'
+      fullPath: '/weekly-task'
+      preLoaderRoute: typeof WeeklyTaskRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/system-design-studio': {
@@ -2394,6 +2414,7 @@ const rootRouteChildren: RootRouteChildren = {
   ResearchRoute: ResearchRoute,
   SolutionsRoute: SolutionsRoute,
   SystemDesignStudioRoute: SystemDesignStudioRoute,
+  WeeklyTaskRoute: WeeklyTaskRoute,
   YuvrolabsRoute: YuvrolabsRouteWithChildren,
   YuvrolabsPricingRoute: YuvrolabsPricingRoute,
   LabSlugRoute: LabSlugRouteWithChildren,
