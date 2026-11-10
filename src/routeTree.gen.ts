@@ -27,6 +27,7 @@ import { Route as ForumRouteImport } from './routes/forum'
 import { Route as EvaluationRouteImport } from './routes/evaluation'
 import { Route as DemoRouteImport } from './routes/demo'
 import { Route as DashboardRouteImport } from './routes/dashboard'
+import { Route as ContestsRouteImport } from './routes/contests'
 import { Route as CollaborationRouteImport } from './routes/collaboration'
 import { Route as CertificatesRouteImport } from './routes/certificates'
 import { Route as CareersRouteImport } from './routes/careers'
@@ -204,6 +205,11 @@ const DemoRoute = DemoRouteImport.update({
 const DashboardRoute = DashboardRouteImport.update({
   id: '/dashboard',
   path: '/dashboard',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ContestsRoute = ContestsRouteImport.update({
+  id: '/contests',
+  path: '/contests',
   getParentRoute: () => rootRouteImport,
 } as any)
 const CollaborationRoute = CollaborationRouteImport.update({
@@ -676,6 +682,7 @@ export interface FileRoutesByFullPath {
   '/careers': typeof CareersRouteWithChildren
   '/certificates': typeof CertificatesRoute
   '/collaboration': typeof CollaborationRouteWithChildren
+  '/contests': typeof ContestsRoute
   '/dashboard': typeof DashboardRoute
   '/demo': typeof DemoRoute
   '/evaluation': typeof EvaluationRouteWithChildren
@@ -781,6 +788,7 @@ export interface FileRoutesByTo {
   '/auth': typeof AuthRoute
   '/book-demo': typeof BookDemoRoute
   '/certificates': typeof CertificatesRoute
+  '/contests': typeof ContestsRoute
   '/dashboard': typeof DashboardRoute
   '/demo': typeof DemoRoute
   '/forum': typeof ForumRoute
@@ -884,6 +892,7 @@ export interface FileRoutesById {
   '/careers': typeof CareersRouteWithChildren
   '/certificates': typeof CertificatesRoute
   '/collaboration': typeof CollaborationRouteWithChildren
+  '/contests': typeof ContestsRoute
   '/dashboard': typeof DashboardRoute
   '/demo': typeof DemoRoute
   '/evaluation': typeof EvaluationRouteWithChildren
@@ -994,6 +1003,7 @@ export interface FileRouteTypes {
     | '/careers'
     | '/certificates'
     | '/collaboration'
+    | '/contests'
     | '/dashboard'
     | '/demo'
     | '/evaluation'
@@ -1099,6 +1109,7 @@ export interface FileRouteTypes {
     | '/auth'
     | '/book-demo'
     | '/certificates'
+    | '/contests'
     | '/dashboard'
     | '/demo'
     | '/forum'
@@ -1201,6 +1212,7 @@ export interface FileRouteTypes {
     | '/careers'
     | '/certificates'
     | '/collaboration'
+    | '/contests'
     | '/dashboard'
     | '/demo'
     | '/evaluation'
@@ -1310,6 +1322,7 @@ export interface RootRouteChildren {
   CareersRoute: typeof CareersRouteWithChildren
   CertificatesRoute: typeof CertificatesRoute
   CollaborationRoute: typeof CollaborationRouteWithChildren
+  ContestsRoute: typeof ContestsRoute
   DashboardRoute: typeof DashboardRoute
   DemoRoute: typeof DemoRoute
   EvaluationRoute: typeof EvaluationRouteWithChildren
@@ -1465,6 +1478,13 @@ declare module '@tanstack/react-router' {
       path: '/dashboard'
       fullPath: '/dashboard'
       preLoaderRoute: typeof DashboardRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/contests': {
+      id: '/contests'
+      path: '/contests'
+      fullPath: '/contests'
+      preLoaderRoute: typeof ContestsRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/collaboration': {
@@ -2399,6 +2419,7 @@ const rootRouteChildren: RootRouteChildren = {
   CareersRoute: CareersRouteWithChildren,
   CertificatesRoute: CertificatesRoute,
   CollaborationRoute: CollaborationRouteWithChildren,
+  ContestsRoute: ContestsRoute,
   DashboardRoute: DashboardRoute,
   DemoRoute: DemoRoute,
   EvaluationRoute: EvaluationRouteWithChildren,
