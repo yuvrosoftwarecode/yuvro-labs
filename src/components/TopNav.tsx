@@ -17,6 +17,7 @@ const primaryLinks = [
   { to: "/dashboard", label: "Simulation Labs" },
   { to: "/mock-interviews", label: "Mock Interviews" },
   { to: "/research", label: "AI Research Papers" },
+  { to: "/contests", label: "Contests" },
 ];
 
 export function TopNav({ rightSlot, activeOverride }: { rightSlot?: React.ReactNode; activeOverride?: string } = {}) {
