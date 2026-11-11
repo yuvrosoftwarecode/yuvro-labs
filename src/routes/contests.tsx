@@ -1,87 +1,31 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { TopNav } from "@/components/TopNav";
-
+import { Button } from "@/components/ui/button";
+import { calendarUrl, countdown, formatContestDate, type Contest } from "@/lib/schedule";
+import { type CatalogItem, type Redemption, type Region } from "@/lib/embers";
+import { createMockContestData } from "@/data/contests";
+import { ContestRow, Filters, HowItWorks, PastContestRow, RedeemPage, Section, StatsRow, Tag, number, type Filter } from "@/components/contests/ContestViews";
 export const Route = createFileRoute("/contests")({
-  head: () => ({ meta: [{ title: "Contests — Yuvro" }] }),
+  head: () => ({ meta: [{ title: "Contests — Yuvro" }, { name: "description", content: "Weekly and biweekly Yuvro coding contests, leaderboards and Embers rewards." }] }),
   component: ContestsPage,
 });
-
-const WEEKLY_EPOCH = Date.UTC(2026, 0, 4, 2, 30); // Sunday 08:00 IST, contest #1
-const BIWEEKLY_EPOCH = Date.UTC(2026, 0, 10, 14, 30); // Saturday 20:00 IST, contest #1
-const WEEK = 7 * 864e5;
-
-function nextOf(epoch: number, period: number, now: number) {
-  const n = Math.max(0, Math.ceil((now - epoch) / period));
-  return { number: n + 1, start: epoch + n * period };
+const tabs = ["Upcoming", "Past", "Redeem", "How it works"] as const;
+function NextContestCard({ contest, now, region, registered, reminded, onRegister, onRemind, notify }: { contest: Contest; now: number; region: Region; registered: boolean; reminded: boolean; onRegister: () => void; onRemind: (value: boolean) => void; notify: (message: string) => void }) {
+  const live = countdown(contest, now) === "Live now";
+  return <section className="contest-section"><div className="contest-name"><Tag kind={contest.kind} /><span className="contest-muted contest-small">Next contest</span></div><h2 className="contest-feature-title">{contest.name}</h2><div className="contest-muted">{formatContestDate(contest.start)}</div><div className="mt-4"><span className="contest-muted contest-small">{live ? "Status" : "Starts in"}</span><div className="contest-countdown" aria-label="Contest countdown">{countdown(contest, now)}</div></div><div className="contest-kv">{[["Duration", `${contest.duration} minutes`], ["Problems", contest.problems], ["Registered", number(2184 + (registered ? 1 : 0))], ["1st place", `${number(contest.podium[0])} Embers${region === "IN" ? ` (₹${number(contest.podium[0] / 10)})` : ""}`]].map(([label, value]) => <div key={label}><span>{label}</span><b>{value}</b></div>)}</div><div className="contest-actions"><Button variant={registered && !live ? "outline" : "default"} className={registered && !live ? "contest-outline contest-ok" : "contest-primary"} onClick={live ? () => notify("The contest room is not connected in this preview.") : onRegister}>{live ? "Enter contest" : registered ? "Registered · Unregister" : "Register"}</Button><Button asChild variant="ghost" className="contest-link"><a href={calendarUrl(contest)} target="_blank" rel="noopener noreferrer" onClick={() => notify("Opening Google Calendar")}>Add to calendar</a></Button><label className="contest-checkbox"><input type="checkbox" checked={reminded} onChange={e => onRemind(e.target.checked)} />Remind me 1 hour before</label></div><details className="mt-5"><summary>Rules and scoring</summary><p>Rank is decided by problems solved, then total time. Each wrong submission adds 5 minutes. Use Python, Java, C++ or JavaScript.</p></details><details><summary>Fair play</summary><p>One account per person. Every submission goes through a plagiarism check after the contest, and flagged accounts lose their Embers and badges.</p></details></section>;
 }
-
-function countdown(ms: number) {
-  const s = Math.max(0, Math.floor(ms / 1000));
-  const d = Math.floor(s / 86400), h = Math.floor((s % 86400) / 3600), m = Math.floor((s % 3600) / 60), sec = s % 60;
-  return `${d}d ${h}h ${m}m ${sec}s`;
-}
-
-const fmt = (t: number) => new Date(t).toLocaleString(undefined, { weekday: "short", month: "short", day: "numeric", hour: "2-digit", minute: "2-digit" });
-
 function ContestsPage() {
-  const [now, setNow] = useState(() => Date.now());
-  useEffect(() => { const t = setInterval(() => setNow(Date.now()), 1000); return () => clearInterval(t); }, []);
-  const [registered, setRegistered] = useState<string[]>([]);
-
-  const weekly = nextOf(WEEKLY_EPOCH, WEEK, now);
-  const biweekly = nextOf(BIWEEKLY_EPOCH, 2 * WEEK, now);
-  const upcoming = [
-    { id: `w${weekly.number}`, name: `Weekly Contest ${weekly.number}`, start: weekly.start, meta: "Every Sunday · 90 minutes · 4 problems" },
-    { id: `b${biweekly.number}`, name: `Biweekly Contest ${biweekly.number}`, start: biweekly.start, meta: "Every other Saturday · 90 minutes · 4 problems" },
-  ].sort((a, b) => a.start - b.start);
-
-  const past = [
-    ...Array.from({ length: 4 }, (_, i) => ({ name: `Weekly Contest ${weekly.number - 1 - i}`, start: weekly.start - (i + 1) * WEEK })),
-    ...Array.from({ length: 2 }, (_, i) => ({ name: `Biweekly Contest ${biweekly.number - 1 - i}`, start: biweekly.start - (i + 1) * 2 * WEEK })),
-  ].filter(p => p.start >= WEEKLY_EPOCH - WEEK).sort((a, b) => b.start - a.start);
-
-  return (
-    <div className="min-h-screen">
-      <TopNav />
-      <main className="mx-auto max-w-[1000px] px-4 py-8">
-        <h1 className="text-2xl font-semibold">Contests</h1>
-        <p className="text-sm text-muted-foreground mt-1">Compete in weekly and biweekly coding contests.</p>
-
-        <section className="mt-8">
-          <h2 className="text-xl font-semibold">Upcoming</h2>
-          <div className="mt-4 grid gap-4 md:grid-cols-2">
-            {upcoming.map(c => {
-              const reg = registered.includes(c.id);
-              return (
-                <div key={c.id} className="rounded-xl border bg-card p-5">
-                  <p className="text-base font-medium">{c.name}</p>
-                  <p className="text-xs text-muted-foreground mt-0.5">{c.meta}</p>
-                  <p className="text-sm mt-4">{fmt(c.start)}</p>
-                  <p className="text-sm text-muted-foreground">Starts in <span className="tabular-nums text-foreground">{countdown(c.start - now)}</span></p>
-                  <button
-                    onClick={() => setRegistered(r => reg ? r.filter(x => x !== c.id) : [...r, c.id])}
-                    className={`mt-4 rounded-md px-4 py-2 text-sm ${reg ? "border" : "text-white"}`}
-                    style={reg ? undefined : { background: "#f7931e" }}
-                  >{reg ? "Registered ✓" : "Register"}</button>
-                </div>
-              );
-            })}
-          </div>
-        </section>
-
-        <section className="mt-10">
-          <h2 className="text-xl font-semibold">Past contests</h2>
-          <ul className="mt-4 divide-y border-y">
-            {past.map(p => (
-              <li key={p.name} className="flex items-center justify-between py-3 text-sm">
-                <span>{p.name}</span>
-                <span className="text-muted-foreground">{fmt(p.start)}</span>
-              </li>
-            ))}
-          </ul>
-        </section>
-      </main>
-    </div>
-  );
+  const [api] = useState(createMockContestData), [now, setNow] = useState(Date.now), [tab, setTab] = useState<typeof tabs[number]>("Upcoming");
+  const [filter, setFilter] = useState<Filter>("All"), [pastFilter, setPastFilter] = useState<Filter>("All"), [open, setOpen] = useState<string | null>(null);
+  const [registered, setRegistered] = useState<Record<string, boolean>>({}), [reminders, setReminders] = useState<Record<string, boolean>>({});
+  const [region, setRegion] = useState<Region>("IN"), [balance, setBalance] = useState(3850), [redemptions, setRedemptions] = useState<Redemption[]>([]), [toast, setToast] = useState("");
+  useEffect(() => { const timer = setInterval(() => setNow(Date.now()), 1000); return () => clearInterval(timer); }, []);
+  useEffect(() => { if (!toast) return; const timer = setTimeout(() => setToast(""), 3000); return () => clearTimeout(timer); }, [toast]);
+  const minute = Math.floor(now / 60000);
+  const { upcoming, past } = useMemo(() => api.getContests(minute * 60000), [api, minute]);
+  const next = upcoming[0];
+  function register(contest: Contest) { const value = !registered[contest.id]; api.register(contest.id, value); setRegistered(previous => ({ ...previous, [contest.id]: value })); setToast(value ? "You’re registered for this preview" : "Registration cancelled"); }
+  function redeem(item: CatalogItem) { try { const result = api.redeem(item, region, balance); setBalance(result.balance); setRedemptions(previous => [result.redemption, ...previous]); setToast(`Demo redemption: ${item.name}. No real reward was activated.`); } catch (error) { setToast(error instanceof Error ? error.message : "Unable to redeem this reward."); } }
+  return <div className="min-h-screen"><TopNav /><div className="contest-theme"><main className="contest-wrap"><h1>Contests</h1><p className="contest-subtitle">Compete every week, climb the leaderboard and earn Embers.</p><StatsRow balance={balance} region={region} /><nav className="contest-tabs" aria-label="Contest sections">{tabs.map(item => <Button key={item} variant="ghost" className="contest-tab" aria-current={tab === item ? "page" : undefined} onClick={() => setTab(item)}>{item}</Button>)}</nav><div key={tab} className="contest-fade">{tab === "Upcoming" && <>{next && <NextContestCard contest={next} now={now} region={region} registered={!!registered[next.id]} reminded={!!reminders[next.id]} onRegister={() => register(next)} onRemind={value => { setReminders(previous => ({ ...previous, [next.id]: value })); setToast(value ? "Reminder selected for this preview; notifications are not connected." : "Reminder removed"); }} notify={setToast} />}<Section title="Upcoming contests"><Filters value={filter} onChange={setFilter} />{upcoming.slice(1).filter(contest => filter === "All" || contest.kind === filter).map(contest => <ContestRow key={contest.id} contest={contest} region={region} registered={!!registered[contest.id]} onRegister={() => register(contest)} />)}</Section></>}{tab === "Past" && <Section title="Past contests"><Filters value={pastFilter} onChange={setPastFilter} />{past.filter(contest => pastFilter === "All" || contest.kind === pastFilter).map(contest => <PastContestRow key={contest.id} contest={contest} open={open === contest.id} onToggle={() => setOpen(open === contest.id ? null : contest.id)} entries={api.getLeaderboard(contest)} />)}</Section>}{tab === "Redeem" && <RedeemPage region={region} onRegion={setRegion} balance={balance} redemptions={redemptions} onRedeem={redeem} />}{tab === "How it works" && <HowItWorks />}</div><p className="contest-muted contest-small mt-5">Preview data · Registrations, reminders and redemptions are temporary. No real rewards or services are activated.</p></main>{toast && <div className="contest-toast" role="status" aria-live="polite">{toast}</div>}</div></div>;
 }
