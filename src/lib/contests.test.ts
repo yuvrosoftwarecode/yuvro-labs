@@ -1,4 +1,10 @@
-import { describe, test, expect } from "bun:test";
+import { describe, test } from "node:test";
+import assert from "node:assert/strict";
+const expect = (actual: unknown) => ({
+  toBe: (expected: unknown) => assert.equal(actual, expected),
+  toEqual: (expected: unknown) => assert.deepEqual(actual, expected),
+  toThrow: () => { assert.equal(typeof actual, "function"); if (typeof actual === "function") assert.throws(() => actual()); },
+});
 import { makeContest, getSchedule, countdown } from "./schedule";
 import { earn, catalog, priceFor, canRedeem, goals, voucherValue } from "./embers";
 import { createMockContestData } from "../data/contests";

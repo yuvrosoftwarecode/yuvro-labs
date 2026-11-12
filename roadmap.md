@@ -1,6 +1,6 @@
 # Tasks
-- [ ] Build supplied Contests design, schedule, reward mocks and tabs with blue actions and orange underlines.
-- [ ] Test contest scheduling/reward rules and verify registration, results, region pricing and redemption on desktop/mobile.
+- [x] Build supplied Contests design, schedule, reward mocks and tabs with blue actions and orange underlines.
+- [x] Test contest scheduling/reward rules and verify registration, results, region pricing and redemption on desktop/mobile.
 - [x] Restyle recruiter Question bank to the supplied design; verify filters, preview/edit/add dialogs, cancelled deletion, and no clipping at 862px and 390px using existing fallback questions (hosted mutations unverified).
 - [x] Add AI Research Papers navigation and supplied /research feed with filters, topics and inline sample summaries.
 - [x] Verify research navigation, following persistence, filters, summaries and narrow-screen layout.
